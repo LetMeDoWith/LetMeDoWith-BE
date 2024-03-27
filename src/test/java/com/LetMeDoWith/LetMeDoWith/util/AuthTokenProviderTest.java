@@ -5,19 +5,19 @@ import java.util.Map;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.LetMeDoWith.LetMeDoWith.dto.valueObject.AccessTokenVO;
+import com.LetMeDoWith.LetMeDoWith.provider.AuthTokenProvider;
+
 @SpringBootTest
-public class AuthTokenUtilTest {
+public class AuthTokenProviderTest {
 
 	@Autowired
-	private AuthTokenUtil authTokenUtil;
+	private AuthTokenProvider authTokenProvider;
 
-	private static String MEMBER_ID = "1";
+	private static Long MEMBER_ID = 1L;
 
 
 	@Test
@@ -25,11 +25,11 @@ public class AuthTokenUtilTest {
 	void validateAccessToken() {
 
 		// given
-		Map<Object, Object> accessTokenDto = authTokenUtil.createAccessToken(MEMBER_ID);
-		System.out.println(accessTokenDto.get("token"));
+		AccessTokenVO accessTokenVO = authTokenProvider.createAccessToken(MEMBER_ID);
+		System.out.println(accessTokenVO.token());
 
 		// when
-		String memberId = authTokenUtil.validateAccessToken((String)accessTokenDto.get("token"));
+		Long memberId = authTokenProvider.validateToken(accessTokenVO.token(), AuthTokenProvider.TokenType.ATK);
 
 		// then
 		Assertions.assertThat(memberId).isEqualTo(MEMBER_ID);

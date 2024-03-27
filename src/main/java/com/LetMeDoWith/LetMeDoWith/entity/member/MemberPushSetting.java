@@ -1,6 +1,6 @@
-package com.LetMeDoWith.LetMeDoWith.model.member;
+package com.LetMeDoWith.LetMeDoWith.entity.member;
 
-import com.LetMeDoWith.LetMeDoWith.model.BaseAuditModel;
+import com.LetMeDoWith.LetMeDoWith.entity.BaseAuditEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class MemberPushSetting extends BaseAuditModel {
+public class MemberPushSetting extends BaseAuditEntity {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.model;
+package com.LetMeDoWith.LetMeDoWith.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @EntityListeners(value = {AuditingEntityListener.class})
 @MappedSuperclass
 @Getter
-public class BaseAuditModel {
+public class BaseAuditEntity {
 
     @CreatedDate
     @Column(name = "create_at", updatable = false)

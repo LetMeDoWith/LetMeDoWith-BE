@@ -38,3 +38,5 @@ out/
 
 ### Prod-Confidential ###
 /src/main/**/application-prod-confidential.yml
+
+/.DS_Store

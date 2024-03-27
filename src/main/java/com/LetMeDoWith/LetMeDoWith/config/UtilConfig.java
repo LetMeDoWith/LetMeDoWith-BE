@@ -1,19 +1,20 @@
 package com.LetMeDoWith.LetMeDoWith.config;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
 
-import com.LetMeDoWith.LetMeDoWith.util.AuthTokenUtil;
+import lombok.RequiredArgsConstructor;
 
-@Component
+@Configuration
+@RequiredArgsConstructor
 public class UtilConfig {
 
-	@Value("${auth.jwt.secret}")
-	private String secret;
-
-	@Bean
-	public AuthTokenUtil authTokenUtil() {
-		return new AuthTokenUtil(secret);
-	}
+	// @Value("${auth.jwt.secret}")
+	// private String secret;
+	//
+	// private
+	//
+	// @Bean
+	// public AuthTokenProvider authTokenProvider() {
+	// 	return new AuthTokenProvider(secret, );
+	// }
 }

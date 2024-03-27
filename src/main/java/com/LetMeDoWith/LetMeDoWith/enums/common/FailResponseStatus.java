@@ -26,8 +26,10 @@ public enum FailResponseStatus {
     UNAUTHORIZED("UNAUTHORIZED", "E300", HttpStatus.UNAUTHORIZED, "Request is not authorized."),
     ATK_NOT_EXIST("ATK_NOT_EXIST", "E301", HttpStatus.UNAUTHORIZED, "Access token is not exist."),
     TOKEN_EXPIRED("TOKEN_EXPIRED", "E302", HttpStatus.UNAUTHORIZED, "Token is expired"),
-    INVALID_TOKEN("INVALID_TOKEN", "E303", HttpStatus.UNAUTHORIZED, "Token is not valid"),
-
+    TOKEN_EXPIRED_BY_ADMIN("TOKEN_EXPIRED_BY_ADMIN", "E303", HttpStatus.UNAUTHORIZED, "Token is expired"),
+    INVALID_TOKEN("INVALID_TOKEN", "E304", HttpStatus.UNAUTHORIZED, "Token is not valid"),
+    INVALID_RTK_TOKEN_MEMBER_NOT_MATCHED("INVALID_RTK_TOKEN_MEMBER_NOT_MATCHED", "E305", HttpStatus.UNAUTHORIZED, "Token is not valid"),
+    INVALID_RTK_TOKEN_ATK_NOT_MATCHED("INVALID_RTK_TOKEN_ATK_NOT_MATCHED", "E305", HttpStatus.UNAUTHORIZED, "Token is not valid"),
 
     /**
      * 500 Interal Server Error

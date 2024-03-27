@@ -1,11 +1,11 @@
-package com.LetMeDoWith.LetMeDoWith.repository.user;
+package com.LetMeDoWith.LetMeDoWith.repository.member;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import com.LetMeDoWith.LetMeDoWith.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.enums.member.MemberType;
-import com.LetMeDoWith.LetMeDoWith.model.member.Member;
+import com.LetMeDoWith.LetMeDoWith.entity.member.Member;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
@@ -24,7 +24,7 @@ class MemberRepositoryTest {
     private TestEntityManager entityManager;
     
     @Autowired
-    private UserRepository userRepository;
+    private MemberRepository memberRepository;
     
     
     @Test
@@ -40,9 +40,9 @@ class MemberRepositoryTest {
                                      .marketingTermAgreeYn(true)
                                      .build();
         
-        userRepository.save(testMemberObj);
+        memberRepository.save(testMemberObj);
         
-        Optional<Member> user = userRepository.findByNickname("nickname");
+        Optional<Member> user = memberRepository.findByNickname("nickname");
         
         assertInstanceOf(Member.class, user.get());
         assertEquals(user.get().getNickname(), "nickname");
@@ -62,17 +62,17 @@ class MemberRepositoryTest {
                                      .marketingTermAgreeYn(true)
                                      .build();
         
-        userRepository.save(testMemberObj);
+        memberRepository.save(testMemberObj);
         
-        Optional<Member> user = userRepository.findByNickname("nickname");
+        Optional<Member> user = memberRepository.findByNickname("nickname");
         
         assertInstanceOf(Member.class, user.get());
         assertEquals(user.get()
                          .getNickname(), "nickname");
         
         // delete
-        userRepository.deleteAll();
-        Optional<Member> userAfterDelete = userRepository.findByNickname("nickname");
+        memberRepository.deleteAll();
+        Optional<Member> userAfterDelete = memberRepository.findByNickname("nickname");
         
         Assertions.assertThrows(NoSuchElementException.class, userAfterDelete::get);
     }
@@ -100,11 +100,11 @@ class MemberRepositoryTest {
                                                .marketingTermAgreeYn(true)
                                                .build();
         
-        userRepository.save(testMemberObj);
-        userRepository.save(testMemberObjWithoutKey);
+        memberRepository.save(testMemberObj);
+        memberRepository.save(testMemberObjWithoutKey);
         
-        Optional<Member> userWithCustomKey = userRepository.findByNickname("nickname");
-        Optional<Member> userWithDefaultKey = userRepository.findByNickname("nickname2");
+        Optional<Member> userWithCustomKey = memberRepository.findByNickname("nickname");
+        Optional<Member> userWithDefaultKey = memberRepository.findByNickname("nickname2");
         
         assertEquals(userWithCustomKey.get().getId(), 1L);
         assertEquals(userWithDefaultKey.get().getId(), 2L);
