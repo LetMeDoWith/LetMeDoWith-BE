@@ -6,11 +6,10 @@ import com.LetMeDoWith.LetMeDoWith.application.member.dto.MemberPersonalInfoVO;
 import com.LetMeDoWith.LetMeDoWith.application.member.repository.MemberRepository;
 import com.LetMeDoWith.LetMeDoWith.application.member.repository.MemberSettingRepository;
 import com.LetMeDoWith.LetMeDoWith.common.enums.SocialProvider;
-import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
+import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
-
 import com.LetMeDoWith.LetMeDoWith.domain.member.Member;
 import com.LetMeDoWith.LetMeDoWith.domain.member.MemberSocialAccount;
 import com.LetMeDoWith.LetMeDoWith.domain.member.MemberTermAgree;
@@ -24,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Slf4j
 public class MemberService {
-
+    
     private final MemberRepository memberRepository;
     private final MemberSettingRepository memberSettingRepository;
     
@@ -76,11 +75,11 @@ public class MemberService {
             throw new RestApiException(FailResponseStatus.DUPLICATE_NICKNAME);
         }
         
-        member.updatePersonalInfoAfterCompleteSignUp(MemberPersonalInfoVO.builder()
-                                                                         .nickname(command.nickname())
-                                                                         .dateOfBirth(command.dateOfBirth())
-                                                                         .gender(command.gender())
-                                                                         .build());
+        member.updatePersonalInfoWithCompletingSignUp(MemberPersonalInfoVO.builder()
+                                                                          .nickname(command.nickname())
+                                                                          .dateOfBirth(command.dateOfBirth())
+                                                                          .gender(command.gender())
+                                                                          .build());
         
         memberRepository.save(MemberTermAgree.of(member,
                                                  command.isTerms(),
