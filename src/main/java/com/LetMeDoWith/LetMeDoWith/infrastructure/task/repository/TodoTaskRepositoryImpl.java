@@ -19,22 +19,22 @@ public class TodoTaskRepositoryImpl implements TodoTaskRepository {
     
     @Override
     public Optional<TodoTask> getTodoTask(Long id, Long memberId) {
-        return todoTaskJpaRepository.findByIdAndMemberId(id, memberId);
+        return todoTaskJpaRepository.findTodoTaskAggregate(id, memberId);
     }
     
     @Override
     public List<TodoTask> getTodoTasks(Long memberId, LocalDate date) {
-        return todoTaskJpaRepository.findAllByIdAndDate(memberId, date);
+        return todoTaskJpaRepository.findAllTodoTaskAggregates(memberId, date);
     }
     
     @Override
     public List<TodoTask> getTodoTasks(Long memberId, Set<LocalDate> dates) {
-        return todoTaskJpaRepository.findAllByIdAndDateIn(memberId, dates);
+        return todoTaskJpaRepository.findAllTodoTaskAggregates(memberId, dates);
     }
     
     @Override
     public List<TodoTask> getTodoTasks(TodoTaskRoutine todoTaskRoutine) {
-        return List.of();
+        return todoTaskJpaRepository.findAllTodoTaskAggregates(todoTaskRoutine);
     }
     
     @Override
