@@ -1,6 +1,8 @@
 package com.LetMeDoWith.LetMeDoWith.domain.task.model;
 
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
+import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
+import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.AggregateRoot;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TodoTaskStatus;
 import jakarta.persistence.CascadeType;
@@ -135,19 +137,22 @@ public class TodoTask extends BaseAuditEntity {
         targetDateSet.add(date);
         
         TodoTaskRoutine routine = TodoTaskRoutine.from(targetDateSet);
-        targetDateSet.stream().sorted().toList().forEach(e -> {
-            TodoTask newTodoTask = TodoTask.builder()
-                                           .memberId(memberId)
-                                           .taskCategoryId(taskCategoryId)
-                                           .title(title)
-                                           .status(TodoTaskStatus.WAIT)
-                                           .routine(routine)
-                                           .date(e)
-                                           .startTime(startTime)
-                                           .build();
-            newTodoTask.validate();
-            result.add(newTodoTask);
-        });
+        targetDateSet.stream()
+                     .sorted()
+                     .toList()
+                     .forEach(e -> {
+                         TodoTask newTodoTask = TodoTask.builder()
+                                                        .memberId(memberId)
+                                                        .taskCategoryId(taskCategoryId)
+                                                        .title(title)
+                                                        .status(TodoTaskStatus.WAIT)
+                                                        .routine(routine)
+                                                        .date(e)
+                                                        .startTime(startTime)
+                                                        .build();
+                         newTodoTask.validate();
+                         result.add(newTodoTask);
+                     });
         
         return result;
     }
@@ -164,15 +169,17 @@ public class TodoTask extends BaseAuditEntity {
         
         List<TodoTask> result = new ArrayList<>();
         result.add(this);
-        routineDates.stream().filter(date -> !date.isEqual(this.date))
-                    .collect(Collectors.toSet()).forEach(date ->
-                                                             result.add(
-                                                                 TodoTask.of(this.memberId,
-                                                                             this.taskCategoryId,
-                                                                             this.title,
-                                                                             date,
-                                                                             this.startTime,
-                                                                             routine))
+        routineDates.stream()
+                    .filter(date -> !date.isEqual(this.date))
+                    .collect(Collectors.toSet())
+                    .forEach(date ->
+                                 result.add(
+                                     TodoTask.of(this.memberId,
+                                                 this.taskCategoryId,
+                                                 this.title,
+                                                 date,
+                                                 this.startTime,
+                                                 routine))
                     );
         
         return result;
@@ -295,6 +302,13 @@ public class TodoTask extends BaseAuditEntity {
      * 유효성 검사
      */
     private void validate() {
-        // 빈 함수
+        if (LocalDate.now().isEqual(this.date) && LocalTime.now().isAfter(this.startTime)) {
+            throw new RestApiException(FailResponseStatus.DOWITH_TASK_NOT_AVAIL_START_TIME);
+        }
+        
+        if (date.isBefore(LocalDate.now())) {
+            throw new RestApiException(FailResponseStatus.DOWITH_TASK_NOT_AVAIL_DATE);
+        }
+        
     }
 }
