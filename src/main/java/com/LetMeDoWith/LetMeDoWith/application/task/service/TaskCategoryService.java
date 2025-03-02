@@ -25,7 +25,7 @@ public class TaskCategoryService {
     /**
      * 한 멤버가 조회 가능한 모든 카테고리를 조회한다.
      *
-     * @param memberId 조회하려는 멤버의 id
+     * @param memberId 조회하려는 멤버의 dowithTaskId
      * @return 멤버가 생성한 개인 카테고리 + 공통 카테고리
      */
     public List<TaskCategory> getAllCategory(Long memberId) {

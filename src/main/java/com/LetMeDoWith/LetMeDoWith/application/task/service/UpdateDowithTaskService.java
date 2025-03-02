@@ -5,7 +5,7 @@ import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseSt
 import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.DOWITH_TASK_TASK_CATEGORY_NOT_EXIST;
 import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.DOWITH_TASK_UPDATE_NOT_AVAIL;
 
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateDowithTaskCommand;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateDowithTaskContentsCommand;
 import com.LetMeDoWith.LetMeDoWith.application.task.repository.TaskCategoryRepository;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
@@ -36,6 +36,25 @@ public class UpdateDowithTaskService {
     
     private final TaskCategoryRepository taskCategoryRepository;
     
+    /**
+     * 두윗모드Task 내용 수정 및 루틴 생성
+     *
+     * @param memberId
+     * @param dowithTaskId
+     * @param command
+     * @param routineDates
+     */
+    @Transactional
+    public DowithTask updateContentsAndCreateRoutine(Long memberId,
+                                                     UpdateDowithTaskContentsCommand command,
+                                                     Set<LocalDate> routineDates) {
+        
+        DowithTask dowithTask = updateContents(memberId, command);
+        dowithTask.createRoutine(routineDates);
+        
+        return dowithTask;
+        
+    }
     
     /**
      * 두윗모드Task 내용 수정
@@ -44,7 +63,8 @@ public class UpdateDowithTaskService {
      * @param command
      */
     @Transactional
-    public void updateDowithTaskContents(Long memberId, UpdateDowithTaskCommand command) {
+    public DowithTask updateContents(Long memberId,
+                                     UpdateDowithTaskContentsCommand command) {
         
         DowithTask dowithTask = dowithTaskRepository.getDowithTask(command.id(), memberId)
                                                     .orElseThrow(() -> new RestApiException(
@@ -91,7 +111,10 @@ public class UpdateDowithTaskService {
             
         }
         
+        return dowithTask;
+        
     }
+    
     
     /**
      * 두윗모드Task 루틴 수정
@@ -101,8 +124,8 @@ public class UpdateDowithTaskService {
      * @param routineDates
      */
     @Transactional
-    public void updateDowithTaskRoutine(Long memberId, Long dowithTaskId,
-                                        Set<LocalDate> routineDates) {
+    public DowithTask updateRoutine(Long memberId, Long dowithTaskId,
+                                    Set<LocalDate> routineDates) {
         
         DowithTask dowithTask = dowithTaskRepository.getDowithTask(dowithTaskId, memberId)
                                                     .orElseThrow(() -> new RestApiException(
@@ -140,6 +163,8 @@ public class UpdateDowithTaskService {
             dowithTask.createRoutine(routineDates);
             
         }
+        
+        return dowithTask;
         
     }
     

@@ -51,11 +51,11 @@ public class Member extends BaseAuditEntity {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
+    @Column(name = "dowithTaskId", nullable = false)
     private Long id;
     
     
-    // OpenID Connect id token의 sub 필드와 동일
+    // OpenID Connect dowithTaskId token의 sub 필드와 동일
     // (sub, provider) 조합으로 uniqueness 판단함.
     @Column
     private String subject;
@@ -83,15 +83,11 @@ public class Member extends BaseAuditEntity {
     
     @Column(name = "profile_image_url")
     private String profileImageUrl;
-
-    public boolean isNormal() {
-        return this.status.equals(MemberStatus.NORMAL);
-    }
     
     /**
      * 소셜 로그인이 완료된 직후 상태(초기 상태)의 Member를 생성한다.
      *
-     * @param subject OIDC id token에서 추출한 회원 구분 번호.
+     * @param subject OIDC dowithTaskId token에서 추출한 회원 구분 번호.
      * @return 초기회된 멤버 객체
      */
     public static Member ofSocialAuthenticated(String subject) {
@@ -118,6 +114,10 @@ public class Member extends BaseAuditEntity {
         return List.of(MemberStatus.SUSPENDED,
                        MemberStatus.WITHDRAWN,
                        MemberStatus.SOCIAL_AUTHENTICATED);
+    }
+    
+    public boolean isNormal() {
+        return this.status.equals(MemberStatus.NORMAL);
     }
     
     // LAZY Badge 획득 레벨인지 확인

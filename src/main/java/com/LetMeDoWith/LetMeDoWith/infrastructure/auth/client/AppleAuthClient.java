@@ -17,7 +17,7 @@ public class AppleAuthClient implements AuthClient {
     
     private final WebClient webClient;
     
-    // TODO: 애플 OIDC id token 공개키 API URL 찾아서 넣을 것.
+    // TODO: 애플 OIDC dowithTaskId token 공개키 API URL 찾아서 넣을 것.
     @Override
     @Cacheable(key = "'AuthPublicKey-Apple'")
     public Mono<OidcPublicKeyResDto> getPublicKeyList() {

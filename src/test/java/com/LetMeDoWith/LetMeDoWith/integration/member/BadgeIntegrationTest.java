@@ -293,7 +293,7 @@ public class BadgeIntegrationTest {
         resultActions.andExpect(status().is2xxSuccessful())
                      .andExpect(jsonPath("$.data.isLazyMember").value(true))
                      .andExpect(jsonPath("$.data.mainBadge").doesNotExist())
-//        .andExpect(jsonPath("$.data.mainBadge.id").value(badge1.getId()))
+//        .andExpect(jsonPath("$.data.mainBadge.dowithTaskId").value(badge1.getId()))
 //        .andExpect(jsonPath("$.data.mainBadge.name").value(badge1.getName()))
 //        .andExpect(jsonPath("$.data.mainBadge.imageUrl").value(badge1.getImageUrl()))
 //        .andExpect(jsonPath("$.data.mainBadge.description").value(badge1.getDescription()))

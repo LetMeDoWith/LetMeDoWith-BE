@@ -23,32 +23,32 @@ import lombok.NoArgsConstructor;
 @Builder
 @Table(name = "BADGE")
 public class Badge extends BaseAuditEntity {
-
-  @OneToMany(mappedBy = "badge", fetch = FetchType.LAZY)
-  protected List<MemberBadge> memberBadges;
-
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "id", nullable = false)
-  private Long id;
-
-  @Column(name = "status", nullable = false)
-  private BadgeStatus badgeStatus;
-
-  @Column(name = "name", nullable = false)
-  private String name;
-
-  @Column(name = "description")
-  private String description;
-
-  @Column(name = "acquire_hint")
-  private String acquireHint;
-
-  @Column(name = "image_url")
-  private String imageUrl;
-
-  @Column(name = "sort_order")
-  private int sortOrder;
+    
+    @OneToMany(mappedBy = "badge", fetch = FetchType.LAZY)
+    protected List<MemberBadge> memberBadges;
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "dowithTaskId", nullable = false)
+    private Long id;
+    
+    @Column(name = "status", nullable = false)
+    private BadgeStatus badgeStatus;
+    
+    @Column(name = "name", nullable = false)
+    private String name;
+    
+    @Column(name = "description")
+    private String description;
+    
+    @Column(name = "acquire_hint")
+    private String acquireHint;
+    
+    @Column(name = "image_url")
+    private String imageUrl;
+    
+    @Column(name = "sort_order")
+    private int sortOrder;
 
 //  public boolean isActive(Long memberId) {
 //    if(memberBadges != null && !memberBadges.isEmpty() && BadgeStatus.ACTIVE.equals(badgeStatus)) {

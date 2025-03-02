@@ -101,7 +101,7 @@ public class AuthController {
     @ApiErrorResponses({
         @ApiErrorResponse(
             status = FailResponseStatus.UNAUTHORIZED,
-            description = "개발용 인증을 위한 id, pw를 올바르게 입력하지 않았을 때 발생")
+            description = "개발용 인증을 위한 dowithTaskId, pw를 올바르게 입력하지 않았을 때 발생")
     })
     @PostMapping("/token/temp")
     public ResponseEntity<ResponseDto<CreateTokenTempResDto>> createTokenTemp(

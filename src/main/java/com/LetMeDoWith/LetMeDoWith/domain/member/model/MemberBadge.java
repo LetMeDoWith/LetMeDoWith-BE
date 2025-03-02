@@ -24,28 +24,28 @@ import lombok.NoArgsConstructor;
 @AggregateRoot
 @Table(name = "member_badge")
 public class MemberBadge extends BaseAuditEntity {
-
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "id", nullable = false)
-  private Long id;
-
-  @Column(name = "member_id")
-  private Long memberId;
-
-  @ManyToOne
-  @JoinColumn(name = "badge_id", nullable = false)
-  private Badge badge;
-
-  @Column(name = "main_yn", nullable = false)
-  private Yn isMain;
-
-  public void registerToMainBadge() {
-    this.isMain = Yn.TRUE;
-  }
-
-  public void cancelMainBadge() {
-    this.isMain = Yn.FALSE;
-  }
-
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "dowithTaskId", nullable = false)
+    private Long id;
+    
+    @Column(name = "member_id")
+    private Long memberId;
+    
+    @ManyToOne
+    @JoinColumn(name = "badge_id", nullable = false)
+    private Badge badge;
+    
+    @Column(name = "main_yn", nullable = false)
+    private Yn isMain;
+    
+    public void registerToMainBadge() {
+        this.isMain = Yn.TRUE;
+    }
+    
+    public void cancelMainBadge() {
+        this.isMain = Yn.FALSE;
+    }
+    
 }

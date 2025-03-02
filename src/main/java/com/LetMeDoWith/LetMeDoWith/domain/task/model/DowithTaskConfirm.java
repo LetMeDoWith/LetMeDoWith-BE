@@ -26,25 +26,25 @@ import lombok.NoArgsConstructor;
 @Table(name = "DOWITH_TASK_CONFIRM")
 @AggregateRoot
 public class DowithTaskConfirm extends BaseAuditEntity {
-
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "id", nullable = false)
-  private Long id;
-
-  @OneToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "dowith_task_id", nullable = false)
-  private DowithTask dowithTask;
-
-  @Column(name = "image_url")
-  private String imageUrl;
-
-  public static DowithTaskConfirm of(DowithTask dowithTask, String imageUrl) {
-    return DowithTaskConfirm.builder()
-        .dowithTask(dowithTask)
-        .imageUrl(imageUrl)
-        .build();
-  }
-
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "dowithTaskId", nullable = false)
+    private Long id;
+    
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "dowith_task_id", nullable = false)
+    private DowithTask dowithTask;
+    
+    @Column(name = "image_url")
+    private String imageUrl;
+    
+    public static DowithTaskConfirm of(DowithTask dowithTask, String imageUrl) {
+        return DowithTaskConfirm.builder()
+                                .dowithTask(dowithTask)
+                                .imageUrl(imageUrl)
+                                .build();
+    }
+    
 }
 

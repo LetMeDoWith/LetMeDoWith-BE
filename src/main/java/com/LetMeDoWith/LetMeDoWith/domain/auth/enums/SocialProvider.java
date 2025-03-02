@@ -29,9 +29,9 @@ public enum SocialProvider implements BaseEnum {
     
     
     /**
-     * OIDC id 토큰의 iss 필드 값으로 social provider 조회
+     * OIDC dowithTaskId 토큰의 iss 필드 값으로 social provider 조회
      *
-     * @param issUrl id 토큰 내 iss 필드 값
+     * @param issUrl dowithTaskId 토큰 내 iss 필드 값
      * @return 자격 증명 제공자의 social provider 타입
      */
     public SocialProvider fromIssUrl(String issUrl) {
