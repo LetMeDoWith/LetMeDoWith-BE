@@ -5,6 +5,7 @@ import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.AggregateRoot;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
+import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskRoutineRepository;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -71,7 +72,7 @@ public class DowithTask extends BaseAuditEntity {
     @OneToOne(mappedBy = "dowithTask", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private DowithTaskConfirm confirms;
     
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "dowith_task_routine_id")
     private DowithTaskRoutine routine;
     
@@ -259,13 +260,11 @@ public class DowithTask extends BaseAuditEntity {
      *
      * @return 물리 삭제할 DowithTaskRoutine domain entity
      */
-    public DowithTaskRoutine deleteRoutine() {
+    public void deleteRoutine(DowithTaskRoutineRepository dowithTaskRoutineRepository) {
         if (isRoutine()) {
             DowithTaskRoutine toDelete = this.routine;
             this.routine = null;
-            return toDelete;
-        } else {
-            return null;
+            dowithTaskRoutineRepository.delete(toDelete);
         }
     }
     

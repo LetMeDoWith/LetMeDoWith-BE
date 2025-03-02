@@ -85,9 +85,10 @@ public class UpdateDowithTaskService {
             Map<Boolean, List<DowithTask>> updateAvailTaskMap = getUpdateAvailTaskMap(dowithTask);
             
             // 기존 routine 삭제
-            dowithTaskRoutineRepository.delete(dowithTask.getRoutine());
+            dowithTask.deleteRoutine(dowithTaskRoutineRepository);
             // 과거 Task 루틴 삭제
-            updateAvailTaskMap.get(false).forEach(DowithTask::deleteRoutine);
+            updateAvailTaskMap.get(false)
+                              .forEach(e -> e.deleteRoutine(dowithTaskRoutineRepository));
             
             // 현재, 미래 Task 콘텐츠 + 루틴 변경
             DowithTaskRoutine newRoutine = dowithTaskRoutineRepository.save(DowithTaskRoutine.from(
@@ -144,10 +145,11 @@ public class UpdateDowithTaskService {
             Map<Boolean, List<DowithTask>> updateAvailTaskMap = getUpdateAvailTaskMap(dowithTask);
             
             // 기존 routine 삭제
-            dowithTaskRoutineRepository.delete(dowithTask.getRoutine());
+            dowithTask.deleteRoutine(dowithTaskRoutineRepository);
             
             // 과거 Task 루틴 삭제
-            updateAvailTaskMap.get(false).forEach(DowithTask::deleteRoutine);
+            updateAvailTaskMap.get(false)
+                              .forEach(e -> e.deleteRoutine(dowithTaskRoutineRepository));
             
             // 현재, 미래 루틴 변경
             DowithTaskRoutine newRoutine = dowithTaskRoutineRepository.save(DowithTaskRoutine.from(

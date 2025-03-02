@@ -16,44 +16,49 @@ import org.springframework.stereotype.Repository;
 @Repository
 @RequiredArgsConstructor
 public class DowithTaskRepositoryImpl implements DowithTaskRepository {
-
-  private final DowithTaskJpaRepository dowithTaskJpaRepository;
-  private final DowithTaskRoutineJpaRepository dowithTaskRoutineJpaRepository;
-  private final DowithTaskConfirmJpaRepository dowithTaskConfirmJpaRepository;
-
-  @Override
-  public Optional<DowithTask> getDowithTask(Long id, Long memberId) {
-    return dowithTaskJpaRepository.findDowithTaskAggregate(id, memberId);
-  }
-
-  @Override
-  public List<DowithTask> getDowithTasks(Long memberId, LocalDate date) {
-    return dowithTaskJpaRepository.findAllDowithTaskAggregates(memberId, date);
-  }
-
-  @Override
-  public List<DowithTask> getDowithTasks(Long memberId, Set<LocalDate> dates) {
-    return dowithTaskJpaRepository.findAllDowithTaskAggregates(memberId, dates);
-  }
-
-
-  @Override
-  public List<DowithTask> getDowithTasks(DowithTaskRoutine dowithTaskRoutine) {
-    return null; // TODO - 구현 필요
-  }
-
-  @Override
-  public DowithTask saveDowithTask(DowithTask dowithTask) {
-    return dowithTaskJpaRepository.save(dowithTask);
-  }
-
-  @Override
-  public List<DowithTask> saveDowithTasks(List<DowithTask> dowithTasks) {
-    return dowithTaskJpaRepository.saveAll(dowithTasks);
-  }
-
-  @Override
-  public void delete(List<DowithTask> dowithTasks) {
-    dowithTaskJpaRepository.deleteAll(dowithTasks);
-  }
+    
+    private final DowithTaskJpaRepository dowithTaskJpaRepository;
+    private final DowithTaskRoutineJpaRepository dowithTaskRoutineJpaRepository;
+    private final DowithTaskConfirmJpaRepository dowithTaskConfirmJpaRepository;
+    
+    @Override
+    public Optional<DowithTask> getDowithTask(Long id, Long memberId) {
+        return dowithTaskJpaRepository.findDowithTaskAggregate(id, memberId);
+    }
+    
+    @Override
+    public List<DowithTask> getDowithTasks(Long memberId, LocalDate date) {
+        return dowithTaskJpaRepository.findAllDowithTaskAggregates(memberId, date);
+    }
+    
+    @Override
+    public List<DowithTask> getDowithTasks(Long memberId, Set<LocalDate> dates) {
+        return dowithTaskJpaRepository.findAllDowithTaskAggregates(memberId, dates);
+    }
+    
+    
+    @Override
+    public List<DowithTask> getDowithTasks(DowithTaskRoutine dowithTaskRoutine) {
+        return null; // TODO - 구현 필요
+    }
+    
+    @Override
+    public DowithTask saveDowithTask(DowithTask dowithTask) {
+        return dowithTaskJpaRepository.save(dowithTask);
+    }
+    
+    @Override
+    public List<DowithTask> saveDowithTasks(List<DowithTask> dowithTasks) {
+        return dowithTaskJpaRepository.saveAll(dowithTasks);
+    }
+    
+    @Override
+    public void delete(DowithTask dowithTask) {
+        dowithTaskJpaRepository.delete(dowithTask);
+    }
+    
+    @Override
+    public void delete(List<DowithTask> dowithTasks) {
+        dowithTaskJpaRepository.deleteAll(dowithTasks);
+    }
 }

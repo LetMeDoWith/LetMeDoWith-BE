@@ -120,10 +120,10 @@ public class DowithTaskController {
     @Operation(summary = "두윗모드 테스크 삭제", description = "두윗모드 테스크를 삭제합니다.")
     @DeleteMapping("/{dowithTaskId}")
     public ResponseEntity deleteDowithTask(@PathVariable Long dowithTaskId,
-                                           @RequestParam(name = "all", required = false, defaultValue = "true") boolean all) {
+                                           @RequestParam(name = "isRoutineInclude", required = false, defaultValue = "false") boolean isRoutineInclude) {
         Long memberId = AuthUtil.getMemberId();
         
-        if (all) {
+        if (isRoutineInclude) {
             // delete all routine tasks
         } else {
             // delete only one task
