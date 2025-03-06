@@ -1,26 +1,27 @@
 package com.LetMeDoWith.LetMeDoWith.application.task.dto;
 
+import java.time.LocalDate;
 import java.util.List;
 import lombok.Builder;
 
 @Builder
 public record RegisterTodoTaskResult(
     List<TodoTaskVO> todoTaskList,
-    boolean isRoutine
+    List<LocalDate> routineDates
 ) {
     
     public static RegisterTodoTaskResult of(List<TodoTaskVO> todoTaskList,
-                                            boolean isRoutine) {
+                                            List<LocalDate> routineDates) {
         return RegisterTodoTaskResult.builder()
                                      .todoTaskList(todoTaskList)
-                                     .isRoutine(isRoutine)
+                                     .routineDates(routineDates)
                                      .build();
     }
     
     public static RegisterTodoTaskResult of(TodoTaskVO todoTaskVO) {
         return RegisterTodoTaskResult.builder()
                                      .todoTaskList(List.of(todoTaskVO))
-                                     .isRoutine(false)
+                                     .routineDates(null)
                                      .build();
     }
     

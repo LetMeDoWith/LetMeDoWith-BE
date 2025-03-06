@@ -35,7 +35,7 @@ public class TodoTaskController {
         
         return ResponseUtil.createSuccessResponse(
             CreateTodoTaskResDto.of(registerTodoTaskResult.todoTaskList(),
-                                    registerTodoTaskResult.isRoutine())
+                                    registerTodoTaskResult.routineDates())
         );
     }
 }
