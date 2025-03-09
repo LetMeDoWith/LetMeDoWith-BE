@@ -2,16 +2,17 @@ package com.LetMeDoWith.LetMeDoWith.application.task.dto;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 import lombok.Builder;
 
 @Builder
 public record RegisterTodoTaskResult(
     List<TodoTaskVO> todoTaskList,
-    List<LocalDate> routineDates
+    Set<LocalDate> routineDates
 ) {
     
     public static RegisterTodoTaskResult of(List<TodoTaskVO> todoTaskList,
-                                            List<LocalDate> routineDates) {
+                                            Set<LocalDate> routineDates) {
         return RegisterTodoTaskResult.builder()
                                      .todoTaskList(todoTaskList)
                                      .routineDates(routineDates)

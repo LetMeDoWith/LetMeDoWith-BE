@@ -1,6 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.application.task.dto;
 
-import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TodoTaskRoutineCycle;
+import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TodoTaskRoutineRepetitionCycle;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Set;
@@ -10,11 +10,12 @@ import lombok.Builder;
 public record CreateTodoTaskCommand(
     Long taskCategoryId,
     String title,
-    LocalDate date,
+    LocalDate startDate,
+    LocalDate endDate,
     LocalTime startTime,
     Boolean isRoutine,
-    TodoTaskRoutineCycle routineRepetitionCycle,
-    Set<Integer> routinePattern
+    TodoTaskRoutineRepetitionCycle routineRepetitionCycle,
+    Set<Integer> repetitionPattern
 ) {
 
 }
