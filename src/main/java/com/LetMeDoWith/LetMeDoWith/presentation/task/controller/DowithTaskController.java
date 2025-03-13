@@ -1,5 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.task.controller;
 
+import com.LetMeDoWith.LetMeDoWith.application.task.service.DeleteDowithTaskService;
 import com.LetMeDoWith.LetMeDoWith.application.task.service.RegisterDowithTaskService;
 import com.LetMeDoWith.LetMeDoWith.application.task.service.UpdateDowithTaskService;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiErrorResponse;
@@ -39,6 +40,7 @@ public class DowithTaskController {
     
     private final RegisterDowithTaskService registerDowithTaskService;
     private final UpdateDowithTaskService updateDowithTaskService;
+    private final DeleteDowithTaskService deleteDowithTaskService;
     
     @Operation(summary = "두윗모드 테스크 생성", description = "두윗모드 테스크를 생성합니다. 루틴이 설정된 Task인 경우 isRoutine을 true로 세팅하고 rountineDates에 Task의 date 포함한 루틴 일자를 리스트로 넣어줍니다.")
     @ApiSuccessResponse(description = "두윗모드 Task 생성 성공. 루틴인 경우 루틴으로 인해 생성된 두윗모드 Task를 포함하여 N개의 Obejct가 반환됩니다.")
@@ -124,9 +126,9 @@ public class DowithTaskController {
         Long memberId = AuthUtil.getMemberId();
         
         if (isRoutineInclude) {
-            // delete all routine tasks
+            deleteDowithTaskService.deleteWithRoutines(memberId, dowithTaskId);
         } else {
-            // delete only one task
+            deleteDowithTaskService.delete(memberId, dowithTaskId);
         }
         
         return ResponseUtil.createSuccessResponse();

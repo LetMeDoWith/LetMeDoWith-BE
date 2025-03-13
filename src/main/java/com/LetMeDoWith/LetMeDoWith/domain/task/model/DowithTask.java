@@ -5,6 +5,7 @@ import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.AggregateRoot;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
+import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskRoutineRepository;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -256,15 +258,67 @@ public class DowithTask extends BaseAuditEntity {
     }
     
     /**
+     * 두윗모드Task 삭제
+     * @param dowithTaskRepository
+     * @param dowithTaskRoutineRepository
+     */
+    public void delete(DowithTaskRepository dowithTaskRepository, DowithTaskRoutineRepository dowithTaskRoutineRepository) {
+        
+        if (!LocalDateTime.now().isBefore(LocalDateTime.of(this.date, this.startTime))) {
+            throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
+        }
+        
+        if(isRoutine()) {
+            this.routine.deleteDate(this.date);
+            
+            if(this.routine.getDates().isEmpty()) {
+                dowithTaskRoutineRepository.delete(this.routine);
+            }
+        }
+        
+        dowithTaskRepository.delete(this);
+    }
+    
+    /**
+     * 두윗모드Task 루틴 삭제 (루틴 포함)
+     * @param dowithTaskRepository
+     * @param dowithTaskRoutineRepository
+     */
+    public void deleteWithRoutine(DowithTaskRepository dowithTaskRepository, DowithTaskRoutineRepository dowithTaskRoutineRepository) {
+        
+        if (!LocalDateTime.now().isBefore(LocalDateTime.of(this.date, this.startTime))) {
+            throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
+        }
+        
+        if(isRoutine()) {
+            Set<LocalDate> toDeleteDates = this.routine.getDatesAfter(this.date);
+            
+            dowithTaskRepository.delete(dowithTaskRepository.getDowithTasks(this.routine)
+                                                            .stream()
+                                                            .filter(e -> toDeleteDates.contains(
+                                                                e.getDate())).toList());
+            
+            this.routine.deleteDates(toDeleteDates);
+            if(this.routine.getDates().isEmpty()) {
+                dowithTaskRoutineRepository.delete(this.routine);
+            }
+        }
+        
+        dowithTaskRepository.delete(this);
+    }
+    
+    /**
      * 두윗모드Task 루틴 삭제
      *
      * @return 물리 삭제할 DowithTaskRoutine domain entity
      */
-    public void deleteRoutine(DowithTaskRoutineRepository dowithTaskRoutineRepository) {
+    public void deleteRoutine(DowithTaskRoutineRepository dowithTaskRoutineRepository, DowithTaskRepository dowithTaskRepository) {
         if (isRoutine()) {
             DowithTaskRoutine toDelete = this.routine;
             this.routine = null;
             dowithTaskRoutineRepository.delete(toDelete);
+            
+            dowithTaskRepository.
         }
     }
     
