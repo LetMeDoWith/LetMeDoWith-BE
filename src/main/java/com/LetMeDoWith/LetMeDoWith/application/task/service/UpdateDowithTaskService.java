@@ -3,7 +3,6 @@ package com.LetMeDoWith.LetMeDoWith.application.task.service;
 import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.DOWITH_TASK_CREATE_COUNT_EXCEED;
 import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.DOWITH_TASK_NOT_EXIST;
 import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.DOWITH_TASK_TASK_CATEGORY_NOT_EXIST;
-import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.DOWITH_TASK_UPDATE_NOT_AVAIL;
 
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateDowithTaskContentsCommand;
 import com.LetMeDoWith.LetMeDoWith.application.task.repository.TaskCategoryRepository;
@@ -27,7 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class UpdateDowithTaskService {
+public class DowithTaskUpdater {
     
     private final DowithTaskRegisterAvailService registerAvailService;
     
@@ -75,40 +74,31 @@ public class UpdateDowithTaskService {
                                                           .orElseThrow(() -> new RestApiException(
                                                               DOWITH_TASK_TASK_CATEGORY_NOT_EXIST));
         
-        if (!dowithTask.isContentsEditable()) {
-            throw new RestApiException(DOWITH_TASK_UPDATE_NOT_AVAIL);
-        }
-        
         if (dowithTask.isRoutine()) {
             
-            // updateAvailDates 기준으로 업데이트 대상 판별
-            Map<Boolean, List<DowithTask>> updateAvailTaskMap = getUpdateAvailTaskMap(dowithTask);
+            DowithTaskRoutine routine = dowithTask.getRoutine();
+            List<DowithTask> dowithTasks = dowithTaskRepository.getDowithTasks(routine);
+            Set<LocalDate> toUpdateDates = routine.getDatesAfterAndEqual(dowithTask.getDate());
             
-            // 기존 routine 삭제
-            dowithTask.deleteRoutine(dowithTaskRoutineRepository, dowithTaskRepository);
-            // 과거 Task 루틴 삭제
-            updateAvailTaskMap.get(false)
-                              .forEach(e -> e.deleteRoutine(dowithTaskRoutineRepository));
+            routine.updateRoutineDates(toUpdateDates);
             
-            // 현재, 미래 Task 콘텐츠 + 루틴 변경
-            DowithTaskRoutine newRoutine = dowithTaskRoutineRepository.save(DowithTaskRoutine.from(
-                updateAvailTaskMap.get(true)
-                                  .stream()
-                                  .map(DowithTask::getDate)
-                                  .collect(Collectors.toSet())));
-            updateAvailTaskMap.get(true)
-                              .forEach(task -> task.update(command.title(),
-                                                           taskCategory.getId(),
-                                                           command.date(),
-                                                           command.startTime(),
-                                                           newRoutine));
+            dowithTasks.forEach(task -> {
+                if (toUpdateDates.contains(task.getDate())) {
+                    task.updateContents(command.title(),
+                                        taskCategory.getId(),
+                                        command.date(),
+                                        command.startTime());
+                } else {
+                    task.unlinkRoutine();
+                }
+            });
             
         } else {
             
-            dowithTask.updateContent(command.title(),
-                                     taskCategory.getId(),
-                                     command.date(),
-                                     command.startTime());
+            dowithTask.updateContents(command.title(),
+                                      taskCategory.getId(),
+                                      command.date(),
+                                      command.startTime());
             
         }
         
