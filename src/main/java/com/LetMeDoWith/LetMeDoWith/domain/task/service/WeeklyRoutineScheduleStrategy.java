@@ -1,7 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.domain.task.service;
 
 import com.LetMeDoWith.LetMeDoWith.common.annotation.DomainService;
-import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TodoTaskRoutineRepetitionCycle;
+import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TodoTaskRoutineCycle;
 import java.time.LocalDate;
 import java.util.Set;
 import java.util.TreeSet;
@@ -30,7 +30,7 @@ public class WeeklyRoutineScheduleStrategy implements TodoTaskRoutineScheduleStr
     }
     
     @Override
-    public TodoTaskRoutineRepetitionCycle getRoutineCycle() {
-        return TodoTaskRoutineRepetitionCycle.WEEKLY;
+    public TodoTaskRoutineCycle getRoutineCycle() {
+        return TodoTaskRoutineCycle.WEEKLY;
     }
 }

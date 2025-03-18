@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @RequiredArgsConstructor
-public class TodoTaskRoutineDateComputeService {
+public class TodoTaskRoutineDateCalculator {
     
     /**
      * 루틴 반복 주기와 패턴에 따라 루틴 수행 일자 목록을 얻는다.
