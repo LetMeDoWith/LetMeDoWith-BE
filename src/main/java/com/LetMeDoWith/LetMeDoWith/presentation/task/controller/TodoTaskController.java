@@ -1,11 +1,11 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.task.controller;
 
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.CreateTodoTaskCommand;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.RegisterTodoTaskResult;
 import com.LetMeDoWith.LetMeDoWith.application.task.service.RegisterTodoTaskService;
 import com.LetMeDoWith.LetMeDoWith.common.dto.ResponseDto;
 import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.CreateTodoTaskReqDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.CreateTodoTaskResDto;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -26,12 +26,12 @@ public class TodoTaskController {
     
     @PostMapping("")
     public ResponseEntity<ResponseDto<CreateTodoTaskResDto>> registerTodoTask(
-        @Valid @RequestBody CreateTodoTaskCommand request) {
+        @Valid @RequestBody CreateTodoTaskReqDto request) {
         Long memberId = AuthUtil.getMemberId();
         
         RegisterTodoTaskResult registerTodoTaskResult = registerTodoTaskService.registerTodoTask(
             memberId,
-            request);
+            request.toCreateTodoTaskCommand());
         
         return ResponseUtil.createSuccessResponse(
             CreateTodoTaskResDto.of(registerTodoTaskResult.todoTaskList(),

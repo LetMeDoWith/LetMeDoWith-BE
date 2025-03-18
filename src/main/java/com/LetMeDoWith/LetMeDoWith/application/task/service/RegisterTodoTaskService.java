@@ -8,7 +8,7 @@ import com.LetMeDoWith.LetMeDoWith.application.task.repository.TodoTaskRepositor
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TodoTask;
-import com.LetMeDoWith.LetMeDoWith.domain.task.service.TodoTaskRoutineDateComputeService;
+import com.LetMeDoWith.LetMeDoWith.domain.task.service.TodoTaskRoutineDateCalculator;
 import com.LetMeDoWith.LetMeDoWith.domain.task.service.TodoTaskRoutineScheduleStrategy;
 import java.time.LocalDate;
 import java.util.List;
@@ -21,10 +21,13 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class RegisterTodoTaskService {
     
+    private static final String ROUTINE_SCHEDULE_STRATEGY_KEY_SUFFIX = "routineScheduleStrategy";
+    
     private final TodoTaskRepository todoTaskRepository;
     private final TaskCategoryRepository taskCategoryRepository;
-    private final TodoTaskRoutineDateComputeService dateComputeService;
+    private final TodoTaskRoutineDateCalculator routineDateCalculator;
     private final Map<String, TodoTaskRoutineScheduleStrategy> routineScheduleStrategies;
+    private final HolidayFilter holidayFilter;
     
     /**
      * 루틴이 아닌 TodoTask를 생성한다.
@@ -64,14 +67,16 @@ public class RegisterTodoTaskService {
                                       FailResponseStatus.DOWITH_TASK_TASK_CATEGORY_NOT_EXIST));
         }
         
-        String strategyKey = command.routineRepetitionCycle().name().toLowerCase()
-            + "RoutineScheduleStrategy";
+        // 루틴 반복 주기에 따른 루틴 수행일자 계산 전략 선택
+        String strategyKey = command.routineCondition().cycle().name().toLowerCase()
+            + ROUTINE_SCHEDULE_STRATEGY_KEY_SUFFIX;
         TodoTaskRoutineScheduleStrategy strategy = routineScheduleStrategies.get(strategyKey);
         
-        Set<LocalDate> routineDates = dateComputeService.computeRoutineDates(strategy,
-                                                                             command.startDate(),
-                                                                             command.endDate(),
-                                                                             command.repetitionPattern());
+        Set<LocalDate> routineDates = routineDateCalculator.computeRoutineDates(strategy,
+                                                                                command.startDate(),
+                                                                                command.endDate(),
+                                                                                command.routineCondition()
+                                                                                       .pattern());
         
         List<TodoTask> todoTasks = TodoTask.ofWithRoutine(memberId,
                                                           command.taskCategoryId(),
