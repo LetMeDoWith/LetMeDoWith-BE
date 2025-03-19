@@ -5,6 +5,7 @@ import com.LetMeDoWith.LetMeDoWith.application.task.dto.RegisterTodoTaskResult;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.TodoTaskVO;
 import com.LetMeDoWith.LetMeDoWith.application.task.repository.TaskCategoryRepository;
 import com.LetMeDoWith.LetMeDoWith.application.task.repository.TodoTaskRepository;
+import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TodoTask;
@@ -21,7 +22,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class RegisterTodoTaskService {
     
-    private static final String ROUTINE_SCHEDULE_STRATEGY_KEY_SUFFIX = "routineScheduleStrategy";
+    private static final String ROUTINE_SCHEDULE_STRATEGY_KEY_SUFFIX = "RoutineScheduleStrategy";
     
     private final TodoTaskRepository todoTaskRepository;
     private final TaskCategoryRepository taskCategoryRepository;
@@ -38,7 +39,7 @@ public class RegisterTodoTaskService {
      */
     public RegisterTodoTaskResult registerTodoTask(Long memberId, CreateTodoTaskCommand command) {
         if (command.taskCategoryId() != null) {
-            taskCategoryRepository.getActiveTaskCategory(command.taskCategoryId(), memberId)
+            taskCategoryRepository.getTaskCategory(command.taskCategoryId(), Yn.TRUE)
                                   .orElseThrow(() -> new RestApiException(
                                       FailResponseStatus.DOWITH_TASK_TASK_CATEGORY_NOT_EXIST));
         }
@@ -56,13 +57,14 @@ public class RegisterTodoTaskService {
      * TodoTask 루틴을 생성한다.
      *
      * @param memberId TodoTask를 생성할 사용자의 ID
-     * @param command  생성할 TodoTask의 정보 (카테고리 ID, 제목, 시작일, 종료일, 시작시간, 루틴여부, 루틴 반복 주기, 루틴 반복 패턴)
+     * @param command  생성할 TodoTask의 정보 (카테고리 ID, 제목, 시작일, 종료일, 시작시간, 루틴여부, 루틴 반복
+     *                 주기, 루틴 반복 패턴)
      * @return 생성된 루틴의 TodoTask 목록
      */
     public RegisterTodoTaskResult registerTodoTaskRoutine(Long memberId,
                                                           CreateTodoTaskCommand command) {
         if (command.taskCategoryId() != null) {
-            taskCategoryRepository.getActiveTaskCategory(command.taskCategoryId(), memberId)
+            taskCategoryRepository.getTaskCategory(command.taskCategoryId(), Yn.TRUE)
                                   .orElseThrow(() -> new RestApiException(
                                       FailResponseStatus.DOWITH_TASK_TASK_CATEGORY_NOT_EXIST));
         }
@@ -77,6 +79,11 @@ public class RegisterTodoTaskService {
                                                                                 command.endDate(),
                                                                                 command.routineCondition()
                                                                                        .pattern());
+        
+        // 공휴일 필터 적용
+        if (Boolean.TRUE.equals(command.routineCondition().excludeHolidays())) {
+            routineDates = holidayFilter.filter(routineDates);
+        }
         
         List<TodoTask> todoTasks = TodoTask.ofWithRoutine(memberId,
                                                           command.taskCategoryId(),

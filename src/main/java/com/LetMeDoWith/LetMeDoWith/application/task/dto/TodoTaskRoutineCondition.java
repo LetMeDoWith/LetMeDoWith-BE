@@ -4,9 +4,7 @@ import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TodoTaskRoutineCycle;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Set;
 import lombok.Builder;
-import lombok.Getter;
 
-@Getter
 @Builder
 @Schema(description = "투두 태스크 루틴 조건 정보")
 public record TodoTaskRoutineCondition(

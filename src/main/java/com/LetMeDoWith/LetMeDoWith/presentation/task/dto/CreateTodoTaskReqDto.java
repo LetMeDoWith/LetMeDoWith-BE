@@ -15,13 +15,13 @@ public record CreateTodoTaskReqDto(
     @NotBlank @Size(max = 40) String title,
     
     @Schema(description = "Task 카테고리 ID", defaultValue = "1")
-    @NotBlank Long taskCategoryId,
+    @NotNull Long taskCategoryId,
     
     @Schema(description = "시작 일자", defaultValue = "2025-01-30")
-    @NotBlank LocalDate startDate,
+    @NotNull LocalDate startDate,
     
     @Schema(description = "시작 시각", defaultValue = "11:30:00")
-    @NotBlank LocalTime startTime,
+    @NotNull LocalTime startTime,
     
     @Schema(description = "종료 일자", defaultValue = "2025-01-30")
     LocalDate endDate,
