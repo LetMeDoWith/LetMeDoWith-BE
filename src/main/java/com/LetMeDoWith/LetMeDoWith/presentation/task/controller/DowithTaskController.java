@@ -86,9 +86,8 @@ public class DowithTaskController {
     }
     
     @Operation(summary = "두윗모드 테스크 수정", description = "두윗모드 테스크를 수정합니다.")
-    @PutMapping("/{dowithTaskId}")
-    public ResponseEntity updateDowithTask(@PathVariable Long dowithTaskId,
-                                           @RequestBody UpdateDowithTaskReqDto requestBody) {
+    @PutMapping("")
+    public ResponseEntity updateDowithTask(@RequestBody UpdateDowithTaskReqDto requestBody) {
         
         Long memberId = AuthUtil.getMemberId();
         

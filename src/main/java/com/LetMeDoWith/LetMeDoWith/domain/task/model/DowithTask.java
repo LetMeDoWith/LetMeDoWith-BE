@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -119,7 +118,7 @@ public class DowithTask extends BaseAuditEntity {
         targetDateSet.add(date);
         
         DowithTaskRoutine routine = DowithTaskRoutine.from(targetDateSet);
-        targetDateSet.stream().sorted().toList().forEach(e -> {
+        targetDateSet.stream().sorted().forEach(e -> {
             DowithTask newDowithTask = DowithTask.builder()
                                                  .memberId(memberId)
                                                  .taskCategoryId(taskCategoryId)
@@ -144,8 +143,7 @@ public class DowithTask extends BaseAuditEntity {
      */
     public List<DowithTask> createRoutine(Set<LocalDate> routineDates) {
         
-        DowithTaskRoutine routine = DowithTaskRoutine.from(routineDates);
-        this.updateRoutine(routine);
+        this.routine = DowithTaskRoutine.from(routineDates);
         
         List<DowithTask> result = new ArrayList<>();
         result.add(this);
@@ -161,6 +159,33 @@ public class DowithTask extends BaseAuditEntity {
                     );
         
         return result;
+        
+    }
+    
+    /**
+     * 루틴 추가
+     *
+     * @param routineDates
+     * @param dowithTaskRepository
+     */
+    public void addRoutine(Set<LocalDate> routineDates,
+                           DowithTaskRepository dowithTaskRepository) {
+        
+        if (isRoutine()) {
+            this.routine.addDates(routineDates);
+            List<DowithTask> result = new ArrayList<>();
+            routineDates.forEach(date ->
+                                     result.add(
+                                         DowithTask.of(this.memberId,
+                                                       this.taskCategoryId,
+                                                       this.title,
+                                                       date,
+                                                       this.startTime,
+                                                       this.routine))
+            );
+            
+            dowithTaskRepository.saveDowithTasks(result);
+        }
         
     }
     
@@ -231,47 +256,87 @@ public class DowithTask extends BaseAuditEntity {
         }
     }
     
-    public Long getRoutineId() {
-        return isRoutine() ? routine.getId() : null;
-    }
-    
-    public void update(String title, Long taskCategoryId, LocalDate date, LocalTime startTime,
-                       DowithTaskRoutine routine) {
-        this.updateContent(title, taskCategoryId, date, startTime);
-        this.updateRoutine(routine);
-    }
-    
-    public void updateContent(String title, Long taskCategoryId, LocalDate date,
-                              LocalTime startTime) {
-        
-        this.title = title;
-        this.taskCategoryId = taskCategoryId;
-        this.date = date;
-        this.startTime = startTime;
-        
-        validate();
-        
+    public Set<LocalDate> getUpdateNotAvailRoutineDates() {
+        if (isRoutine()) {
+            return this.routine.getDatesBefore(LocalDate.now());
+        } else {
+            return Set.of();
+        }
     }
     
     public void updateRoutine(DowithTaskRoutine routine) {
         this.routine = routine;
     }
     
+    public void updateContents(String title, Long taskCategoryId, LocalDate date,
+                               LocalTime startTime) {
+        
+        if (!isContentsEditable()) {
+            throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
+        }
+        
+        if (!isRoutine()) {
+            
+            this.title = title;
+            this.taskCategoryId = taskCategoryId;
+            this.date = date;
+            this.startTime = startTime;
+            
+            validate();
+            
+        }
+        
+    }
+    
+    public void updateContentsWithRoutine(String title, Long taskCategoryId, LocalDate date,
+                                          LocalTime startTime,
+                                          DowithTaskRepository dowithTaskRepository) {
+        
+        if (!isContentsEditable()) {
+            throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
+        }
+        
+        if (isRoutine()) {
+            List<DowithTask> dowithTasks = dowithTaskRepository.getDowithTasks(this.routine);
+            Set<LocalDate> updateAvailRoutineDates = getUpdateAvailRoutineDates();
+            
+            // 기존 routine에서 수정 가능한 일자 삭제 = 과거 task와 수정 task routine 분리
+            this.routine.deleteDates(updateAvailRoutineDates);
+            
+            // 수정 가능한 일자를 기반으로 새 routine 생성
+            DowithTaskRoutine newRoutine = DowithTaskRoutine.from(updateAvailRoutineDates);
+            dowithTasks.forEach(task -> {
+                if (updateAvailRoutineDates.contains(task.getDate())) {
+                    task.updateContents(title, taskCategoryId, date, startTime);
+                    task.updateRoutine(newRoutine);
+                }
+            });
+        }
+        
+    }
+    
+    
+    public void unlinkRoutine() {
+        this.routine = null;
+    }
+    
     /**
      * 두윗모드Task 삭제
+     *
      * @param dowithTaskRepository
      * @param dowithTaskRoutineRepository
      */
-    public void delete(DowithTaskRepository dowithTaskRepository, DowithTaskRoutineRepository dowithTaskRoutineRepository) {
+    public void delete(DowithTaskRepository dowithTaskRepository,
+                       DowithTaskRoutineRepository dowithTaskRoutineRepository) {
         
         if (!LocalDateTime.now().isBefore(LocalDateTime.of(this.date, this.startTime))) {
             throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
         }
         
-        if(isRoutine()) {
+        if (isRoutine()) {
             this.routine.deleteDate(this.date);
             
-            if(this.routine.getDates().isEmpty()) {
+            if (this.routine.getDates().isEmpty()) {
                 dowithTaskRoutineRepository.delete(this.routine);
             }
         }
@@ -281,16 +346,18 @@ public class DowithTask extends BaseAuditEntity {
     
     /**
      * 두윗모드Task 루틴 삭제 (루틴 포함)
+     *
      * @param dowithTaskRepository
      * @param dowithTaskRoutineRepository
      */
-    public void deleteWithRoutine(DowithTaskRepository dowithTaskRepository, DowithTaskRoutineRepository dowithTaskRoutineRepository) {
+    public void deleteWithRoutine(DowithTaskRepository dowithTaskRepository,
+                                  DowithTaskRoutineRepository dowithTaskRoutineRepository) {
         
         if (!LocalDateTime.now().isBefore(LocalDateTime.of(this.date, this.startTime))) {
             throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
         }
         
-        if(isRoutine()) {
+        if (isRoutine()) {
             Set<LocalDate> toDeleteDates = this.routine.getDatesAfter(this.date);
             
             dowithTaskRepository.delete(dowithTaskRepository.getDowithTasks(this.routine)
@@ -299,7 +366,7 @@ public class DowithTask extends BaseAuditEntity {
                                                                 e.getDate())).toList());
             
             this.routine.deleteDates(toDeleteDates);
-            if(this.routine.getDates().isEmpty()) {
+            if (this.routine.getDates().isEmpty()) {
                 dowithTaskRoutineRepository.delete(this.routine);
             }
         }
@@ -312,14 +379,20 @@ public class DowithTask extends BaseAuditEntity {
      *
      * @return 물리 삭제할 DowithTaskRoutine domain entity
      */
-    public void deleteRoutine(DowithTaskRoutineRepository dowithTaskRoutineRepository, DowithTaskRepository dowithTaskRepository) {
+    public void deleteRoutine(Set<LocalDate> routineDates,
+                              DowithTaskRepository dowithTaskRepository) {
+        
         if (isRoutine()) {
-            DowithTaskRoutine toDelete = this.routine;
-            this.routine = null;
-            dowithTaskRoutineRepository.delete(toDelete);
             
-            dowithTaskRepository.
+            dowithTaskRepository.delete(dowithTaskRepository.getDowithTasks(this.routine)
+                                                            .stream()
+                                                            .filter(e -> routineDates.contains(e.getDate()))
+                                                            .toList());
+            
+            this.routine.deleteDates(routineDates);
+            
         }
+        
     }
     
     private void validate() {

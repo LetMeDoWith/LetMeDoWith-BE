@@ -63,6 +63,10 @@ public class DowithTaskRoutine extends BaseAuditEntity {
                                 .collect(java.util.stream.Collectors.toSet());
     }
     
+    public void addDates(Set<LocalDate> dates) {
+        this.routineDates.getDates().addAll(dates);
+    }
+    
     public void deleteDate(LocalDate date) {
         this.routineDates.getDates().remove(date);
     }
