@@ -43,7 +43,7 @@ public class DowithTask extends BaseAuditEntity {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "dowithTaskId", nullable = false)
+    @Column(name = "id", nullable = false)
     private Long id;
     
     @Column(name = "member_id", nullable = false)
@@ -244,30 +244,50 @@ public class DowithTask extends BaseAuditEntity {
     }
     
     /**
-     * 수정가능한 두윗모드Task 루틴 일자 조회
+     * 수정가능한(현재 혹은 미래일자) 두윗모드Task 루틴 일자 조회
      *
      * @return
      */
     public Set<LocalDate> getUpdateAvailRoutineDates() {
-        if (isRoutine()) {
-            return this.routine.getDatesAfterAndEqual(LocalDate.now());
-        } else {
-            return Set.of();
+        Set<LocalDate> result =
+            isRoutine() ? this.routine.getDatesAfterAndEqual(LocalDate.now()) : Set.of();
+        if (LocalDateTime.now().isAfter(LocalDateTime.of(this.date, this.startTime))) {
+            result.remove(LocalDate.now());
         }
+        return result;
     }
     
+    /**
+     * 수정 불가한(과거 일자) 두윗모드Task 루틴 일자 조회
+     *
+     * @return
+     */
     public Set<LocalDate> getUpdateNotAvailRoutineDates() {
-        if (isRoutine()) {
-            return this.routine.getDatesBefore(LocalDate.now());
-        } else {
-            return Set.of();
+        Set<LocalDate> result =
+            isRoutine() ? this.routine.getDatesBefore(LocalDate.now()) : Set.of();
+        if (LocalDateTime.now().isAfter(LocalDateTime.of(this.date, this.startTime))) {
+            result.add(LocalDate.now());
         }
+        return result;
     }
     
+    /**
+     * 루틴 수정
+     *
+     * @param routine
+     */
     public void updateRoutine(DowithTaskRoutine routine) {
         this.routine = routine;
     }
     
+    /**
+     * 컨텐츠 수정 (루틴이 없는 경우)
+     *
+     * @param title
+     * @param taskCategoryId
+     * @param date
+     * @param startTime
+     */
     public void updateContents(String title, Long taskCategoryId, LocalDate date,
                                LocalTime startTime) {
         
@@ -288,6 +308,15 @@ public class DowithTask extends BaseAuditEntity {
         
     }
     
+    /**
+     * 컨텐츠 수정 (루틴이 있는 경우)
+     *
+     * @param title
+     * @param taskCategoryId
+     * @param date
+     * @param startTime
+     * @param dowithTaskRepository
+     */
     public void updateContentsWithRoutine(String title, Long taskCategoryId, LocalDate date,
                                           LocalTime startTime,
                                           DowithTaskRepository dowithTaskRepository) {
@@ -313,11 +342,6 @@ public class DowithTask extends BaseAuditEntity {
             });
         }
         
-    }
-    
-    
-    public void unlinkRoutine() {
-        this.routine = null;
     }
     
     /**
@@ -405,15 +429,5 @@ public class DowithTask extends BaseAuditEntity {
             throw new RestApiException(FailResponseStatus.DOWITH_TASK_NOT_AVAIL_DATE);
         }
     }
-//  public boolean isEqual(LocalDate date, LocalTime startTime, Set<LocalDate> routineDates) {
-//    if(!this.date.equals(date)) return false;
-//    if(!this.startTime.equals(startTime)) return false;
-//    if(isRoutine()) {
-//      return this.routine.isEqual(routineDates);
-//    }else {
-//      return routineDates == null || routineDates.isEmpty();
-//    }
-//  }
-
-
+    
 }
