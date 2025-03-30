@@ -2,6 +2,7 @@ package com.LetMeDoWith.LetMeDoWith.domain.task.model;
 
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.common.provider.TimeProvider;
 import jakarta.persistence.Embeddable;
 import java.time.LocalDate;
 import java.util.LinkedHashSet;
@@ -17,16 +18,19 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class DowithTaskRoutineDates {
-
-  private Set<LocalDate> dates;
-
-  public static DowithTaskRoutineDates from(Set<LocalDate> dates) {
-    dates.forEach(date -> {
-      if (date.isBefore(LocalDate.now())) {
-        throw new RestApiException(FailResponseStatus.DOWITH_TASK_NOT_AVAIL_DATE);
-      }
-    });
-    return new DowithTaskRoutineDates(
-        dates.stream().sorted().collect(Collectors.toCollection(LinkedHashSet::new)));
-  }
+    
+    private Set<LocalDate> dates;
+    
+    public static DowithTaskRoutineDates from(Set<LocalDate> dates) {
+        return new DowithTaskRoutineDates(
+            dates.stream().sorted().collect(Collectors.toCollection(LinkedHashSet::new)));
+    }
+    
+    public void validate(TimeProvider timeProvider) {
+        dates.forEach(date -> {
+            if (date.isBefore(timeProvider.nowDate())) {
+                throw new RestApiException(FailResponseStatus.DOWITH_TASK_NOT_AVAIL_DATE);
+            }
+        });
+    }
 }

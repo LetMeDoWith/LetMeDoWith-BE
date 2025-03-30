@@ -7,6 +7,7 @@ import com.LetMeDoWith.LetMeDoWith.application.task.dto.CreateDowithTaskWithRout
 import com.LetMeDoWith.LetMeDoWith.application.task.repository.TaskCategoryRepository;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.common.provider.TimeProvider;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.service.DowithTaskRegisterAvailChecker;
@@ -26,6 +27,8 @@ public class RegisterDowithTaskService {
     
     private final DowithTaskRepository dowithTaskRepository;
     private final TaskCategoryRepository taskCategoryRepository;
+    
+    private final TimeProvider timeProvider;
     
     /**
      * 두윗모드 테스크 생성
@@ -51,7 +54,7 @@ public class RegisterDowithTaskService {
         }
         
         DowithTask dowithTask = DowithTask.of(memberId, command.taskCategoryId(), command.title(),
-                                              command.date(), command.startTime());
+                                              command.date(), command.startTime(), timeProvider);
         
         return dowithTaskRepository.saveDowithTask(dowithTask);
         
@@ -75,7 +78,8 @@ public class RegisterDowithTaskService {
                                                                command.title(),
                                                                command.date(),
                                                                command.startTime(),
-                                                               command.routineDates());
+                                                               command.routineDates(),
+                                                               timeProvider);
         
         return dowithTaskRepository.saveDowithTasks(dowithTask);
         

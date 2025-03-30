@@ -3,6 +3,7 @@ package com.LetMeDoWith.LetMeDoWith.domain.task.model;
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.common.provider.TimeProvider;
 import com.LetMeDoWith.LetMeDoWith.domain.AggregateRoot;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskRepository;
@@ -79,57 +80,61 @@ public class DowithTask extends BaseAuditEntity {
     
     
     public static DowithTask of(Long memberId, Long taskCategoryId, String title, LocalDate date,
-                                LocalTime startTime) {
-        DowithTask newDowithTask = DowithTask.builder()
-                                             .memberId(memberId)
-                                             .taskCategoryId(taskCategoryId)
-                                             .title(title)
-                                             .status(DowithTaskStatus.WAIT)
-                                             .date(date)
-                                             .startTime(startTime)
-                                             .routine(null)
-                                             .confirms(null)
-                                             .build();
-        newDowithTask.validate();
-        return newDowithTask;
+                                LocalTime startTime, TimeProvider timeProvider) {
+        DowithTask task = DowithTask.builder()
+                                    .memberId(memberId)
+                                    .taskCategoryId(taskCategoryId)
+                                    .title(title)
+                                    .status(DowithTaskStatus.WAIT)
+                                    .date(date)
+                                    .startTime(startTime)
+                                    .routine(null)
+                                    .confirms(null)
+                                    .build();
+        task.validate(timeProvider);
+        return task;
     }
     
     public static DowithTask of(Long memberId, Long taskCategoryId, String title, LocalDate date,
-                                LocalTime startTime, DowithTaskRoutine routine) {
-        DowithTask newDowithTask = DowithTask.builder()
-                                             .memberId(memberId)
-                                             .taskCategoryId(taskCategoryId)
-                                             .title(title)
-                                             .status(DowithTaskStatus.WAIT)
-                                             .date(date)
-                                             .startTime(startTime)
-                                             .routine(null)
-                                             .confirms(null)
-                                             .build();
-        newDowithTask.validate();
-        return newDowithTask;
+                                LocalTime startTime, DowithTaskRoutine routine,
+                                TimeProvider timeProvider) {
+        DowithTask task = DowithTask.builder()
+                                    .memberId(memberId)
+                                    .taskCategoryId(taskCategoryId)
+                                    .title(title)
+                                    .status(DowithTaskStatus.WAIT)
+                                    .date(date)
+                                    .startTime(startTime)
+                                    .routine(routine)
+                                    .confirms(null)
+                                    .build();
+        task.validate(timeProvider);
+        return task;
     }
     
     public static List<DowithTask> ofWithRoutine(Long memberId, Long taskCategoryId, String title,
                                                  LocalDate date, LocalTime startTime,
-                                                 Set<LocalDate> routineDateSet) {
+                                                 Set<LocalDate> routineDateSet,
+                                                 TimeProvider timeProvider) {
         List<DowithTask> result = new ArrayList<>();
         Set<LocalDate> targetDateSet = new TreeSet<>(routineDateSet);
         targetDateSet.add(date);
         
-        DowithTaskRoutine routine = DowithTaskRoutine.from(targetDateSet);
+        DowithTaskRoutine routine = DowithTaskRoutine.from(targetDateSet, timeProvider);
         targetDateSet.stream().sorted().forEach(e -> {
-            DowithTask newDowithTask = DowithTask.builder()
-                                                 .memberId(memberId)
-                                                 .taskCategoryId(taskCategoryId)
-                                                 .title(title)
-                                                 .status(DowithTaskStatus.WAIT)
-                                                 .routine(routine)
-                                                 .date(e)
-                                                 .startTime(startTime)
-                                                 .build();
-            newDowithTask.validate();
-            result.add(newDowithTask);
+            DowithTask task = DowithTask.builder()
+                                        .memberId(memberId)
+                                        .taskCategoryId(taskCategoryId)
+                                        .title(title)
+                                        .status(DowithTaskStatus.WAIT)
+                                        .routine(routine)
+                                        .date(e)
+                                        .startTime(startTime)
+                                        .build();
+            if (task.getDate().isEqual(date)) {
+                task.validate(timeProvider);
+            }
+            result.add(task);
         });
         
         return result;
@@ -141,22 +146,24 @@ public class DowithTask extends BaseAuditEntity {
      * @param routineDates 루틴대상일자
      * @return 루틴 생성된 DowithTask domain entity 리스트
      */
-    public List<DowithTask> createRoutine(Set<LocalDate> routineDates) {
+    public List<DowithTask> createRoutine(Set<LocalDate> routineDates, TimeProvider timeProvider) {
         
-        this.routine = DowithTaskRoutine.from(routineDates);
+        routineDates.add(this.date);
+        this.routine = DowithTaskRoutine.from(routineDates, timeProvider);
         
         List<DowithTask> result = new ArrayList<>();
-        result.add(this);
         routineDates.stream().filter(date -> !date.isEqual(this.date))
                     .collect(Collectors.toSet()).forEach(date ->
-                                                             result.add(
-                                                                 DowithTask.of(this.memberId,
-                                                                               this.taskCategoryId,
-                                                                               this.title,
-                                                                               date,
-                                                                               this.startTime,
-                                                                               routine))
+                                                             result.add(DowithTask.of(this.memberId,
+                                                                                      this.taskCategoryId,
+                                                                                      this.title,
+                                                                                      date,
+                                                                                      this.startTime,
+                                                                                      routine,
+                                                                                      timeProvider))
+                    
                     );
+        result.add(this);
         
         return result;
         
@@ -169,19 +176,21 @@ public class DowithTask extends BaseAuditEntity {
      * @param dowithTaskRepository
      */
     public void addRoutine(Set<LocalDate> routineDates,
-                           DowithTaskRepository dowithTaskRepository) {
+                           DowithTaskRepository dowithTaskRepository,
+                           TimeProvider timeProvider) {
         
         if (isRoutine()) {
             this.routine.addDates(routineDates);
             List<DowithTask> result = new ArrayList<>();
             routineDates.forEach(date ->
-                                     result.add(
-                                         DowithTask.of(this.memberId,
-                                                       this.taskCategoryId,
-                                                       this.title,
-                                                       date,
-                                                       this.startTime,
-                                                       this.routine))
+                                     result.add(DowithTask.of(this.memberId,
+                                                              this.taskCategoryId,
+                                                              this.title,
+                                                              date,
+                                                              this.startTime,
+                                                              this.routine,
+                                                              timeProvider))
+            
             );
             
             dowithTaskRepository.saveDowithTasks(result);
@@ -222,8 +231,8 @@ public class DowithTask extends BaseAuditEntity {
      *
      * @return
      */
-    public boolean isContentsEditable() {
-        LocalDateTime now = LocalDateTime.now();
+    public boolean isContentsEditable(TimeProvider timeProvider) {
+        LocalDateTime now = timeProvider.now();
         if (now.toLocalDate().equals(this.date)) {
             return !now.toLocalTime().isAfter(this.startTime);
         }
@@ -248,12 +257,16 @@ public class DowithTask extends BaseAuditEntity {
      *
      * @return
      */
-    public Set<LocalDate> getUpdateAvailRoutineDates() {
+    public Set<LocalDate> getUpdateAvailRoutineDates(TimeProvider timeProvider) {
         Set<LocalDate> result =
-            isRoutine() ? this.routine.getDatesAfterAndEqual(LocalDate.now()) : Set.of();
-        if (LocalDateTime.now().isAfter(LocalDateTime.of(this.date, this.startTime))) {
-            result.remove(LocalDate.now());
+            isRoutine() ? this.routine.getDatesAfterAndEqual(timeProvider.nowDate()) : Set.of();
+        
+        LocalDateTime now = timeProvider.now();
+        if (result.contains(now.toLocalDate()) && now.isAfter(LocalDateTime.of(now.toLocalDate(),
+                                                                               this.startTime))) {
+            result.remove(timeProvider.nowDate());
         }
+        
         return result;
     }
     
@@ -262,11 +275,14 @@ public class DowithTask extends BaseAuditEntity {
      *
      * @return
      */
-    public Set<LocalDate> getUpdateNotAvailRoutineDates() {
+    public Set<LocalDate> getUpdateNotAvailRoutineDates(TimeProvider timeProvider) {
         Set<LocalDate> result =
-            isRoutine() ? this.routine.getDatesBefore(LocalDate.now()) : Set.of();
-        if (LocalDateTime.now().isAfter(LocalDateTime.of(this.date, this.startTime))) {
-            result.add(LocalDate.now());
+            isRoutine() ? this.routine.getDatesBeforeAndEqual(timeProvider.nowDate()) : Set.of();
+        
+        LocalDateTime now = timeProvider.now();
+        if (result.contains(now.toLocalDate()) && now.isBefore(LocalDateTime.of(now.toLocalDate(),
+                                                                                this.startTime))) {
+            result.remove(timeProvider.nowDate());
         }
         return result;
     }
@@ -289,22 +305,20 @@ public class DowithTask extends BaseAuditEntity {
      * @param startTime
      */
     public void updateContents(String title, Long taskCategoryId, LocalDate date,
-                               LocalTime startTime) {
+                               LocalTime startTime, TimeProvider timeProvider) {
         
-        if (!isContentsEditable()) {
+        if (!isContentsEditable(timeProvider)) {
             throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
         }
         
         if (!isRoutine()) {
-            
             this.title = title;
             this.taskCategoryId = taskCategoryId;
             this.date = date;
             this.startTime = startTime;
-            
-            validate();
-            
         }
+        
+        this.validate(timeProvider);
         
     }
     
@@ -319,24 +333,26 @@ public class DowithTask extends BaseAuditEntity {
      */
     public void updateContentsWithRoutine(String title, Long taskCategoryId, LocalDate date,
                                           LocalTime startTime,
-                                          DowithTaskRepository dowithTaskRepository) {
+                                          DowithTaskRepository dowithTaskRepository,
+                                          TimeProvider timeProvider) {
         
-        if (!isContentsEditable()) {
+        if (!isContentsEditable(timeProvider)) {
             throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
         }
         
         if (isRoutine()) {
             List<DowithTask> dowithTasks = dowithTaskRepository.getDowithTasks(this.routine);
-            Set<LocalDate> updateAvailRoutineDates = getUpdateAvailRoutineDates();
+            Set<LocalDate> updateAvailRoutineDates = getUpdateAvailRoutineDates(timeProvider);
             
             // 기존 routine에서 수정 가능한 일자 삭제 = 과거 task와 수정 task routine 분리
             this.routine.deleteDates(updateAvailRoutineDates);
             
             // 수정 가능한 일자를 기반으로 새 routine 생성
-            DowithTaskRoutine newRoutine = DowithTaskRoutine.from(updateAvailRoutineDates);
+            DowithTaskRoutine newRoutine = DowithTaskRoutine.from(updateAvailRoutineDates,
+                                                                  timeProvider);
             dowithTasks.forEach(task -> {
                 if (updateAvailRoutineDates.contains(task.getDate())) {
-                    task.updateContents(title, taskCategoryId, date, startTime);
+                    task.updateContents(title, taskCategoryId, date, startTime, timeProvider);
                     task.updateRoutine(newRoutine);
                 }
             });
@@ -349,11 +365,13 @@ public class DowithTask extends BaseAuditEntity {
      *
      * @param dowithTaskRepository
      * @param dowithTaskRoutineRepository
+     * @param timeProvider
      */
     public void delete(DowithTaskRepository dowithTaskRepository,
-                       DowithTaskRoutineRepository dowithTaskRoutineRepository) {
+                       DowithTaskRoutineRepository dowithTaskRoutineRepository,
+                       TimeProvider timeProvider) {
         
-        if (!LocalDateTime.now().isBefore(LocalDateTime.of(this.date, this.startTime))) {
+        if (!timeProvider.now().isBefore(LocalDateTime.of(this.date, this.startTime))) {
             throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
         }
         
@@ -373,11 +391,13 @@ public class DowithTask extends BaseAuditEntity {
      *
      * @param dowithTaskRepository
      * @param dowithTaskRoutineRepository
+     * @param timeProvider
      */
     public void deleteWithRoutine(DowithTaskRepository dowithTaskRepository,
-                                  DowithTaskRoutineRepository dowithTaskRoutineRepository) {
+                                  DowithTaskRoutineRepository dowithTaskRoutineRepository,
+                                  TimeProvider timeProvider) {
         
-        if (!LocalDateTime.now().isBefore(LocalDateTime.of(this.date, this.startTime))) {
+        if (!timeProvider.now().isBefore(LocalDateTime.of(this.date, this.startTime))) {
             throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
         }
         
@@ -419,13 +439,14 @@ public class DowithTask extends BaseAuditEntity {
         
     }
     
-    private void validate() {
-        if (LocalDate.now().isEqual(date)) {
-            if (LocalTime.now().isAfter(startTime)) {
+    private void validate(TimeProvider timeProvider) {
+        LocalDateTime nowDateTime = timeProvider.now();
+        if (nowDateTime.toLocalDate().isEqual(date)) {
+            if (nowDateTime.toLocalTime().isAfter(startTime)) {
                 throw new RestApiException(FailResponseStatus.DOWITH_TASK_NOT_AVAIL_START_TIME);
             }
         }
-        if (date.isBefore(LocalDate.now())) {
+        if (date.isBefore(nowDateTime.toLocalDate())) {
             throw new RestApiException(FailResponseStatus.DOWITH_TASK_NOT_AVAIL_DATE);
         }
     }

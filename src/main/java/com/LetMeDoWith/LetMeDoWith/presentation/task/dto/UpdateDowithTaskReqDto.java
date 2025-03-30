@@ -6,8 +6,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import lombok.Builder;
 
 @Builder
@@ -39,6 +40,12 @@ public record UpdateDowithTaskReqDto(
                                               .date(this.startDateTime().toLocalDate())
                                               .startTime(this.startDateTime().toLocalTime())
                                               .build();
+    }
+    
+    public Set<LocalDate> getRoutineDates() {
+        Set<LocalDate> routineDates = new HashSet<>(this.routineDates);
+        routineDates.add(startDateTime.toLocalDate());
+        return routineDates;
     }
     
 }

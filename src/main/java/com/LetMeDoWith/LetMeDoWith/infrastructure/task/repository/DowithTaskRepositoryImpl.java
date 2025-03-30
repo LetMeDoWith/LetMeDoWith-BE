@@ -39,7 +39,7 @@ public class DowithTaskRepositoryImpl implements DowithTaskRepository {
     
     @Override
     public List<DowithTask> getDowithTasks(DowithTaskRoutine dowithTaskRoutine) {
-        return null; // TODO - 구현 필요
+        return dowithTaskJpaRepository.findAllDowithTaskAggregates(dowithTaskRoutine);
     }
     
     @Override

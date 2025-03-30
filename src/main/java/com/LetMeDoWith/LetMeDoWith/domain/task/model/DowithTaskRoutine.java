@@ -1,6 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.domain.task.model;
 
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
+import com.LetMeDoWith.LetMeDoWith.common.provider.TimeProvider;
 import com.LetMeDoWith.LetMeDoWith.domain.converter.DowithTaskRoutineDatesConverter;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -34,22 +35,28 @@ public class DowithTaskRoutine extends BaseAuditEntity {
     @Convert(converter = DowithTaskRoutineDatesConverter.class)
     private DowithTaskRoutineDates routineDates;
     
-    public static DowithTaskRoutine from(Set<LocalDate> dates) {
+    public static DowithTaskRoutine from(Set<LocalDate> dates, TimeProvider timeProvider) {
+        
+        DowithTaskRoutineDates routineDates = DowithTaskRoutineDates.from(dates);
+        routineDates.validate(timeProvider);
+        
         return DowithTaskRoutine.builder()
-                                .routineDates(DowithTaskRoutineDates.from(dates))
+                                .routineDates(routineDates)
                                 .build();
     }
     
-    public void updateRoutineDates(Set<LocalDate> dates) {
-        this.routineDates = DowithTaskRoutineDates.from(dates);
+    public void updateRoutineDates(Set<LocalDate> dates, TimeProvider timeProvider) {
+        DowithTaskRoutineDates routineDate = DowithTaskRoutineDates.from(dates);
+        routineDates.validate(timeProvider);
+        this.routineDates = routineDate;
     }
     
     public Set<LocalDate> getDates() {
         return this.routineDates.getDates();
     }
     
-    public Set<LocalDate> getDatesBefore(LocalDate standardDate) {
-        return this.routineDates.getDates().stream().filter(date -> date.isBefore(standardDate))
+    public Set<LocalDate> getDatesBeforeAndEqual(LocalDate standardDate) {
+        return this.routineDates.getDates().stream().filter(date -> !date.isAfter(standardDate))
                                 .collect(java.util.stream.Collectors.toSet());
     }
     

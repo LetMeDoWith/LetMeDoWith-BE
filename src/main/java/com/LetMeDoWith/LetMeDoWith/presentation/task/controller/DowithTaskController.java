@@ -94,7 +94,7 @@ public class DowithTaskController {
         if (requestBody.isRoutineCreate()) {
             updateDowithTaskService.updateContentsAndCreateRoutine(memberId,
                                                                    requestBody.toCommand(),
-                                                                   new HashSet<>(requestBody.routineDates()));
+                                                                   requestBody.getRoutineDates());
         } else {
             updateDowithTaskService.updateContents(memberId,
                                                    requestBody.toCommand());

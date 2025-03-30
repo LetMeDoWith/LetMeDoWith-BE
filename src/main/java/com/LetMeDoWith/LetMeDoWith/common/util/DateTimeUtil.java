@@ -37,6 +37,14 @@ public class DateTimeUtil {
         return targetDate.isBefore(standardDate);
     }
     
+    public static boolean isBeforeOrEqual(LocalDate targetDate, LocalDate standardDate) {
+        return targetDate.isBefore(standardDate) || targetDate.isEqual(standardDate);
+    }
+    
+    public static boolean isBefore(LocalTime targetTime, LocalTime standardTime) {
+        return targetTime.isBefore(standardTime);
+    }
+    
     public static DateDifferences getDifferences(Set<LocalDate> leftDates,
                                                  Set<LocalDate> rightDates) {
         Set<LocalDate> commonDates = leftDates.stream()
