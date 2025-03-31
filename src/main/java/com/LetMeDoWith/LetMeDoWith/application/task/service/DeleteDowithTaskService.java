@@ -38,7 +38,7 @@ public class DeleteDowithTaskService {
     }
     
     /**
-     * 두윗모드 Task 삭제 (루틴 포함)
+     * 두윗모드 Task + 루틴으로 등록된 모든 Task 삭제
      *
      * @param memberId
      * @param dowithTaskId
@@ -48,7 +48,7 @@ public class DeleteDowithTaskService {
         
         DowithTask dowithTask = dowithTaskRepository.getDowithTask(dowithTaskId, memberId)
                                                     .orElseThrow(() -> new RestApiException(
-                                                        FailResponseStatus.DOWITH_TASK_NOT_EXIST));
+                                                        FailResponseStatus.INVALID_REQUEST));
         
         dowithTask.deleteWithRoutine(dowithTaskRepository,
                                      dowithTaskRoutineRepository,

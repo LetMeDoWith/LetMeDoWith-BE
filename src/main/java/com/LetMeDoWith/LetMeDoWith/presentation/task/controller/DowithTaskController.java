@@ -74,11 +74,11 @@ public class DowithTaskController {
         
         List<DowithTask> dowithTasks = new ArrayList<>();
         if (requestBody.isRoutine()) {
-            dowithTasks.addAll(registerDowithTaskService.registerDowithTaskWithRoutine(memberId,
-                                                                                       requestBody.toCreateDowithTaskRoutineCommand()));
+            dowithTasks.addAll(registerDowithTaskService.createDowithTaskWithRoutine(memberId,
+                                                                                     requestBody.toCreateDowithTaskRoutineCommand()));
         } else {
-            dowithTasks.add(registerDowithTaskService.registerDowithTask(memberId,
-                                                                         requestBody.toCreateDowithTaskCommand()));
+            dowithTasks.add(registerDowithTaskService.createDowithTask(memberId,
+                                                                       requestBody.toCreateDowithTaskCommand()));
         }
         
         return ResponseUtil.createSuccessResponse(

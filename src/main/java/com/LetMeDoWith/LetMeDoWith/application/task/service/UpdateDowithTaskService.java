@@ -51,7 +51,20 @@ public class UpdateDowithTaskService {
                                                      UpdateDowithTaskContentsCommand command,
                                                      Set<LocalDate> routineDates) {
         
-        DowithTask dowithTask = this.updateContents(memberId, command);
+        DowithTask dowithTask = dowithTaskRepository.getDowithTask(command.id(), memberId)
+                                                    .orElseThrow(() -> new RestApiException(
+                                                        DOWITH_TASK_NOT_EXIST));
+        
+        TaskCategory taskCategory = taskCategoryRepository.getActiveTaskCategory(
+                                                              command.taskCategoryId(), memberId)
+                                                          .orElseThrow(() -> new RestApiException(
+                                                              DOWITH_TASK_TASK_CATEGORY_NOT_EXIST));
+        dowithTask.updateContents(command.title(),
+                                  taskCategory.getId(),
+                                  command.date(),
+                                  command.startTime(),
+                                  timeProvider);
+        
         Set<LocalDate> toCreateDates = routineDates.stream()
                                                    .filter(date -> !date.isEqual(command.date()))
                                                    .collect(
@@ -62,6 +75,7 @@ public class UpdateDowithTaskService {
                                  .isAvail()) {
             throw new RestApiException(DOWITH_TASK_CREATE_COUNT_EXCEED);
         }
+        
         List<DowithTask> newDowithTasks = dowithTask.createRoutine(routineDates, timeProvider);
         dowithTaskRepository.saveDowithTasks(newDowithTasks);
         
@@ -134,18 +148,6 @@ public class UpdateDowithTaskService {
         if (!dowithTask.isRoutine()) {
             throw new RestApiException(INVALID_REQUEST);
         }
-        
-        Set<LocalDate> updateNotAvailRoutineDates = dowithTask.getUpdateNotAvailRoutineDates(
-            timeProvider);
-        Set<LocalDate> collect = routineDates.stream()
-                                             .filter(date -> DateTimeUtil.isBeforeOrEqual(
-                                                 date,
-                                                 timeProvider.nowDate()))
-                                             .filter(date -> !date.isEqual(timeProvider.nowDate())
-                                                 || timeProvider.nowTime()
-                                                                .isBefore(dowithTask.getStartTime()))
-                                             .collect(
-                                                 Collectors.toSet());
         
         // input routineDates 중에서 업데이트 불가한 routine 일자(과거일자)가 DB에 저장된 routine 중 업데이트 불가한 일자와 일치하는지 확인
         if (!dowithTask.getUpdateNotAvailRoutineDates(timeProvider).equals(routineDates.stream()

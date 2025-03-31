@@ -12,7 +12,6 @@ public record CreateDowithTaskWithRoutineCommand(
     Long taskCategoryId,
     LocalDate date,
     LocalTime startTime,
-    Boolean isRoutine,
     Set<LocalDate> routineDates
 ) {
     

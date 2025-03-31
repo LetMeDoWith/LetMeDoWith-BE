@@ -31,12 +31,13 @@ public class RegisterDowithTaskService {
     private final TimeProvider timeProvider;
     
     /**
-     * 두윗모드 테스크 생성
+     * 두윗모드 Task 생성
      *
      * @param memberId
      * @param command
      */
-    public DowithTask registerDowithTask(Long memberId, CreateDowithTaskCommand command) {
+    @Transactional
+    public DowithTask createDowithTask(Long memberId, CreateDowithTaskCommand command) {
         
         Set<LocalDate> targetDateSet = command.getTargetDateSet();
         
@@ -60,14 +61,27 @@ public class RegisterDowithTaskService {
         
     }
     
+    /**
+     * 두윗모드 Task 생성 - 루틴이 있는 경우
+     *
+     * @param memberId
+     * @param command
+     * @return
+     */
     @Transactional
-    public List<DowithTask> registerDowithTaskWithRoutine(Long memberId,
-                                                          CreateDowithTaskWithRoutineCommand command) {
+    public List<DowithTask> createDowithTaskWithRoutine(Long memberId,
+                                                        CreateDowithTaskWithRoutineCommand command) {
         
         Set<LocalDate> targetDateSet = command.getTargetDateSet();
         
         RegisterAvailResult registerAvailResult = dowithTaskRegisterAvailChecker.isRegisterAvail(
             targetDateSet, dowithTaskRepository.getDowithTasks(memberId, targetDateSet));
+        
+        if (command.taskCategoryId() != null) {
+            taskCategoryRepository.getActiveTaskCategory(command.taskCategoryId(), memberId)
+                                  .orElseThrow(() -> new RestApiException(
+                                      FailResponseStatus.DOWITH_TASK_TASK_CATEGORY_NOT_EXIST));
+        }
         
         if (!registerAvailResult.isAvail()) {
             throw new RestApiException(DOWITH_TASK_CREATE_COUNT_EXCEED);

@@ -114,7 +114,7 @@ public class MemberService {
      * 멤버를 탈퇴처리한다.
      * 실제 데이터베이스에서 멤버는 삭제되지 않고, 탈퇴 상태로 변경된다.
      *
-     * @param memberId 탈퇴하려는 멤버의 ID
+     * @param memberId 탈퇴하려는 멤버의 id
      * @return 탈퇴요청 성공 여부
      */
     public void withdrawMember(Long memberId) {
