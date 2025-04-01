@@ -11,7 +11,7 @@ import com.LetMeDoWith.LetMeDoWith.common.enums.member.Gender;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.TaskCompleteLevel;
-import com.LetMeDoWith.LetMeDoWith.common.provider.ClockTimeProvider;
+import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.auth.model.AccessToken;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
@@ -59,9 +59,6 @@ public class UpdateDowithTaskIntegrationTest {
     ObjectMapper objectMapper;
     @Autowired
     MockMvc mockMvc;
-    
-    @Autowired
-    ClockTimeProvider timeProvider;
     
     @Autowired
     MemberJpaRepository memberJpaRepository;
@@ -145,15 +142,14 @@ public class UpdateDowithTaskIntegrationTest {
     @DisplayName("[SUCCESS] 두윗모드 테스크 수정 - 루틴 생성이 포함된 경우")
     void updateDowithTaskWithRoutine1() throws Exception {
         // given
-        timeProvider.setClock(Clock.fixed(LocalDateTime.of(2024, 3, 1, 0, 0)
-                                                       .toInstant(ZoneOffset.UTC),
-                                          ZoneId.of("UTC")));
+        SystemTimeUtil.setClock(Clock.fixed(LocalDateTime.of(2024, 3, 1, 0, 0)
+                                                         .toInstant(ZoneOffset.UTC),
+                                            ZoneId.of("UTC")));
         DowithTask dowithTask = dowithTaskJpaRepository.save(DowithTask.of(member.getId(),
                                                                            taskCategory.getId(),
                                                                            "설거지 하기",
                                                                            LocalDate.of(2024, 3, 2),
-                                                                           LocalTime.of(13, 0),
-                                                                           timeProvider));
+                                                                           LocalTime.of(13, 0)));
         
         // when
         UpdateDowithTaskReqDto requestBody = UpdateDowithTaskReqDto.builder()
@@ -206,22 +202,20 @@ public class UpdateDowithTaskIntegrationTest {
     @DisplayName("[FAIL] 두윗모드 테스크 수정 - 루틴일에 Task 등록 가능 개수 초과한 경우")
     void updateDowithTaskWithRoutine2() throws Exception {
         // given
-        timeProvider.setClock(Clock.fixed(LocalDateTime.of(2024, 3, 1, 0, 0)
-                                                       .toInstant(ZoneOffset.UTC),
-                                          ZoneId.of("UTC")));
+        SystemTimeUtil.setClock(Clock.fixed(LocalDateTime.of(2024, 3, 1, 0, 0)
+                                                         .toInstant(ZoneOffset.UTC),
+                                            ZoneId.of("UTC")));
         DowithTask dowithTask = dowithTaskJpaRepository.save(DowithTask.of(member.getId(),
                                                                            taskCategory.getId(),
                                                                            "설거지 하기",
                                                                            LocalDate.of(2024, 3, 2),
-                                                                           LocalTime.of(13, 0),
-                                                                           timeProvider));
+                                                                           LocalTime.of(13, 0)));
         // 루틴일에 Task 하나 생성
         dowithTaskJpaRepository.save(DowithTask.of(member.getId(),
                                                    taskCategory.getId(),
                                                    "설거지 하기2",
                                                    LocalDate.of(2024, 3, 10),
-                                                   LocalTime.of(13, 0),
-                                                   timeProvider));
+                                                   LocalTime.of(13, 0)));
         
         // when
         UpdateDowithTaskReqDto requestBody = UpdateDowithTaskReqDto.builder()
@@ -252,15 +246,14 @@ public class UpdateDowithTaskIntegrationTest {
     @DisplayName("[SUCCESS] 두윗모드 테스크 수정 - 루틴 생성이 포함되지 않은 경우")
     void updateDowithTaskWithRoutine3() throws Exception {
         // given
-        timeProvider.setClock(Clock.fixed(LocalDateTime.of(2024, 3, 1, 0, 0)
-                                                       .toInstant(ZoneOffset.UTC),
-                                          ZoneId.of("UTC")));
+        SystemTimeUtil.setClock(Clock.fixed(LocalDateTime.of(2024, 3, 1, 0, 0)
+                                                         .toInstant(ZoneOffset.UTC),
+                                            ZoneId.of("UTC")));
         DowithTask dowithTask = dowithTaskJpaRepository.save(DowithTask.of(member.getId(),
                                                                            taskCategory.getId(),
                                                                            "설거지 하기",
                                                                            LocalDate.of(2024, 3, 2),
-                                                                           LocalTime.of(13, 0),
-                                                                           timeProvider));
+                                                                           LocalTime.of(13, 0)));
         
         // when
         UpdateDowithTaskReqDto requestBody = UpdateDowithTaskReqDto.builder()
@@ -295,9 +288,9 @@ public class UpdateDowithTaskIntegrationTest {
     @DisplayName("[SUCCESS] 두윗모드 테스크 루틴 수정")
     void updateDowithTaskWithRoutine4() throws Exception {
         // given
-        timeProvider.setClock(Clock.fixed(LocalDateTime.of(2024, 3, 1, 0, 0)
-                                                       .toInstant(ZoneOffset.UTC),
-                                          ZoneId.of("UTC")));
+        SystemTimeUtil.setClock(Clock.fixed(LocalDateTime.of(2024, 3, 1, 0, 0)
+                                                         .toInstant(ZoneOffset.UTC),
+                                            ZoneId.of("UTC")));
         DowithTask dowithTask = dowithTaskJpaRepository.saveAll(DowithTask.ofWithRoutine(
                                                            member.getId(),
                                                            taskCategory.getId(),
@@ -307,17 +300,17 @@ public class UpdateDowithTaskIntegrationTest {
                                                            Set.of(LocalDate.of(2024, 3, 2),
                                                                   LocalDate.of(2024, 3, 3),
                                                                   LocalDate.of(2024, 3, 16),
-                                                                  LocalDate.of(2024, 3, 17)),
-                                                           timeProvider)).stream().filter(task -> task.getDate()
-                                                                                                      .equals(LocalDate.of(2024,
-                                                                                                                           3,
-                                                                                                                           2)))
+                                                                  LocalDate.of(2024, 3, 17)))).stream().filter(task -> task.getDate()
+                                                                                                                           .equals(LocalDate.of(
+                                                                                                                               2024,
+                                                                                                                               3,
+                                                                                                                               2)))
                                                        .findFirst().get();
         
         // when
-        timeProvider.setClock(Clock.fixed(LocalDateTime.of(2024, 3, 15, 0, 0)
-                                                       .toInstant(ZoneOffset.UTC),
-                                          ZoneId.of("UTC")));
+        SystemTimeUtil.setClock(Clock.fixed(LocalDateTime.of(2024, 3, 15, 0, 0)
+                                                         .toInstant(ZoneOffset.UTC),
+                                            ZoneId.of("UTC")));
         List<LocalDate> newRoutineDates = List.of(
             LocalDate.of(2024,
                          3,
@@ -364,9 +357,9 @@ public class UpdateDowithTaskIntegrationTest {
     @DisplayName("[FAIL] 두윗모드 테스크 루틴 수정 - input routineDates 중에서 업데이트 불가한 routine 일자(과거일자)가 DB에 저장된 routine 중 업데이트 불가한 일자와 일치하지 않는 경우")
     void updateDowithTaskWithRoutine5() throws Exception {
         // given
-        timeProvider.setClock(Clock.fixed(LocalDateTime.of(2024, 3, 1, 0, 0)
-                                                       .toInstant(ZoneOffset.UTC),
-                                          ZoneId.of("UTC")));
+        SystemTimeUtil.setClock(Clock.fixed(LocalDateTime.of(2024, 3, 1, 0, 0)
+                                                         .toInstant(ZoneOffset.UTC),
+                                            ZoneId.of("UTC")));
         DowithTask dowithTask = dowithTaskJpaRepository.saveAll(DowithTask.ofWithRoutine(
                                                            member.getId(),
                                                            taskCategory.getId(),
@@ -376,17 +369,17 @@ public class UpdateDowithTaskIntegrationTest {
                                                            Set.of(LocalDate.of(2024, 3, 2),
                                                                   LocalDate.of(2024, 3, 3),
                                                                   LocalDate.of(2024, 3, 16),
-                                                                  LocalDate.of(2024, 3, 17)),
-                                                           timeProvider)).stream().filter(task -> task.getDate()
-                                                                                                      .equals(LocalDate.of(2024,
-                                                                                                                           3,
-                                                                                                                           2)))
+                                                                  LocalDate.of(2024, 3, 17)))).stream().filter(task -> task.getDate()
+                                                                                                                           .equals(LocalDate.of(
+                                                                                                                               2024,
+                                                                                                                               3,
+                                                                                                                               2)))
                                                        .findFirst().get();
         
         // when
-        timeProvider.setClock(Clock.fixed(LocalDateTime.of(2024, 3, 15, 0, 0)
-                                                       .toInstant(ZoneOffset.UTC),
-                                          ZoneId.of("UTC")));
+        SystemTimeUtil.setClock(Clock.fixed(LocalDateTime.of(2024, 3, 15, 0, 0)
+                                                         .toInstant(ZoneOffset.UTC),
+                                            ZoneId.of("UTC")));
         List<LocalDate> newRoutineDates = List.of(
             LocalDate.of(2024,
                          3,
@@ -418,9 +411,9 @@ public class UpdateDowithTaskIntegrationTest {
     @DisplayName("[FAIL] 두윗모드 테스크 루틴 수정 - 수정하는 routineDate 중에 이미 등록된 Task가 있어 등록 가능 개수 초과한 경우")
     void updateDowithTaskWithRoutine6() throws Exception {
         // given
-        timeProvider.setClock(Clock.fixed(LocalDateTime.of(2024, 3, 1, 0, 0)
-                                                       .toInstant(ZoneOffset.UTC),
-                                          ZoneId.of("UTC")));
+        SystemTimeUtil.setClock(Clock.fixed(LocalDateTime.of(2024, 3, 1, 0, 0)
+                                                         .toInstant(ZoneOffset.UTC),
+                                            ZoneId.of("UTC")));
         DowithTask dowithTask = dowithTaskJpaRepository.saveAll(DowithTask.ofWithRoutine(
                                                            member.getId(),
                                                            taskCategory.getId(),
@@ -430,11 +423,11 @@ public class UpdateDowithTaskIntegrationTest {
                                                            Set.of(LocalDate.of(2024, 3, 2),
                                                                   LocalDate.of(2024, 3, 3),
                                                                   LocalDate.of(2024, 3, 16),
-                                                                  LocalDate.of(2024, 3, 17)),
-                                                           timeProvider)).stream().filter(task -> task.getDate()
-                                                                                                      .equals(LocalDate.of(2024,
-                                                                                                                           3,
-                                                                                                                           2)))
+                                                                  LocalDate.of(2024, 3, 17)))).stream().filter(task -> task.getDate()
+                                                                                                                           .equals(LocalDate.of(
+                                                                                                                               2024,
+                                                                                                                               3,
+                                                                                                                               2)))
                                                        .findFirst().get();
         
         // 이미 등록된 Task
@@ -442,13 +435,12 @@ public class UpdateDowithTaskIntegrationTest {
                                                    taskCategory.getId(),
                                                    "설거지 하기2",
                                                    LocalDate.of(2024, 3, 20),
-                                                   LocalTime.of(13, 0),
-                                                   timeProvider));
+                                                   LocalTime.of(13, 0)));
         
         // when
-        timeProvider.setClock(Clock.fixed(LocalDateTime.of(2024, 3, 15, 0, 0)
-                                                       .toInstant(ZoneOffset.UTC),
-                                          ZoneId.of("UTC")));
+        SystemTimeUtil.setClock(Clock.fixed(LocalDateTime.of(2024, 3, 15, 0, 0)
+                                                         .toInstant(ZoneOffset.UTC),
+                                            ZoneId.of("UTC")));
         List<LocalDate> newRoutineDates = List.of(
             LocalDate.of(2024,
                          3,

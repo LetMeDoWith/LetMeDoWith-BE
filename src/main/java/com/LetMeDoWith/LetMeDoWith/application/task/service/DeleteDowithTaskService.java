@@ -2,7 +2,6 @@ package com.LetMeDoWith.LetMeDoWith.application.task.service;
 
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
-import com.LetMeDoWith.LetMeDoWith.common.provider.TimeProvider;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskRoutineRepository;
@@ -13,8 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class DeleteDowithTaskService {
-    
-    private final TimeProvider timeProvider;
     
     private final DowithTaskRepository dowithTaskRepository;
     private final DowithTaskRoutineRepository dowithTaskRoutineRepository;
@@ -33,7 +30,7 @@ public class DeleteDowithTaskService {
                                                     .orElseThrow(() -> new RestApiException(
                                                         FailResponseStatus.INVALID_REQUEST));
         
-        dowithTask.delete(dowithTaskRepository, dowithTaskRoutineRepository, timeProvider);
+        dowithTask.delete(dowithTaskRepository, dowithTaskRoutineRepository);
         
     }
     
@@ -51,8 +48,7 @@ public class DeleteDowithTaskService {
                                                         FailResponseStatus.INVALID_REQUEST));
         
         dowithTask.deleteWithRoutine(dowithTaskRepository,
-                                     dowithTaskRoutineRepository,
-                                     timeProvider);
+                                     dowithTaskRoutineRepository);
         
     }
     

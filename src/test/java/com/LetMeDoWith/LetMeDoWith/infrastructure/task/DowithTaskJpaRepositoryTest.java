@@ -2,7 +2,6 @@ package com.LetMeDoWith.LetMeDoWith.infrastructure.task;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-import com.LetMeDoWith.LetMeDoWith.common.provider.ClockTimeProvider;
 import com.LetMeDoWith.LetMeDoWith.config.TestQueryDslConfig;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
@@ -52,8 +51,6 @@ public class DowithTaskJpaRepositoryTest {
     private TestEntityManager entityManager;
     @Autowired
     private DowithTaskJpaRepository dowithTaskJpaRepository;
-    @Autowired
-    private ClockTimeProvider timeProvider;
     
     @BeforeEach
     void beforeEach() {
@@ -68,14 +65,12 @@ public class DowithTaskJpaRepositoryTest {
                                                taskCategoryId1,
                                                title1,
                                                date1,
-                                               startTime1,
-                                               timeProvider);
+                                               startTime1);
         DowithTask dowithTask2 = DowithTask.of(memberId,
                                                taskCategoryId2,
                                                title2,
                                                date2,
-                                               startTime2,
-                                               timeProvider);
+                                               startTime2);
         
         // when
         DowithTask savedDowithTask1 = dowithTaskJpaRepository.save(dowithTask1);
@@ -98,16 +93,14 @@ public class DowithTaskJpaRepositoryTest {
                                                                  startTime1,
                                                                  Set.of(routineDate1_1,
                                                                         routineDate1_2,
-                                                                        routineDate1_3),
-                                                                 timeProvider);
+                                                                        routineDate1_3));
         List<DowithTask> dowithTasks2 = DowithTask.ofWithRoutine(memberId,
                                                                  taskCategoryId2,
                                                                  title2,
                                                                  date2,
                                                                  startTime2,
                                                                  Set.of(routineDate2_1,
-                                                                        routineDate2_2),
-                                                                 timeProvider);
+                                                                        routineDate2_2));
         
         // when
         List<DowithTask> savedDowithTask1 = dowithTaskJpaRepository.saveAll(dowithTasks1);
@@ -135,8 +128,7 @@ public class DowithTaskJpaRepositoryTest {
                                               taskCategoryId1,
                                               title1,
                                               date1,
-                                              startTime1,
-                                              timeProvider);
+                                              startTime1);
         
         // when
         DowithTask savedTask = dowithTaskJpaRepository.save(dowithTask);
@@ -171,8 +163,7 @@ public class DowithTaskJpaRepositoryTest {
                                                                             date2,
                                                                             startTime2,
                                                                             Set.of(routineDate2_1,
-                                                                                   routineDate2_2),
-                                                                            timeProvider);
+                                                                                   routineDate2_2));
         
         List<DowithTask> dowithTasks = dowithTaskJpaRepository.saveAll(dowithTasksWithRoutines);
         Set<LocalDate> targetDates = Set.of(date2, routineDate2_1, routineDate2_2);
@@ -205,16 +196,14 @@ public class DowithTaskJpaRepositoryTest {
                                               taskCategoryId1,
                                               title1,
                                               date2,
-                                              startTime2,
-                                              timeProvider);
+                                              startTime2);
         List<DowithTask> dowithTasksWithRoutines = DowithTask.ofWithRoutine(memberId,
                                                                             taskCategoryId2,
                                                                             title2,
                                                                             date2,
                                                                             startTime2,
                                                                             Set.of(routineDate2_1,
-                                                                                   routineDate2_2),
-                                                                            timeProvider);
+                                                                                   routineDate2_2));
         
         // when
         dowithTaskJpaRepository.save(dowithTask);
@@ -236,16 +225,14 @@ public class DowithTaskJpaRepositoryTest {
                                               taskCategoryId1,
                                               title1,
                                               date2,
-                                              startTime2,
-                                              timeProvider);
+                                              startTime2);
         List<DowithTask> dowithTasksWithRoutines = DowithTask.ofWithRoutine(memberId,
                                                                             taskCategoryId2,
                                                                             title2,
                                                                             date2,
                                                                             startTime2,
                                                                             Set.of(routineDate2_1,
-                                                                                   routineDate2_2),
-                                                                            timeProvider);
+                                                                                   routineDate2_2));
         
         // when
         dowithTaskJpaRepository.save(dowithTask);

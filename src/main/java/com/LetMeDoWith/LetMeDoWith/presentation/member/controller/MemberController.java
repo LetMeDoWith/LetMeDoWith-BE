@@ -97,7 +97,7 @@ public class MemberController {
     /**
      * 멤버를 탈퇴처리한다.
      *
-     * @param memberId 탈퇴하려는 멤버의 dowithTaskId
+     * @param memberId 탈퇴하려는 멤버의 id
      * @return 탈퇴 성공 여부
      */
     @Operation(summary = "탈퇴", description = "해당 회원을 탈퇴 처리 합니다.")

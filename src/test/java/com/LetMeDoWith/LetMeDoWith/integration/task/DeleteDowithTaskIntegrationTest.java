@@ -8,7 +8,7 @@ import com.LetMeDoWith.LetMeDoWith.common.enums.member.Gender;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.TaskCompleteLevel;
-import com.LetMeDoWith.LetMeDoWith.common.provider.ClockTimeProvider;
+import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.auth.model.AccessToken;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
@@ -58,9 +58,6 @@ public class DeleteDowithTaskIntegrationTest {
     ObjectMapper objectMapper;
     @Autowired
     MockMvc mockMvc;
-    
-    @Autowired
-    ClockTimeProvider timeProvider;
     
     @Autowired
     MemberJpaRepository memberJpaRepository;
@@ -117,18 +114,18 @@ public class DeleteDowithTaskIntegrationTest {
     @Test
     @DisplayName("[SUCCESS] Routine이 없는 Task 삭제")
     void deleteDowithTask1() throws Exception {
+        
         // given
-        timeProvider.setClock(Clock.fixed(LocalDateTime.of(2024, 3, 1, 0, 0)
-                                                       .toInstant(ZoneOffset.UTC),
-                                          ZoneId.of("UTC")));
+        SystemTimeUtil.setClock(Clock.fixed(LocalDateTime.of(2024, 3, 1, 0, 0)
+                                                         .toInstant(ZoneOffset.UTC),
+                                            ZoneId.of("UTC")));
         DowithTask dowithTask = dowithTaskJpaRepository.save(DowithTask.of(member.getId(),
                                                                            taskCategory.getId(),
                                                                            "test",
-                                                                           timeProvider.nowDate()
-                                                                                       .plusDays(1),
+                                                                           SystemTimeUtil.nowDate()
+                                                                                         .plusDays(1),
                                                                            // 시작시간 :  현재 시간 기준 다음날
-                                                                           LocalTime.of(1, 0),
-                                                                           timeProvider));
+                                                                           LocalTime.of(1, 0)));
         
         // when
         ResultActions resultActions = requestDeleteDowithTask(dowithTask.getId(), false);
@@ -142,23 +139,22 @@ public class DeleteDowithTaskIntegrationTest {
     @DisplayName("[FAIL] Routine이 없는 Task 삭제 - 시작시간이 과거인 경우")
     void deleteDowithTask2() throws Exception {
         // given
-        timeProvider.setClock(Clock.fixed(LocalDateTime.of(2024, 3, 1, 0, 0)
-                                                       .toInstant(ZoneOffset.UTC),
-                                          ZoneId.of("UTC")));
+        SystemTimeUtil.setClock(Clock.fixed(LocalDateTime.of(2024, 3, 1, 0, 0)
+                                                         .toInstant(ZoneOffset.UTC),
+                                            ZoneId.of("UTC")));
         DowithTask dowithTask = dowithTaskJpaRepository.save(DowithTask.of(member.getId(),
                                                                            taskCategory.getId(),
                                                                            "test",
-                                                                           timeProvider.now()
-                                                                                       .plusDays(1)
-                                                                                       .toLocalDate(),
+                                                                           SystemTimeUtil.now()
+                                                                                         .plusDays(1)
+                                                                                         .toLocalDate(),
                                                                            // 시작시간 :  과거
-                                                                           LocalTime.of(1, 0),
-                                                                           timeProvider));
+                                                                           LocalTime.of(1, 0)));
         
         // when
-        timeProvider.setClock(Clock.fixed(LocalDateTime.of(2024, 3, 15, 0, 0)
-                                                       .toInstant(ZoneOffset.UTC),
-                                          ZoneId.of("UTC")));
+        SystemTimeUtil.setClock(Clock.fixed(LocalDateTime.of(2024, 3, 15, 0, 0)
+                                                         .toInstant(ZoneOffset.UTC),
+                                            ZoneId.of("UTC")));
         ResultActions resultActions = requestDeleteDowithTask(dowithTask.getId(), false);
         
         // then
@@ -170,9 +166,9 @@ public class DeleteDowithTaskIntegrationTest {
     @DisplayName("[SUCCESS] Routine이 있는 Task 삭제")
     void deleteDowithTaskWithRoutine() throws Exception {
         // given
-        timeProvider.setClock(Clock.fixed(LocalDateTime.of(2024, 3, 1, 0, 0)
-                                                       .toInstant(ZoneOffset.UTC),
-                                          ZoneId.of("UTC")));
+        SystemTimeUtil.setClock(Clock.fixed(LocalDateTime.of(2024, 3, 1, 0, 0)
+                                                         .toInstant(ZoneOffset.UTC),
+                                            ZoneId.of("UTC")));
         Set<LocalDate> routineDateSet = new HashSet<>();
         routineDateSet.add(LocalDate.of(2024, 3, 5)); // 삭제되지 않아야 할 Routine
         routineDateSet.add(LocalDate.of(2024, 3, 7)); // 삭제되지 않아야 할 Routine
@@ -184,8 +180,7 @@ public class DeleteDowithTaskIntegrationTest {
             "test",
             LocalDate.of(2024, 3, 15),
             LocalTime.of(1, 0),
-            routineDateSet,
-            timeProvider));
+            routineDateSet));
         
         Long targetDowithTaskID = dowithTasks.stream()
                                              .filter(task -> task.getDate()
@@ -208,9 +203,9 @@ public class DeleteDowithTaskIntegrationTest {
                                                     .toList();
         
         // when
-        timeProvider.setClock(Clock.fixed(LocalDateTime.of(2024, 3, 15, 0, 0)
-                                                       .toInstant(ZoneOffset.UTC),
-                                          ZoneId.of("UTC")));
+        SystemTimeUtil.setClock(Clock.fixed(LocalDateTime.of(2024, 3, 15, 0, 0)
+                                                         .toInstant(ZoneOffset.UTC),
+                                            ZoneId.of("UTC")));
         ResultActions resultActions = requestDeleteDowithTask(targetDowithTaskID, true);
         
         // then

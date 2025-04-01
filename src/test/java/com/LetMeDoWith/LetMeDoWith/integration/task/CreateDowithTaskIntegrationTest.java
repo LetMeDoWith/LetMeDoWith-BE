@@ -12,7 +12,6 @@ import com.LetMeDoWith.LetMeDoWith.common.enums.member.Gender;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.TaskCompleteLevel;
-import com.LetMeDoWith.LetMeDoWith.common.provider.ClockTimeProvider;
 import com.LetMeDoWith.LetMeDoWith.common.util.DateTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.auth.model.AccessToken;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
@@ -57,9 +56,6 @@ public class CreateDowithTaskIntegrationTest {
     ObjectMapper objectMapper;
     @Autowired
     MockMvc mockMvc;
-    
-    @Autowired
-    ClockTimeProvider timeProvider;
     
     @Autowired
     MemberJpaRepository memberJpaRepository;
@@ -214,7 +210,7 @@ public class CreateDowithTaskIntegrationTest {
         
         dowithTaskJpaRepository.saveAndFlush(
             DowithTask.of(member.getId(), 1L, "이미 있던 Task", startDateTime.toLocalDate(),
-                          startDateTime.toLocalTime(), timeProvider));
+                          startDateTime.toLocalTime()));
         
         CreateDowithTaskReqDto requestBody = new CreateDowithTaskReqDto("테스트", 1L, startDateTime,
                                                                         Boolean.TRUE,
@@ -248,8 +244,7 @@ public class CreateDowithTaskIntegrationTest {
                           1L,
                           "이미 있던 Task",
                           routineDate1,
-                          startDateTime.toLocalTime(),
-                          timeProvider));
+                          startDateTime.toLocalTime()));
         
         CreateDowithTaskReqDto requestBody = new CreateDowithTaskReqDto("테스트", 1L, startDateTime,
                                                                         Boolean.TRUE,

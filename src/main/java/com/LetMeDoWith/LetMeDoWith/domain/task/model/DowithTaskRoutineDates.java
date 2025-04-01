@@ -2,7 +2,7 @@ package com.LetMeDoWith.LetMeDoWith.domain.task.model;
 
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
-import com.LetMeDoWith.LetMeDoWith.common.provider.TimeProvider;
+import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import jakarta.persistence.Embeddable;
 import java.time.LocalDate;
 import java.util.LinkedHashSet;
@@ -26,9 +26,9 @@ public class DowithTaskRoutineDates {
             dates.stream().sorted().collect(Collectors.toCollection(LinkedHashSet::new)));
     }
     
-    public void validate(TimeProvider timeProvider) {
+    public void validate() {
         dates.forEach(date -> {
-            if (date.isBefore(timeProvider.nowDate())) {
+            if (date.isBefore(SystemTimeUtil.nowDate())) {
                 throw new RestApiException(FailResponseStatus.DOWITH_TASK_NOT_AVAIL_DATE);
             }
         });
