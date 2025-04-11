@@ -8,18 +8,17 @@ import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseSt
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateDowithTaskContentsCommand;
 import com.LetMeDoWith.LetMeDoWith.application.task.repository.TaskCategoryRepository;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
-import com.LetMeDoWith.LetMeDoWith.common.util.DateTimeUtil;
-import com.LetMeDoWith.LetMeDoWith.common.util.DateTimeUtil.DateDifferences;
 import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskCategory;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskRoutineRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.service.DowithTaskRegisterAvailChecker;
+import com.LetMeDoWith.LetMeDoWith.domain.task.service.DowithTaskRoutineDateCalculator;
+import com.LetMeDoWith.LetMeDoWith.domain.task.service.DowithTaskRoutineDateCalculator.RoutineDateResult;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UpdateDowithTaskService {
     
     private final DowithTaskRegisterAvailChecker registerAvailChecker;
+    private final DowithTaskRoutineDateCalculator routineDateCalculator;
     
     private final DowithTaskRepository dowithTaskRepository;
     private final DowithTaskRoutineRepository dowithTaskRoutineRepository;
@@ -62,10 +62,13 @@ public class UpdateDowithTaskService {
                                   command.date(),
                                   command.startTime());
         
+        // 새롭게 생성할 일자 계산
         Set<LocalDate> toCreateDates = routineDates.stream()
-                                                   .filter(date -> !date.isEqual(command.date()))
+                                                   .filter(date -> !date.isEqual(dowithTask.getDate()))
                                                    .collect(
                                                        Collectors.toSet());
+        
+        // 새 DowithTask 생성 가능 여부 validation
         if (!registerAvailChecker.isRegisterAvail(toCreateDates,
                                                   dowithTaskRepository.getDowithTasks(memberId,
                                                                                       toCreateDates))
@@ -73,8 +76,7 @@ public class UpdateDowithTaskService {
             throw new RestApiException(DOWITH_TASK_CREATE_COUNT_EXCEED);
         }
         
-        List<DowithTask> newDowithTasks = dowithTask.createRoutine(routineDates);
-        dowithTaskRepository.saveDowithTasks(newDowithTasks);
+        dowithTaskRepository.saveDowithTasks(dowithTask.createRoutine(routineDates));
         
         return dowithTask;
         
@@ -144,50 +146,27 @@ public class UpdateDowithTaskService {
             throw new RestApiException(INVALID_REQUEST);
         }
         
-        // input routineDates 중에서 업데이트 불가한 routine 일자(과거일자)가 DB에 저장된 routine 중 업데이트 불가한 일자와 일치하는지 확인
-        if (!dowithTask.getUpdateNotAvailRoutineDates().equals(routineDates.stream()
-                                                                           .filter(date -> DateTimeUtil.isBeforeOrEqual(
-                                                                               date,
-                                                                               nowDate))
-                                                                           .filter(date ->
-                                                                                       !date.isEqual(
-                                                                                           nowDate)
-                                                                                           || nowTime
-                                                                                           .isBefore(
-                                                                                               dowithTask.getStartTime()))
-                                                                           .collect(
-                                                                               Collectors.toSet()))) {
+        // 수정 대상 루틴 날짜 계산
+        RoutineDateResult RoutineDatesToModifyResult = routineDateCalculator.getRoutineDatesToModify(
+            dowithTask,
+            routineDates);
+        
+        if (!RoutineDatesToModifyResult.isValid()) {
             throw new RestApiException(INVALID_REQUEST);
         }
         
-        // input 중에서 업데이트 가능한 일자(현재,미래일자)와 기존 rountine 중 업데이트 가능한 일자 비교
-        Set<LocalDate> existingUpdateAvailDates = dowithTask.getUpdateAvailRoutineDates();
-        Set<LocalDate> toUpdateRoutineDates = routineDates.stream()
-                                                          .filter(date -> DateTimeUtil.isAfterOrEqual(
-                                                              date,
-                                                              nowDate))
-                                                          .filter(date -> !date.isEqual(nowDate)
-                                                              || nowTime.isBefore(dowithTask.getStartTime()))
-                                                          .collect(
-                                                              Collectors.toSet());
+        dowithTask.deleteRoutine(RoutineDatesToModifyResult.getToDeleteRoutineDates(),
+                                 dowithTaskRepository);
         
-        DateDifferences differences = DateTimeUtil.getDifferences(existingUpdateAvailDates,
-                                                                  toUpdateRoutineDates);
-        // 기존 routine 중 삭제해야할 routine 선별 및 삭제
-        Set<LocalDate> toDeleteDates = differences.getLeftOnlyDates();
-        dowithTask.deleteRoutine(toDeleteDates, dowithTaskRepository);
-        
-        // input 중에서 추가해야할 routine 선별 및 생성
-        Set<LocalDate> toCreateDates = differences.getRightOnlyDates();
-        
-        if (!registerAvailChecker.isRegisterAvail(toCreateDates,
+        Set<LocalDate> toCreateRoutineDates = RoutineDatesToModifyResult.getToCreateRoutineDates();
+        if (!registerAvailChecker.isRegisterAvail(toCreateRoutineDates,
                                                   dowithTaskRepository.getDowithTasks(dowithTask.getMemberId(),
-                                                                                      toCreateDates))
+                                                                                      toCreateRoutineDates))
                                  .isAvail()) {
             throw new RestApiException(DOWITH_TASK_CREATE_COUNT_EXCEED);
         }
         
-        dowithTask.addRoutine(toCreateDates, dowithTaskRepository);
+        dowithTask.addRoutine(toCreateRoutineDates, dowithTaskRepository);
         
         return dowithTask;
         
