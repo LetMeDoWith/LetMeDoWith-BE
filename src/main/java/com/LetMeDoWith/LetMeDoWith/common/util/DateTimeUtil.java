@@ -4,10 +4,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Set;
-import java.util.stream.Collectors;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
@@ -43,32 +39,6 @@ public class DateTimeUtil {
     
     public static boolean isBefore(LocalTime targetTime, LocalTime standardTime) {
         return targetTime.isBefore(standardTime);
-    }
-    
-    public static DateDifferences getDifferences(Set<LocalDate> leftDates,
-                                                 Set<LocalDate> rightDates) {
-        Set<LocalDate> commonDates = leftDates.stream()
-                                              .filter(rightDates::contains)
-                                              .collect(Collectors.toSet());
-        
-        Set<LocalDate> leftOnlyDates = leftDates.stream()
-                                                .filter(date -> !rightDates.contains(date))
-                                                .collect(Collectors.toSet());
-        
-        Set<LocalDate> rightOnlyDates = rightDates.stream()
-                                                  .filter(date -> !leftDates.contains(date))
-                                                  .collect(Collectors.toSet());
-        
-        return new DateDifferences(commonDates, leftOnlyDates, rightOnlyDates);
-    }
-    
-    @AllArgsConstructor
-    @Getter
-    public static class DateDifferences {
-        
-        final Set<LocalDate> commonDates;
-        final Set<LocalDate> leftOnlyDates;
-        final Set<LocalDate> rightOnlyDates;
     }
     
 }
