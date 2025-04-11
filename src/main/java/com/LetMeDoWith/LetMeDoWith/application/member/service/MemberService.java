@@ -3,8 +3,6 @@ package com.LetMeDoWith.LetMeDoWith.application.member.service;
 
 import com.LetMeDoWith.LetMeDoWith.application.member.dto.CreateSignupCompletedMemberCommand;
 import com.LetMeDoWith.LetMeDoWith.application.member.dto.MemberPersonalInfoVO;
-import com.LetMeDoWith.LetMeDoWith.application.member.repository.MemberRepository;
-import com.LetMeDoWith.LetMeDoWith.application.member.repository.MemberSettingRepository;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
@@ -12,6 +10,8 @@ import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.auth.enums.SocialProvider;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.MemberAlarmSetting;
+import com.LetMeDoWith.LetMeDoWith.domain.member.repository.MemberRepository;
+import com.LetMeDoWith.LetMeDoWith.domain.member.repository.MemberSettingRepository;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
