@@ -39,7 +39,7 @@ public class RegisterTodoTaskService {
      */
     public RegisterTodoTaskResult registerTodoTask(Long memberId, CreateTodoTaskCommand command) {
         if (command.taskCategoryId() != null) {
-            taskCategoryRepository.getTaskCategory(command.taskCategoryId(), Yn.TRUE)
+            taskCategoryRepository.getActiveTaskCategory(command.taskCategoryId(), memberId)
                                   .orElseThrow(() -> new RestApiException(
                                       FailResponseStatus.DOWITH_TASK_TASK_CATEGORY_NOT_EXIST));
         }
