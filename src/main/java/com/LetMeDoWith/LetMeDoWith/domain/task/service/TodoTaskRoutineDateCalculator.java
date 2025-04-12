@@ -1,16 +1,16 @@
 package com.LetMeDoWith.LetMeDoWith.domain.task.service;
 
+import com.LetMeDoWith.LetMeDoWith.common.annotation.DomainService;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import java.time.LocalDate;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
 /**
  * 루틴 반복 주기와 패턴에 따라 루틴 수행 일자 목록을 계산하는 서비스.
  */
-@Service
+@DomainService
 @RequiredArgsConstructor
 public class TodoTaskRoutineDateCalculator {
     
