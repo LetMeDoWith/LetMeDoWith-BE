@@ -130,7 +130,7 @@ class RegisterTodoTaskServiceTest {
         TodoTaskRoutineCondition routineCondition = TodoTaskRoutineCondition.builder()
                                                                             .cycle(cycle)
                                                                             .pattern(Set.of()) // DAILY는 패턴을 사용하지 않음
-                                                                            .excludeHolidays(false)
+                                                                            .isExcludeHolidays(false)
                                                                             .build();
         
         CreateTodoTaskCommand routineCommand = CreateTodoTaskCommand.builder()
@@ -210,7 +210,7 @@ class RegisterTodoTaskServiceTest {
         TodoTaskRoutineCondition routineCondition = TodoTaskRoutineCondition.builder()
                                                                             .cycle(cycle)
                                                                             .pattern(Set.of())
-                                                                            .excludeHolidays(false)
+                                                                            .isExcludeHolidays(false)
                                                                             .build();
         
         CreateTodoTaskCommand routineCommand = CreateTodoTaskCommand.builder()
@@ -246,7 +246,7 @@ class RegisterTodoTaskServiceTest {
         TodoTaskRoutineCondition routineCondition = TodoTaskRoutineCondition.builder()
                                                                             .cycle(cycle)
                                                                             .pattern(Set.of())
-                                                                            .excludeHolidays(false)
+                                                                            .isExcludeHolidays(false)
                                                                             .build();
         
         CreateTodoTaskCommand routineCommand = CreateTodoTaskCommand.builder()
@@ -298,7 +298,7 @@ class RegisterTodoTaskServiceTest {
                                                                                             6,
                                                                                             7,
                                                                                             8)) // 8은 유효하지 않은 요일
-                                                                            .excludeHolidays(false)
+                                                                            .isExcludeHolidays(false)
                                                                             .build();
         
         CreateTodoTaskCommand routineCommand = CreateTodoTaskCommand.builder()
