@@ -1,8 +1,9 @@
 package com.LetMeDoWith.LetMeDoWith.domain.task.model;
 
+import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.INVALID_REQUEST;
+
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
-import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.AggregateRoot;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
@@ -321,7 +322,7 @@ public class DowithTask extends BaseAuditEntity {
                                LocalTime startTime) {
         
         if (!isContentsEditable()) {
-            throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
+            throw new RestApiException(INVALID_REQUEST);
         }
         
         if (!isRoutine()) {
@@ -349,7 +350,7 @@ public class DowithTask extends BaseAuditEntity {
                                           DowithTaskRepository dowithTaskRepository) {
         
         if (!isContentsEditable()) {
-            throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
+            throw new RestApiException(INVALID_REQUEST);
         }
         
         if (isRoutine()) {
@@ -410,7 +411,7 @@ public class DowithTask extends BaseAuditEntity {
                        DowithTaskRoutineRepository dowithTaskRoutineRepository) {
         
         if (!SystemTimeUtil.now().isBefore(LocalDateTime.of(this.date, this.startTime))) {
-            throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
+            throw new RestApiException(INVALID_REQUEST);
         }
         
         if (isRoutine()) {
@@ -434,7 +435,7 @@ public class DowithTask extends BaseAuditEntity {
                                   DowithTaskRoutineRepository dowithTaskRoutineRepository) {
         
         if (!SystemTimeUtil.now().isBefore(LocalDateTime.of(this.date, this.startTime))) {
-            throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
+            throw new RestApiException(INVALID_REQUEST);
         }
         
         if (isRoutine()) {
@@ -479,11 +480,11 @@ public class DowithTask extends BaseAuditEntity {
         LocalDateTime nowDateTime = SystemTimeUtil.now();
         if (nowDateTime.toLocalDate().isEqual(date)) {
             if (nowDateTime.toLocalTime().isAfter(startTime)) {
-                throw new RestApiException(FailResponseStatus.DOWITH_TASK_NOT_AVAIL_START_TIME);
+                throw new RestApiException(INVALID_REQUEST);
             }
         }
         if (date.isBefore(nowDateTime.toLocalDate())) {
-            throw new RestApiException(FailResponseStatus.DOWITH_TASK_NOT_AVAIL_DATE);
+            throw new RestApiException(INVALID_REQUEST);
         }
     }
     

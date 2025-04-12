@@ -15,7 +15,7 @@ public enum FailResponseStatus {
     INVALID_PARAM_ERROR("INVALID_PARAM_ERROR", "E201", HttpStatus.BAD_REQUEST, "요청 파라미터가 잘못되었습니다."),
     
     // API FAIL (NEW)
-    INVALID_REQUEST("INVALID_REQUEST", "E100", HttpStatus.BAD_REQUEST, "Invalid Request"),
+    INVALID_REQUEST("INVALID_REQUEST", "E100", HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
     
     // Member 도메인 관련 Exception - E21X
     MANDATORY_PARAM_ERROR_NAME("MANDATORY_PARAM_ERROR_NAME",

@@ -1,8 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.application.task.service;
 
 import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.DOWITH_TASK_CREATE_COUNT_EXCEED;
-import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.DOWITH_TASK_NOT_EXIST;
-import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.DOWITH_TASK_TASK_CATEGORY_NOT_EXIST;
 import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.INVALID_REQUEST;
 
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateDowithTaskContentsCommand;
@@ -51,12 +49,12 @@ public class UpdateDowithTaskService {
         
         DowithTask dowithTask = dowithTaskRepository.getDowithTask(command.id(), memberId)
                                                     .orElseThrow(() -> new RestApiException(
-                                                        DOWITH_TASK_NOT_EXIST));
+                                                        INVALID_REQUEST));
         
         TaskCategory taskCategory = taskCategoryRepository.getActiveTaskCategory(
                                                               command.taskCategoryId(), memberId)
                                                           .orElseThrow(() -> new RestApiException(
-                                                              DOWITH_TASK_TASK_CATEGORY_NOT_EXIST));
+                                                              INVALID_REQUEST));
         
         if (dowithTask.isContentsEditable()) {
             dowithTask.updateContents(command.title(),
@@ -99,12 +97,12 @@ public class UpdateDowithTaskService {
         
         DowithTask dowithTask = dowithTaskRepository.getDowithTask(command.id(), memberId)
                                                     .orElseThrow(() -> new RestApiException(
-                                                        DOWITH_TASK_NOT_EXIST));
+                                                        INVALID_REQUEST));
         
         TaskCategory taskCategory = taskCategoryRepository.getActiveTaskCategory(
                                                               command.taskCategoryId(), memberId)
                                                           .orElseThrow(() -> new RestApiException(
-                                                              DOWITH_TASK_TASK_CATEGORY_NOT_EXIST));
+                                                              INVALID_REQUEST));
         
         if (dowithTask.isRoutine()) {
             // 루틴이 있는 경우 TodoTask로 전환 불가

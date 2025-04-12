@@ -1,11 +1,11 @@
 package com.LetMeDoWith.LetMeDoWith.application.task.service;
 
 import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.DOWITH_TASK_CREATE_COUNT_EXCEED;
+import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.INVALID_REQUEST;
 
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.CreateDowithTaskCommand;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.CreateDowithTaskWithRoutineCommand;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
-import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TaskCategoryRepository;
@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class RegisterDowithTaskService {
+public class CreateDowithTaskService {
     
     private final DowithTaskRegisterAvailChecker dowithTaskRegisterAvailChecker;
     
@@ -41,7 +41,7 @@ public class RegisterDowithTaskService {
         if (command.taskCategoryId() != null) {
             taskCategoryRepository.getActiveTaskCategory(command.taskCategoryId(), memberId)
                                   .orElseThrow(() -> new RestApiException(
-                                      FailResponseStatus.DOWITH_TASK_TASK_CATEGORY_NOT_EXIST));
+                                      INVALID_REQUEST));
         }
         
         RegisterAvailResult registerAvailResult = dowithTaskRegisterAvailChecker.isRegisterAvail(
@@ -77,7 +77,7 @@ public class RegisterDowithTaskService {
         if (command.taskCategoryId() != null) {
             taskCategoryRepository.getActiveTaskCategory(command.taskCategoryId(), memberId)
                                   .orElseThrow(() -> new RestApiException(
-                                      FailResponseStatus.DOWITH_TASK_TASK_CATEGORY_NOT_EXIST));
+                                      INVALID_REQUEST));
         }
         
         if (!registerAvailResult.isAvail()) {

@@ -4,6 +4,7 @@ import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateDowithTaskContents
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -17,7 +18,7 @@ public record UpdateDowithTaskReqDto(
     @NotNull Long dowithTaskId,
     
     @Schema(description = "제목", defaultValue = "저녁 먹기")
-    @NotBlank String title,
+    @NotBlank @Size(max = 40) String title,
     
     @Schema(description = "Task 카테고리 ID", defaultValue = "2")
     Long taskCategoryId,
