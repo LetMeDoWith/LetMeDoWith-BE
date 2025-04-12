@@ -1,7 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.task.dto;
 
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.CreateTodoTaskCommand;
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.TodoTaskRoutineCondition;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.CreateTodoTaskCommand.TodoTaskRoutineCondition;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

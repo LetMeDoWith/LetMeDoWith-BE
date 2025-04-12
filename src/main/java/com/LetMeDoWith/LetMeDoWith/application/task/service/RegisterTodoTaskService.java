@@ -81,7 +81,7 @@ public class RegisterTodoTaskService {
                                                                                        .pattern());
         
         // 공휴일 필터 적용
-        if (Boolean.TRUE.equals(command.routineCondition().excludeHolidays())) {
+        if (Boolean.TRUE.equals(command.routineCondition().isExcludeHolidays())) {
             routineDates = holidayFilter.filter(routineDates);
         }
         
