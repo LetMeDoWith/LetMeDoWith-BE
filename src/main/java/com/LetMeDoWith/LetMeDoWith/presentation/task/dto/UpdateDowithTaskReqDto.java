@@ -23,13 +23,16 @@ public record UpdateDowithTaskReqDto(
     Long taskCategoryId,
     
     @Schema(description = "시작일시", defaultValue = "2025-03-30T11:30:00")
-    @NotNull LocalDateTime startDateTime,
+    LocalDateTime startDateTime,
     
     @Schema(description = "루틴 생성 여부", defaultValue = "true")
     @NotNull Boolean isRoutineCreate,
     
     @Schema(description = "루틴일", defaultValue = "[\"2025-04-01\", \"2025-04-02\"]")
-    List<LocalDate> routineDates
+    List<LocalDate> routineDates,
+    
+    @Schema(description = "투두모드로 전환 여부", defaultValue = "false")
+    @NotNull Boolean isConvertToTodoTask
 ) {
     
     public UpdateDowithTaskContentsCommand toCommand() {
@@ -39,6 +42,7 @@ public record UpdateDowithTaskReqDto(
                                               .taskCategoryId(this.taskCategoryId)
                                               .date(this.startDateTime().toLocalDate())
                                               .startTime(this.startDateTime().toLocalTime())
+                                              .isConvertToTodoTask(this.isConvertToTodoTask)
                                               .build();
     }
     

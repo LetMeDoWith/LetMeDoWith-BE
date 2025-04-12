@@ -298,6 +298,22 @@ public class DowithTask extends BaseAuditEntity {
      *
      * @param title
      * @param taskCategoryId
+     */
+    public void updateContents(String title, Long taskCategoryId) {
+        
+        if (!isRoutine()) {
+            this.title = title;
+            this.taskCategoryId = taskCategoryId;
+        }
+        
+        this.validate();
+    }
+    
+    /**
+     * 컨텐츠 수정 (루틴이 없는 경우)
+     *
+     * @param title
+     * @param taskCategoryId
      * @param date
      * @param startTime
      */
@@ -348,6 +364,35 @@ public class DowithTask extends BaseAuditEntity {
             dowithTasks.forEach(task -> {
                 if (updateAvailRoutineDates.contains(task.getDate())) {
                     task.updateContents(title, taskCategoryId, date, startTime);
+                    task.updateRoutine(newRoutine);
+                }
+            });
+        }
+        
+    }
+    
+    /**
+     * 컨텐츠 수정 (루틴이 있는 경우)
+     *
+     * @param title
+     * @param taskCategoryId
+     * @param dowithTaskRepository
+     */
+    public void updateContentsWithRoutine(String title, Long taskCategoryId,
+                                          DowithTaskRepository dowithTaskRepository) {
+        
+        if (isRoutine()) {
+            List<DowithTask> dowithTasks = dowithTaskRepository.getDowithTasks(this.routine);
+            Set<LocalDate> updateAvailRoutineDates = getUpdateAvailRoutineDates();
+            
+            // 기존 routine에서 수정 가능한 일자 삭제 = 과거 task와 수정 task routine 분리
+            this.routine.deleteDates(updateAvailRoutineDates);
+            
+            // 수정 가능한 일자를 기반으로 새 routine 생성
+            DowithTaskRoutine newRoutine = DowithTaskRoutine.from(updateAvailRoutineDates);
+            dowithTasks.forEach(task -> {
+                if (updateAvailRoutineDates.contains(task.getDate())) {
+                    task.updateContents(title, taskCategoryId);
                     task.updateRoutine(newRoutine);
                 }
             });

@@ -10,6 +10,7 @@ public record UpdateDowithTaskContentsCommand(
     String title,
     Long taskCategoryId,
     LocalDate date,
-    LocalTime startTime) {
+    LocalTime startTime,
+    boolean isConvertToTodoTask) {
     
 }

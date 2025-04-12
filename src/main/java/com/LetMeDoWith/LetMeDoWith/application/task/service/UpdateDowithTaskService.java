@@ -57,10 +57,15 @@ public class UpdateDowithTaskService {
                                                               command.taskCategoryId(), memberId)
                                                           .orElseThrow(() -> new RestApiException(
                                                               DOWITH_TASK_TASK_CATEGORY_NOT_EXIST));
-        dowithTask.updateContents(command.title(),
-                                  taskCategory.getId(),
-                                  command.date(),
-                                  command.startTime());
+        
+        if (dowithTask.isContentsEditable()) {
+            dowithTask.updateContents(command.title(),
+                                      taskCategory.getId(),
+                                      command.date(),
+                                      command.startTime());
+        } else {
+            dowithTask.updateContents(command.title(), taskCategory.getId());
+        }
         
         // 새롭게 생성할 일자 계산
         Set<LocalDate> toCreateDates = routineDates.stream()
@@ -83,14 +88,14 @@ public class UpdateDowithTaskService {
     }
     
     /**
-     * 두윗모드Task 내용 수정
+     * 두윗모드Task 내용만 수정
      *
      * @param memberId
      * @param command
      */
     @Transactional
-    public DowithTask updateContents(Long memberId,
-                                     UpdateDowithTaskContentsCommand command) {
+    public DowithTask updateContentsOnly(Long memberId,
+                                         UpdateDowithTaskContentsCommand command) {
         
         DowithTask dowithTask = dowithTaskRepository.getDowithTask(command.id(), memberId)
                                                     .orElseThrow(() -> new RestApiException(
@@ -102,19 +107,37 @@ public class UpdateDowithTaskService {
                                                               DOWITH_TASK_TASK_CATEGORY_NOT_EXIST));
         
         if (dowithTask.isRoutine()) {
+            // 루틴이 있는 경우 TodoTask로 전환 불가
+            if (command.isConvertToTodoTask()) {
+                throw new RestApiException(INVALID_REQUEST);
+            }
             
-            dowithTask.updateContentsWithRoutine(command.title(),
-                                                 taskCategory.getId(),
-                                                 command.date(),
-                                                 command.startTime(),
-                                                 dowithTaskRepository);
+            // TODO- 수정 대상이 어디까지인지 해당 정책 확인 필요 to 기획
+            if (dowithTask.isContentsEditable()) {
+                dowithTask.updateContentsWithRoutine(command.title(),
+                                                     taskCategory.getId(),
+                                                     command.date(),
+                                                     command.startTime(),
+                                                     dowithTaskRepository);
+            } else {
+                dowithTask.updateContentsWithRoutine(command.title(),
+                                                     taskCategory.getId(),
+                                                     dowithTaskRepository);
+            }
+            
             
         } else {
+            // 루틴이 없는 DowithTask인 경우에만 TodoTask로 전환 가능
+            // TODO - TodoTask Aggregate Merge 후 개발
             
-            dowithTask.updateContents(command.title(),
-                                      taskCategory.getId(),
-                                      command.date(),
-                                      command.startTime());
+            if (dowithTask.isContentsEditable()) {
+                dowithTask.updateContents(command.title(),
+                                          taskCategory.getId(),
+                                          command.date(),
+                                          command.startTime());
+            } else {
+                dowithTask.updateContents(command.title(), taskCategory.getId());
+            }
             
         }
         
@@ -147,6 +170,8 @@ public class UpdateDowithTaskService {
         }
         
         // 수정 대상 루틴 날짜 계산
+        // - 기존 루틴 일자에는 없고 새로운 루틴 일자에는 있어서 생성이 필요한 일자
+        // - 기존 루틴 일자에는 있고 새로운 루틴 일자에는 없어서 삭제가 필요한 일자
         RoutineDateResult RoutineDatesToModifyResult = routineDateCalculator.getRoutineDatesToModify(
             dowithTask,
             routineDates);
@@ -155,9 +180,11 @@ public class UpdateDowithTaskService {
             throw new RestApiException(INVALID_REQUEST);
         }
         
+        // 새 루틴 등록으로, 삭제할 루틴 일자 + 연관 DowithTask 삭제
         dowithTask.deleteRoutine(RoutineDatesToModifyResult.getToDeleteRoutineDates(),
                                  dowithTaskRepository);
         
+        // 새 루틴 등록으로, 새 루틴 생성 + 연관 DowithTask 생성
         Set<LocalDate> toCreateRoutineDates = RoutineDatesToModifyResult.getToCreateRoutineDates();
         if (!registerAvailChecker.isRegisterAvail(toCreateRoutineDates,
                                                   dowithTaskRepository.getDowithTasks(dowithTask.getMemberId(),

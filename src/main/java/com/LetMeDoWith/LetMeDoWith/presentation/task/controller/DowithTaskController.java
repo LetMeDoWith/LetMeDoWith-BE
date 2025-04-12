@@ -96,8 +96,8 @@ public class DowithTaskController {
                                                                    requestBody.toCommand(),
                                                                    requestBody.getRoutineDates());
         } else {
-            updateDowithTaskService.updateContents(memberId,
-                                                   requestBody.toCommand());
+            updateDowithTaskService.updateContentsOnly(memberId,
+                                                       requestBody.toCommand());
         }
         
         return ResponseUtil.createSuccessResponse();
