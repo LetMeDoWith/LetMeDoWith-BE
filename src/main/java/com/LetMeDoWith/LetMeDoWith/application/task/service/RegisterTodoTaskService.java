@@ -13,6 +13,7 @@ import com.LetMeDoWith.LetMeDoWith.domain.task.service.TodoTaskRoutineDateCalcul
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +24,7 @@ public class RegisterTodoTaskService {
     private final TodoTaskRepository todoTaskRepository;
     private final TaskCategoryRepository taskCategoryRepository;
     private final TodoTaskRoutineDateCalculator routineDateCalculator;
-    private final HolidayFilter holidayFilter;
+    private final HolidayService holidayService;
     
     /**
      * 루틴이 아닌 TodoTask를 생성한다.
@@ -71,9 +72,15 @@ public class RegisterTodoTaskService {
             command.endDate(),
             command.routineCondition().pattern());
         
-        // 공휴일 필터 적용
+        // 공휴일 제외 적용
         if (Boolean.TRUE.equals(command.routineCondition().isExcludeHolidays())) {
-            routineDates = holidayFilter.filter(routineDates);
+            Set<LocalDate> holidays = holidayService.getHolidays("KR",
+                                                                 command.startDate(),
+                                                                 command.endDate());
+            
+            routineDates = routineDates.stream()
+                                       .filter(date -> !holidays.contains(date))
+                                       .collect(Collectors.toSet());
         }
         
         List<TodoTask> todoTasks = TodoTask.ofWithRoutine(memberId,
