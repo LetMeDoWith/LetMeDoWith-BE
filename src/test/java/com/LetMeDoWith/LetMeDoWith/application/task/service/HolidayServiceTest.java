@@ -27,40 +27,29 @@ class HolidayServiceTest {
 
     private LocalDate startDate;
     private LocalDate endDate;
-    private Set<Holiday> irregularHolidays;
+    private Set<Holiday> holidays;
 
     @BeforeEach
     void setUp() {
         startDate = LocalDate.of(2024, 1, 1);
         endDate = LocalDate.of(2024, 12, 31);
-        irregularHolidays = Set.of(
+        holidays = Set.of(
+                Holiday.of("KR", LocalDate.of(2024, 1, 1), "신정"),
                 Holiday.of("KR", LocalDate.of(2024, 2, 9), "설날"),
                 Holiday.of("KR", LocalDate.of(2024, 2, 10), "설날"),
-                Holiday.of("KR", LocalDate.of(2024, 2, 11), "설날"));
+                Holiday.of("KR", LocalDate.of(2024, 2, 11), "설날"),
+                Holiday.of("KR", LocalDate.of(2024, 3, 1), "삼일절"));
     }
 
     @Test
-    @DisplayName("[SUCCESS] 고정 공휴일 확인 성공")
-    void testIsHolidayWithFixedHoliday() {
+    @DisplayName("[SUCCESS] 공휴일 확인 성공")
+    void testIsHoliday() {
         // given
-        LocalDate samiljeol = LocalDate.of(2024, 3, 1); // 삼일절
+        LocalDate holiday = LocalDate.of(2024, 1, 1); // 신정
+        when(holidayRepository.isHoliday(holiday)).thenReturn(true);
 
         // when
-        boolean result = holidayService.isHoliday(samiljeol);
-
-        // then
-        assertThat(result).isTrue();
-    }
-
-    @Test
-    @DisplayName("[SUCCESS] 비정기 공휴일 확인 성공")
-    void testIsHolidayWithIrregularHoliday() {
-        // given
-        LocalDate seolnal = LocalDate.of(2024, 2, 9); // 설날
-        when(holidayRepository.isHoliday(seolnal)).thenReturn(true);
-
-        // when
-        boolean result = holidayService.isHoliday(seolnal);
+        boolean result = holidayService.isHoliday(holiday);
 
         // then
         assertThat(result).isTrue();
@@ -70,7 +59,7 @@ class HolidayServiceTest {
     @DisplayName("[SUCCESS] 공휴일이 아닌 날짜 확인 성공")
     void testIsHolidayWithNonHoliday() {
         // given
-        LocalDate normalDay = LocalDate.of(2024, 3, 2); // 삼일절 다음날
+        LocalDate normalDay = LocalDate.of(2024, 1, 2);
         when(holidayRepository.isHoliday(normalDay)).thenReturn(false);
 
         // when
@@ -85,23 +74,16 @@ class HolidayServiceTest {
     void testGetHolidays() {
         // given
         when(holidayRepository.getHolidays("KR", startDate, endDate))
-                .thenReturn(irregularHolidays);
+                .thenReturn(holidays);
 
         // when
-        Set<LocalDate> holidays = holidayService.getHolidays("KR", startDate, endDate);
+        Set<LocalDate> result = holidayService.getHolidays("KR", startDate, endDate);
 
         // then
-        assertThat(holidays).hasSize(irregularHolidays.size() + 7); // 비정기 공휴일 + 고정 공휴일
-        assertThat(holidays).containsAll(irregularHolidays.stream()
+        assertThat(result).hasSize(holidays.size());
+        assertThat(result).containsAll(holidays.stream()
                 .map(Holiday::getDate)
                 .toList());
-        assertThat(holidays).contains(LocalDate.of(2024, 1, 1)); // 신정
-        assertThat(holidays).contains(LocalDate.of(2024, 3, 1)); // 삼일절
-        assertThat(holidays).contains(LocalDate.of(2024, 5, 5)); // 어린이날
-        assertThat(holidays).contains(LocalDate.of(2024, 6, 6)); // 현충일
-        assertThat(holidays).contains(LocalDate.of(2024, 8, 15)); // 광복절
-        assertThat(holidays).contains(LocalDate.of(2024, 10, 3)); // 개천절
-        assertThat(holidays).contains(LocalDate.of(2024, 10, 9)); // 한글날
     }
 
     @Test
@@ -117,13 +99,12 @@ class HolidayServiceTest {
                 .thenReturn(multiYearHolidays);
 
         // when
-        Set<LocalDate> holidays = holidayService.getHolidays("KR", multiYearStartDate, multiYearEndDate);
+        Set<LocalDate> result = holidayService.getHolidays("KR", multiYearStartDate, multiYearEndDate);
 
         // then
-        assertThat(holidays).hasSize(2); // 크리스마스 + 신정(2024)
-        assertThat(holidays).containsExactlyInAnyOrder(
-                LocalDate.of(2023, 12, 25), // 크리스마스
-                LocalDate.of(2024, 1, 1) // 신정(2024)
-        );
+        assertThat(result).hasSize(2);
+        assertThat(result).containsExactlyInAnyOrder(
+                LocalDate.of(2023, 12, 25),
+                LocalDate.of(2024, 1, 1));
     }
 }
