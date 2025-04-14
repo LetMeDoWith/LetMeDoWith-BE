@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.domain.task.service;
+package com.LetMeDoWith.LetMeDoWith.domain.task.service.strategy;
 
 import com.LetMeDoWith.LetMeDoWith.common.annotation.DomainService;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TodoTaskRoutineCycle;
