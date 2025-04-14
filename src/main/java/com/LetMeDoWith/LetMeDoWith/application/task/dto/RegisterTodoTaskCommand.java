@@ -8,7 +8,7 @@ import java.util.Set;
 import lombok.Builder;
 
 @Builder
-public record CreateTodoTaskCommand(
+public record RegisterTodoTaskCommand(
     Long taskCategoryId,
     String title,
     LocalDate startDate,

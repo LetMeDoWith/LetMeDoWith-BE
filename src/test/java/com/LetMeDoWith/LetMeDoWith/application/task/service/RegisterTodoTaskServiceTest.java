@@ -7,8 +7,8 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.CreateTodoTaskCommand;
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.CreateTodoTaskCommand.TodoTaskRoutineCondition;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.RegisterTodoTaskCommand;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.RegisterTodoTaskCommand.TodoTaskRoutineCondition;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.RegisterTodoTaskResult;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
@@ -59,16 +59,16 @@ class RegisterTodoTaskServiceTest {
     @InjectMocks
     private RegisterTodoTaskService registerTodoTaskService;
     
-    private CreateTodoTaskCommand command;
+    private RegisterTodoTaskCommand command;
     
     @BeforeEach
     void setUp() {
-        command = CreateTodoTaskCommand.builder()
-                                       .taskCategoryId(1L)
-                                       .title("Test Task")
-                                       .startDate(LocalDate.now().plusDays(1))
-                                       .startTime(LocalTime.of(10, 0))
-                                       .build();
+        command = RegisterTodoTaskCommand.builder()
+                                         .taskCategoryId(1L)
+                                         .title("Test Task")
+                                         .startDate(LocalDate.now().plusDays(1))
+                                         .startTime(LocalTime.of(10, 0))
+                                         .build();
     }
     
     @Test
@@ -134,17 +134,18 @@ class RegisterTodoTaskServiceTest {
                                                                             .isExcludeHolidays(false)
                                                                             .build();
         
-        CreateTodoTaskCommand routineCommand = CreateTodoTaskCommand.builder()
-                                                                    .taskCategoryId(1L)
-                                                                    .title(title)
-                                                                    .startDate(startDate)
-                                                                    .endDate(endDate)
-                                                                    .startTime(LocalTime.now()
-                                                                                        .plusHours(1)) // 현재로부터 1시간 후
-                                                                    .isRoutine(true)
-                                                                    .routineCondition(
-                                                                        routineCondition)
-                                                                    .build();
+        RegisterTodoTaskCommand routineCommand = RegisterTodoTaskCommand.builder()
+                                                                        .taskCategoryId(1L)
+                                                                        .title(title)
+                                                                        .startDate(startDate)
+                                                                        .endDate(endDate)
+                                                                        .startTime(LocalTime.now()
+                                                                                            .plusHours(
+                                                                                                1)) // 현재로부터 1시간 후
+                                                                        .isRoutine(true)
+                                                                        .routineCondition(
+                                                                            routineCondition)
+                                                                        .build();
         
         when(taskCategoryRepository.getTaskCategory(routineCommand.taskCategoryId(), Yn.TRUE))
             .thenReturn(Optional.of(new TaskCategory()));
@@ -210,16 +211,17 @@ class RegisterTodoTaskServiceTest {
                                                                             .isExcludeHolidays(false)
                                                                             .build();
         
-        CreateTodoTaskCommand routineCommand = CreateTodoTaskCommand.builder()
-                                                                    .taskCategoryId(1L)
-                                                                    .title(title)
-                                                                    .startDate(startDate)
-                                                                    .endDate(endDate)
-                                                                    .startTime(LocalTime.of(10, 0))
-                                                                    .isRoutine(true)
-                                                                    .routineCondition(
-                                                                        routineCondition)
-                                                                    .build();
+        RegisterTodoTaskCommand routineCommand = RegisterTodoTaskCommand.builder()
+                                                                        .taskCategoryId(1L)
+                                                                        .title(title)
+                                                                        .startDate(startDate)
+                                                                        .endDate(endDate)
+                                                                        .startTime(LocalTime.of(10,
+                                                                                                0))
+                                                                        .isRoutine(true)
+                                                                        .routineCondition(
+                                                                            routineCondition)
+                                                                        .build();
         
         when(taskCategoryRepository.getTaskCategory(routineCommand.taskCategoryId(), Yn.TRUE))
             .thenReturn(Optional.empty());
@@ -246,16 +248,17 @@ class RegisterTodoTaskServiceTest {
                                                                             .isExcludeHolidays(false)
                                                                             .build();
         
-        CreateTodoTaskCommand routineCommand = CreateTodoTaskCommand.builder()
-                                                                    .taskCategoryId(1L)
-                                                                    .title(title)
-                                                                    .startDate(startDate)
-                                                                    .endDate(endDate)
-                                                                    .startTime(LocalTime.of(10, 0))
-                                                                    .isRoutine(true)
-                                                                    .routineCondition(
-                                                                        routineCondition)
-                                                                    .build();
+        RegisterTodoTaskCommand routineCommand = RegisterTodoTaskCommand.builder()
+                                                                        .taskCategoryId(1L)
+                                                                        .title(title)
+                                                                        .startDate(startDate)
+                                                                        .endDate(endDate)
+                                                                        .startTime(LocalTime.of(10,
+                                                                                                0))
+                                                                        .isRoutine(true)
+                                                                        .routineCondition(
+                                                                            routineCondition)
+                                                                        .build();
         
         when(taskCategoryRepository.getTaskCategory(routineCommand.taskCategoryId(), Yn.TRUE))
             .thenReturn(Optional.of(new TaskCategory()));
@@ -295,16 +298,17 @@ class RegisterTodoTaskServiceTest {
                                                                             .isExcludeHolidays(false)
                                                                             .build();
         
-        CreateTodoTaskCommand routineCommand = CreateTodoTaskCommand.builder()
-                                                                    .taskCategoryId(1L)
-                                                                    .title(title)
-                                                                    .startDate(startDate)
-                                                                    .endDate(endDate)
-                                                                    .startTime(LocalTime.of(10, 0))
-                                                                    .isRoutine(true)
-                                                                    .routineCondition(
-                                                                        routineCondition)
-                                                                    .build();
+        RegisterTodoTaskCommand routineCommand = RegisterTodoTaskCommand.builder()
+                                                                        .taskCategoryId(1L)
+                                                                        .title(title)
+                                                                        .startDate(startDate)
+                                                                        .endDate(endDate)
+                                                                        .startTime(LocalTime.of(10,
+                                                                                                0))
+                                                                        .isRoutine(true)
+                                                                        .routineCondition(
+                                                                            routineCondition)
+                                                                        .build();
         
         when(taskCategoryRepository.getTaskCategory(routineCommand.taskCategoryId(), Yn.TRUE))
             .thenReturn(Optional.of(new TaskCategory()));

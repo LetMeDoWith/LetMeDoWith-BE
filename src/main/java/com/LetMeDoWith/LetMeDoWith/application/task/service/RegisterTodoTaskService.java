@@ -1,6 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.application.task.service;
 
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.CreateTodoTaskCommand;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.RegisterTodoTaskCommand;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.RegisterTodoTaskResult;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.TodoTaskVO;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
@@ -32,7 +32,7 @@ public class RegisterTodoTaskService {
      * @param command  생성할 TodoTask의 정보 (카테고리 ID, 제목, 시작일, 시작시간, 루틴여부)
      * @return 생성된 TodoTask
      */
-    public RegisterTodoTaskResult registerTodoTask(Long memberId, CreateTodoTaskCommand command) {
+    public RegisterTodoTaskResult registerTodoTask(Long memberId, RegisterTodoTaskCommand command) {
         if (command.taskCategoryId() != null) {
             taskCategoryRepository.getActiveTaskCategory(command.taskCategoryId(), memberId)
                                   .orElseThrow(() -> new RestApiException(
@@ -57,7 +57,7 @@ public class RegisterTodoTaskService {
      * @return 생성된 루틴의 TodoTask 목록
      */
     public RegisterTodoTaskResult registerTodoTaskRoutine(Long memberId,
-                                                          CreateTodoTaskCommand command) {
+                                                          RegisterTodoTaskCommand command) {
         if (command.taskCategoryId() != null) {
             taskCategoryRepository.getTaskCategory(command.taskCategoryId(), Yn.TRUE)
                                   .orElseThrow(() -> new RestApiException(

@@ -1,7 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.task.dto;
 
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.CreateTodoTaskCommand;
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.CreateTodoTaskCommand.TodoTaskRoutineCondition;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.RegisterTodoTaskCommand;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.RegisterTodoTaskCommand.TodoTaskRoutineCondition;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -34,16 +34,16 @@ public record CreateTodoTaskReqDto(
 
 ) {
     
-    public CreateTodoTaskCommand toCreateTodoTaskCommand() {
-        return CreateTodoTaskCommand.builder()
-                                    .title(this.title)
-                                    .taskCategoryId(this.taskCategoryId)
-                                    .startDate(this.startDate)
-                                    .startTime(this.startTime)
-                                    .endDate(this.endDate)
-                                    .isRoutine(this.isRoutine)
-                                    .routineCondition(this.routineCondition)
-                                    .build();
+    public RegisterTodoTaskCommand toCreateTodoTaskCommand() {
+        return RegisterTodoTaskCommand.builder()
+                                      .title(this.title)
+                                      .taskCategoryId(this.taskCategoryId)
+                                      .startDate(this.startDate)
+                                      .startTime(this.startTime)
+                                      .endDate(this.endDate)
+                                      .isRoutine(this.isRoutine)
+                                      .routineCondition(this.routineCondition)
+                                      .build();
     }
     
 }
