@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.application.task.repository;
+package com.LetMeDoWith.LetMeDoWith.domain.task.repository;
 
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.Holiday;
 import java.time.LocalDate;

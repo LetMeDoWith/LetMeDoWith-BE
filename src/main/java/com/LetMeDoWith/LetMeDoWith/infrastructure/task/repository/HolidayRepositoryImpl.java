@@ -1,7 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.task.repository;
 
-import com.LetMeDoWith.LetMeDoWith.application.task.repository.HolidayRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.Holiday;
+import com.LetMeDoWith.LetMeDoWith.domain.task.repository.HolidayRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.jpaRepository.HolidayJpaRepository;
 import java.time.LocalDate;
 import java.util.Set;

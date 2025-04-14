@@ -1,7 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.application.task.service;
 
-import com.LetMeDoWith.LetMeDoWith.application.task.repository.HolidayRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.Holiday;
+import com.LetMeDoWith.LetMeDoWith.domain.task.repository.HolidayRepository;
 import java.time.LocalDate;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -11,9 +11,9 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class HolidayService {
-
+    
     private final HolidayRepository holidayRepository;
-
+    
     /**
      * 특정 날짜가 공휴일인지 확인한다.
      *
@@ -23,7 +23,7 @@ public class HolidayService {
     public boolean isHoliday(LocalDate date) {
         return holidayRepository.isHoliday(date);
     }
-
+    
     /**
      * 입력받은 범위에 포함되는 공휴일 목록을 조회한다.
      *
@@ -34,8 +34,8 @@ public class HolidayService {
      */
     public Set<LocalDate> getHolidays(String countryCode, LocalDate start, LocalDate end) {
         return holidayRepository.getHolidays(countryCode, start, end)
-                .stream()
-                .map(Holiday::getDate)
-                .collect(Collectors.toSet());
+                                .stream()
+                                .map(Holiday::getDate)
+                                .collect(Collectors.toSet());
     }
 }

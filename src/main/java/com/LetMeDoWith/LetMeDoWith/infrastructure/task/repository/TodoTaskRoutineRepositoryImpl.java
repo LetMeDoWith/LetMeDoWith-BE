@@ -1,7 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.task.repository;
 
-import com.LetMeDoWith.LetMeDoWith.application.task.repository.TodoTaskRoutineRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TodoTaskRoutine;
+import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TodoTaskRoutineRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.jpaRepository.TodoTaskRoutineJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
