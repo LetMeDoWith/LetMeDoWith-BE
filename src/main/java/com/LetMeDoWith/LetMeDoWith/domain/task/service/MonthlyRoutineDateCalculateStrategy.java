@@ -8,7 +8,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 @DomainService
-public class MonthlyRoutineScheduleStrategy implements TodoTaskRoutineScheduleStrategy {
+public class MonthlyRoutineDateCalculateStrategy implements TodoTaskRoutineDateCalculateStrategy {
     
     
     /**

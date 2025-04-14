@@ -10,10 +10,8 @@ import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TodoTask;
 import com.LetMeDoWith.LetMeDoWith.domain.task.service.TodoTaskRoutineDateCalculator;
-import com.LetMeDoWith.LetMeDoWith.domain.task.service.TodoTaskRoutineScheduleStrategy;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,15 +19,12 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class RegisterTodoTaskService {
-    
-    private static final String ROUTINE_SCHEDULE_STRATEGY_KEY_SUFFIX = "RoutineScheduleStrategy";
-    
+
     private final TodoTaskRepository todoTaskRepository;
     private final TaskCategoryRepository taskCategoryRepository;
     private final TodoTaskRoutineDateCalculator routineDateCalculator;
-    private final Map<String, TodoTaskRoutineScheduleStrategy> routineScheduleStrategies;
     private final HolidayFilter holidayFilter;
-    
+
     /**
      * 루틴이 아닌 TodoTask를 생성한다.
      *
@@ -40,19 +35,19 @@ public class RegisterTodoTaskService {
     public RegisterTodoTaskResult registerTodoTask(Long memberId, CreateTodoTaskCommand command) {
         if (command.taskCategoryId() != null) {
             taskCategoryRepository.getActiveTaskCategory(command.taskCategoryId(), memberId)
-                                  .orElseThrow(() -> new RestApiException(
-                                      FailResponseStatus.DOWITH_TASK_TASK_CATEGORY_NOT_EXIST));
+                    .orElseThrow(() -> new RestApiException(
+                            FailResponseStatus.DOWITH_TASK_TASK_CATEGORY_NOT_EXIST));
         }
-        
+
         TodoTask todoTask = TodoTask.of(memberId,
-                                        command.taskCategoryId(),
-                                        command.title(),
-                                        command.startDate(),
-                                        command.startTime());
-        
+                command.taskCategoryId(),
+                command.title(),
+                command.startDate(),
+                command.startTime());
+
         return RegisterTodoTaskResult.of(TodoTaskVO.from(todoTaskRepository.saveTodoTask(todoTask)));
     }
-    
+
     /**
      * TodoTask 루틴을 생성한다.
      *
@@ -62,40 +57,36 @@ public class RegisterTodoTaskService {
      * @return 생성된 루틴의 TodoTask 목록
      */
     public RegisterTodoTaskResult registerTodoTaskRoutine(Long memberId,
-                                                          CreateTodoTaskCommand command) {
+            CreateTodoTaskCommand command) {
         if (command.taskCategoryId() != null) {
             taskCategoryRepository.getTaskCategory(command.taskCategoryId(), Yn.TRUE)
-                                  .orElseThrow(() -> new RestApiException(
-                                      FailResponseStatus.DOWITH_TASK_TASK_CATEGORY_NOT_EXIST));
+                    .orElseThrow(() -> new RestApiException(
+                            FailResponseStatus.DOWITH_TASK_TASK_CATEGORY_NOT_EXIST));
         }
-        
-        // 루틴 반복 주기에 따른 루틴 수행일자 계산 전략 선택
-        String strategyKey = command.routineCondition().cycle().name().toLowerCase()
-            + ROUTINE_SCHEDULE_STRATEGY_KEY_SUFFIX;
-        TodoTaskRoutineScheduleStrategy strategy = routineScheduleStrategies.get(strategyKey);
-        
-        Set<LocalDate> routineDates = routineDateCalculator.computeRoutineDates(strategy,
-                                                                                command.startDate(),
-                                                                                command.endDate(),
-                                                                                command.routineCondition()
-                                                                                       .pattern());
-        
+
+        // 루틴 반복 주기에 따른 루틴 수행일자 계산
+        Set<LocalDate> routineDates = routineDateCalculator.computeRoutineDates(
+                command.routineCondition().cycle(),
+                command.startDate(),
+                command.endDate(),
+                command.routineCondition().pattern());
+
         // 공휴일 필터 적용
         if (Boolean.TRUE.equals(command.routineCondition().isExcludeHolidays())) {
             routineDates = holidayFilter.filter(routineDates);
         }
-        
+
         List<TodoTask> todoTasks = TodoTask.ofWithRoutine(memberId,
-                                                          command.taskCategoryId(),
-                                                          command.title(),
-                                                          command.startDate(),
-                                                          command.startTime(),
-                                                          routineDates);
-        
+                command.taskCategoryId(),
+                command.title(),
+                command.startDate(),
+                command.startTime(),
+                routineDates);
+
         return RegisterTodoTaskResult.of(todoTaskRepository.saveTodoTasks(todoTasks)
-                                                           .stream()
-                                                           .map(TodoTaskVO::from)
-                                                           .toList(),
-                                         routineDates);
+                .stream()
+                .map(TodoTaskVO::from)
+                .toList(),
+                routineDates);
     }
 }

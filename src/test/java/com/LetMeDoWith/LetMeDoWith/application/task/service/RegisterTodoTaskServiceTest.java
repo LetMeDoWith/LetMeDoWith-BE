@@ -12,14 +12,15 @@ import com.LetMeDoWith.LetMeDoWith.application.task.dto.CreateTodoTaskCommand.To
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.RegisterTodoTaskResult;
 import com.LetMeDoWith.LetMeDoWith.application.task.repository.TaskCategoryRepository;
 import com.LetMeDoWith.LetMeDoWith.application.task.repository.TodoTaskRepository;
+import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TodoTaskRoutineCycle;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskCategory;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TodoTask;
-import com.LetMeDoWith.LetMeDoWith.domain.task.service.DailyRoutineScheduleStrategy;
+import com.LetMeDoWith.LetMeDoWith.domain.task.service.DailyRoutineDateCalculateStrategy;
+import com.LetMeDoWith.LetMeDoWith.domain.task.service.TodoTaskRoutineDateCalculateStrategy;
 import com.LetMeDoWith.LetMeDoWith.domain.task.service.TodoTaskRoutineDateCalculator;
-import com.LetMeDoWith.LetMeDoWith.domain.task.service.TodoTaskRoutineScheduleStrategy;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -47,10 +48,10 @@ class RegisterTodoTaskServiceTest {
     private TodoTaskRoutineDateCalculator routineDateCalculator;
     
     @Mock
-    private DailyRoutineScheduleStrategy dailyRoutineScheduleStrategy;
+    private DailyRoutineDateCalculateStrategy dailyRoutineScheduleStrategy;
     
     @Mock
-    private Map<String, TodoTaskRoutineScheduleStrategy> routineScheduleStrategies;
+    private Map<String, TodoTaskRoutineDateCalculateStrategy> routineScheduleStrategies;
     
     @Mock
     private HolidayFilter holidayFilter;
@@ -145,17 +146,14 @@ class RegisterTodoTaskServiceTest {
                                                                         routineCondition)
                                                                     .build();
         
-        when(taskCategoryRepository.getActiveTaskCategory(routineCommand.taskCategoryId(), 1L))
+        when(taskCategoryRepository.getTaskCategory(routineCommand.taskCategoryId(), Yn.TRUE))
             .thenReturn(Optional.of(new TaskCategory()));
-        
-        when(routineScheduleStrategies.get("dailyRoutineScheduleStrategy"))
-            .thenReturn(dailyRoutineScheduleStrategy);
         
         Set<LocalDate> routineDates = Set.of(startDate,
                                              startDate.plusDays(1),
                                              startDate.plusDays(2));
         when(routineDateCalculator.computeRoutineDates(
-            any(DailyRoutineScheduleStrategy.class),
+            eq(cycle),
             eq(startDate),
             eq(endDate),
             eq(Set.of())))
@@ -189,10 +187,9 @@ class RegisterTodoTaskServiceTest {
         assertThat(result.routineDates()).containsExactlyInAnyOrderElementsOf(routineDates);
         
         // 메소드 호출 검증
-        verify(taskCategoryRepository).getActiveTaskCategory(routineCommand.taskCategoryId(), 1L);
-        verify(routineScheduleStrategies).get("dailyRoutineScheduleStrategy");
+        verify(taskCategoryRepository).getTaskCategory(routineCommand.taskCategoryId(), Yn.TRUE);
         verify(routineDateCalculator).computeRoutineDates(
-            any(DailyRoutineScheduleStrategy.class),
+            eq(cycle),
             eq(startDate),
             eq(endDate),
             eq(Set.of()));
@@ -224,7 +221,7 @@ class RegisterTodoTaskServiceTest {
                                                                         routineCondition)
                                                                     .build();
         
-        when(taskCategoryRepository.getActiveTaskCategory(routineCommand.taskCategoryId(), 1L))
+        when(taskCategoryRepository.getTaskCategory(routineCommand.taskCategoryId(), Yn.TRUE))
             .thenReturn(Optional.empty());
         
         // when & then
@@ -260,14 +257,11 @@ class RegisterTodoTaskServiceTest {
                                                                         routineCondition)
                                                                     .build();
         
-        when(taskCategoryRepository.getActiveTaskCategory(routineCommand.taskCategoryId(), 1L))
+        when(taskCategoryRepository.getTaskCategory(routineCommand.taskCategoryId(), Yn.TRUE))
             .thenReturn(Optional.of(new TaskCategory()));
         
-        when(routineScheduleStrategies.get("dailyRoutineScheduleStrategy"))
-            .thenReturn(dailyRoutineScheduleStrategy);
-        
         when(routineDateCalculator.computeRoutineDates(
-            any(DailyRoutineScheduleStrategy.class),
+            eq(cycle),
             eq(startDate),
             eq(endDate),
             eq(Set.of())))
@@ -312,14 +306,11 @@ class RegisterTodoTaskServiceTest {
                                                                         routineCondition)
                                                                     .build();
         
-        when(taskCategoryRepository.getActiveTaskCategory(routineCommand.taskCategoryId(), 1L))
+        when(taskCategoryRepository.getTaskCategory(routineCommand.taskCategoryId(), Yn.TRUE))
             .thenReturn(Optional.of(new TaskCategory()));
         
-        when(routineScheduleStrategies.get("weeklyRoutineScheduleStrategy"))
-            .thenReturn(dailyRoutineScheduleStrategy);
-        
         when(routineDateCalculator.computeRoutineDates(
-            any(DailyRoutineScheduleStrategy.class),
+            eq(cycle),
             eq(startDate),
             eq(endDate),
             eq(Set.of(1, 2, 3, 4, 5, 6, 7, 8))))
