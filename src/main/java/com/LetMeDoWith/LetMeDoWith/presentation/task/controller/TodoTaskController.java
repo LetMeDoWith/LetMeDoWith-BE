@@ -26,36 +26,35 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/task/todo")
 @RequiredArgsConstructor
 public class TodoTaskController {
-
+    
     private final RegisterTodoTaskService registerTodoTaskService;
-
+    
     @Operation(summary = "투두모드 태스크 등록", description = "투두모드 태스크를 등록합니다. 루틴이 설정된 Task인 경우 isRoutine을 true로 세팅하고 rountineDates에 Task의 date 포함한 루틴 일자를 리스트로 넣어줍니다.")
-    @ApiSuccessResponse(description = "투두모드 Task 생성 성공. 루틴인 경우 루틴으로 인해 생성된 투두모드 Task를 포함하여 N개의 Object가 반환됩니다.")
+    @ApiSuccessResponse(description = "투두모드 Task 생성 성공. 본 API는 생성 성공 여부만 반환합니다. 이후 데이터는 조회 API에서 확인할 수 있습니다.")
     @ApiErrorResponses({
-            @ApiErrorResponse(status = FailResponseStatus.INVALID_PARAM_ERROR, description = "Request Body의 title이 공백이거나, 40자 초과인경우 / startDate가 null인 경우 / startTime이 null인 경우 / isRoutine이 null인 경우"),
-            @ApiErrorResponse(status = FailResponseStatus.DOWITH_TASK_TASK_CATEGORY_NOT_EXIST, description = "Task 카테고리가 존재하지 않는 경우"),
-            @ApiErrorResponse(status = FailResponseStatus.DOWITH_TASK_NOT_AVAIL_DATE, description = "시작일이 종료일보다 늦거나 과거 날짜인 경우"),
-            @ApiErrorResponse(status = FailResponseStatus.DOWITH_TASK_NOT_AVAIL_START_TIME, description = "오늘 날짜의 경우 시작 시간이 현재 시간보다 이전인 경우")
+        @ApiErrorResponse(status = FailResponseStatus.INVALID_PARAM_ERROR, description = "Request Body의 title이 공백이거나, 40자 초과인경우 / startDate가 null인 경우 / startTime이 null인 경우 / isRoutine이 null인 경우"),
+        @ApiErrorResponse(status = FailResponseStatus.DOWITH_TASK_TASK_CATEGORY_NOT_EXIST, description = "Task 카테고리가 존재하지 않는 경우"),
+        @ApiErrorResponse(status = FailResponseStatus.DOWITH_TASK_NOT_AVAIL_DATE, description = "시작일이 종료일보다 늦거나 과거 날짜인 경우"),
+        @ApiErrorResponse(status = FailResponseStatus.DOWITH_TASK_NOT_AVAIL_START_TIME, description = "오늘 날짜의 경우 시작 시간이 현재 시간보다 이전인 경우")
     })
     @PostMapping("")
     public ResponseEntity<ResponseDto<CreateTodoTaskResDto>> registerTodoTask(
-            @Valid @RequestBody CreateTodoTaskReqDto request) {
+        @Valid @RequestBody CreateTodoTaskReqDto request) {
         Long memberId = AuthUtil.getMemberId();
-
+        
         RegisterTodoTaskResult result;
-
+        
         if (request.isRoutine()) {
             result = registerTodoTaskService.registerTodoTaskRoutine(
-                    memberId,
-                    request.toCreateTodoTaskCommand());
+                memberId,
+                request.toCreateTodoTaskCommand());
         } else {
             result = registerTodoTaskService.registerTodoTask(
-                    memberId,
-                    request.toCreateTodoTaskCommand());
+                memberId,
+                request.toCreateTodoTaskCommand());
         }
-
-        return ResponseUtil.createSuccessResponse(
-                CreateTodoTaskResDto.of(result.todoTaskList(),
-                        result.routineDates()));
+        
+        // 생성은 성공 여부만 반환, 이후 데이터는 조회 API에서 확인
+        return ResponseUtil.createSuccessResponse();
     }
 }
