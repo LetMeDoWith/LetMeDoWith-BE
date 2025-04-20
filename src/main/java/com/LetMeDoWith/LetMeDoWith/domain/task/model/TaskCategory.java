@@ -45,6 +45,16 @@ public class TaskCategory extends BaseAuditEntity {
     @Column(name = "category_holder_id")
     private Long categoryHolderId;
     
+    public static TaskCategory of(String title, TaskCategoryCreationType creationType, String emoji,
+                                  Long categoryHolderId) {
+        return TaskCategory.builder()
+                           .title(title)
+                           .creationType(creationType)
+                           .emoji(emoji)
+                           .categoryHolderId(categoryHolderId)
+                           .build();
+    }
+    
     @Getter
     @AllArgsConstructor
     public enum TaskCategoryCreationType implements BaseEnum {

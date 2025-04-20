@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.application.member.repository;
+package com.LetMeDoWith.LetMeDoWith.domain.member.repository;
 
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.MemberAlarmSetting;

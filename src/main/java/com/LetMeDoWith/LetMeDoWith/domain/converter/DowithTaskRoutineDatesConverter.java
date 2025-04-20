@@ -10,24 +10,26 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Converter(autoApply = true)
-public class DowithTaskRoutineDatesConverter implements AttributeConverter<DowithTaskRoutineDates, String> {
-
-  @Override
-  public String convertToDatabaseColumn(DowithTaskRoutineDates dowithTaskRoutineDates) {
-    StringBuilder sb = new StringBuilder();
-    dowithTaskRoutineDates.getDates().forEach(date -> {
-      sb.append(date.toString());
-      sb.append("/");
-    });
-    sb.deleteCharAt(sb.length()-1);
-    return sb.toString();
-  }
-
-  @Override
-  public DowithTaskRoutineDates convertToEntityAttribute(String s) {
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    Set<LocalDate> dates = Arrays.stream(s.split("/")).map(date -> LocalDate.parse(date, formatter))
-        .collect(Collectors.toSet());
-    return DowithTaskRoutineDates.from(dates);
-  }
+public class DowithTaskRoutineDatesConverter
+    implements AttributeConverter<DowithTaskRoutineDates, String> {
+    
+    @Override
+    public String convertToDatabaseColumn(DowithTaskRoutineDates dowithTaskRoutineDates) {
+        StringBuilder sb = new StringBuilder();
+        dowithTaskRoutineDates.getDates().forEach(date -> {
+            sb.append(date.toString());
+            sb.append("/");
+        });
+        sb.deleteCharAt(sb.length() - 1);
+        return sb.toString();
+    }
+    
+    @Override
+    public DowithTaskRoutineDates convertToEntityAttribute(String s) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        Set<LocalDate> dates = Arrays.stream(s.split("/"))
+                                     .map(date -> LocalDate.parse(date, formatter))
+                                     .collect(Collectors.toSet());
+        return DowithTaskRoutineDates.from(dates);
+    }
 }

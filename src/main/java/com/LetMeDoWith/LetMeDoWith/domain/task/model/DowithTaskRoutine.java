@@ -35,27 +35,50 @@ public class DowithTaskRoutine extends BaseAuditEntity {
     private DowithTaskRoutineDates routineDates;
     
     public static DowithTaskRoutine from(Set<LocalDate> dates) {
+        
+        DowithTaskRoutineDates routineDates = DowithTaskRoutineDates.from(dates);
+        routineDates.validate();
+        
         return DowithTaskRoutine.builder()
-                                .routineDates(DowithTaskRoutineDates.from(dates))
+                                .routineDates(routineDates)
                                 .build();
     }
     
     public void updateRoutineDates(Set<LocalDate> dates) {
-        this.routineDates = DowithTaskRoutineDates.from(dates);
+        DowithTaskRoutineDates routineDate = DowithTaskRoutineDates.from(dates);
+        routineDates.validate();
+        this.routineDates = routineDate;
     }
     
     public Set<LocalDate> getDates() {
         return this.routineDates.getDates();
     }
     
-    public Set<LocalDate> getDatesBefore(LocalDate standardDate) {
-        return this.routineDates.getDates().stream().filter(date -> date.isBefore(standardDate))
+    public Set<LocalDate> getDatesBeforeAndEqual(LocalDate standardDate) {
+        return this.routineDates.getDates().stream().filter(date -> !date.isAfter(standardDate))
+                                .collect(java.util.stream.Collectors.toSet());
+    }
+    
+    public Set<LocalDate> getDatesAfter(LocalDate standardDate) {
+        return this.routineDates.getDates().stream().filter(date -> date.isAfter(standardDate))
                                 .collect(java.util.stream.Collectors.toSet());
     }
     
     public Set<LocalDate> getDatesAfterAndEqual(LocalDate standardDate) {
         return this.routineDates.getDates().stream().filter(date -> !date.isBefore(standardDate))
                                 .collect(java.util.stream.Collectors.toSet());
+    }
+    
+    public void addDates(Set<LocalDate> dates) {
+        this.routineDates.getDates().addAll(dates);
+    }
+    
+    public void deleteDate(LocalDate date) {
+        this.routineDates.getDates().remove(date);
+    }
+    
+    public void deleteDates(Set<LocalDate> dates) {
+        this.routineDates.getDates().removeAll(dates);
     }
     
 }

@@ -21,7 +21,7 @@ public record GetAllTaskCategoryRes(
 ) {
     
     // todo: 단일 객체 형태 말고 List 형태로 수정할 것.
-
+    
     public static GetAllTaskCategoryRes from(TaskCategory taskCategory) {
         return new GetAllTaskCategoryRes(taskCategory.getId(),
                                          taskCategory.getTitle(),
