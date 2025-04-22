@@ -1,13 +1,13 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.member.repository;
 
-import com.LetMeDoWith.LetMeDoWith.application.member.repository.MemberRepository;
-import com.LetMeDoWith.LetMeDoWith.domain.auth.enums.SocialProvider;
-import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
+import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.domain.auth.enums.SocialProvider;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.MemberSocialAccount;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.MemberTermAgree;
+import com.LetMeDoWith.LetMeDoWith.domain.member.repository.MemberRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.member.jpaRepository.MemberJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.member.jpaRepository.MemberSocialAccountJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.member.jpaRepository.MemberTermAgreeJpaRepository;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 @RequiredArgsConstructor
 public class MemberRepositoryImpl implements MemberRepository {
-
+    
     
     private final MemberJpaRepository memberJpaRepository;
     private final MemberTermAgreeJpaRepository termAgreeJpaRepository;
@@ -34,12 +34,12 @@ public class MemberRepositoryImpl implements MemberRepository {
     public Optional<Member> getMember(SocialProvider provider, String subject) {
         return memberJpaRepository.findByProviderAndSubject(provider, subject);
     }
-
+    
     @Override
     public Optional<Member> getNormalStatusMember(Long id) {
         return memberJpaRepository.findByIdAndStatus(id, MemberStatus.NORMAL);
     }
-
+    
     @Override
     public List<Member> getMembers(String nickname, List<MemberStatus> memberStatuses) {
         return memberJpaRepository.findAllByNicknameAndStatusIn(nickname, memberStatuses);

@@ -1,6 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.task.jpaRepository;
 
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTaskRoutine;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.QDowithTask;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.QDowithTaskConfirm;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.QDowithTaskRoutine;
@@ -80,4 +81,14 @@ public class QDowithTaskRepositoryImpl implements QDowithTaskRepository {
                                                   .fetchJoin().fetchOne());
     }
     
+    @Override
+    public List<DowithTask> findAllDowithTaskAggregates(DowithTaskRoutine dowithTaskRoutine) {
+        return jpaQueryFactory.selectFrom(qDowithTask)
+                              .leftJoin(qDowithTask.confirms, qDowithTaskConfirm)
+                              .leftJoin(qDowithTask.routine, qDowithTaskRoutine)
+                              .where(qDowithTask.routine.eq(dowithTaskRoutine))
+                              .orderBy(qDowithTask.createdAt.asc())
+                              .fetchJoin()
+                              .fetch();
+    }
 }

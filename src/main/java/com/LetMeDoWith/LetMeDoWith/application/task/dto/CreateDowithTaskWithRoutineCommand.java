@@ -12,13 +12,13 @@ public record CreateDowithTaskWithRoutineCommand(
     Long taskCategoryId,
     LocalDate date,
     LocalTime startTime,
-    Boolean isRoutine,
     Set<LocalDate> routineDates
 ) {
-  public Set<LocalDate> getTargetDateSet() {
-    Set<LocalDate> tartgetDateSet = new HashSet<>();
-    tartgetDateSet.add(date);
-    tartgetDateSet.addAll(routineDates);
-    return tartgetDateSet;
-  }
+    
+    public Set<LocalDate> getTargetDateSet() {
+        Set<LocalDate> targetDateSet = new HashSet<>();
+        targetDateSet.add(date);
+        targetDateSet.addAll(routineDates);
+        return targetDateSet;
+    }
 }
