@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class TodoTaskRoutineDateCalculator {
     
-    private static final String ROUTINE_SCHEDULE_STRATEGY_KEY_SUFFIX = "RoutineScheduleStrategy";
+    private static final String ROUTINE_SCHEDULE_STRATEGY_KEY_SUFFIX = "RoutineDateScheduleStrategy";
     private final Map<String, TodoTaskRoutineDateCalculateStrategy> routineScheduleStrategies;
     
     /**

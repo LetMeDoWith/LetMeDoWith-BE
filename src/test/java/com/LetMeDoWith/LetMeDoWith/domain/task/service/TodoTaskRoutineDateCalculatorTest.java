@@ -54,7 +54,7 @@ class TodoTaskRoutineDateCalculatorTest {
         LocalDate startDate = LocalDate.of(2024, 1, 1);
         LocalDate endDate = LocalDate.of(2024, 1, 2);
         
-        when(routineScheduleStrategies.get("dailyRoutineScheduleStrategy")).thenReturn(null);
+        when(routineScheduleStrategies.get("dailyRoutineDateScheduleStrategy")).thenReturn(null);
         
         // when & then
         assertThatThrownBy(() -> routineDateCalculator.computeRoutineDates(
@@ -74,7 +74,8 @@ class TodoTaskRoutineDateCalculatorTest {
         LocalDate endDate = LocalDate.of(2024, 1, 2);
         Set<LocalDate> expectedDates = Set.of(startDate, endDate);
         
-        when(routineScheduleStrategies.get("dailyRoutineScheduleStrategy")).thenReturn(dailyStrategy);
+        when(routineScheduleStrategies.get("dailyRoutineDateScheduleStrategy")).thenReturn(
+            dailyStrategy);
         when(dailyStrategy.getRoutineDates(startDate,
                                            endDate,
                                            Set.of(1))).thenReturn(expectedDates);
