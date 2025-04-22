@@ -2,7 +2,6 @@ package com.LetMeDoWith.LetMeDoWith.application.task.service;
 
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.RegisterTodoTaskCommand;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.RegisterTodoTaskResult;
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.TodoTaskVO;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
@@ -46,7 +45,7 @@ public class RegisterTodoTaskService {
                                         command.startDate(),
                                         command.startTime());
         
-        return RegisterTodoTaskResult.of(TodoTaskVO.from(todoTaskRepository.saveTodoTask(todoTask)));
+        return RegisterTodoTaskResult.of(todoTaskRepository.saveTodoTask(todoTask));
     }
     
     /**
@@ -90,10 +89,7 @@ public class RegisterTodoTaskService {
                                                           command.startTime(),
                                                           routineDates);
         
-        return RegisterTodoTaskResult.of(todoTaskRepository.saveTodoTasks(todoTasks)
-                                                           .stream()
-                                                           .map(TodoTaskVO::from)
-                                                           .toList(),
+        return RegisterTodoTaskResult.of(todoTaskRepository.saveTodoTasks(todoTasks),
                                          routineDates);
     }
 }

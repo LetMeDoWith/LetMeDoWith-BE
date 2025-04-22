@@ -1,5 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.application.task.dto;
 
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.TodoTask;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
@@ -7,11 +8,11 @@ import lombok.Builder;
 
 @Builder
 public record RegisterTodoTaskResult(
-    List<TodoTaskVO> todoTaskList,
+    List<TodoTask> todoTaskList,
     Set<LocalDate> routineDates
 ) {
     
-    public static RegisterTodoTaskResult of(List<TodoTaskVO> todoTaskList,
+    public static RegisterTodoTaskResult of(List<TodoTask> todoTaskList,
                                             Set<LocalDate> routineDates) {
         return RegisterTodoTaskResult.builder()
                                      .todoTaskList(todoTaskList)
@@ -19,11 +20,10 @@ public record RegisterTodoTaskResult(
                                      .build();
     }
     
-    public static RegisterTodoTaskResult of(TodoTaskVO todoTaskVO) {
+    public static RegisterTodoTaskResult of(TodoTask todoTask) {
         return RegisterTodoTaskResult.builder()
-                                     .todoTaskList(List.of(todoTaskVO))
+                                     .todoTaskList(List.of(todoTask))
                                      .routineDates(null)
                                      .build();
     }
-    
 }
