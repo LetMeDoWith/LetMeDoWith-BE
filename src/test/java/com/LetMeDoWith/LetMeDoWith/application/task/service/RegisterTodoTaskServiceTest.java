@@ -21,6 +21,7 @@ import com.LetMeDoWith.LetMeDoWith.domain.task.model.TodoTask;
 import com.LetMeDoWith.LetMeDoWith.domain.task.service.TodoTaskRoutineDateCalculator;
 import com.LetMeDoWith.LetMeDoWith.domain.task.service.strategy.DailyRoutineDateCalculateStrategy;
 import com.LetMeDoWith.LetMeDoWith.domain.task.service.strategy.TodoTaskRoutineDateCalculateStrategy;
+import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -66,7 +67,7 @@ class RegisterTodoTaskServiceTest {
                 command = RegisterTodoTaskCommand.builder()
                                 .taskCategoryId(1L)
                                 .title("Test Task")
-                                .startDate(LocalDate.now().plusDays(1))
+                                .startDate(SystemTimeUtil.nowDate().plusDays(1))
                                 .startTime(LocalTime.of(10, 0))
                                 .build();
         }
@@ -78,7 +79,7 @@ class RegisterTodoTaskServiceTest {
                 when(taskCategoryRepository.getActiveTaskCategory(command.taskCategoryId(), 1L))
                                 .thenReturn(Optional.of(new TaskCategory()));
                 when(todoTaskRepository.saveTodoTask(any(TodoTask.class)))
-                                .thenReturn(TodoTask.of(1L, 1L, "Test Task", LocalDate.now().plusDays(1),
+                                .thenReturn(TodoTask.of(1L, 1L, "Test Task", SystemTimeUtil.nowDate().plusDays(1),
                                                 LocalTime.of(10, 0)));
 
                 // when
@@ -93,7 +94,7 @@ class RegisterTodoTaskServiceTest {
         @DisplayName("[SUCCESS] 루틴 TodoTask 생성 성공")
         void testRegisterTodoTaskRoutineSuccess() {
                 // given
-                LocalDate startDate = LocalDate.now().plusDays(1);
+                LocalDate startDate = SystemTimeUtil.nowDate().plusDays(1);
                 LocalDate endDate = startDate.plusDays(7);
                 String title = "매일 운동하기";
                 TodoTaskRoutineCycle cycle = TodoTaskRoutineCycle.DAILY;
@@ -108,7 +109,7 @@ class RegisterTodoTaskServiceTest {
                                 .title(title)
                                 .startDate(startDate)
                                 .endDate(endDate)
-                                .startTime(LocalTime.now().plusHours(1))
+                                .startTime(SystemTimeUtil.nowTime().plusHours(1))
                                 .isRoutine(true)
                                 .routineCondition(routineCondition)
                                 .build();
@@ -127,7 +128,7 @@ class RegisterTodoTaskServiceTest {
                                 .thenReturn(routineDates);
 
                 List<TodoTask> todoTasks = TodoTask.ofWithRoutine(1L, 1L, title, startDate,
-                                LocalTime.now().plusHours(1),
+                                SystemTimeUtil.nowTime().plusHours(1),
                                 routineDates);
                 when(todoTaskRepository.saveTodoTasks(any(List.class)))
                                 .thenReturn(todoTasks);
@@ -145,7 +146,7 @@ class RegisterTodoTaskServiceTest {
         @DisplayName("[SUCCESS] 공휴일 제외 루틴 TodoTask 생성 성공")
         void testRegisterTodoTaskRoutineWithHolidayExclusionSuccess() {
                 // given
-                LocalDate startDate = LocalDate.now().plusDays(1);
+                LocalDate startDate = SystemTimeUtil.nowDate().plusDays(1);
                 LocalDate endDate = startDate.plusDays(7);
                 String title = "매일 운동하기";
                 TodoTaskRoutineCycle cycle = TodoTaskRoutineCycle.DAILY;
@@ -160,7 +161,7 @@ class RegisterTodoTaskServiceTest {
                                 .title(title)
                                 .startDate(startDate)
                                 .endDate(endDate)
-                                .startTime(LocalTime.now().plusHours(1))
+                                .startTime(SystemTimeUtil.nowTime().plusHours(1))
                                 .isRoutine(true)
                                 .routineCondition(routineCondition)
                                 .build();
@@ -183,7 +184,7 @@ class RegisterTodoTaskServiceTest {
                                 .thenReturn(holidays);
 
                 List<TodoTask> todoTasks = TodoTask.ofWithRoutine(1L, 1L, title, startDate,
-                                LocalTime.now().plusHours(1),
+                                SystemTimeUtil.nowTime().plusHours(1),
                                 Set.of(startDate, startDate.plusDays(2)));
                 when(todoTaskRepository.saveTodoTasks(any(List.class)))
                                 .thenReturn(todoTasks);
