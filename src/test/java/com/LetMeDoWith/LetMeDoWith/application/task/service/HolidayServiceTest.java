@@ -3,9 +3,12 @@ package com.LetMeDoWith.LetMeDoWith.application.task.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
+import com.LetMeDoWith.LetMeDoWith.domain.task.enums.CountryCode;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.Holiday;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.HolidayRepository;
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -33,11 +36,11 @@ class HolidayServiceTest {
         startDate = LocalDate.of(2024, 1, 1);
         endDate = LocalDate.of(2024, 12, 31);
         holidays = Set.of(
-            Holiday.of("KR", LocalDate.of(2024, 1, 1), "신정"),
-            Holiday.of("KR", LocalDate.of(2024, 2, 9), "설날"),
-            Holiday.of("KR", LocalDate.of(2024, 2, 10), "설날"),
-            Holiday.of("KR", LocalDate.of(2024, 2, 11), "설날"),
-            Holiday.of("KR", LocalDate.of(2024, 3, 1), "삼일절"));
+            Holiday.of(CountryCode.KR, LocalDate.of(2024, 1, 1), "신정"),
+            Holiday.of(CountryCode.KR, LocalDate.of(2024, 2, 9), "설날"),
+            Holiday.of(CountryCode.KR, LocalDate.of(2024, 2, 10), "설날"),
+            Holiday.of(CountryCode.KR, LocalDate.of(2024, 2, 11), "설날"),
+            Holiday.of(CountryCode.KR, LocalDate.of(2024, 3, 1), "삼일절"));
     }
     
     @Test
@@ -72,11 +75,11 @@ class HolidayServiceTest {
     @DisplayName("[SUCCESS] 공휴일 목록 조회 성공")
     void testGetHolidays() {
         // given
-        when(holidayRepository.getHolidays("KR", startDate, endDate))
+        when(holidayRepository.getHolidays(CountryCode.KR, startDate, endDate))
             .thenReturn(holidays);
         
         // when
-        Set<LocalDate> result = holidayService.getHolidays("KR", startDate, endDate);
+        Set<LocalDate> result = holidayService.getHolidays(CountryCode.KR, startDate, endDate);
         
         // then
         assertThat(result).hasSize(holidays.size());
@@ -92,13 +95,13 @@ class HolidayServiceTest {
         LocalDate multiYearStartDate = LocalDate.of(2023, 12, 1);
         LocalDate multiYearEndDate = LocalDate.of(2024, 1, 31);
         Set<Holiday> multiYearHolidays = Set.of(
-            Holiday.of("KR", LocalDate.of(2023, 12, 25), "크리스마스"),
-            Holiday.of("KR", LocalDate.of(2024, 1, 1), "신정"));
-        when(holidayRepository.getHolidays("KR", multiYearStartDate, multiYearEndDate))
+            Holiday.of(CountryCode.KR, LocalDate.of(2023, 12, 25), "크리스마스"),
+            Holiday.of(CountryCode.KR, LocalDate.of(2024, 1, 1), "신정"));
+        when(holidayRepository.getHolidays(CountryCode.KR, multiYearStartDate, multiYearEndDate))
             .thenReturn(multiYearHolidays);
         
         // when
-        Set<LocalDate> result = holidayService.getHolidays("KR",
+        Set<LocalDate> result = holidayService.getHolidays(CountryCode.KR,
                                                            multiYearStartDate,
                                                            multiYearEndDate);
         
@@ -107,5 +110,28 @@ class HolidayServiceTest {
         assertThat(result).containsExactlyInAnyOrder(
             LocalDate.of(2023, 12, 25),
             LocalDate.of(2024, 1, 1));
+    }
+    
+    @Test
+    @DisplayName("특정 기간의 공휴일을 조회한다")
+    void getHolidaysInPeriod() {
+        // given
+        List<Holiday> holidays = Arrays.asList(
+            Holiday.of(CountryCode.KR, LocalDate.of(2024, 1, 1), "신정"),
+            Holiday.of(CountryCode.KR, LocalDate.of(2024, 2, 9), "설날"),
+            Holiday.of(CountryCode.KR, LocalDate.of(2024, 2, 10), "설날"),
+            Holiday.of(CountryCode.KR, LocalDate.of(2024, 2, 11), "설날"),
+            Holiday.of(CountryCode.KR, LocalDate.of(2024, 3, 1), "삼일절"));
+        // ... existing code ...
+    }
+    
+    @Test
+    @DisplayName("특정 날짜가 공휴일인지 확인한다")
+    void isHoliday() {
+        // given
+        List<Holiday> holidays = Arrays.asList(
+            Holiday.of(CountryCode.KR, LocalDate.of(2023, 12, 25), "크리스마스"),
+            Holiday.of(CountryCode.KR, LocalDate.of(2024, 1, 1), "신정"));
+        // ... existing code ...
     }
 }

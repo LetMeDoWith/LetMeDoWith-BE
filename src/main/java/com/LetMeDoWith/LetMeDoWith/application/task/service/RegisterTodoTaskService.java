@@ -5,6 +5,7 @@ import com.LetMeDoWith.LetMeDoWith.application.task.dto.RegisterTodoTaskResult;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.domain.task.enums.CountryCode;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TodoTask;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TaskCategoryRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TodoTaskRepository;
@@ -73,7 +74,7 @@ public class RegisterTodoTaskService {
         
         // 공휴일 제외 적용
         if (Boolean.TRUE.equals(command.routineCondition().isExcludeHolidays())) {
-            Set<LocalDate> holidays = holidayService.getHolidays("KR",
+            Set<LocalDate> holidays = holidayService.getHolidays(CountryCode.KR,
                                                                  command.startDate(),
                                                                  command.endDate());
             

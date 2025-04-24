@@ -14,6 +14,7 @@ import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
+import com.LetMeDoWith.LetMeDoWith.domain.task.enums.CountryCode;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TodoTaskRoutineCycle;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskCategory;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TodoTask;
@@ -187,7 +188,7 @@ class RegisterTodoTaskServiceTest {
             .thenReturn(routineDates);
         
         Set<LocalDate> holidays = Set.of(startDate.plusDays(1));
-        when(holidayService.getHolidays("KR", startDate, endDate))
+        when(holidayService.getHolidays(CountryCode.KR, startDate, endDate))
             .thenReturn(holidays);
         
         List<TodoTask> todoTasks = TodoTask.ofWithRoutine(1L, 1L, title, startDate,

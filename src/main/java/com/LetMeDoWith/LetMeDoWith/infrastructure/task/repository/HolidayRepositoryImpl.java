@@ -1,5 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.task.repository;
 
+import com.LetMeDoWith.LetMeDoWith.domain.task.enums.CountryCode;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.Holiday;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.HolidayRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.jpaRepository.HolidayJpaRepository;
@@ -20,7 +21,8 @@ public class HolidayRepositoryImpl implements HolidayRepository {
     }
     
     @Override
-    public Set<Holiday> getHolidays(String countryCode, LocalDate startDate, LocalDate endDate) {
+    public Set<Holiday> getHolidays(CountryCode countryCode, LocalDate startDate,
+                                    LocalDate endDate) {
         return holidayJpaRepository.findAllByCountryCodeAndDateBetween(countryCode,
                                                                        startDate,
                                                                        endDate);

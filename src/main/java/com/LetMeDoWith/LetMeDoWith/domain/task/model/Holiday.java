@@ -1,6 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.domain.task.model;
 
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
+import com.LetMeDoWith.LetMeDoWith.domain.task.enums.CountryCode;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -26,7 +27,7 @@ public class Holiday extends BaseAuditEntity {
     private Long id;
     
     @Column(name = "country_code", nullable = false)
-    private String countryCode = "KR"; // 국가 코드 (예: "KR")
+    private CountryCode countryCode = CountryCode.KR;
     
     @Column(nullable = false)
     private LocalDate date; // 공휴일 날짜
@@ -34,7 +35,7 @@ public class Holiday extends BaseAuditEntity {
     @Column(nullable = false)
     private String name; // 공휴일 명칭 (예: 설날, 추석)
     
-    public static Holiday of(String countryCode, LocalDate date, String name) {
+    public static Holiday of(CountryCode countryCode, LocalDate date, String name) {
         return Holiday.builder()
                       .countryCode(countryCode)
                       .date(date)
