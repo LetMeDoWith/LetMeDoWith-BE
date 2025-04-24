@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.domain.converter;
+package com.LetMeDoWith.LetMeDoWith.infrastructure.task.converter;
 
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TodoTaskRoutineDates;
 import jakarta.persistence.AttributeConverter;
