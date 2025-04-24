@@ -56,8 +56,8 @@ public class RegisterTodoTaskService {
      *                 주기, 루틴 반복 패턴)
      * @return 생성된 루틴의 TodoTask 목록
      */
-    public RegisterTodoTaskResult registerTodoTaskRoutine(Long memberId,
-                                                          RegisterTodoTaskCommand command) {
+    public RegisterTodoTaskResult registerTodoTaskWithRoutine(Long memberId,
+                                                              RegisterTodoTaskCommand command) {
         if (command.taskCategoryId() != null) {
             taskCategoryRepository.getTaskCategory(command.taskCategoryId(), Yn.TRUE)
                                   .orElseThrow(() -> new RestApiException(

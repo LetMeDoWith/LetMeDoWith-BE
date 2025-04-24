@@ -45,7 +45,7 @@ public class TodoTaskController {
         RegisterTodoTaskResult result;
         
         if (request.isRoutine()) {
-            result = registerTodoTaskService.registerTodoTaskRoutine(
+            result = registerTodoTaskService.registerTodoTaskWithRoutine(
                 memberId,
                 request.toCreateTodoTaskCommand());
         } else {
