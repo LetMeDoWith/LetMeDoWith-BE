@@ -34,7 +34,7 @@ public class TodoTaskRoutineDateCalculator {
                                               LocalDate endDate,
                                               Set<Integer> repetitionPattern) {
         if (startDate.isAfter(endDate)) {
-            throw new RestApiException(FailResponseStatus.DOWITH_TASK_NOT_AVAIL_DATE);
+            throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
         }
         
         TodoTaskRoutineDateCalculateStrategy strategy = getStrategy(cycle);
@@ -46,7 +46,7 @@ public class TodoTaskRoutineDateCalculator {
         TodoTaskRoutineDateCalculateStrategy strategy = routineScheduleStrategies.get(strategyKey);
         
         if (strategy == null) {
-            throw new RestApiException(FailResponseStatus.DOWITH_TASK_NOT_AVAIL_DATE);
+            throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
         }
         
         return strategy;

@@ -44,7 +44,7 @@ class TodoTaskRoutineDateCalculatorTest {
             endDate,
             Set.of(1))).isInstanceOf(RestApiException.class)
                        .hasFieldOrPropertyWithValue("status",
-                                                    FailResponseStatus.DOWITH_TASK_NOT_AVAIL_DATE);
+                                                    FailResponseStatus.INVALID_REQUEST);
     }
     
     @Test
@@ -63,7 +63,7 @@ class TodoTaskRoutineDateCalculatorTest {
             endDate,
             Set.of(1))).isInstanceOf(RestApiException.class)
                        .hasFieldOrPropertyWithValue("status",
-                                                    FailResponseStatus.DOWITH_TASK_NOT_AVAIL_DATE);
+                                                    FailResponseStatus.INVALID_REQUEST);
     }
     
     @Test

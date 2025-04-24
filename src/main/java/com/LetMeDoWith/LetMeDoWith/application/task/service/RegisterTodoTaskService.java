@@ -62,7 +62,7 @@ public class RegisterTodoTaskService {
         if (command.taskCategoryId() != null) {
             taskCategoryRepository.getTaskCategory(command.taskCategoryId(), Yn.TRUE)
                                   .orElseThrow(() -> new RestApiException(
-                                      FailResponseStatus.DOWITH_TASK_TASK_CATEGORY_NOT_EXIST));
+                                      FailResponseStatus.INVALID_REQUEST));
         }
         
         // 루틴 반복 주기에 따른 루틴 수행일자 계산

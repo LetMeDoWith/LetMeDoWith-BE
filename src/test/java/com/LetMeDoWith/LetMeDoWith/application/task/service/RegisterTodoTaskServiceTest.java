@@ -255,7 +255,7 @@ class RegisterTodoTaskServiceTest {
                                                                                      routineCommand))
             .isInstanceOf(RestApiException.class)
             .hasFieldOrPropertyWithValue("status",
-                                         FailResponseStatus.DOWITH_TASK_TASK_CATEGORY_NOT_EXIST);
+                                         FailResponseStatus.INVALID_REQUEST);
     }
     
     @Test
@@ -292,7 +292,7 @@ class RegisterTodoTaskServiceTest {
                                                                                      routineCommand))
             .isInstanceOf(RestApiException.class)
             .hasFieldOrPropertyWithValue("status",
-                                         FailResponseStatus.DOWITH_TASK_NOT_AVAIL_DATE);
+                                         FailResponseStatus.INVALID_REQUEST);
     }
     
     @Test

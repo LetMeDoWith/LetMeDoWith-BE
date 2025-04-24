@@ -32,10 +32,7 @@ public class TodoTaskController {
     @Operation(summary = "투두모드 태스크 등록", description = "투두모드 태스크를 등록합니다. 루틴이 설정된 Task인 경우 isRoutine을 true로 세팅하고 rountineDates에 Task의 date 포함한 루틴 일자를 리스트로 넣어줍니다.")
     @ApiSuccessResponse(description = "투두모드 Task 생성 성공. 본 API는 생성 성공 여부만 반환합니다. 이후 데이터는 조회 API에서 확인할 수 있습니다.")
     @ApiErrorResponses({
-        @ApiErrorResponse(status = FailResponseStatus.INVALID_PARAM_ERROR, description = "Request Body의 title이 공백이거나, 40자 초과인경우 / startDate가 null인 경우 / startTime이 null인 경우 / isRoutine이 null인 경우"),
-        @ApiErrorResponse(status = FailResponseStatus.DOWITH_TASK_TASK_CATEGORY_NOT_EXIST, description = "Task 카테고리가 존재하지 않는 경우"),
-        @ApiErrorResponse(status = FailResponseStatus.DOWITH_TASK_NOT_AVAIL_DATE, description = "시작일이 종료일보다 늦거나 과거 날짜인 경우"),
-        @ApiErrorResponse(status = FailResponseStatus.DOWITH_TASK_NOT_AVAIL_START_TIME, description = "오늘 날짜의 경우 시작 시간이 현재 시간보다 이전인 경우")
+        @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청입니다."),
     })
     @PostMapping("")
     public ResponseEntity<ResponseDto<CreateTodoTaskResDto>> registerTodoTask(
