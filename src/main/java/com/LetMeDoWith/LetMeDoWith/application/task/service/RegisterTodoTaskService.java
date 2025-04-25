@@ -13,7 +13,6 @@ import com.LetMeDoWith.LetMeDoWith.domain.task.service.TodoTaskRoutineDateCalcul
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -59,11 +58,14 @@ public class RegisterTodoTaskService {
      */
     public RegisterTodoTaskResult registerTodoTaskWithRoutine(Long memberId,
                                                               RegisterTodoTaskCommand command) {
+        
         if (command.taskCategoryId() != null) {
             taskCategoryRepository.getTaskCategory(command.taskCategoryId(), Yn.TRUE)
                                   .orElseThrow(() -> new RestApiException(
                                       FailResponseStatus.INVALID_REQUEST));
         }
+        
+        List<TodoTask> todoTasks;
         
         // 루틴 반복 주기에 따른 루틴 수행일자 계산
         Set<LocalDate> routineDates = routineDateCalculator.computeRoutineDates(
@@ -72,23 +74,29 @@ public class RegisterTodoTaskService {
             command.endDate(),
             command.routineCondition().pattern());
         
-        // 공휴일 제외 적용
         if (Boolean.TRUE.equals(command.routineCondition().isExcludeHolidays())) {
+            // 공휴일 목록 조회
             Set<LocalDate> holidays = holidayService.getHolidays(CountryCode.KR,
                                                                  command.startDate(),
                                                                  command.endDate());
             
-            routineDates = routineDates.stream()
-                                       .filter(date -> !holidays.contains(date))
-                                       .collect(Collectors.toSet());
+            // 공휴일 제외 메서드 사용
+            todoTasks = TodoTask.ofWithRoutine(memberId,
+                                               command.taskCategoryId(),
+                                               command.title(),
+                                               command.startDate(),
+                                               command.startTime(),
+                                               routineDates,
+                                               holidays);
+        } else {
+            // 기본 메서드 사용
+            todoTasks = TodoTask.ofWithRoutine(memberId,
+                                               command.taskCategoryId(),
+                                               command.title(),
+                                               command.startDate(),
+                                               command.startTime(),
+                                               routineDates);
         }
-        
-        List<TodoTask> todoTasks = TodoTask.ofWithRoutine(memberId,
-                                                          command.taskCategoryId(),
-                                                          command.title(),
-                                                          command.startDate(),
-                                                          command.startTime(),
-                                                          routineDates);
         
         return RegisterTodoTaskResult.of(todoTaskRepository.saveTodoTasks(todoTasks),
                                          routineDates);

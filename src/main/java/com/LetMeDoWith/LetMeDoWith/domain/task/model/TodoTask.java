@@ -158,6 +158,30 @@ public class TodoTask extends BaseAuditEntity {
     }
     
     /**
+     * 루틴을 포함한 TodoTask 리스트 생성 메서드 (공휴일 제외)
+     *
+     * @param memberId       회원 ID
+     * @param taskCategoryId 작업 카테고리 ID
+     * @param title          제목
+     * @param date           날짜
+     * @param startTime      시작 시간
+     * @param routineDateSet 루틴 날짜 세트
+     * @param holidays       제외할 공휴일 세트
+     * @return 생성된 TodoTask 리스트
+     */
+    public static List<TodoTask> ofWithRoutine(Long memberId, Long taskCategoryId,
+                                               String title, LocalDate date, LocalTime startTime,
+                                               Set<LocalDate> routineDateSet,
+                                               Set<LocalDate> holidays) {
+        Set<LocalDate> filteredDates = routineDateSet.stream()
+                                                     .filter(routineDate -> !holidays.contains(
+                                                         routineDate))
+                                                     .collect(Collectors.toSet());
+        
+        return ofWithRoutine(memberId, taskCategoryId, title, date, startTime, filteredDates);
+    }
+    
+    /**
      * TodoTask 루틴 생성
      *
      * @param routineDates 루틴 날짜 세트
