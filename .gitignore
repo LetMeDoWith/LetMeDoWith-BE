@@ -36,16 +36,15 @@ out/
 ### VS Code ###
 .vscode/
 
-<<<<<<< HEAD
+
 ### Dev-Confidential ###
 /src/main/**/application-dev-confidential.yml
 
 ### Prod-Confidential ###
 /src/main/**/application-prod-confidential.yml
-=======
+
 ### Confidential ###
 /src/main/**/application-*-confidential.yml
->>>>>>> cda34acde09b873fe8bedf0964f632b803492392
 
 ### Dev server artifacts ###
 samLocalEnvVars.json
@@ -53,3 +52,5 @@ samLocalEnvVars.json
 *.env
 
 /.DS_Store
+/src/main/generated/
+/lib/
