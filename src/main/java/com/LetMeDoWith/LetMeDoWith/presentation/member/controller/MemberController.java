@@ -14,6 +14,7 @@ import com.LetMeDoWith.LetMeDoWith.common.exception.status.SuccessResponseStatus
 import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
 import com.LetMeDoWith.LetMeDoWith.presentation.auth.dto.CreateTokenResDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.CheckNicknameReqDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.SignupCompleteReqDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -76,7 +77,7 @@ public class MemberController {
     /**
      * 닉네임의 중복 여부를 검증한다. 닉네임은 공백일 수 없다.
      *
-     * @param nickname 중복 여부를 검증하려는 닉네임
+     * @param checkNicknameReqDto 중복 여부를 검증하려는 닉네임
      * @return 닉네임의 검증 결과
      */
     @Operation(summary = "닉네임 중복 여부 검증", description = "닉네임 중복 여부를 검증합니다.")
@@ -86,8 +87,9 @@ public class MemberController {
             status = FailResponseStatus.DUPLICATE_NICKNAME)
     })
     @PostMapping("/nickname")
-    public ResponseEntity<ResponseDto<String>> checkNickname(@RequestBody String nickname) {
-        if (memberService.isExistingNickname(nickname)) {
+    public ResponseEntity<ResponseDto<String>> checkNickname(
+        @RequestBody CheckNicknameReqDto checkNicknameReqDto) {
+        if (memberService.isExistingNickname(checkNicknameReqDto.nickname())) {
             throw new RestApiException(FailResponseStatus.DUPLICATE_NICKNAME);
         } else {
             return ResponseUtil.createSuccessResponse("사용 가능한 닉네임입니다.");
