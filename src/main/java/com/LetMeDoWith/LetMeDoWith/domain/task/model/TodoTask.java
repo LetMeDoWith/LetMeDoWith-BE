@@ -3,6 +3,7 @@ package com.LetMeDoWith.LetMeDoWith.domain.task.model;
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.AggregateRoot;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TodoTaskStatus;
 import jakarta.persistence.CascadeType;
@@ -222,7 +223,7 @@ public class TodoTask extends BaseAuditEntity {
      * @return 내용 수정 가능 여부
      */
     public boolean isContentsEditable() {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = SystemTimeUtil.now();
         if (now.toLocalDate().equals(this.date)) {
             return !now.toLocalTime().isAfter(this.startTime);
         }
@@ -249,7 +250,7 @@ public class TodoTask extends BaseAuditEntity {
      */
     public Set<LocalDate> getUpdateAvailRoutineDates() {
         if (isRoutine()) {
-            return this.routine.getDatesAfterAndEqual(LocalDate.now());
+            return this.routine.getDatesAfterAndEqual(SystemTimeUtil.nowDate());
         } else {
             return Set.of();
         }
@@ -324,11 +325,14 @@ public class TodoTask extends BaseAuditEntity {
      * 유효성 검사
      */
     private void validate() {
-        if (LocalDate.now().isEqual(this.date) && LocalTime.now().isAfter(this.startTime)) {
+        LocalDateTime now = SystemTimeUtil.now();
+        LocalDate nowDate = now.toLocalDate();
+        LocalTime nowTime = now.toLocalTime();
+        if (SystemTimeUtil.nowDate().isEqual(this.date) && nowTime.isAfter(this.startTime)) {
             throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
         }
         
-        if (date.isBefore(LocalDate.now())) {
+        if (date.isBefore(nowDate)) {
             throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
         }
         

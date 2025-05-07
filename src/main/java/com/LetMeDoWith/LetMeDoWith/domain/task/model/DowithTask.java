@@ -202,7 +202,7 @@ public class DowithTask extends BaseAuditEntity {
     public void confirm(String imageUrl) {
         confirms = DowithTaskConfirm.of(this, imageUrl);
         this.status = DowithTaskStatus.SUCCESS;
-        this.successDateTime = LocalDateTime.now();
+        this.successDateTime = SystemTimeUtil.now();
     }
     
     /**
@@ -210,7 +210,7 @@ public class DowithTask extends BaseAuditEntity {
      */
     public void complete() {
         this.status = DowithTaskStatus.COMPLETE;
-        this.completeDateTime = LocalDateTime.now();
+        this.completeDateTime = SystemTimeUtil.now();
     }
     
     /**
