@@ -11,6 +11,7 @@ import com.LetMeDoWith.LetMeDoWith.common.dto.ResponseDto;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.SuccessResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
 import com.LetMeDoWith.LetMeDoWith.presentation.auth.dto.CreateTokenResDto;
@@ -21,7 +22,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -99,7 +99,6 @@ public class MemberController {
     /**
      * 멤버를 탈퇴처리한다.
      *
-     * @param memberId 탈퇴하려는 멤버의 id
      * @return 탈퇴 성공 여부
      */
     @Operation(summary = "탈퇴", description = "해당 회원을 탈퇴 처리 합니다.")
@@ -109,6 +108,7 @@ public class MemberController {
     })
     @DeleteMapping("/{memberId}")
     public <T> ResponseEntity<ResponseDto<T>> withdrawMember(@PathVariable String memberId) {
+
         memberService.withdrawMember(memberId);
         
         return ResponseUtil.createSuccessResponse(SuccessResponseStatus.OK);

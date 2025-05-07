@@ -30,10 +30,8 @@ public record UpdateDowithTaskReqDto(
     @NotNull Boolean isRoutineCreate,
     
     @Schema(description = "루틴일", defaultValue = "[\"2025-04-01\", \"2025-04-02\"]")
-    List<LocalDate> routineDates,
-    
-    @Schema(description = "투두모드로 전환 여부", defaultValue = "false")
-    @NotNull Boolean isConvertToTodoTask
+    List<LocalDate> routineDates
+
 ) {
     
     public UpdateDowithTaskContentsCommand toCommand() {
@@ -43,11 +41,13 @@ public record UpdateDowithTaskReqDto(
                                               .taskCategoryId(this.taskCategoryId)
                                               .date(this.startDateTime().toLocalDate())
                                               .startTime(this.startDateTime().toLocalTime())
-                                              .isConvertToTodoTask(this.isConvertToTodoTask)
                                               .build();
     }
     
     public Set<LocalDate> getRoutineDates() {
+        if (routineDates == null) {
+            return new HashSet<>();
+        }
         Set<LocalDate> routineDates = new HashSet<>(this.routineDates);
         routineDates.add(startDateTime.toLocalDate());
         return routineDates;
