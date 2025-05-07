@@ -1,7 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.common.util;
 
-import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
+import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -45,10 +45,10 @@ public class AuthUtil {
         return authorizationHeader;
     }
     
-    public Long getMemberId() {
+    public String getMemberId() {
         
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-        return (Long) request.getAttribute("memberId");
+        return request.getAttribute("memberId").toString();
         
     }
     

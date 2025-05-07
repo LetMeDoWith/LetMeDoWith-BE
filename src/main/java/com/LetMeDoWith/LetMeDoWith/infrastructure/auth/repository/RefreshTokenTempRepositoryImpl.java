@@ -21,10 +21,11 @@ public class RefreshTokenTempRepositoryImpl implements RefreshTokenRepository {
   @Override
   public Optional<RefreshToken> getRefreshToken(String refreshToken) {
     Optional<TempRefreshToken> opTemp = repository.findById(refreshToken);
-    if(opTemp.isEmpty()) return Optional.empty();
+    if (opTemp.isEmpty())
+      return Optional.empty();
     TempRefreshToken tempRefreshToken = opTemp.get();
     LocalDateTime now = LocalDateTime.now();
-    if(tempRefreshToken.getExpireAt().isBefore(now) || tempRefreshToken.getExpireAt().isEqual(now)){
+    if (tempRefreshToken.getExpireAt().isBefore(now) || tempRefreshToken.getExpireAt().isEqual(now)) {
       repository.delete(tempRefreshToken);
       return Optional.empty();
     }
@@ -56,7 +57,7 @@ public class RefreshTokenTempRepositoryImpl implements RefreshTokenRepository {
   }
 
   @Override
-  public void deleteRefreshTokens(Long memberId) {
+  public void deleteRefreshTokens(String memberId) {
     repository.deleteByMemberId(memberId);
   }
 }

@@ -48,8 +48,8 @@ public class DowithTask extends BaseAuditEntity {
     @Column(name = "id", nullable = false)
     private Long id;
     
-    @Column(name = "member_id", nullable = false)
-    private Long memberId;
+    @Column(name = "member_id", nullable = false, length = 26)
+    private String memberId;
     
     @Column(name = "task_category_id", nullable = true)
     private Long taskCategoryId;
@@ -80,7 +80,7 @@ public class DowithTask extends BaseAuditEntity {
     private DowithTaskRoutine routine;
     
     
-    public static DowithTask of(Long memberId, Long taskCategoryId, String title, LocalDate date,
+    public static DowithTask of(String memberId, Long taskCategoryId, String title, LocalDate date,
                                 LocalTime startTime) {
         DowithTask task = DowithTask.builder()
                                     .memberId(memberId)
@@ -96,7 +96,7 @@ public class DowithTask extends BaseAuditEntity {
         return task;
     }
     
-    public static DowithTask of(Long memberId, Long taskCategoryId, String title, LocalDate date,
+    public static DowithTask of(String memberId, Long taskCategoryId, String title, LocalDate date,
                                 LocalTime startTime, DowithTaskRoutine routine) {
         DowithTask task = DowithTask.builder()
                                     .memberId(memberId)
@@ -112,7 +112,7 @@ public class DowithTask extends BaseAuditEntity {
         return task;
     }
     
-    public static List<DowithTask> ofWithRoutine(Long memberId, Long taskCategoryId, String title,
+    public static List<DowithTask> ofWithRoutine(String memberId, Long taskCategoryId, String title,
                                                  LocalDate date, LocalTime startTime,
                                                  Set<LocalDate> routineDateSet) {
         List<DowithTask> result = new ArrayList<>();

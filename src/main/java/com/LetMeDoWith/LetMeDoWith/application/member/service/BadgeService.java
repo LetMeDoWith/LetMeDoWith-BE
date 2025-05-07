@@ -34,7 +34,7 @@ public class BadgeService {
      * @param memberId
      * @return
      */
-    public GetBadgesInfoResult getBadgesInfo(Long memberId) {
+    public GetBadgesInfoResult getBadgesInfo(String memberId) {
         
         Member member = memberRepository.getNormalStatusMember(memberId)
                                         .orElseThrow(() -> new RestApiException(
@@ -53,15 +53,15 @@ public class BadgeService {
      * @param badgeId
      */
     @Transactional
-    public void updateMainBadge(Long memberId, Long badgeId) {
+    public void updateMainBadge(String memberId, Long badgeId) {
         
         Member member = memberRepository.getMember(memberId, MemberStatus.NORMAL)
                                         .orElseThrow(() -> new RestApiException(
                                             MEMBER_NOT_EXIST_BADGE));
-      
-      if (member.isLazyBadgeAcquireLevel()) {
-        throw new RestApiException(LAZY_NOT_AVAIL_UPDATE_MAIN_BADGE);
-      }
+        
+        if (member.isLazyBadgeAcquireLevel()) {
+            throw new RestApiException(LAZY_NOT_AVAIL_UPDATE_MAIN_BADGE);
+        }
         
         Badge newMainBadge = badgeRepository.getBadge(badgeId, BadgeStatus.ACTIVE)
                                             .orElseThrow(() -> new RestApiException(BADGE_NOT_EXIST));

@@ -45,8 +45,8 @@ public class TodoTask extends BaseAuditEntity {
     @Column(name = "id", nullable = false)
     private Long id;
     
-    @Column(name = "member_id", nullable = false)
-    private Long memberId;
+    @Column(name = "member_id", nullable = false, length = 26)
+    private String memberId;
     
     @Column(name = "task_category_id", nullable = true)
     private Long taskCategoryId;
@@ -77,7 +77,7 @@ public class TodoTask extends BaseAuditEntity {
      * @param startTime      시작 시간
      * @return 생성된 TodoTask 객체
      */
-    public static TodoTask of(Long memberId, Long taskCategoryId, String title, LocalDate date,
+    public static TodoTask of(String memberId, Long taskCategoryId, String title, LocalDate date,
                               LocalTime startTime) {
         TodoTask newTodoTask = TodoTask.builder()
                                        .memberId(memberId)
@@ -103,7 +103,7 @@ public class TodoTask extends BaseAuditEntity {
      * @param routine        루틴
      * @return 생성된 TodoTask 객체
      */
-    public static TodoTask of(Long memberId, Long taskCategoryId, String title, LocalDate date,
+    public static TodoTask of(String memberId, Long taskCategoryId, String title, LocalDate date,
                               LocalTime startTime, TodoTaskRoutine routine) {
         TodoTask newTodoTask = TodoTask.builder()
                                        .memberId(memberId)
@@ -129,7 +129,7 @@ public class TodoTask extends BaseAuditEntity {
      * @param routineDateSet 루틴 날짜 세트
      * @return 생성된 TodoTask 리스트
      */
-    public static List<TodoTask> ofWithRoutine(Long memberId, Long taskCategoryId, String title,
+    public static List<TodoTask> ofWithRoutine(String memberId, Long taskCategoryId, String title,
                                                LocalDate date, LocalTime startTime,
                                                Set<LocalDate> routineDateSet) {
         List<TodoTask> result = new ArrayList<>();
@@ -169,7 +169,7 @@ public class TodoTask extends BaseAuditEntity {
      * @param holidays       제외할 공휴일 세트
      * @return 생성된 TodoTask 리스트
      */
-    public static List<TodoTask> ofWithRoutine(Long memberId, Long taskCategoryId,
+    public static List<TodoTask> ofWithRoutine(String memberId, Long taskCategoryId,
                                                String title, LocalDate date, LocalTime startTime,
                                                Set<LocalDate> routineDateSet,
                                                Set<LocalDate> holidays) {

@@ -53,7 +53,7 @@ public class DowithTaskController {
     public ResponseEntity createDowithTask(
         @Valid @RequestBody CreateDowithTaskReqDto requestBody) {
         
-        Long memberId = AuthUtil.getMemberId();
+        String memberId = AuthUtil.getMemberId();
         
         if (requestBody.isRoutine()) {
             createDowithTaskService.createDowithTaskWithRoutine(memberId,
@@ -85,7 +85,7 @@ public class DowithTaskController {
     @PutMapping("")
     public ResponseEntity updateDowithTask(@RequestBody UpdateDowithTaskReqDto requestBody) {
         
-        Long memberId = AuthUtil.getMemberId();
+        String memberId = AuthUtil.getMemberId();
         
         if (requestBody.isRoutineCreate()) {
             updateDowithTaskService.updateContentsAndCreateRoutine(memberId,
@@ -120,7 +120,7 @@ public class DowithTaskController {
     public ResponseEntity updateDowithTaskRoutine(
         @RequestBody UpdateDowithTaskRoutineReqDto requestBody) {
         
-        Long memberId = AuthUtil.getMemberId();
+        String memberId = AuthUtil.getMemberId();
         
         updateDowithTaskService.updateRoutine(memberId,
                                               requestBody.dowithTaskId(),
@@ -140,7 +140,7 @@ public class DowithTaskController {
     @DeleteMapping("/{dowithTaskId}")
     public ResponseEntity deleteDowithTask(@PathVariable Long dowithTaskId,
                                            @RequestParam(name = "isRoutineInclude", required = false, defaultValue = "false") boolean isRoutineInclude) {
-        Long memberId = AuthUtil.getMemberId();
+        String memberId = AuthUtil.getMemberId();
         
         if (isRoutineInclude) {
             deleteDowithTaskService.deleteWithRoutines(memberId, dowithTaskId);

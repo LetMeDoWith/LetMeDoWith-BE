@@ -43,7 +43,7 @@ public class UpdateDowithTaskService {
      * @param routineDates
      */
     @Transactional
-    public DowithTask updateContentsAndCreateRoutine(Long memberId,
+    public DowithTask updateContentsAndCreateRoutine(String memberId,
                                                      UpdateDowithTaskContentsCommand command,
                                                      Set<LocalDate> routineDates) {
         
@@ -92,7 +92,7 @@ public class UpdateDowithTaskService {
      * @param command
      */
     @Transactional
-    public DowithTask updateContentsOnly(Long memberId,
+    public DowithTask updateContentsOnly(String memberId,
                                          UpdateDowithTaskContentsCommand command) {
         
         DowithTask dowithTask = dowithTaskRepository.getDowithTask(command.id(), memberId)
@@ -152,7 +152,7 @@ public class UpdateDowithTaskService {
      * @param routineDates
      */
     @Transactional
-    public DowithTask updateRoutine(Long memberId, Long dowithTaskId,
+    public DowithTask updateRoutine(String memberId, Long dowithTaskId,
                                     Set<LocalDate> routineDates) {
         
         final DowithTask dowithTask = dowithTaskRepository.getDowithTask(dowithTaskId, memberId)

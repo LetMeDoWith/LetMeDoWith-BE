@@ -28,7 +28,7 @@ public class TaskCategoryService {
      * @param memberId 조회하려는 멤버의 id
      * @return 멤버가 생성한 개인 카테고리 + 공통 카테고리
      */
-    public List<TaskCategory> getAllCategory(Long memberId) {
+    public List<TaskCategory> getAllCategory(String memberId) {
         List<TaskCategory> userCreatedCategories = taskCategoryRepository.getCategories(memberId,
                                                                                         Yn.TRUE);
         

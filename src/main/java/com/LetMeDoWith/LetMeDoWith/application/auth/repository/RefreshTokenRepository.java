@@ -11,6 +11,7 @@ public interface RefreshTokenRepository {
 	RefreshToken save(RefreshToken refreshToken);
 
 	void deleteRefreshToken(RefreshToken refreshToken);
-	void deleteRefreshTokens(Long memberId);
+
+	void deleteRefreshTokens(String memberId);
 
 }

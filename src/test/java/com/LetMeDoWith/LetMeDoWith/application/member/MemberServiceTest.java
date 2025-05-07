@@ -144,7 +144,7 @@ class MemberServiceTest {
     @DisplayName("[SUCCESS] 유저 탈퇴")
     void withdrawMemberTest() {
         Member member = Member.builder()
-                              .id(1L)
+                              .id("1L")
                               .subject("subject")
                               .nickname("nickname")
                               .selfDescription("self desc")
@@ -154,11 +154,11 @@ class MemberServiceTest {
                               .profileImageUrl("image.jpeg")
                               .build();
         
-        Mockito.when(memberRepository.getMember(ArgumentMatchers.eq(1L),
+        Mockito.when(memberRepository.getMember(ArgumentMatchers.eq("1L"),
                                                 ArgumentMatchers.eq(MemberStatus.NORMAL)))
                .thenReturn(Optional.of(member));
         
-        memberService.withdrawMember(1L);
+        memberService.withdrawMember("1L");
         
         Assertions.assertEquals(member.getStatus(), MemberStatus.WITHDRAWN);
     }
@@ -167,7 +167,7 @@ class MemberServiceTest {
     @DisplayName("[FAIL] 일반 상태 외에서 탈퇴 시도")
     void withdrawAbnormalStatusMemberTest() {
         Member member = Member.builder()
-                              .id(1L)
+                              .id("1L")
                               .subject("subject")
                               .nickname("nickname")
                               .selfDescription("self desc")
@@ -177,13 +177,13 @@ class MemberServiceTest {
                               .profileImageUrl("image.jpeg")
                               .build();
         
-        Mockito.when(memberRepository.getMember(ArgumentMatchers.eq(1L),
+        Mockito.when(memberRepository.getMember(ArgumentMatchers.eq("1L"),
                                                 ArgumentMatchers.eq(MemberStatus.NORMAL)))
                .thenReturn(Optional.empty());
         
         Assertions.assertThrows(RestApiException.class,
                                 () -> {
-                                    memberService.withdrawMember(1L);
+                                    memberService.withdrawMember("1L");
                                 },
                                 FailResponseStatus.MEMBER_CANNOT_WITHDRAW.getMessage());
     }

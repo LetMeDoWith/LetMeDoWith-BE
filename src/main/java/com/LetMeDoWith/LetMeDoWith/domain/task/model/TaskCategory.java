@@ -42,11 +42,11 @@ public class TaskCategory extends BaseAuditEntity {
     @Column(name = "emoji", nullable = false)
     private String emoji;
     
-    @Column(name = "category_holder_id")
-    private Long categoryHolderId;
+    @Column(name = "category_holder_id", length = 26)
+    private String categoryHolderId;
     
     public static TaskCategory of(String title, TaskCategoryCreationType creationType, String emoji,
-                                  Long categoryHolderId) {
+                                  String categoryHolderId) {
         return TaskCategory.builder()
                            .title(title)
                            .creationType(creationType)

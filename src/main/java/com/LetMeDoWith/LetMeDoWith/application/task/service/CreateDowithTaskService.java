@@ -34,7 +34,7 @@ public class CreateDowithTaskService {
      * @param command
      */
     @Transactional
-    public DowithTask createDowithTask(Long memberId, CreateDowithTaskCommand command) {
+    public DowithTask createDowithTask(String memberId, CreateDowithTaskCommand command) {
         
         Set<LocalDate> targetDateSet = command.getTargetDateSet();
         
@@ -66,7 +66,7 @@ public class CreateDowithTaskService {
      * @return
      */
     @Transactional
-    public List<DowithTask> createDowithTaskWithRoutine(Long memberId,
+    public List<DowithTask> createDowithTaskWithRoutine(String memberId,
                                                         CreateDowithTaskWithRoutineCommand command) {
         
         Set<LocalDate> targetDateSet = command.getTargetDateSet();

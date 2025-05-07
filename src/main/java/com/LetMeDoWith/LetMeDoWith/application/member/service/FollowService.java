@@ -22,7 +22,7 @@ public class FollowService {
     private final MemberRepository memberRepository;
     private final FollowRepository followRepository;
     
-    public RetrieveFollowsResDto retrieveFollows(Long memberId,
+    public RetrieveFollowsResDto retrieveFollows(String memberId,
                                                  FollowType followType,
                                                  Pageable pageable) {
         
@@ -67,7 +67,7 @@ public class FollowService {
     }
     
     @Transactional
-    public void createFollow(Long memberId, Long followingMemberId) {
+    public void createFollow(String memberId, String followingMemberId) {
         
         Member followerMember = memberRepository.getMember(memberId, MemberStatus.NORMAL)
                                                 .orElseThrow(() -> new RestApiException(
@@ -82,7 +82,7 @@ public class FollowService {
     }
     
     @Transactional
-    public void deleteFollow(Long memberId, Long followingMemberId) {
+    public void deleteFollow(String memberId, String followingMemberId) {
         
         MemberFollow memberFollow = followRepository.getFollowing(
                                                         memberId,

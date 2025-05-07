@@ -30,8 +30,8 @@ public class MemberBadge extends BaseAuditEntity {
     @Column(name = "id", nullable = false)
     private Long id;
     
-    @Column(name = "member_id")
-    private Long memberId;
+    @Column(name = "member_id", length = 26)
+    private String memberId;
     
     @ManyToOne
     @JoinColumn(name = "badge_id", nullable = false)

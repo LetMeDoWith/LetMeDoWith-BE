@@ -1,13 +1,13 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.member.controller;
 
-import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.CreateFollowReqDto;
-import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.RetrieveFollowsResDto;
-import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.application.member.service.FollowService;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.FollowType;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
-import com.LetMeDoWith.LetMeDoWith.application.member.service.FollowService;
+import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
+import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.CreateFollowReqDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.RetrieveFollowsResDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -29,14 +29,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class FollowController {
     
     private final FollowService followService;
-
+    
     @Operation(summary = "팔로우 목록 조회", description = "유져의 팔로우 목록을 조회합니다.")
     @GetMapping("/{memberId}")
-    public ResponseEntity retrieveFollows(@PathVariable(name = "memberId") Long memberId,
-        @RequestParam(name = "followType") FollowType type,
-        Pageable pageable) {
+    public ResponseEntity retrieveFollows(@PathVariable(name = "memberId") String memberId,
+                                          @RequestParam(name = "followType") FollowType type,
+                                          Pageable pageable) {
         
-        Long tokenMemberId = AuthUtil.getMemberId();
+        String tokenMemberId = AuthUtil.getMemberId();
         if (!tokenMemberId.equals(memberId)) {
             throw new RestApiException(FailResponseStatus.UNAUTHORIZED);
         }
@@ -45,7 +45,7 @@ public class FollowController {
         
         return ResponseUtil.createSuccessResponse(result, pageable);
     }
-
+    
     @Operation(summary = "팔로우 등록", description = "유져의 팔로우 대상을 등록합니다.")
     @PostMapping()
     public ResponseEntity createFollow(@RequestBody CreateFollowReqDto requestBody) {
@@ -54,10 +54,10 @@ public class FollowController {
         
         return ResponseUtil.createSuccessResponse();
     }
-
+    
     @Operation(summary = "팔로우 취소", description = "팔로우를 취소합니다.")
     @DeleteMapping("/{followingId}")
-    public ResponseEntity deleteFollow(@PathVariable Long followingId) {
+    public ResponseEntity deleteFollow(@PathVariable String followingId) {
         
         followService.deleteFollow(AuthUtil.getMemberId(), followingId);
         

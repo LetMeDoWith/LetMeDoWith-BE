@@ -26,7 +26,7 @@ public class MemberRepositoryImpl implements MemberRepository {
     private final MemberSocialAccountJpaRepository socialAccountJpaRepository;
     
     @Override
-    public Optional<Member> getMember(Long id, MemberStatus memberStatus) {
+    public Optional<Member> getMember(String id, MemberStatus memberStatus) {
         return memberJpaRepository.findByIdAndStatus(id, memberStatus);
     }
     
@@ -36,7 +36,7 @@ public class MemberRepositoryImpl implements MemberRepository {
     }
     
     @Override
-    public Optional<Member> getNormalStatusMember(Long id) {
+    public Optional<Member> getNormalStatusMember(String id) {
         return memberJpaRepository.findByIdAndStatus(id, MemberStatus.NORMAL);
     }
     

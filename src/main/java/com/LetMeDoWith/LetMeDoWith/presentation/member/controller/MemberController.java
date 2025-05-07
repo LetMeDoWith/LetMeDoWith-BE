@@ -108,7 +108,7 @@ public class MemberController {
         @ApiErrorResponse(status = FailResponseStatus.MEMBER_NOT_EXIST)
     })
     @DeleteMapping("/{memberId}")
-    public <T> ResponseEntity<ResponseDto<T>> withdrawMember(@PathVariable Long memberId) {
+    public <T> ResponseEntity<ResponseDto<T>> withdrawMember(@PathVariable String memberId) {
         memberService.withdrawMember(memberId);
         
         return ResponseUtil.createSuccessResponse(SuccessResponseStatus.OK);

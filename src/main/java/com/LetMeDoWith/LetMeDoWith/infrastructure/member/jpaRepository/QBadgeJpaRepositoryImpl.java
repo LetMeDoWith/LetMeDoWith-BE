@@ -13,32 +13,32 @@ import org.springframework.stereotype.Repository;
 @Repository
 @RequiredArgsConstructor
 public class QBadgeJpaRepositoryImpl implements QBadgeJpaRepository {
-
-  private final JPAQueryFactory jpaQueryFactory;
-
-  private QBadge qBadge = QBadge.badge;
-  private QMemberBadge qMemberBadge = QMemberBadge.memberBadge;
-
-  @Override
-  public List<MemberBadgeVO> findAllJoinMemberBadge(Long memberId, BadgeStatus badgeStatus) {
-    return jpaQueryFactory.select(Projections.bean(
-            MemberBadgeVO.class,
-            qMemberBadge.id.as("memberBadgeId"),
-            qMemberBadge.memberId,
-            qMemberBadge.isMain,
-            qBadge.id.as("badgeId"),
-            qBadge.badgeStatus,
-            qBadge.name,
-            qBadge.description,
-            qBadge.acquireHint,
-            qBadge.imageUrl,
-            qBadge.sortOrder
-        ))
-        .from(qBadge)
-        .leftJoin(qBadge.memberBadges, qMemberBadge)
-          .on(qMemberBadge.memberId.eq(memberId))
-        .where(qBadge.badgeStatus.eq(badgeStatus))
-        .orderBy(qBadge.sortOrder.asc())
-        .fetch();
-  }
+    
+    private final JPAQueryFactory jpaQueryFactory;
+    
+    private final QBadge qBadge = QBadge.badge;
+    private final QMemberBadge qMemberBadge = QMemberBadge.memberBadge;
+    
+    @Override
+    public List<MemberBadgeVO> findAllJoinMemberBadge(String memberId, BadgeStatus badgeStatus) {
+        return jpaQueryFactory.select(Projections.bean(
+                                  MemberBadgeVO.class,
+                                  qMemberBadge.id.as("memberBadgeId"),
+                                  qMemberBadge.memberId,
+                                  qMemberBadge.isMain,
+                                  qBadge.id.as("badgeId"),
+                                  qBadge.badgeStatus,
+                                  qBadge.name,
+                                  qBadge.description,
+                                  qBadge.acquireHint,
+                                  qBadge.imageUrl,
+                                  qBadge.sortOrder
+                              ))
+                              .from(qBadge)
+                              .leftJoin(qBadge.memberBadges, qMemberBadge)
+                              .on(qMemberBadge.memberId.eq(memberId))
+                              .where(qBadge.badgeStatus.eq(badgeStatus))
+                              .orderBy(qBadge.sortOrder.asc())
+                              .fetch();
+    }
 }

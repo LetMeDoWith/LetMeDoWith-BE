@@ -6,6 +6,6 @@ import com.LetMeDoWith.LetMeDoWith.common.enums.member.BadgeStatus;
 import java.util.List;
 
 public interface QBadgeJpaRepository {
-
-  List<MemberBadgeVO> findAllJoinMemberBadge(Long memberId, BadgeStatus badgeStatus);
+    
+    List<MemberBadgeVO> findAllJoinMemberBadge(String memberId, BadgeStatus badgeStatus);
 }

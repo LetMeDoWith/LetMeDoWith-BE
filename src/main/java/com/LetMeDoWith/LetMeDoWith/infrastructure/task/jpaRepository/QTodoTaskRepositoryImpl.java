@@ -31,7 +31,7 @@ public class QTodoTaskRepositoryImpl implements QTodoTaskRepository {
     }
     
     @Override
-    public Optional<TodoTask> findTodoTaskAggregate(Long id, Long memberId) {
+    public Optional<TodoTask> findTodoTaskAggregate(Long id, String memberId) {
         return Optional.ofNullable(
             jpaQueryFactory.selectFrom(qTodoTask)
                            .leftJoin(qTodoTask.routine)
@@ -42,7 +42,7 @@ public class QTodoTaskRepositoryImpl implements QTodoTaskRepository {
     }
     
     @Override
-    public List<TodoTask> findAllTodoTaskAggregates(Long memberId, LocalDate date) {
+    public List<TodoTask> findAllTodoTaskAggregates(String memberId, LocalDate date) {
         return jpaQueryFactory.selectFrom(qTodoTask)
                               .leftJoin(qTodoTask.routine)
                               .where(qTodoTask.memberId.eq(memberId)
@@ -53,7 +53,7 @@ public class QTodoTaskRepositoryImpl implements QTodoTaskRepository {
     }
     
     @Override
-    public List<TodoTask> findAllTodoTaskAggregates(Long memberId, Set<LocalDate> dates) {
+    public List<TodoTask> findAllTodoTaskAggregates(String memberId, Set<LocalDate> dates) {
         return jpaQueryFactory.selectFrom(qTodoTask)
                               .leftJoin(qTodoTask.routine)
                               .where(qTodoTask.memberId.eq(memberId)
