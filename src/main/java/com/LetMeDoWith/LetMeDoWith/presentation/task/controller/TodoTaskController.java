@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Todo Task", description = "투두모드 태스크")
 @RestController
-@RequestMapping("/api/v1/task/todo")
+@RequestMapping("/api/v1/tasks/todo")
 @RequiredArgsConstructor
 public class TodoTaskController {
     
@@ -35,18 +35,18 @@ public class TodoTaskController {
         @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청입니다."),
     })
     @PostMapping("")
-    public ResponseEntity<ResponseDto<CreateTodoTaskResDto>> registerTodoTask(
+    public ResponseEntity<ResponseDto<CreateTodoTaskResDto>> createTodoTask(
         @Valid @RequestBody CreateTodoTaskReqDto request) {
         Long memberId = AuthUtil.getMemberId();
         
         RegisterTodoTaskResult result;
         
         if (request.isRoutine()) {
-            result = registerTodoTaskService.registerTodoTaskWithRoutine(
+            result = registerTodoTaskService.createTodoTaskWithRoutine(
                 memberId,
                 request.toCreateTodoTaskCommand());
         } else {
-            result = registerTodoTaskService.registerTodoTask(
+            result = registerTodoTaskService.createTodoTask(
                 memberId,
                 request.toCreateTodoTaskCommand());
         }

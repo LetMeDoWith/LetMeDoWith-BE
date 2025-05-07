@@ -13,9 +13,9 @@ import com.LetMeDoWith.LetMeDoWith.domain.auth.model.AccessToken;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskCategory;
-import com.LetMeDoWith.LetMeDoWith.infrastructure.member.jpaRepository.MemberJpaRepository;
-import com.LetMeDoWith.LetMeDoWith.infrastructure.task.jpaRepository.DowithTaskJpaRepository;
-import com.LetMeDoWith.LetMeDoWith.infrastructure.task.jpaRepository.TaskCategoryJpaRepository;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.member.persistence.jpaRepository.MemberJpaRepository;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.DowithTaskJpaRepository;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.TaskCategoryJpaRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.charset.StandardCharsets;
 import java.time.Clock;
@@ -48,7 +48,7 @@ import org.springframework.util.LinkedMultiValueMap;
 @AutoConfigureMockMvc
 public class DeleteDowithTaskIntegrationTest {
     
-    static final String BASE_URL = "/api/v1/task/dowith";
+    static final String BASE_URL = "/api/v1/tasks/dowith";
     private final LocalDate nowDate = LocalDate.now();
     private final LocalDate dateBeforeOneDay = nowDate.minusDays(1);
     private final LocalDate dateBeforeTwoDay = nowDate.minusDays(2);

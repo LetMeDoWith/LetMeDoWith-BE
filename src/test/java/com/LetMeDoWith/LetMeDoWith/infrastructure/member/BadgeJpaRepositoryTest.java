@@ -2,7 +2,7 @@
 //
 //import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 //
-//import com.LetMeDoWith.LetMeDoWith.application.member.dto.MemberBadgeVO;
+//import com.LetMeDoWith.LetMeDoWith.domain.member.dto.MemberBadgeVO;
 //import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 //import com.LetMeDoWith.LetMeDoWith.common.enums.member.BadgeStatus;
 //import com.LetMeDoWith.LetMeDoWith.config.TestQueryDslConfig;

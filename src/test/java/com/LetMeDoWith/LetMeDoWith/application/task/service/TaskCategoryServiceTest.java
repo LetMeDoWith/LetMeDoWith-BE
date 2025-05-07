@@ -62,7 +62,7 @@ class TaskCategoryServiceTest {
             mockUserCategories);
         
         // When: 모든 카테고리를 조회하는 메서드 호출
-        List<TaskCategory> result = taskCategoryService.getAllCategory(TEST_MEMBER_ID);
+        List<TaskCategory> result = taskCategoryService.retrieveTaskCategories(TEST_MEMBER_ID);
         
         // Then: 결과 검증 (공통 카테고리와 유저 카테고리가 모두 포함되어야 함)
         assertThat(result)

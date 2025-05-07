@@ -32,7 +32,7 @@ public class RegisterTodoTaskService {
      * @param command  생성할 TodoTask의 정보 (카테고리 ID, 제목, 시작일, 시작시간, 루틴여부)
      * @return 생성된 TodoTask
      */
-    public RegisterTodoTaskResult registerTodoTask(Long memberId, RegisterTodoTaskCommand command) {
+    public RegisterTodoTaskResult createTodoTask(Long memberId, RegisterTodoTaskCommand command) {
         if (command.taskCategoryId() != null) {
             taskCategoryRepository.getActiveTaskCategory(command.taskCategoryId(), memberId)
                                   .orElseThrow(() -> new RestApiException(
@@ -56,8 +56,8 @@ public class RegisterTodoTaskService {
      *                 주기, 루틴 반복 패턴)
      * @return 생성된 루틴의 TodoTask 목록
      */
-    public RegisterTodoTaskResult registerTodoTaskWithRoutine(Long memberId,
-                                                              RegisterTodoTaskCommand command) {
+    public RegisterTodoTaskResult createTodoTaskWithRoutine(Long memberId,
+                                                            RegisterTodoTaskCommand command) {
         
         if (command.taskCategoryId() != null) {
             taskCategoryRepository.getTaskCategory(command.taskCategoryId(), Yn.TRUE)
