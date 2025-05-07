@@ -105,10 +105,6 @@ public class UpdateDowithTaskService {
                                                               INVALID_REQUEST));
         
         if (dowithTask.isRoutine()) {
-            // 루틴이 있는 경우 TodoTask로 전환 불가
-            if (command.isConvertToTodoTask()) {
-                throw new RestApiException(INVALID_REQUEST);
-            }
             
             // TODO- 수정 대상이 어디까지인지 해당 정책 확인 필요 to 기획
             if (dowithTask.isContentsEditable()) {
