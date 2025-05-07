@@ -43,9 +43,6 @@ out/
 ### Prod-Confidential ###
 /src/main/**/application-prod-confidential.yml
 
-### Confidential ###
-/src/main/**/application-*-confidential.yml
-
 ### Dev server artifacts ###
 samLocalEnvVars.json
 .aws-sam/

@@ -4,6 +4,7 @@ import com.LetMeDoWith.LetMeDoWith.domain.task.dto.DowithTaskQueryDto;
 import com.LetMeDoWith.LetMeDoWith.domain.task.dto.TodoTaskQueryDto;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TodoTaskStatus;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -50,26 +51,42 @@ public record RetrieveTasksResDto(
     }
     
     public record TodoTaskDto(
-        Long id, // TODO - 추후 PK 정책에 따른 수정 필요
+        @Schema(description = "투두모드Task ID", defaultValue = "1")
+        Long id,
+        @Schema(description = "Task카테고리 ID", defaultValue = "2")
         Long taskCategoryId,
+        @Schema(description = "카테고리명", defaultValue = "일상")
         String taskCategoryName,
+        @Schema(description = "제목", defaultValue = "아침 먹기")
         String title,
+        @Schema(description = "상태", implementation = TodoTaskStatus.class)
         TodoTaskStatus status,
+        @Schema(description = "일자", defaultValue = "2025-01-30")
         LocalDate date,
+        @Schema(description = "시작시간", defaultValue = "11:30:00")
         LocalTime startTime
     ) {
     
     }
     
     public record DowithTaskDto(
-        Long id, // TODO - 추후 PK 정책에 따른 수정 필요
+        @Schema(description = "두윗모드Task ID", defaultValue = "1")
+        Long id,
+        @Schema(description = "Task카테고리 ID", defaultValue = "2")
         Long taskCategoryId,
+        @Schema(description = "카테고리명", defaultValue = "일상")
         String taskCategoryName,
+        @Schema(description = "제목", defaultValue = "아침 먹기")
         String title,
+        @Schema(description = "상태", implementation = DowithTaskStatus.class)
         DowithTaskStatus status,
+        @Schema(description = "일자", defaultValue = "2025-01-30")
         LocalDate date,
+        @Schema(description = "시작시간", defaultValue = "11:30:00")
         LocalTime startTime,
+        @Schema(description = "인증 이미지 URL", defaultValue = "https://example.com/image.jpg")
         String confirmedImageUrl,
+        @Schema(description = "피드백 개수", defaultValue = "5")
         int feedBackCount
     ) {
     

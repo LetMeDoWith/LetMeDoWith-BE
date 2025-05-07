@@ -5,7 +5,7 @@ import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiSuccessResponse;
 import com.LetMeDoWith.LetMeDoWith.common.dto.ResponseDto;
 import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
-import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.GetAllTaskCategoryRes;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.GetAllTaskCategoryResDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
@@ -28,14 +28,14 @@ public class TaskCategoryController {
     @Operation(summary = "태스크 카테고리 조회", description = "모든 태스크 카테고리를 조회합니다. (공통 + 유저 생성)")
     @ApiSuccessResponse(description = "카테고리 조회 성공")
     @GetMapping("")
-    public ResponseEntity<ResponseDto<List<GetAllTaskCategoryRes>>> getAllTaskCategories() {
+    public ResponseEntity<ResponseDto<List<GetAllTaskCategoryResDto>>> getAllTaskCategories() {
         
         Long memberId = AuthUtil.getMemberId();
         
-        List<GetAllTaskCategoryRes> res = taskCategoryService.getAllCategory(memberId)
-                                                             .stream()
-                                                             .map(GetAllTaskCategoryRes::from)
-                                                             .toList();
+        List<GetAllTaskCategoryResDto> res = taskCategoryService.getAllCategory(memberId)
+                                                                .stream()
+                                                                .map(GetAllTaskCategoryResDto::from)
+                                                                .toList();
         
         return ResponseUtil.createSuccessResponse(res);
     }

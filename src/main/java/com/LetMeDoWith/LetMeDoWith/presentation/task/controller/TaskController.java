@@ -41,7 +41,7 @@ public class TaskController {
         @RequestParam(value = "startDate") LocalDate startDate,
         @RequestParam(value = "endDate") LocalDate endDate) {
         
-        if (startDate.isBefore(endDate)) {
+        if (endDate.isBefore(startDate)) {
             throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
         }
         
