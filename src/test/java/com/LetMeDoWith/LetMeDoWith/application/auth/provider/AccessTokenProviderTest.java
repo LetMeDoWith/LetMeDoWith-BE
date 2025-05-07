@@ -35,7 +35,7 @@ class AccessTokenProviderTest {
      * You cannot utilize this token for any purpose on this system.
      */
     
-    public final Long MEMBER_ID = 1L;
+    public final String MEMBER_ID = "1L";
     public final String SAMPLE_TOKEN_NORMAL = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjllMjQxM2UzODI1YWMyYmFiMTdmZTRkNGJhZDkxMjhjIn0.eyJpc3MiOiJodHRwczovL21vY2suYXV0aGVudGljYXRlLmxldG1lZG93aXRoLmRvIiwiYXVkIjoibGV0bWVkb3dpdGhTYW1wbGVBcHBsaWNhdGlvbiIsInN1YiI6IjViZTg2MzU5MDczYzQzNGJhZDJkYTM5MzIyMjJkYWJlIiwiZXhwIjoxOTk5OTk5OTk5LCJpYXQiOjE3MTI1NjM1MDMsIm5pY2tuYW1lIjoiSm9uaCBEb2UiLCJlbWFpbCI6ImpkMTIzQGxldG1lZG93aXRoLmNvbSJ9.zJMubgT5utETNIaUjuAkoRC74-eyPjVOaiiYIFlzv3eVOrbj7bM7RxpZtFeiYdvmpyiEH7sHbo-qVnTukeLlTaT_wNDeLSS7GYskbC75T_zCGx4e5vt4fgDTI4ov_iVWq9RzawTwFzJqj0b3j9hNST4HkuizQymAt5tnFClEa2fE_ojikecBEhfqdn3PAgOzq-pcHM-7-q1cs0QWrseFeouGvVmsOoiRTyewQ8ouuCf9zaYIf6KUu-lAQPsmsjYmNI2MHlPLCZbnnp3qZo7R-ozX66ZELbZwVZxPvrLqLOjdS4yPk_-aaQhT9s5sB0SljmWh9LLYELyXXkiQbVkx9QU-W0TjgnDpb-ScLQ2C5NXgEAF6OHBGynjyymwi_rvBxfY4l22evluOzBp18ECpc7DOhlcnwrPrS5M4pSCpEd8CLlYTyNvYWBJ7umhhDcub5ZLh6cqZ2LJanDG-UM1nLxRB6QGOFZcazyR1rPeGb7kiXiOh6-E7Wz7zwKvhcAUB";
     public final String SAMPLE_TOKEN_ILLEGAL_SIGNATURE = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjllMjQxM2UzODI1YWMyYmFiMTdmZTRkNGJhZDkxMjhjIn0.eyJpc3MiOiJodHRwczovL21vY2suYXV0aGVudGljYXRlLmxldG1lZG93aXRoLmRvIiwiYXVkIjoibGV0bWVkb3dpdGhTYW1wbGVBcHBsaWNhdGlvbiIsInN1YiI6IjViZTg2MzU5MDczYzQzNGJhZDJkYTM5MzIyMjJkYWJlIiwiZXhwIjoxNzEyNTYzNTAzLCJpYXQiOjE5OTk5OTk5OTksIm5pY2tuYW1lIjoiSm9uaCBEb2UiLCJlbWFpbCI6ImpkMTIzQGxldG1lZG93aXRoLmNvbSJ9.TNM7fBiE7joA5FtMbRB4rrjijg2ctngwSnjFXcjfRByeCos9YewaL9QWiHz0uWJodZB6355ZdEYHaFvoWkGaKe1rbGQ75VRO6b8nqheeNRmed2ZajEZRDUSl5zvKuV49yuDo3sFjwEWHHYJBKpYFbnxJt_rmeWitLhxxfOJomnzdxu5hYY6IAeqLgdt-sfxqNbqziyjMQr6AG3jqvDEasrGSKoiTILnJXpK3paf7I3PRAKVFitaXc8S8ddP0QNrEt2_aqTjJbpSnYiV9OoxgacSJo4c_SKeHKbONis1jjubYAu083T0zH6QZMkfey7rIDmhIIhNpugIpp5-QRtmZ6p_P4-aYZPioLcz-U-rvGlQENwyBTds7-_diafSKRQvHpX7Vzdvin-ZlOeXQDoLchT7wZYNWL6WZv9WcsHZvw1K2NjCvCKb09sPup3YaiTfqze46pxej3lhL5SgXKXQfPEyisdggx2VZgHCnBocGRk60S0OkgBgjX9HZHAYzwMcGAnH";
     public final String SAMPLE_TOKEN_MALFORMED = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjllMjQxM2UzODI1YWMyYmFiMTdmZTRkNGJhZDkxMjhjIn0.eyJpc3MiOiJodHRwczovL21vY2suYXV0aGVudGljYXRlLmxldG1lZG93aXRoLmRvIiwiYXVkIjoibGV0bWVkb3dpdGhTYW1wbGVBcHBsaWNhdGlvbiIsInN1YiI6IjViZTg2MzU5MDczYzQzNGJhZDJkYTM5MzIyMjJkYWJlIiwiZXhwIjoxNzEyNTYzNTAzLCJpYXQiOjE5OTk5OTk5OTksIm5pY2tuYW1lIjoiSm9uaCBEb2UiLCJlbWFpbCI6ImpkMTIzQGxldG1lZG93aXRoLmNvbSJ9.TNM7fBiE7joA5FtMbRB4rrjijg2ctngwSnjFXcjfRByeCos9YewaL9QWiHz0uWJodZB6355ZdEYHaFvoWkGaKe1rbGQ75VRO6b8nqheeNRmed2ZajEZRDUSl5zvKuV49yuDo3sFjwEWHHYJBKpYFbnxJt_rmeWitLhxxfOJomnzdxu5hYY6IAeqLgdt-sfxqNbqziyjMQr6AG3jqvDEasrGSKoiTILnJXpK3paf7I3PRAKVFitaXc8S8ddP0QNrEt2_aqTjJbpSnYiV9OoxgacSJo4c_SKeHKbONis1jjubYAu083T0zH6QZMkfey7rIDmhIIhNpugIpp5-QRtmZ6p_P4-aYZPioLcz-U-rvGlQENwyBTds7-_diafSKRQvHpX7Vzdvin-ZlOeXQDoLchT7wZYNWL6WZv9WcsHZvw1K2NjCvCKb09sPup3YaiTfqze46pxej3lhL5SgXKXQfPEyigx2VZgHCnB.ocGRk60S0OkgBgjX9HZHAYzwMcGAnH";
@@ -74,7 +74,7 @@ class AccessTokenProviderTest {
     @DisplayName("[SUCCESS] ID token 검증 테스트")
     void verifyNormalTokenTest() {
         Jws<Claims> oidcToken = JwtUtil.parseTokenToJws(SAMPLE_TOKEN_NORMAL,
-                                                                  SAMPLE_RSA_PUBKEY);
+                                                        SAMPLE_RSA_PUBKEY);
         
         assertEquals(oidcToken.getBody().getIssuer(), SAMPLE_ISS);
         assertEquals(oidcToken.getBody().getExpiration(),
@@ -90,7 +90,7 @@ class AccessTokenProviderTest {
         System.out.println(accessToken.getToken());
         
         // when
-        Long memberId = accessTokenProvider.validateAccessToken(accessToken.getToken());
+        String memberId = accessTokenProvider.validateAccessToken(accessToken.getToken());
         
         // then
         Assertions.assertThat(memberId).isEqualTo(MEMBER_ID);
@@ -133,7 +133,7 @@ class AccessTokenProviderTest {
     void verifyExpiredTokenTest() {
         assertThrows(RestApiAuthException.class,
                      () -> JwtUtil.parseTokenToJws(SAMPLE_TOKEN_EXPIRED,
-                                                             SAMPLE_RSA_PUBKEY),
+                                                   SAMPLE_RSA_PUBKEY),
                      FailResponseStatus.TOKEN_EXPIRED.getMessage());
     }
     
@@ -142,7 +142,7 @@ class AccessTokenProviderTest {
     void verifyIllegalSignatureTokenTest() {
         assertThrows(RestApiAuthException.class,
                      () -> JwtUtil.parseTokenToJws(SAMPLE_TOKEN_ILLEGAL_SIGNATURE,
-                                                             SAMPLE_RSA_PUBKEY),
+                                                   SAMPLE_RSA_PUBKEY),
                      FailResponseStatus.INVALID_TOKEN.getMessage());
     }
     
@@ -151,7 +151,7 @@ class AccessTokenProviderTest {
     void verifyMalformedTokenTest() {
         assertThrows(RestApiAuthException.class,
                      () -> JwtUtil.parseTokenToJws(SAMPLE_TOKEN_MALFORMED,
-                                                             SAMPLE_RSA_PUBKEY),
+                                                   SAMPLE_RSA_PUBKEY),
                      FailResponseStatus.INVALID_TOKEN.getMessage());
     }
     
@@ -160,32 +160,32 @@ class AccessTokenProviderTest {
     void verifyTokenWithInvalidKeyTest() {
         assertThrows(RestApiAuthException.class,
                      () -> JwtUtil.parseTokenToJws(SAMPLE_TOKEN_NORMAL,
-                                                             new RSAPublicKey() {
-                                                                 @Override
-                                                                 public BigInteger getPublicExponent() {
-                                                                     return null;
-                                                                 }
-                                                                 
-                                                                 @Override
-                                                                 public String getAlgorithm() {
-                                                                     return null;
-                                                                 }
-                                                                 
-                                                                 @Override
-                                                                 public String getFormat() {
-                                                                     return null;
-                                                                 }
-                                                                 
-                                                                 @Override
-                                                                 public byte[] getEncoded() {
-                                                                     return new byte[0];
-                                                                 }
-                                                                 
-                                                                 @Override
-                                                                 public BigInteger getModulus() {
-                                                                     return null;
-                                                                 }
-                                                             }),
+                                                   new RSAPublicKey() {
+                                                       @Override
+                                                       public BigInteger getPublicExponent() {
+                                                           return null;
+                                                       }
+                                                       
+                                                       @Override
+                                                       public String getAlgorithm() {
+                                                           return null;
+                                                       }
+                                                       
+                                                       @Override
+                                                       public String getFormat() {
+                                                           return null;
+                                                       }
+                                                       
+                                                       @Override
+                                                       public byte[] getEncoded() {
+                                                           return new byte[0];
+                                                       }
+                                                       
+                                                       @Override
+                                                       public BigInteger getModulus() {
+                                                           return null;
+                                                       }
+                                                   }),
                      FailResponseStatus.INVALID_TOKEN.getMessage());
     }
 }

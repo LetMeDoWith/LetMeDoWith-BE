@@ -100,7 +100,7 @@ public class CreateTokenService {
                                                        String refreshToken,
                                                        String userAgent) {
         
-        Long memberId = accessTokenProvider.getMemberIdWithoutVerify(accessToken);
+        String memberId = accessTokenProvider.getMemberIdWithoutVerify(accessToken);
         
         RefreshToken savedRefreshToken = null;
         savedRefreshToken = refreshTokenProvider.findRefreshToken(refreshToken);

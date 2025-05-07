@@ -3,7 +3,6 @@ package com.LetMeDoWith.LetMeDoWith.common.interceptor;
 import com.LetMeDoWith.LetMeDoWith.application.auth.provider.AccessTokenProvider;
 import com.LetMeDoWith.LetMeDoWith.application.auth.provider.SignupTokenProvider;
 import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
-import com.LetMeDoWith.LetMeDoWith.domain.auth.enums.TokenType;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -42,14 +41,14 @@ public class AuthenticateInterceptor implements HandlerInterceptor {
         
         String tokenToBeValidated =
             isSignupCompleteReq ? AuthUtil.getSignupToken() : AuthUtil.getAccessToken();
-
-        Long memberId;
-        if(isSignupCompleteReq) {
+        
+        String memberId;
+        if (isSignupCompleteReq) {
             memberId = signupTokenProvider.validateSignupToken(tokenToBeValidated);
-        }else {
+        } else {
             memberId = accessTokenProvider.validateAccessToken(tokenToBeValidated);
         }
-
+        
         request.setAttribute("memberId", memberId);
         
         return true;
