@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Task", description = "테스크")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/task")
+@RequestMapping("/api/v1/tasks")
 public class TaskController {
     
     private final RetrieveTaskService retrieveTaskService;
