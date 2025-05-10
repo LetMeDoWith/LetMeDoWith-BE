@@ -3,7 +3,7 @@ package com.LetMeDoWith.LetMeDoWith.infrastructure.member.query;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.BadgeStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.QBadge;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.QMemberBadge;
-import com.LetMeDoWith.LetMeDoWith.infrastructure.member.query.dto.MemberBadgeDto;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.member.query.dto.MemberBadgeQueryDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
@@ -20,10 +20,10 @@ public class BadgeQueryRepositoryImpl implements BadgeQueryRepository {
     private final QMemberBadge qMemberBadge = QMemberBadge.memberBadge;
     
     @Override
-    public List<MemberBadgeDto> getBadges(Long memberId) {
+    public List<MemberBadgeQueryDto> getBadges(Long memberId) {
         
         return jpaQueryFactory.select(Projections.bean(
-                                  MemberBadgeDto.class,
+                                  MemberBadgeQueryDto.class,
                                   qMemberBadge.id.as("memberBadgeId"),
                                   qMemberBadge.memberId,
                                   qMemberBadge.isMain,

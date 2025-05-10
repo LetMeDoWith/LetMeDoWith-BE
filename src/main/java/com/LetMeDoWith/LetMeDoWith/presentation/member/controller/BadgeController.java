@@ -5,7 +5,7 @@ import com.LetMeDoWith.LetMeDoWith.application.member.service.BadgeService;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
-import com.LetMeDoWith.LetMeDoWith.infrastructure.member.query.dto.MemberBadgeDto;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.member.query.dto.MemberBadgeQueryDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.RetrieveBadgesInfoResDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.UpdateMainBadgeReqDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,11 +33,11 @@ public class BadgeController {
         Long memberId = AuthUtil.getMemberId();
         RetrieveBadgesInfoResult result = badgeService.retrieveBadgesInfo(memberId);
         
-        MemberBadgeDto mainBadge = result.getBadges()
-                                         .stream()
-                                         .filter(e -> Yn.TRUE.equals(e.getIsMain()))
-                                         .findFirst()
-                                         .orElse(null);
+        MemberBadgeQueryDto mainBadge = result.getBadges()
+                                              .stream()
+                                              .filter(e -> Yn.TRUE.equals(e.getIsMain()))
+                                              .findFirst()
+                                              .orElse(null);
         
         return ResponseUtil.createSuccessResponse(
             RetrieveBadgesInfoResDto.of(memberId,

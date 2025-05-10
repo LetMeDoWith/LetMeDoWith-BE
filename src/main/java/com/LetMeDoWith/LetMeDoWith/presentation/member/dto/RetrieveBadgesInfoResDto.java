@@ -1,6 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.member.dto;
 
-import com.LetMeDoWith.LetMeDoWith.infrastructure.member.query.dto.MemberBadgeDto;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.member.query.dto.MemberBadgeQueryDto;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Builder;
@@ -16,8 +16,8 @@ public class RetrieveBadgesInfoResDto {
     private List<Badge> badges;
     
     public static RetrieveBadgesInfoResDto of(Long memberId, boolean isLazy,
-                                              @Nullable MemberBadgeDto mainBadgeVO,
-                                              List<MemberBadgeDto> badgeVOs) {
+                                              @Nullable MemberBadgeQueryDto mainBadgeVO,
+                                              List<MemberBadgeQueryDto> badgeVOs) {
         
         List<Badge> badgesResult = new ArrayList<>();
         badgeVOs.forEach(e -> badgesResult.add(Badge.builder()

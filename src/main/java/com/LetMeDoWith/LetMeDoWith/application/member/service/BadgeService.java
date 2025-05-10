@@ -15,7 +15,7 @@ import com.LetMeDoWith.LetMeDoWith.domain.member.model.MemberBadge;
 import com.LetMeDoWith.LetMeDoWith.domain.member.repository.BadgeRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.member.repository.MemberRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.member.query.BadgeQueryRepository;
-import com.LetMeDoWith.LetMeDoWith.infrastructure.member.query.dto.MemberBadgeDto;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.member.query.dto.MemberBadgeQueryDto;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +43,7 @@ public class BadgeService {
                                         .orElseThrow(() -> new RestApiException(
                                             MEMBER_NOT_EXIST_BADGE));
         
-        List<MemberBadgeDto> badges = badgeQueryRepository.getBadges(memberId);
+        List<MemberBadgeQueryDto> badges = badgeQueryRepository.getBadges(memberId);
         
         return RetrieveBadgesInfoResult.of(member.isLazyBadgeAcquireLevel(), badges);
         

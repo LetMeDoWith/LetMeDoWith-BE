@@ -5,7 +5,7 @@ import com.LetMeDoWith.LetMeDoWith.common.enums.member.BadgeStatus;
 import lombok.Data;
 
 @Data
-public class MemberBadgeDto {
+public class MemberBadgeQueryDto {
     
     private Long memberBadgeId;
     private Long memberId;
