@@ -19,7 +19,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,8 +42,13 @@ public class RetrieveTaskIntegrationTest extends AbstractIntegrationTest {
     private TodoTask todoTask1, todoTask2;
     private DowithTask dowithTask1, dowithTask2;
     
-    @BeforeEach
-    void setTestData() {
+    protected void deleteTestData() {
+        todoTaskJpaRepository.deleteAll();
+        dowithTaskJpaRepository.deleteAll();
+        taskCategoryJpaRepository.deleteAll();
+    }
+    
+    protected void createTestData() {
         
         SystemTimeUtil.setClock(Clock.fixed(LocalDateTime.of(2024, 3, 1, 0, 0)
                                                          .toInstant(ZoneOffset.UTC),

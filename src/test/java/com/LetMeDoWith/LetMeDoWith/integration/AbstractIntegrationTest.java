@@ -5,14 +5,19 @@ import com.LetMeDoWith.LetMeDoWith.common.enums.member.Gender;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.TaskCompleteLevel;
+import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.auth.model.AccessToken;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.member.persistence.jpaRepository.MemberJpaRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.charset.StandardCharsets;
+import java.time.Clock;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -42,11 +47,32 @@ public abstract class AbstractIntegrationTest {
     AccessTokenProvider accessTokenProvider;
     private AccessToken requestMemberAccessToken;
     
+    
+    @BeforeEach
+    void beforeEach() {
+        createMemberTestData();
+        createTestData();
+    }
+    
+    @AfterEach
+    void afterEach() {
+        deleteTestData();
+    }
+    
+    /**
+     * Test 환경 시간대 설정
+     *
+     * @param dateTime
+     */
+    protected void setFixedClock(LocalDateTime dateTime) {
+        SystemTimeUtil.setClock(Clock.fixed(dateTime.toInstant(ZoneOffset.UTC),
+                                            ZoneOffset.UTC));
+    }
+    
     /**
      * 해당 Abstract Class 상속 받은 테스트는 모든 Test 메서드 시작전에 request Member 세팅
      */
-    @BeforeEach
-    void beforeEach() {
+    private void createMemberTestData() {
         memberJpaRepository.deleteAll();
         
         requestMember = memberJpaRepository.save(Member.builder()
@@ -59,8 +85,17 @@ public abstract class AbstractIntegrationTest {
                                                        .type(MemberType.USER)
                                                        .build());
         requestMemberAccessToken = accessTokenProvider.createAccessToken(requestMember.getId());
-        
     }
+    
+    /**
+     * 이전 Test의 test data 삭제 - abstract method
+     */
+    protected abstract void deleteTestData();
+    
+    /**
+     * Test Data 생성 - abstract method
+     */
+    protected abstract void createTestData();
     
     /**
      * MockMvc Request
