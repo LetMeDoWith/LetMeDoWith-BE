@@ -1,10 +1,9 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.member.query;
 
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.BadgeStatus;
-import com.LetMeDoWith.LetMeDoWith.domain.member.dto.MemberBadgeDto;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.QBadge;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.QMemberBadge;
-import com.LetMeDoWith.LetMeDoWith.domain.member.repository.BadgeQueryRepository;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.member.query.dto.MemberBadgeDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;

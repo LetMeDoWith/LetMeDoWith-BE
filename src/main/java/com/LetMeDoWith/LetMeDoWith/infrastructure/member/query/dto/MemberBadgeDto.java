@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.domain.member.dto;
+package com.LetMeDoWith.LetMeDoWith.infrastructure.member.query.dto;
 
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.BadgeStatus;
