@@ -1,45 +1,45 @@
-//package com.LetMeDoWith.LetMeDoWith.integration.auth;
+// package com.LetMeDoWith.LetMeDoWith.integration.auth;
 //
-//import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+// import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 //
-//import com.LetMeDoWith.LetMeDoWith.application.auth.provider.AccessTokenProvider;
-//import com.LetMeDoWith.LetMeDoWith.application.auth.provider.RefreshTokenProvider;
-//import com.LetMeDoWith.LetMeDoWith.application.auth.service.CreateTokenService;
-//import com.LetMeDoWith.LetMeDoWith.common.enums.member.Gender;
-//import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
-//import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
-//import com.LetMeDoWith.LetMeDoWith.common.enums.member.TaskCompleteLevel;
-//import com.LetMeDoWith.LetMeDoWith.domain.auth.model.AccessToken;
-//import com.LetMeDoWith.LetMeDoWith.domain.auth.model.RefreshToken;
-//import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
-//import com.LetMeDoWith.LetMeDoWith.infrastructure.member.jpaRepository.MemberJpaRepository;
-//import com.LetMeDoWith.LetMeDoWith.presentation.auth.dto.CreateTokenRefreshReqDto;
-//import com.fasterxml.jackson.databind.ObjectMapper;
-//import java.nio.charset.StandardCharsets;
-//import java.time.LocalDate;
-//import lombok.extern.slf4j.Slf4j;
-//import org.junit.jupiter.api.AfterEach;
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.DisplayName;
-//import org.junit.jupiter.api.Test;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-//import org.springframework.boot.test.context.SpringBootTest;
-//import org.springframework.http.HttpHeaders;
-//import org.springframework.http.MediaType;
-//import org.springframework.test.context.ActiveProfiles;
-//import org.springframework.test.web.servlet.MockMvc;
-//import org.springframework.test.web.servlet.ResultActions;
-//import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-//import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-//import org.springframework.util.LinkedMultiValueMap;
-//import org.springframework.util.MultiValueMap;
+// import com.LetMeDoWith.LetMeDoWith.application.auth.provider.AccessTokenProvider;
+// import com.LetMeDoWith.LetMeDoWith.application.auth.provider.RefreshTokenProvider;
+// import com.LetMeDoWith.LetMeDoWith.application.auth.service.CreateTokenService;
+// import com.LetMeDoWith.LetMeDoWith.common.enums.member.Gender;
+// import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
+// import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
+// import com.LetMeDoWith.LetMeDoWith.common.enums.member.TaskCompleteLevel;
+// import com.LetMeDoWith.LetMeDoWith.domain.auth.model.AccessToken;
+// import com.LetMeDoWith.LetMeDoWith.domain.auth.model.RefreshToken;
+// import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
+// import com.LetMeDoWith.LetMeDoWith.infrastructure.member.jpaRepository.MemberJpaRepository;
+// import com.LetMeDoWith.LetMeDoWith.presentation.auth.dto.CreateTokenRefreshReqDto;
+// import com.fasterxml.jackson.databind.ObjectMapper;
+// import java.nio.charset.StandardCharsets;
+// import java.time.LocalDate;
+// import lombok.extern.slf4j.Slf4j;
+// import org.junit.jupiter.api.AfterEach;
+// import org.junit.jupiter.api.BeforeEach;
+// import org.junit.jupiter.api.DisplayName;
+// import org.junit.jupiter.api.Test;
+// import org.springframework.beans.factory.annotation.Autowired;
+// import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+// import org.springframework.boot.test.context.SpringBootTest;
+// import org.springframework.http.HttpHeaders;
+// import org.springframework.http.MediaType;
+// import org.springframework.test.context.ActiveProfiles;
+// import org.springframework.test.web.servlet.MockMvc;
+// import org.springframework.test.web.servlet.ResultActions;
+// import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+// import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+// import org.springframework.util.LinkedMultiValueMap;
+// import org.springframework.util.MultiValueMap;
 //
-//@Slf4j
-//@SpringBootTest
-////@ActiveProfiles("local")
-//@AutoConfigureMockMvc
-//public class AuthIntegrationTest {
+// @Slf4j
+// @SpringBootTest
+//// @ActiveProfiles("local")
+// @AutoConfigureMockMvc
+// public class AuthIntegrationTest {
 //
 //    static final String BASE_URL = "/api/v1/auth";
 //    static final String TOKEN_REFRESH_URL = "/token/refresh";
@@ -111,7 +111,8 @@
 //                                                                         accessToken.getToken(),
 //                                                                         userAgent);
 //        CreateTokenRefreshReqDto requestBody = CreateTokenRefreshReqDto.builder()
-//                                                                       .refreshToken(refreshToken.getToken())
+//
+// .refreshToken(refreshToken.getToken())
 //                                                                       .build();
 //        log.info("init accessToken = {}", accessToken.getToken());
 //        log.info("init refreshToken = {}", refreshToken.getToken());
@@ -129,4 +130,4 @@
 //
 //    }
 //
-//}
+// }

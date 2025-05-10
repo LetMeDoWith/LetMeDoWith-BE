@@ -7,13 +7,10 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum TokenType implements BaseEnum {
+    ATK("ATK", "access token"),
+    RTK("RTK", "refresh token"),
+    SIGNUP("SIGNUP", "signup token");
 
-  ATK("ATK", "access token"),
-  RTK("RTK", "refresh token"),
-  SIGNUP("SIGNUP", "signup token");
-
-  private final String code;
-  public final String description;
-
-
+    private final String code;
+    public final String description;
 }

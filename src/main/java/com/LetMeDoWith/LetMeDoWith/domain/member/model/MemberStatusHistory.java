@@ -23,24 +23,23 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class MemberStatusHistory extends BaseAuditEntity {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-    
+
     @ManyToOne
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
-    
+
     @Convert(converter = MemberStatusConverter.class)
     @Column(nullable = false)
     private MemberStatus status;
-    
+
     @Column(nullable = false)
     private LocalDateTime statusChangedAt;
-    
+
     @Column(nullable = false)
     private LocalDateTime statusEndAt;
-    
 }

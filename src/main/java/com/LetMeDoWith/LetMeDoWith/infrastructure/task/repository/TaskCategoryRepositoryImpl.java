@@ -14,41 +14,36 @@ import org.springframework.stereotype.Repository;
 @Repository
 @RequiredArgsConstructor
 public class TaskCategoryRepositoryImpl implements TaskCategoryRepository {
-    
+
     private final TaskCategoryJpaRepository taskCategoryJpaRepository;
-    
+
     @Override
     public TaskCategory save(TaskCategory taskCategory) {
         return taskCategoryJpaRepository.save(taskCategory);
     }
-    
+
     @Override
     public Optional<TaskCategory> getTaskCategory(Long id, Yn isActive) {
         return taskCategoryJpaRepository.findByIdAndIsActive(id, isActive);
     }
-    
+
     @Override
     public Optional<TaskCategory> getActiveTaskCategory(Long id, Long holderId) {
-        return taskCategoryJpaRepository.findByIdAndCategoryHolderIdInAndIsActive(id,
-                                                                                  Arrays.asList(
-                                                                                      holderId,
-                                                                                      null),
-                                                                                  Yn.TRUE);
+        return taskCategoryJpaRepository.findByIdAndCategoryHolderIdInAndIsActive(
+                id, Arrays.asList(holderId, null), Yn.TRUE);
     }
-    
+
     @Override
     public List<TaskCategory> getAllTaskCategories(Yn isActive) {
         return taskCategoryJpaRepository.findAllByIsActive(isActive);
     }
-    
+
     @Override
     public List<TaskCategory> getCategories(Long holderId, Yn isActive) {
-        return taskCategoryJpaRepository
-            .findAllByCategoryHolderIdAndCreationTypeAndIsActive(holderId,
-                                                                 TaskCategoryCreationType.USER_CUSTOM,
-                                                                 isActive);
+        return taskCategoryJpaRepository.findAllByCategoryHolderIdAndCreationTypeAndIsActive(
+                holderId, TaskCategoryCreationType.USER_CUSTOM, isActive);
     }
-    
+
     @Override
     public List<TaskCategory> getCategories(TaskCategoryCreationType creationType, Yn isActive) {
         return taskCategoryJpaRepository.findAllByCreationTypeAndIsActive(creationType, isActive);

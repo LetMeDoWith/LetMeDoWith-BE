@@ -10,19 +10,19 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class EnumUtil {
 
-	public <T extends BaseEnum> T getEnum(Class<T> enumClass, String code) {
-		if(code == null) return null;
+    public <T extends BaseEnum> T getEnum(Class<T> enumClass, String code) {
+        if (code == null) return null;
 
-		try {
-			for(BaseEnum el : enumClass.getEnumConstants()) {
-				if(code.equalsIgnoreCase(el.getCode().toUpperCase())) {
-					return (T) el;
-				}
-			}
-		} catch (Exception e) {
-			throw new RestApiException(INTERNAL_SERVER_ERROR);
-		}
+        try {
+            for (BaseEnum el : enumClass.getEnumConstants()) {
+                if (code.equalsIgnoreCase(el.getCode().toUpperCase())) {
+                    return (T) el;
+                }
+            }
+        } catch (Exception e) {
+            throw new RestApiException(INTERNAL_SERVER_ERROR);
+        }
 
-		throw new RestApiException(CODE_ENUM_NOT_EXIST);
-	}
+        throw new RestApiException(CODE_ENUM_NOT_EXIST);
+    }
 }

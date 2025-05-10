@@ -7,23 +7,20 @@ import java.util.Set;
 import lombok.Builder;
 
 @Builder
-public record RegisterTodoTaskResult(
-    List<TodoTask> todoTaskList,
-    Set<LocalDate> routineDates
-) {
-    
-    public static RegisterTodoTaskResult of(List<TodoTask> todoTaskList,
-                                            Set<LocalDate> routineDates) {
+public record RegisterTodoTaskResult(List<TodoTask> todoTaskList, Set<LocalDate> routineDates) {
+
+    public static RegisterTodoTaskResult of(
+            List<TodoTask> todoTaskList, Set<LocalDate> routineDates) {
         return RegisterTodoTaskResult.builder()
-                                     .todoTaskList(todoTaskList)
-                                     .routineDates(routineDates)
-                                     .build();
+                .todoTaskList(todoTaskList)
+                .routineDates(routineDates)
+                .build();
     }
-    
+
     public static RegisterTodoTaskResult of(TodoTask todoTask) {
         return RegisterTodoTaskResult.builder()
-                                     .todoTaskList(List.of(todoTask))
-                                     .routineDates(null)
-                                     .build();
+                .todoTaskList(List.of(todoTask))
+                .routineDates(null)
+                .build();
     }
 }

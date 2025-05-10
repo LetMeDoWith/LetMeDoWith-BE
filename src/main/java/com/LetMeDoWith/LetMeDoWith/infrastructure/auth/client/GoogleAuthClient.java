@@ -14,16 +14,17 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 @Profile("!dev")
 public class GoogleAuthClient implements AuthClient {
-    
+
     private final WebClient webClient;
-    
+
     @Override
     @Cacheable(key = "'AuthPublicKey-Google'")
     public Mono<OidcPublicKeyResDto> getPublicKeyList() {
-        return webClient.get()
-                        .uri("https://www.googleapis.com/oauth2/v3/certs")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .retrieve()
-                        .bodyToMono(OidcPublicKeyResDto.class);
+        return webClient
+                .get()
+                .uri("https://www.googleapis.com/oauth2/v3/certs")
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(OidcPublicKeyResDto.class);
     }
 }

@@ -7,13 +7,10 @@ import lombok.Builder;
 
 @Builder
 public record UpdateDowithTaskWithRoutinesCommand(
-    Long id,
-    String title,
-    Long taskCategoryId,
-    LocalDate date,
-    LocalTime startTime,
-    Boolean isRoutine,
-    Set<LocalDate> routineDates
-) {
-
-}
+        Long id,
+        String title,
+        Long taskCategoryId,
+        LocalDate date,
+        LocalTime startTime,
+        Boolean isRoutine,
+        Set<LocalDate> routineDates) {}

@@ -6,14 +6,14 @@ import lombok.Getter;
 @Getter
 public class RestApiAuthException extends RuntimeException {
 
-  private FailResponseStatus status;
+    private FailResponseStatus status;
 
-  public RestApiAuthException(FailResponseStatus status) {
-    this.status = status;
-  }
+    public RestApiAuthException(FailResponseStatus status) {
+        this.status = status;
+    }
 
-  public RestApiAuthException(FailResponseStatus status, Exception exception) {
-    super(exception);
-    this.status = status;
-  }
+    public RestApiAuthException(FailResponseStatus status, Exception exception) {
+        super(exception);
+        this.status = status;
+    }
 }

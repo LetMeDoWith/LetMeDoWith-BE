@@ -21,12 +21,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class CreateDowithTaskService {
-    
+
     private final DowithTaskRegisterAvailChecker dowithTaskRegisterAvailChecker;
-    
+
     private final DowithTaskRepository dowithTaskRepository;
     private final TaskCategoryRepository taskCategoryRepository;
-    
+
     /**
      * 두윗모드 Task 생성
      *
@@ -35,29 +35,34 @@ public class CreateDowithTaskService {
      */
     @Transactional
     public DowithTask createDowithTask(Long memberId, CreateDowithTaskCommand command) {
-        
+
         Set<LocalDate> targetDateSet = command.getTargetDateSet();
-        
+
         if (command.taskCategoryId() != null) {
-            taskCategoryRepository.getActiveTaskCategory(command.taskCategoryId(), memberId)
-                                  .orElseThrow(() -> new RestApiException(
-                                      INVALID_REQUEST));
+            taskCategoryRepository
+                    .getActiveTaskCategory(command.taskCategoryId(), memberId)
+                    .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
         }
-        
-        RegisterAvailResult registerAvailResult = dowithTaskRegisterAvailChecker.isRegisterAvail(
-            targetDateSet, dowithTaskRepository.getDowithTasks(memberId, targetDateSet));
-        
+
+        RegisterAvailResult registerAvailResult =
+                dowithTaskRegisterAvailChecker.isRegisterAvail(
+                        targetDateSet, dowithTaskRepository.getDowithTasks(memberId, targetDateSet));
+
         if (!registerAvailResult.isAvail()) {
             throw new RestApiException(DOWITH_TASK_CREATE_COUNT_EXCEED);
         }
-        
-        DowithTask dowithTask = DowithTask.of(memberId, command.taskCategoryId(), command.title(),
-                                              command.date(), command.startTime());
-        
+
+        DowithTask dowithTask =
+                DowithTask.of(
+                        memberId,
+                        command.taskCategoryId(),
+                        command.title(),
+                        command.date(),
+                        command.startTime());
+
         return dowithTaskRepository.saveDowithTask(dowithTask);
-        
     }
-    
+
     /**
      * 두윗모드 Task 생성 - 루틴이 있는 경우
      *
@@ -66,34 +71,34 @@ public class CreateDowithTaskService {
      * @return
      */
     @Transactional
-    public List<DowithTask> createDowithTaskWithRoutine(Long memberId,
-                                                        CreateDowithTaskWithRoutineCommand command) {
-        
+    public List<DowithTask> createDowithTaskWithRoutine(
+            Long memberId, CreateDowithTaskWithRoutineCommand command) {
+
         Set<LocalDate> targetDateSet = command.getTargetDateSet();
-        
-        RegisterAvailResult registerAvailResult = dowithTaskRegisterAvailChecker.isRegisterAvail(
-            targetDateSet, dowithTaskRepository.getDowithTasks(memberId, targetDateSet));
-        
+
+        RegisterAvailResult registerAvailResult =
+                dowithTaskRegisterAvailChecker.isRegisterAvail(
+                        targetDateSet, dowithTaskRepository.getDowithTasks(memberId, targetDateSet));
+
         if (command.taskCategoryId() != null) {
-            taskCategoryRepository.getActiveTaskCategory(command.taskCategoryId(), memberId)
-                                  .orElseThrow(() -> new RestApiException(
-                                      INVALID_REQUEST));
+            taskCategoryRepository
+                    .getActiveTaskCategory(command.taskCategoryId(), memberId)
+                    .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
         }
-        
+
         if (!registerAvailResult.isAvail()) {
             throw new RestApiException(DOWITH_TASK_CREATE_COUNT_EXCEED);
         }
-        
-        List<DowithTask> dowithTask = DowithTask.ofWithRoutine(memberId,
-                                                               command.taskCategoryId(),
-                                                               command.title(),
-                                                               command.date(),
-                                                               command.startTime(),
-                                                               command.routineDates());
-        
+
+        List<DowithTask> dowithTask =
+                DowithTask.ofWithRoutine(
+                        memberId,
+                        command.taskCategoryId(),
+                        command.title(),
+                        command.date(),
+                        command.startTime(),
+                        command.routineDates());
+
         return dowithTaskRepository.saveDowithTasks(dowithTask);
-        
     }
-    
-    
 }

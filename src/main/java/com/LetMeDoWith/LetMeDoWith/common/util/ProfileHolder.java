@@ -5,12 +5,10 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ProfileHolder {
-    
+
     public static String activeProfile;
-    
+
     public ProfileHolder(Environment env) {
-        activeProfile = env.getActiveProfiles().length > 0
-            ? env.getActiveProfiles()[0]
-            : "default";
+        activeProfile = env.getActiveProfiles().length > 0 ? env.getActiveProfiles()[0] : "default";
     }
 }

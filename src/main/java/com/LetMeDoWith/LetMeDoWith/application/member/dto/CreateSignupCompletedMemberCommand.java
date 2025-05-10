@@ -16,12 +16,9 @@ import lombok.Builder;
  */
 @Builder
 public record CreateSignupCompletedMemberCommand(
-    String nickname,
-    LocalDate dateOfBirth,
-    Gender gender,
-    boolean isTerms,
-    boolean isPrivacy,
-    boolean isAdvertisement
-) {
-
-}
+        String nickname,
+        LocalDate dateOfBirth,
+        Gender gender,
+        boolean isTerms,
+        boolean isPrivacy,
+        boolean isAdvertisement) {}

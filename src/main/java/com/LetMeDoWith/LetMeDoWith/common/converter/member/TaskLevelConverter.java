@@ -7,6 +7,7 @@ import jakarta.persistence.Converter;
 @Converter(autoApply = true)
 public class TaskLevelConverter extends AbstractCombinedConverter<TaskCompleteLevel> {
 
-  public TaskLevelConverter() { super(TaskCompleteLevel.class); }
-
+    public TaskLevelConverter() {
+        super(TaskCompleteLevel.class);
+    }
 }

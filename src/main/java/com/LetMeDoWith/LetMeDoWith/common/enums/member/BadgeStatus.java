@@ -7,11 +7,9 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum BadgeStatus implements BaseEnum {
+    ACTIVE("ACTIVE", "활성화"),
+    INACTIVE("INACTIVE", "비활성화");
 
-  ACTIVE("ACTIVE", "활성화"),
-  INACTIVE("INACTIVE", "비활성화");
-
-  private final String code;
-  private final String description;
-
+    private final String code;
+    private final String description;
 }

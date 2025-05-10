@@ -8,14 +8,10 @@ import lombok.Data;
 @Builder
 public class GetBadgesInfoResult {
 
-  private boolean isMemberLazy;
-  private List<MemberBadgeVO> badges;
+    private boolean isMemberLazy;
+    private List<MemberBadgeVO> badges;
 
-  public static GetBadgesInfoResult of(boolean isLazy, List<MemberBadgeVO> badges) {
-    return GetBadgesInfoResult.builder()
-        .isMemberLazy(isLazy)
-        .badges(badges)
-        .build();
-  }
-
+    public static GetBadgesInfoResult of(boolean isLazy, List<MemberBadgeVO> badges) {
+        return GetBadgesInfoResult.builder().isMemberLazy(isLazy).badges(badges).build();
+    }
 }

@@ -14,18 +14,18 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 @Profile("!dev")
 public class AppleAuthClient implements AuthClient {
-    
+
     private final WebClient webClient;
-    
+
     // TODO: 애플 OIDC id token 공개키 API URL 찾아서 넣을 것.
     @Override
     @Cacheable(key = "'AuthPublicKey-Apple'")
     public Mono<OidcPublicKeyResDto> getPublicKeyList() {
-        return webClient.get()
-                        .uri("TBD")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .retrieve()
-                        .bodyToMono(OidcPublicKeyResDto.class);
+        return webClient
+                .get()
+                .uri("TBD")
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(OidcPublicKeyResDto.class);
     }
-    
 }

@@ -1,5 +1,3 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.auth.dto;
 
-public record CreateTokenTempResDto(String accessToken) {
-
-}
+public record CreateTokenTempResDto(String accessToken) {}
