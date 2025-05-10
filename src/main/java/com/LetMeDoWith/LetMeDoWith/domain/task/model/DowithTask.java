@@ -478,8 +478,10 @@ public class DowithTask extends BaseAuditEntity {
     
     private void validate() {
         LocalDateTime nowDateTime = SystemTimeUtil.now();
-        if (nowDateTime.toLocalDate().isEqual(date)) {
-            if (nowDateTime.toLocalTime().isAfter(startTime)) {
+        LocalDate nowData = nowDateTime.toLocalDate();
+        LocalTime nowTime = nowDateTime.toLocalTime();
+        if (nowData.isEqual(date)) {
+            if (nowTime.isAfter(startTime)) {
                 throw new RestApiException(INVALID_REQUEST);
             }
         }

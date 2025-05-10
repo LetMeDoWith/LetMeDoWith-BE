@@ -24,8 +24,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 public class DeleteDowithTaskIntegrationTest extends AbstractIntegrationTest {
     
-    static final String BASE_URL = "/api/v1/tasks/dowith";
-    static final String DELETE_TASK_URL = BASE_URL + "/{dowithTaskId}";
+    static final String DELETE_TASK_URL = "/api/v1/tasks/dowith" + "/{dowithTaskId}";
     
     @Autowired
     DowithTaskJpaRepository dowithTaskJpaRepository;
@@ -64,7 +63,7 @@ public class DeleteDowithTaskIntegrationTest extends AbstractIntegrationTest {
         
         // when
         ResultActions resultActions = request(MockMvcRequestBuilders.delete(
-                                                                        BASE_URL + "/{dowithTaskId}",
+                                                                        DELETE_TASK_URL,
                                                                         dowithTask.getId())
                                                                     .param("isRoutineInclude",
                                                                            String.valueOf(false)));
@@ -90,7 +89,7 @@ public class DeleteDowithTaskIntegrationTest extends AbstractIntegrationTest {
         // when
         setFixedClock(LocalDateTime.of(2024, 3, 15, 0, 0));
         ResultActions resultActions = request(MockMvcRequestBuilders.delete(
-                                                                        BASE_URL + "/{dowithTaskId}",
+                                                                        DELETE_TASK_URL,
                                                                         dowithTask.getId())
                                                                     .param("isRoutineInclude",
                                                                            String.valueOf(false)));
@@ -141,7 +140,7 @@ public class DeleteDowithTaskIntegrationTest extends AbstractIntegrationTest {
         // when
         setFixedClock(LocalDateTime.of(2024, 3, 15, 0, 0));
         ResultActions resultActions = request(MockMvcRequestBuilders.delete(
-                                                                        BASE_URL + "/{dowithTaskId}",
+                                                                        DELETE_TASK_URL,
                                                                         targetDowithTaskID)
                                                                     .param("isRoutineInclude",
                                                                            String.valueOf(true)));

@@ -26,8 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class RetrieveTaskIntegrationTest extends AbstractIntegrationTest {
     
-    static final String BASE_URL = "/api/v1/tasks";
-    static final String RETRIEVE_TASKS_URL = BASE_URL;
+    static final String RETRIEVE_TASKS_URL = "/api/v1/tasks";
     
     @Autowired
     DowithTaskJpaRepository dowithTaskJpaRepository;
