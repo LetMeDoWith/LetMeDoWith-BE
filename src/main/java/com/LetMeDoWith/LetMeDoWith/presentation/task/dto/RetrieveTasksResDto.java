@@ -1,7 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.task.dto;
 
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.RetrieveTasksResult;
-import com.LetMeDoWith.LetMeDoWith.common.util.EnumUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TodoTaskStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -23,8 +22,7 @@ public record RetrieveTasksResDto(
                                                 todoTaskQueryDto.taskCategoryId(),
                                                 todoTaskQueryDto.taskCategoryName(),
                                                 todoTaskQueryDto.title(),
-                                                EnumUtil.getEnum(TodoTaskStatus.class,
-                                                                 todoTaskQueryDto.status()),
+                                                todoTaskQueryDto.status(),
                                                 todoTaskQueryDto.date(),
                                                 todoTaskQueryDto.startTime()
                                             )).toList();
@@ -35,8 +33,7 @@ public record RetrieveTasksResDto(
                                                     dowithTaskQueryDto.taskCategoryId(),
                                                     dowithTaskQueryDto.taskCategoryName(),
                                                     dowithTaskQueryDto.title(),
-                                                    EnumUtil.getEnum(DowithTaskStatus.class,
-                                                                     dowithTaskQueryDto.status()),
+                                                    dowithTaskQueryDto.status(),
                                                     dowithTaskQueryDto.date(),
                                                     dowithTaskQueryDto.startTime(),
                                                     dowithTaskQueryDto.confirmedImageUrl(),
@@ -57,7 +54,7 @@ public record RetrieveTasksResDto(
         @Schema(description = "제목", defaultValue = "아침 먹기")
         String title,
         @Schema(description = "상태", implementation = TodoTaskStatus.class)
-        TodoTaskStatus status,
+        String status,
         @Schema(description = "일자", defaultValue = "2025-01-30")
         LocalDate date,
         @Schema(description = "시작시간", defaultValue = "11:30:00")
@@ -77,7 +74,7 @@ public record RetrieveTasksResDto(
         @Schema(description = "제목", defaultValue = "아침 먹기")
         String title,
         @Schema(description = "상태", implementation = DowithTaskStatus.class)
-        DowithTaskStatus status,
+        String status,
         @Schema(description = "일자", defaultValue = "2025-01-30")
         LocalDate date,
         @Schema(description = "시작시간", defaultValue = "11:30:00")
