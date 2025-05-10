@@ -17,10 +17,10 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class MemberSettingService {
-    
+
     private final MemberRepository memberRepository;
     private final MemberSettingRepository memberSettingRepository;
-    
+
     /**
      * 유저의 알람 수신 상태를 변경한다.
      *
@@ -28,13 +28,13 @@ public class MemberSettingService {
      */
     @Transactional
     public void updateAlarmSetting(UpdateMemberAlarmSettingCommand command) {
-        Member member = memberRepository.getMember(AuthUtil.getMemberId(), MemberStatus.NORMAL)
-                                        .orElseThrow(() -> new RestApiException(FailResponseStatus.MEMBER_NOT_EXIST));
-        
+        Member member =
+                memberRepository
+                        .getMember(AuthUtil.getMemberId(), MemberStatus.NORMAL)
+                        .orElseThrow(() -> new RestApiException(FailResponseStatus.MEMBER_NOT_EXIST));
+
         MemberAlarmSetting alarmSetting = member.getAlarmSetting();
-        
-        memberSettingRepository.save(
-            alarmSetting.update(MemberAlarmSettingVO.fromCommand(command)));
+
+        memberSettingRepository.save(alarmSetting.update(MemberAlarmSettingVO.fromCommand(command)));
     }
-    
 }

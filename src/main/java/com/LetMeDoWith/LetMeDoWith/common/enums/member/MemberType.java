@@ -9,7 +9,7 @@ import lombok.Getter;
 public enum MemberType implements BaseEnum {
     USER("USER", "일반"),
     ADMIN("ADMIN", "관리자");
-    
+
     private final String code;
     private final String description;
 }

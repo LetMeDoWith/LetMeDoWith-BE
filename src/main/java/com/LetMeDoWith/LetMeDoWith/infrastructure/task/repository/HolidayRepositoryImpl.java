@@ -12,19 +12,16 @@ import org.springframework.stereotype.Repository;
 @Repository
 @RequiredArgsConstructor
 public class HolidayRepositoryImpl implements HolidayRepository {
-    
+
     private final HolidayJpaRepository holidayJpaRepository;
-    
+
     @Override
     public boolean isHoliday(LocalDate date) {
         return holidayJpaRepository.existsByDate(date);
     }
-    
+
     @Override
-    public Set<Holiday> getHolidays(CountryCode countryCode, LocalDate startDate,
-                                    LocalDate endDate) {
-        return holidayJpaRepository.findAllByCountryCodeAndDateBetween(countryCode,
-                                                                       startDate,
-                                                                       endDate);
+    public Set<Holiday> getHolidays(CountryCode countryCode, LocalDate startDate, LocalDate endDate) {
+        return holidayJpaRepository.findAllByCountryCodeAndDateBetween(countryCode, startDate, endDate);
     }
 }

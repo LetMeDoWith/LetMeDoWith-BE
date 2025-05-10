@@ -5,9 +5,9 @@ import java.time.LocalDate;
 import java.util.Set;
 
 public interface TodoTaskRoutineDateCalculateStrategy {
-    
-    Set<LocalDate> getRoutineDates(LocalDate startDate, LocalDate endDate,
-                                   Set<Integer> repetitionPattern);
-    
+
+    Set<LocalDate> getRoutineDates(
+            LocalDate startDate, LocalDate endDate, Set<Integer> repetitionPattern);
+
     TodoTaskRoutineCycle getRoutineCycle();
 }

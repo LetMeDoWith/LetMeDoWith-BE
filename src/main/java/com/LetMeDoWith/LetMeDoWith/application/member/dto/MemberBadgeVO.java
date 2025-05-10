@@ -7,16 +7,15 @@ import lombok.Data;
 @Data
 public class MemberBadgeVO {
 
-  private Long memberBadgeId;
-  private Long memberId;
-  private Yn isMain;
+    private Long memberBadgeId;
+    private Long memberId;
+    private Yn isMain;
 
-  private Long badgeId;
-  private BadgeStatus badgeStatus;
-  private String name;
-  private String description;
-  private String acquireHint;
-  private String imageUrl;
-  private int sortOrder;
-
+    private Long badgeId;
+    private BadgeStatus badgeStatus;
+    private String name;
+    private String description;
+    private String acquireHint;
+    private String imageUrl;
+    private int sortOrder;
 }

@@ -13,16 +13,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/health-check")
 @RequiredArgsConstructor
 public class HealthCheckController {
-    
+
     @GetMapping("")
     public ResponseEntity retrieveMemberInfo() {
         return ResponseUtil.createSuccessResponse();
     }
-    
+
     @GetMapping("/test")
     public ResponseEntity testException() {
-        
+
         throw new RestApiException(FailResponseStatus.UNAUTHORIZED);
-        
     }
 }

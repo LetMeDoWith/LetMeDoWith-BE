@@ -1,32 +1,32 @@
-//package com.LetMeDoWith.LetMeDoWith.infrastructure.member;
+// package com.LetMeDoWith.LetMeDoWith.infrastructure.member;
 //
-//import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+// import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 //
-//import com.LetMeDoWith.LetMeDoWith.application.member.dto.MemberBadgeVO;
-//import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
-//import com.LetMeDoWith.LetMeDoWith.common.enums.member.BadgeStatus;
-//import com.LetMeDoWith.LetMeDoWith.config.TestQueryDslConfig;
-//import com.LetMeDoWith.LetMeDoWith.domain.member.model.Badge;
-//import com.LetMeDoWith.LetMeDoWith.domain.member.model.MemberBadge;
-//import com.LetMeDoWith.LetMeDoWith.infrastructure.member.jpaRepository.BadgeJpaRepository;
-//import com.LetMeDoWith.LetMeDoWith.infrastructure.member.jpaRepository.MemberBadgeJpaRepository;
-//import java.util.List;
-//import lombok.extern.slf4j.Slf4j;
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.DisplayName;
-//import org.junit.jupiter.api.Test;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-//import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
-//import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-//import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-//import org.springframework.context.annotation.Import;
+// import com.LetMeDoWith.LetMeDoWith.application.member.dto.MemberBadgeVO;
+// import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
+// import com.LetMeDoWith.LetMeDoWith.common.enums.member.BadgeStatus;
+// import com.LetMeDoWith.LetMeDoWith.config.TestQueryDslConfig;
+// import com.LetMeDoWith.LetMeDoWith.domain.member.model.Badge;
+// import com.LetMeDoWith.LetMeDoWith.domain.member.model.MemberBadge;
+// import com.LetMeDoWith.LetMeDoWith.infrastructure.member.jpaRepository.BadgeJpaRepository;
+// import com.LetMeDoWith.LetMeDoWith.infrastructure.member.jpaRepository.MemberBadgeJpaRepository;
+// import java.util.List;
+// import lombok.extern.slf4j.Slf4j;
+// import org.junit.jupiter.api.BeforeEach;
+// import org.junit.jupiter.api.DisplayName;
+// import org.junit.jupiter.api.Test;
+// import org.springframework.beans.factory.annotation.Autowired;
+// import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+// import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
+// import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+// import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+// import org.springframework.context.annotation.Import;
 //
-//@DataJpaTest
-//@AutoConfigureTestDatabase(replace = Replace.NONE)
-//@Slf4j
-//@Import(TestQueryDslConfig.class)
-//public class BadgeJpaRepositoryTest {
+// @DataJpaTest
+// @AutoConfigureTestDatabase(replace = Replace.NONE)
+// @Slf4j
+// @Import(TestQueryDslConfig.class)
+// public class BadgeJpaRepositoryTest {
 //
 //  @Autowired
 //  private TestEntityManager entityManager;
@@ -95,9 +95,12 @@
 //    // when
 //    badgeJpaRepository.saveAll(List.of(badge1, badge2, badge3));
 //    badgeJpaRepository.flush();
-//    Badge savedBadge1 = badgeJpaRepository.findByName(badge1Name).orElseThrow(() -> new IllegalArgumentException("not found"));
-//    Badge savedBadge2 = badgeJpaRepository.findByName(badge2Name).orElseThrow(() -> new IllegalArgumentException("not found"));
-//    Badge savedBadge3 = badgeJpaRepository.findByName(badge3Name).orElseThrow(() -> new IllegalArgumentException("not found"));
+//    Badge savedBadge1 = badgeJpaRepository.findByName(badge1Name).orElseThrow(() -> new
+// IllegalArgumentException("not found"));
+//    Badge savedBadge2 = badgeJpaRepository.findByName(badge2Name).orElseThrow(() -> new
+// IllegalArgumentException("not found"));
+//    Badge savedBadge3 = badgeJpaRepository.findByName(badge3Name).orElseThrow(() -> new
+// IllegalArgumentException("not found"));
 //
 //    // then
 //    assertThat(savedBadge1.getId()).isNotNull();
@@ -212,4 +215,4 @@
 //
 //  }
 //
-//}
+// }

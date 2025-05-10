@@ -8,13 +8,12 @@ import lombok.Builder;
 
 @Builder
 public record CreateDowithTaskWithRoutineCommand(
-    String title,
-    Long taskCategoryId,
-    LocalDate date,
-    LocalTime startTime,
-    Set<LocalDate> routineDates
-) {
-    
+        String title,
+        Long taskCategoryId,
+        LocalDate date,
+        LocalTime startTime,
+        Set<LocalDate> routineDates) {
+
     public Set<LocalDate> getTargetDateSet() {
         Set<LocalDate> targetDateSet = new HashSet<>();
         targetDateSet.add(date);

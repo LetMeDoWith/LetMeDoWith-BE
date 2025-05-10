@@ -8,9 +8,8 @@ import org.springframework.stereotype.Component;
 @Converter(autoApply = true)
 @Component
 public class MemberStatusConverter extends AbstractCombinedConverter<MemberStatus> {
-    
+
     public MemberStatusConverter() {
         super(MemberStatus.class);
     }
-    
 }

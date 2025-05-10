@@ -40,37 +40,31 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class RegisterTodoTaskServiceTest {
 
-    @Mock
-    private TodoTaskRepository todoTaskRepository;
+    @Mock private TodoTaskRepository todoTaskRepository;
 
-    @Mock
-    private TaskCategoryRepository taskCategoryRepository;
+    @Mock private TaskCategoryRepository taskCategoryRepository;
 
-    @Mock
-    private TodoTaskRoutineDateCalculator routineDateCalculator;
+    @Mock private TodoTaskRoutineDateCalculator routineDateCalculator;
 
-    @Mock
-    private DailyRoutineDateCalculateStrategy dailyRoutineScheduleStrategy;
+    @Mock private DailyRoutineDateCalculateStrategy dailyRoutineScheduleStrategy;
 
-    @Mock
-    private Map<String, TodoTaskRoutineDateCalculateStrategy> routineScheduleStrategies;
+    @Mock private Map<String, TodoTaskRoutineDateCalculateStrategy> routineScheduleStrategies;
 
-    @Mock
-    private HolidayService holidayService;
+    @Mock private HolidayService holidayService;
 
-    @InjectMocks
-    private RegisterTodoTaskService registerTodoTaskService;
+    @InjectMocks private RegisterTodoTaskService registerTodoTaskService;
 
     private RegisterTodoTaskCommand command;
 
     @BeforeEach
     void setUp() {
-        command = RegisterTodoTaskCommand.builder()
-                .taskCategoryId(1L)
-                .title("Test Task")
-                .startDate(SystemTimeUtil.nowDate().plusDays(1))
-                .startTime(LocalTime.of(10, 0))
-                .build();
+        command =
+                RegisterTodoTaskCommand.builder()
+                        .taskCategoryId(1L)
+                        .title("Test Task")
+                        .startDate(SystemTimeUtil.nowDate().plusDays(1))
+                        .startTime(LocalTime.of(10, 0))
+                        .build();
     }
 
     @Test
@@ -80,8 +74,9 @@ class RegisterTodoTaskServiceTest {
         when(taskCategoryRepository.getActiveTaskCategory(command.taskCategoryId(), 1L))
                 .thenReturn(Optional.of(new TaskCategory()));
         when(todoTaskRepository.saveTodoTask(any(TodoTask.class)))
-                .thenReturn(TodoTask.of(1L, 1L, "Test Task", SystemTimeUtil.nowDate().plusDays(1),
-                        LocalTime.of(10, 0)));
+                .thenReturn(
+                        TodoTask.of(
+                                1L, 1L, "Test Task", SystemTimeUtil.nowDate().plusDays(1), LocalTime.of(10, 0)));
 
         // when
         RegisterTodoTaskResult result = registerTodoTaskService.registerTodoTask(1L, command);
@@ -99,47 +94,40 @@ class RegisterTodoTaskServiceTest {
         LocalDate endDate = startDate.plusDays(7);
         String title = "매일 운동하기";
         TodoTaskRoutineCycle cycle = TodoTaskRoutineCycle.DAILY;
-        TodoTaskRoutineCondition routineCondition = TodoTaskRoutineCondition.builder()
-                .cycle(cycle)
-                .pattern(Set.of())
-                .isExcludeHolidays(false)
-                .build();
+        TodoTaskRoutineCondition routineCondition =
+                TodoTaskRoutineCondition.builder()
+                        .cycle(cycle)
+                        .pattern(Set.of())
+                        .isExcludeHolidays(false)
+                        .build();
 
-        RegisterTodoTaskCommand routineCommand = RegisterTodoTaskCommand.builder()
-                .taskCategoryId(1L)
-                .title(title)
-                .startDate(startDate)
-                .endDate(endDate)
-                .startTime(SystemTimeUtil.nowTime()
-                        .plusHours(
-                                1))
-                .isRoutine(true)
-                .routineCondition(
-                        routineCondition)
-                .build();
+        RegisterTodoTaskCommand routineCommand =
+                RegisterTodoTaskCommand.builder()
+                        .taskCategoryId(1L)
+                        .title(title)
+                        .startDate(startDate)
+                        .endDate(endDate)
+                        .startTime(SystemTimeUtil.nowTime().plusHours(1))
+                        .isRoutine(true)
+                        .routineCondition(routineCondition)
+                        .build();
 
         when(taskCategoryRepository.getTaskCategory(routineCommand.taskCategoryId(), Yn.TRUE))
                 .thenReturn(Optional.of(new TaskCategory()));
 
-        Set<LocalDate> routineDates = Set.of(startDate,
-                startDate.plusDays(1),
-                startDate.plusDays(2));
+        Set<LocalDate> routineDates = Set.of(startDate, startDate.plusDays(1), startDate.plusDays(2));
         when(routineDateCalculator.computeRoutineDates(
-                eq(cycle),
-                eq(startDate),
-                eq(endDate),
-                eq(Set.of())))
+                        eq(cycle), eq(startDate), eq(endDate), eq(Set.of())))
                 .thenReturn(routineDates);
 
-        List<TodoTask> todoTasks = TodoTask.ofWithRoutine(1L, 1L, title, startDate,
-                SystemTimeUtil.nowTime().plusHours(1),
-                routineDates);
-        when(todoTaskRepository.saveTodoTasks(any(List.class)))
-                .thenReturn(todoTasks);
+        List<TodoTask> todoTasks =
+                TodoTask.ofWithRoutine(
+                        1L, 1L, title, startDate, SystemTimeUtil.nowTime().plusHours(1), routineDates);
+        when(todoTaskRepository.saveTodoTasks(any(List.class))).thenReturn(todoTasks);
 
         // when
-        RegisterTodoTaskResult result = registerTodoTaskService.registerTodoTaskWithRoutine(1L,
-                routineCommand);
+        RegisterTodoTaskResult result =
+                registerTodoTaskService.registerTodoTaskWithRoutine(1L, routineCommand);
 
         // then
         assertThat(result).isNotNull();
@@ -155,52 +143,49 @@ class RegisterTodoTaskServiceTest {
         LocalDate endDate = startDate.plusDays(7);
         String title = "매일 운동하기";
         TodoTaskRoutineCycle cycle = TodoTaskRoutineCycle.DAILY;
-        TodoTaskRoutineCondition routineCondition = TodoTaskRoutineCondition.builder()
-                .cycle(cycle)
-                .pattern(Set.of())
-                .isExcludeHolidays(true)
-                .build();
+        TodoTaskRoutineCondition routineCondition =
+                TodoTaskRoutineCondition.builder()
+                        .cycle(cycle)
+                        .pattern(Set.of())
+                        .isExcludeHolidays(true)
+                        .build();
 
-        RegisterTodoTaskCommand routineCommand = RegisterTodoTaskCommand.builder()
-                .taskCategoryId(1L)
-                .title(title)
-                .startDate(startDate)
-                .endDate(endDate)
-                .startTime(SystemTimeUtil.nowTime()
-                        .plusHours(
-                                1))
-                .isRoutine(true)
-                .routineCondition(
-                        routineCondition)
-                .build();
+        RegisterTodoTaskCommand routineCommand =
+                RegisterTodoTaskCommand.builder()
+                        .taskCategoryId(1L)
+                        .title(title)
+                        .startDate(startDate)
+                        .endDate(endDate)
+                        .startTime(SystemTimeUtil.nowTime().plusHours(1))
+                        .isRoutine(true)
+                        .routineCondition(routineCondition)
+                        .build();
 
         when(taskCategoryRepository.getTaskCategory(routineCommand.taskCategoryId(), Yn.TRUE))
                 .thenReturn(Optional.of(new TaskCategory()));
 
-        Set<LocalDate> routineDates = Set.of(startDate,
-                startDate.plusDays(1),
-                startDate.plusDays(2));
+        Set<LocalDate> routineDates = Set.of(startDate, startDate.plusDays(1), startDate.plusDays(2));
         when(routineDateCalculator.computeRoutineDates(
-                eq(cycle),
-                eq(startDate),
-                eq(endDate),
-                eq(Set.of())))
+                        eq(cycle), eq(startDate), eq(endDate), eq(Set.of())))
                 .thenReturn(routineDates);
 
         Set<LocalDate> holidays = Set.of(startDate.plusDays(1));
-        when(holidayService.getHolidays(CountryCode.KR, startDate, endDate))
-                .thenReturn(holidays);
+        when(holidayService.getHolidays(CountryCode.KR, startDate, endDate)).thenReturn(holidays);
 
-        List<TodoTask> todoTasks = TodoTask.ofWithRoutine(1L, 1L, title, startDate,
-                SystemTimeUtil.nowTime().plusHours(1),
-                routineDates,
-                holidays);
-        when(todoTaskRepository.saveTodoTasks(any(List.class)))
-                .thenReturn(todoTasks);
+        List<TodoTask> todoTasks =
+                TodoTask.ofWithRoutine(
+                        1L,
+                        1L,
+                        title,
+                        startDate,
+                        SystemTimeUtil.nowTime().plusHours(1),
+                        routineDates,
+                        holidays);
+        when(todoTaskRepository.saveTodoTasks(any(List.class))).thenReturn(todoTasks);
 
         // when
-        RegisterTodoTaskResult result = registerTodoTaskService.registerTodoTaskWithRoutine(1L,
-                routineCommand);
+        RegisterTodoTaskResult result =
+                registerTodoTaskService.registerTodoTaskWithRoutine(1L, routineCommand);
 
         // then
         assertThat(result).isNotNull();
@@ -218,8 +203,8 @@ class RegisterTodoTaskServiceTest {
         // when & then
         assertThatThrownBy(() -> registerTodoTaskService.registerTodoTask(1L, command))
                 .isInstanceOf(RestApiException.class)
-                .hasFieldOrPropertyWithValue("status",
-                        FailResponseStatus.DOWITH_TASK_TASK_CATEGORY_NOT_EXIST);
+                .hasFieldOrPropertyWithValue(
+                        "status", FailResponseStatus.DOWITH_TASK_TASK_CATEGORY_NOT_EXIST);
     }
 
     @Test
@@ -230,33 +215,32 @@ class RegisterTodoTaskServiceTest {
         LocalDate endDate = LocalDate.of(2024, 12, 31);
         String title = "매일 운동하기";
         TodoTaskRoutineCycle cycle = TodoTaskRoutineCycle.DAILY;
-        TodoTaskRoutineCondition routineCondition = TodoTaskRoutineCondition.builder()
-                .cycle(cycle)
-                .pattern(Set.of())
-                .isExcludeHolidays(false)
-                .build();
+        TodoTaskRoutineCondition routineCondition =
+                TodoTaskRoutineCondition.builder()
+                        .cycle(cycle)
+                        .pattern(Set.of())
+                        .isExcludeHolidays(false)
+                        .build();
 
-        RegisterTodoTaskCommand routineCommand = RegisterTodoTaskCommand.builder()
-                .taskCategoryId(1L)
-                .title(title)
-                .startDate(startDate)
-                .endDate(endDate)
-                .startTime(LocalTime.of(10,
-                        0))
-                .isRoutine(true)
-                .routineCondition(
-                        routineCondition)
-                .build();
+        RegisterTodoTaskCommand routineCommand =
+                RegisterTodoTaskCommand.builder()
+                        .taskCategoryId(1L)
+                        .title(title)
+                        .startDate(startDate)
+                        .endDate(endDate)
+                        .startTime(LocalTime.of(10, 0))
+                        .isRoutine(true)
+                        .routineCondition(routineCondition)
+                        .build();
 
         when(taskCategoryRepository.getTaskCategory(routineCommand.taskCategoryId(), Yn.TRUE))
                 .thenReturn(Optional.empty());
 
         // when & then
-        assertThatThrownBy(() -> registerTodoTaskService.registerTodoTaskWithRoutine(1L,
-                routineCommand))
+        assertThatThrownBy(
+                        () -> registerTodoTaskService.registerTodoTaskWithRoutine(1L, routineCommand))
                 .isInstanceOf(RestApiException.class)
-                .hasFieldOrPropertyWithValue("status",
-                        FailResponseStatus.INVALID_REQUEST);
+                .hasFieldOrPropertyWithValue("status", FailResponseStatus.INVALID_REQUEST);
     }
 
     @Test
@@ -267,33 +251,32 @@ class RegisterTodoTaskServiceTest {
         LocalDate endDate = LocalDate.of(2024, 1, 1);
         String title = "매일 운동하기";
         TodoTaskRoutineCycle cycle = TodoTaskRoutineCycle.DAILY;
-        TodoTaskRoutineCondition routineCondition = TodoTaskRoutineCondition.builder()
-                .cycle(cycle)
-                .pattern(Set.of())
-                .isExcludeHolidays(false)
-                .build();
+        TodoTaskRoutineCondition routineCondition =
+                TodoTaskRoutineCondition.builder()
+                        .cycle(cycle)
+                        .pattern(Set.of())
+                        .isExcludeHolidays(false)
+                        .build();
 
-        RegisterTodoTaskCommand routineCommand = RegisterTodoTaskCommand.builder()
-                .taskCategoryId(1L)
-                .title(title)
-                .startDate(startDate)
-                .endDate(endDate)
-                .startTime(LocalTime.of(10,
-                        0))
-                .isRoutine(true)
-                .routineCondition(
-                        routineCondition)
-                .build();
+        RegisterTodoTaskCommand routineCommand =
+                RegisterTodoTaskCommand.builder()
+                        .taskCategoryId(1L)
+                        .title(title)
+                        .startDate(startDate)
+                        .endDate(endDate)
+                        .startTime(LocalTime.of(10, 0))
+                        .isRoutine(true)
+                        .routineCondition(routineCondition)
+                        .build();
 
         when(taskCategoryRepository.getTaskCategory(routineCommand.taskCategoryId(), Yn.TRUE))
                 .thenReturn(Optional.of(new TaskCategory()));
 
         // when & then
-        assertThatThrownBy(() -> registerTodoTaskService.registerTodoTaskWithRoutine(1L,
-                routineCommand))
+        assertThatThrownBy(
+                        () -> registerTodoTaskService.registerTodoTaskWithRoutine(1L, routineCommand))
                 .isInstanceOf(RestApiException.class)
-                .hasFieldOrPropertyWithValue("status",
-                        FailResponseStatus.INVALID_REQUEST);
+                .hasFieldOrPropertyWithValue("status", FailResponseStatus.INVALID_REQUEST);
     }
 
     @Test
@@ -304,44 +287,34 @@ class RegisterTodoTaskServiceTest {
         LocalDate endDate = LocalDate.of(2024, 12, 31);
         String title = "매주 운동하기";
         TodoTaskRoutineCycle cycle = TodoTaskRoutineCycle.WEEKLY;
-        TodoTaskRoutineCondition routineCondition = TodoTaskRoutineCondition.builder()
-                .cycle(cycle)
-                .pattern(Set.of(1,
-                        2,
-                        3,
-                        4,
-                        5,
-                        6,
-                        7,
-                        8))
-                .isExcludeHolidays(false)
-                .build();
+        TodoTaskRoutineCondition routineCondition =
+                TodoTaskRoutineCondition.builder()
+                        .cycle(cycle)
+                        .pattern(Set.of(1, 2, 3, 4, 5, 6, 7, 8))
+                        .isExcludeHolidays(false)
+                        .build();
 
-        RegisterTodoTaskCommand routineCommand = RegisterTodoTaskCommand.builder()
-                .taskCategoryId(1L)
-                .title(title)
-                .startDate(startDate)
-                .endDate(endDate)
-                .startTime(LocalTime.of(10,
-                        0))
-                .isRoutine(true)
-                .routineCondition(
-                        routineCondition)
-                .build();
+        RegisterTodoTaskCommand routineCommand =
+                RegisterTodoTaskCommand.builder()
+                        .taskCategoryId(1L)
+                        .title(title)
+                        .startDate(startDate)
+                        .endDate(endDate)
+                        .startTime(LocalTime.of(10, 0))
+                        .isRoutine(true)
+                        .routineCondition(routineCondition)
+                        .build();
 
         when(taskCategoryRepository.getTaskCategory(routineCommand.taskCategoryId(), Yn.TRUE))
                 .thenReturn(Optional.of(new TaskCategory()));
 
         when(routineDateCalculator.computeRoutineDates(
-                eq(cycle),
-                eq(startDate),
-                eq(endDate),
-                eq(Set.of(1, 2, 3, 4, 5, 6, 7, 8))))
+                        eq(cycle), eq(startDate), eq(endDate), eq(Set.of(1, 2, 3, 4, 5, 6, 7, 8))))
                 .thenThrow(new RestApiException(FailResponseStatus.DOWITH_TASK_NOT_AVAIL_DATE));
 
         // when & then
-        assertThatThrownBy(() -> registerTodoTaskService.registerTodoTaskWithRoutine(1L,
-                routineCommand))
+        assertThatThrownBy(
+                        () -> registerTodoTaskService.registerTodoTaskWithRoutine(1L, routineCommand))
                 .isInstanceOf(RestApiException.class)
                 .hasFieldOrPropertyWithValue("status", FailResponseStatus.DOWITH_TASK_NOT_AVAIL_DATE);
     }

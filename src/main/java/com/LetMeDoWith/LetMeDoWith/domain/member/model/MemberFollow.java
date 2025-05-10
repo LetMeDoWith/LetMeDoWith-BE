@@ -19,16 +19,16 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class MemberFollow extends BaseAuditEntity {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-    
+
     @ManyToOne
     @JoinColumn(name = "follower_id", nullable = false)
     private Member followerMember;
-    
+
     @ManyToOne
     @JoinColumn(name = "following_id", nullable = false)
     private Member followingMember;

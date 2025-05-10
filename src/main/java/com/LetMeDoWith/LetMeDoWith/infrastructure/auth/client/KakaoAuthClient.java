@@ -14,17 +14,17 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 @CacheConfig(cacheNames = "KAKAO", cacheManager = "socialProviderPublicKeyCacheManager")
 public class KakaoAuthClient implements AuthClient {
-    
+
     private final WebClient webClient;
-    
+
     @Override
     @Cacheable(key = "'AuthPublicKey-Kakao'")
     public Mono<OidcPublicKeyResDto> getPublicKeyList() {
-        return webClient.get()
-                        .uri("https://kauth.kakao.com/.well-known/jwks.json")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .retrieve()
-                        .bodyToMono(OidcPublicKeyResDto.class);
+        return webClient
+                .get()
+                .uri("https://kauth.kakao.com/.well-known/jwks.json")
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(OidcPublicKeyResDto.class);
     }
-    
 }

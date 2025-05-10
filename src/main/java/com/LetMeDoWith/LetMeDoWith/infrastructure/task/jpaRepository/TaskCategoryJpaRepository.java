@@ -9,18 +9,16 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TaskCategoryJpaRepository extends JpaRepository<TaskCategory, Long> {
 
-  Optional<TaskCategory> findByIdAndIsActive(Long id, Yn isActive);
+    Optional<TaskCategory> findByIdAndIsActive(Long id, Yn isActive);
 
-  Optional<TaskCategory> findByIdAndCategoryHolderIdInAndIsActive(Long id,
-      List<Long> categoryHolderId,
-      Yn isActive);
+    Optional<TaskCategory> findByIdAndCategoryHolderIdInAndIsActive(
+            Long id, List<Long> categoryHolderId, Yn isActive);
 
-  List<TaskCategory> findAllByIsActive(Yn isActive);
+    List<TaskCategory> findAllByIsActive(Yn isActive);
 
-  List<TaskCategory> findAllByCategoryHolderIdAndCreationTypeAndIsActive(Long holderId,
-      TaskCategoryCreationType taskCategoryCreationType,
-      Yn isActive);
+    List<TaskCategory> findAllByCategoryHolderIdAndCreationTypeAndIsActive(
+            Long holderId, TaskCategoryCreationType taskCategoryCreationType, Yn isActive);
 
-  List<TaskCategory> findAllByCreationTypeAndIsActive(TaskCategoryCreationType creationType,
-      Yn isActive);
+    List<TaskCategory> findAllByCreationTypeAndIsActive(
+            TaskCategoryCreationType creationType, Yn isActive);
 }

@@ -23,9 +23,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/member/setting")
 @RequiredArgsConstructor
 public class MemberSettingController {
-    
+
     private final MemberSettingService memberSettingService;
-    
+
     /**
      * 유저의 푸쉬 알람 수신 상태를 변경한다.
      *
@@ -34,15 +34,12 @@ public class MemberSettingController {
      */
     @Operation(summary = "알림 수신 상태 변경", description = "회원의 알림 수신 상태를 변경합니다.")
     @ApiSuccessResponse(description = "회원 알림 수신상태 변경 성공")
-    @ApiErrorResponses({
-        @ApiErrorResponse(status = FailResponseStatus.MEMBER_NOT_EXIST)
-    })
+    @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.MEMBER_NOT_EXIST)})
     @PutMapping("/alarm")
     public <T> ResponseEntity<ResponseDto<T>> updateAlarm(
-        @RequestBody UpdateMemberAlarmSettingReq req) {
+            @RequestBody UpdateMemberAlarmSettingReq req) {
         memberSettingService.updateAlarmSetting(UpdateMemberAlarmSettingCommand.fromReq(req));
-        
+
         return ResponseUtil.createSuccessResponse();
     }
-    
 }
