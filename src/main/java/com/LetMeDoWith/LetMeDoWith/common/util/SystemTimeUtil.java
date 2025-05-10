@@ -13,7 +13,7 @@ public class SystemTimeUtil {
     
     public static void setClock(Clock clock) {
         if (!ProfileHolder.activeProfile.equals("test")) {
-            throw new IllegalStateException("로컬 테스트 환경에서만 사용 가능합니다.");
+            throw new IllegalStateException("테스트 환경에서만 사용 가능합니다.");
         }
         SystemTimeUtil.clock = clock;
     }
