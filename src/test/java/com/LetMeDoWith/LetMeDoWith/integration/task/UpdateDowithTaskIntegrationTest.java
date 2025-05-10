@@ -27,8 +27,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 public class UpdateDowithTaskIntegrationTest extends AbstractIntegrationTest {
     
-    static final String UPDATE_DOWITH_TASK = "/api/v1/tasks/dowith";
-    static final String UPDATE_DOWITH_TASK_ROUTINE = UPDATE_DOWITH_TASK + "/routine";
+    static final String UPDATE_DOWITH_TASK_URL = "/api/v1/tasks/dowith";
+    static final String UPDATE_DOWITH_TASK_ROUTINE_URL = UPDATE_DOWITH_TASK_URL + "/routine";
     
     @Autowired
     DowithTaskJpaRepository dowithTaskJpaRepository;
@@ -85,7 +85,7 @@ public class UpdateDowithTaskIntegrationTest extends AbstractIntegrationTest {
                                                                        LocalDate.of(2024, 3, 10),
                                                                        LocalDate.of(2024, 3, 11)))
                                                                    .build();
-        ResultActions resultActions = this.request(MockMvcRequestBuilders.put(UPDATE_DOWITH_TASK)
+        ResultActions resultActions = this.request(MockMvcRequestBuilders.put(UPDATE_DOWITH_TASK_URL)
                                                                          .content(this.writeRequestBodyAsString(
                                                                              requestBody)));
         
@@ -150,7 +150,7 @@ public class UpdateDowithTaskIntegrationTest extends AbstractIntegrationTest {
                                                                        LocalDate.of(2024, 3, 10),
                                                                        LocalDate.of(2024, 3, 11)))
                                                                    .build();
-        ResultActions resultActions = this.request(MockMvcRequestBuilders.put(UPDATE_DOWITH_TASK)
+        ResultActions resultActions = this.request(MockMvcRequestBuilders.put(UPDATE_DOWITH_TASK_URL)
                                                                          .content(this.writeRequestBodyAsString(
                                                                              requestBody)));
         
@@ -185,7 +185,7 @@ public class UpdateDowithTaskIntegrationTest extends AbstractIntegrationTest {
                                                                        0))
                                                                    .isRoutineCreate(false)
                                                                    .build();
-        ResultActions resultActions = request(MockMvcRequestBuilders.put(UPDATE_DOWITH_TASK)
+        ResultActions resultActions = request(MockMvcRequestBuilders.put(UPDATE_DOWITH_TASK_URL)
                                                                     .content(this.writeRequestBodyAsString(
                                                                         requestBody)));
         
@@ -246,7 +246,7 @@ public class UpdateDowithTaskIntegrationTest extends AbstractIntegrationTest {
                                                                                      newRoutineDates)
                                                                                  .build();
         ResultActions resultActions = this.request(MockMvcRequestBuilders.put(
-                                                                             UPDATE_DOWITH_TASK_ROUTINE)
+                                                                             UPDATE_DOWITH_TASK_ROUTINE_URL)
                                                                          .content(this.writeRequestBodyAsString(
                                                                              requestBody)));
         
@@ -314,7 +314,7 @@ public class UpdateDowithTaskIntegrationTest extends AbstractIntegrationTest {
                                                                                      newRoutineDates)
                                                                                  .build();
         ResultActions resultActions = this.request(MockMvcRequestBuilders.put(
-                                                                             UPDATE_DOWITH_TASK_ROUTINE)
+                                                                             UPDATE_DOWITH_TASK_ROUTINE_URL)
                                                                          .content(this.writeRequestBodyAsString(
                                                                              requestBody)));
         
@@ -374,7 +374,7 @@ public class UpdateDowithTaskIntegrationTest extends AbstractIntegrationTest {
                                                                                      newRoutineDates)
                                                                                  .build();
         ResultActions resultActions = this.request(MockMvcRequestBuilders.put(
-                                                                             UPDATE_DOWITH_TASK_ROUTINE)
+                                                                             UPDATE_DOWITH_TASK_ROUTINE_URL)
                                                                          .content(this.writeRequestBodyAsString(
                                                                              requestBody)));
         
