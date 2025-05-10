@@ -4,8 +4,4 @@ import lombok.Builder;
 
 @Builder
 public record MemberAgreementCommand(
-	boolean isTermsAgree,
-	boolean isPrivacyAgree,
-	boolean isAdvertisementAgree
-) {
-}
+        boolean isTermsAgree, boolean isPrivacyAgree, boolean isAdvertisementAgree) {}

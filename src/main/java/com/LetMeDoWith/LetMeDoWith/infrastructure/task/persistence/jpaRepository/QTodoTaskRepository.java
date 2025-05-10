@@ -8,14 +8,14 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface QTodoTaskRepository {
-    
+
     Optional<TodoTask> findTodoTaskAggregate(Long id);
-    
+
     Optional<TodoTask> findTodoTaskAggregate(Long id, Long memberId);
-    
+
     List<TodoTask> findAllTodoTaskAggregates(Long memberId, LocalDate date);
-    
+
     List<TodoTask> findAllTodoTaskAggregates(Long memberId, Set<LocalDate> dates);
-    
+
     List<TodoTask> findAllTodoTaskAggregates(TodoTaskRoutine todoTaskRoutine);
 }

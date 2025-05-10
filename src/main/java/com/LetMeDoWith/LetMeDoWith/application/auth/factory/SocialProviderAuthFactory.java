@@ -9,13 +9,12 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class SocialProviderAuthFactory {
-    
+
     private final ApplicationContext applicationContext;
-    
+
     public AuthClient getClient(SocialProvider socialProvider) {
-        
-        return (AuthClient) applicationContext.getBean(
-            socialProvider.getCode().toLowerCase() + "AuthClient");
-        
+
+        return (AuthClient)
+                applicationContext.getBean(socialProvider.getCode().toLowerCase() + "AuthClient");
     }
 }

@@ -15,36 +15,36 @@ import org.springframework.stereotype.Repository;
 @Repository
 @RequiredArgsConstructor
 public class DowithTaskQueryRespositoryImpl implements DowithTaskQueryRepository {
-    
+
     private final JPAQueryFactory queryFactory;
-    
+
     private final QDowithTask dowithTask = QDowithTask.dowithTask;
     private final QDowithTaskConfirm dowithTaskConfirm = QDowithTaskConfirm.dowithTaskConfirm;
     private final QTaskCategory taskCategory = QTaskCategory.taskCategory;
-    
+
     @Override
-    public List<DowithTaskQueryDto> getDowithTasks(Long memberId, LocalDate startDate,
-                                                   LocalDate endDate) {
+    public List<DowithTaskQueryDto> getDowithTasks(
+            Long memberId, LocalDate startDate, LocalDate endDate) {
         return queryFactory
-            .select(Projections.constructor(
-                DowithTaskQueryDto.class,
-                dowithTask.id,
-                dowithTask.taskCategoryId,
-                taskCategory.title,
-                dowithTask.title,
-                dowithTask.status,
-                dowithTask.date,
-                dowithTask.startTime,
-                dowithTaskConfirm.imageUrl,
-                Expressions.constant(0) // TODO - 추후 FeedBack 개발시 추가
-            ))
-            .from(dowithTask)
-            .leftJoin(taskCategory).on(dowithTask.taskCategoryId.eq(taskCategory.id))
-            .leftJoin(dowithTaskConfirm).on(dowithTaskConfirm.dowithTask.eq(dowithTask))
-            .where(dowithTask.memberId.eq(memberId)
-                                      .and(dowithTask.date.between(startDate, endDate)))
-            .fetch();
+                .select(
+                        Projections.constructor(
+                                DowithTaskQueryDto.class,
+                                dowithTask.id,
+                                dowithTask.taskCategoryId,
+                                taskCategory.title,
+                                dowithTask.title,
+                                dowithTask.status,
+                                dowithTask.date,
+                                dowithTask.startTime,
+                                dowithTaskConfirm.imageUrl,
+                                Expressions.constant(0) // TODO - 추후 FeedBack 개발시 추가
+                                ))
+                .from(dowithTask)
+                .leftJoin(taskCategory)
+                .on(dowithTask.taskCategoryId.eq(taskCategory.id))
+                .leftJoin(dowithTaskConfirm)
+                .on(dowithTaskConfirm.dowithTask.eq(dowithTask))
+                .where(dowithTask.memberId.eq(memberId).and(dowithTask.date.between(startDate, endDate)))
+                .fetch();
     }
-    
-    
 }

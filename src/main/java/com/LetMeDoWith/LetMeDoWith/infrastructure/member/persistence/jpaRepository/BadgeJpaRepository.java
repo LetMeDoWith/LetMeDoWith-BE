@@ -8,8 +8,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface BadgeJpaRepository extends JpaRepository<Badge, Long> {
-    
     Optional<Badge> findByIdAndBadgeStatus(Long id, BadgeStatus badgeStatus);
-    
+
     Optional<Badge> findByName(String name);
 }

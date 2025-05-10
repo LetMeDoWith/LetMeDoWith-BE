@@ -7,6 +7,7 @@ import jakarta.persistence.Converter;
 @Converter(autoApply = true)
 public class BadgeStatusConverter extends AbstractCombinedConverter<BadgeStatus> {
 
-  public BadgeStatusConverter() { super(BadgeStatus.class); }
-
+    public BadgeStatusConverter() {
+        super(BadgeStatus.class);
+    }
 }

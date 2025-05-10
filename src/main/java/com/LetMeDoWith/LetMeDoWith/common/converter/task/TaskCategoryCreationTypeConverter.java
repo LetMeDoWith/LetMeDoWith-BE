@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 @Converter(autoApply = true)
 @Component
 public class TaskCategoryCreationTypeConverter
-    extends AbstractCombinedConverter<TaskCategoryCreationType> {
-    
+        extends AbstractCombinedConverter<TaskCategoryCreationType> {
+
     public TaskCategoryCreationTypeConverter() {
         super(TaskCategoryCreationType.class);
     }

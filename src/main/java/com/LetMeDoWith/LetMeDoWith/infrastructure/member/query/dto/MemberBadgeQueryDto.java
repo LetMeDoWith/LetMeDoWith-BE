@@ -6,11 +6,11 @@ import lombok.Data;
 
 @Data
 public class MemberBadgeQueryDto {
-    
+
     private Long memberBadgeId;
     private Long memberId;
     private Yn isMain;
-    
+
     private Long badgeId;
     private BadgeStatus badgeStatus;
     private String name;
@@ -18,5 +18,4 @@ public class MemberBadgeQueryDto {
     private String acquireHint;
     private String imageUrl;
     private int sortOrder;
-    
 }

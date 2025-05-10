@@ -8,16 +8,8 @@ import lombok.Builder;
 @Builder
 @Schema(description = "회원가입 완료 요청시 필요한 추가 개인정보")
 public record SignupCompleteReqDto(
-    @Schema(description = "회원의 닉네임")
-    String nickname,
-    
-    @Schema(description = "회원의 생년월일")
-    LocalDate dateOfBirth,
-    
-    @Schema(description = "회원의 성별", implementation = Gender.class)
-    Gender gender,
-    
-    @Schema(description = "회원의 약관 항목별 동의 여부", implementation = CreateMemberTermAgreeReqDto.class)
-    CreateMemberTermAgreeReqDto agreements) {
-    
-}
+        @Schema(description = "회원의 닉네임") String nickname,
+        @Schema(description = "회원의 생년월일") LocalDate dateOfBirth,
+        @Schema(description = "회원의 성별", implementation = Gender.class) Gender gender,
+        @Schema(description = "회원의 약관 항목별 동의 여부", implementation = CreateMemberTermAgreeReqDto.class)
+                CreateMemberTermAgreeReqDto agreements) {}

@@ -3,11 +3,8 @@ package com.LetMeDoWith.LetMeDoWith.infrastructure.auth.entity;
 import com.LetMeDoWith.LetMeDoWith.domain.auth.model.RefreshToken;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,30 +17,29 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class TempRefreshToken {
 
-  @Id
-  @Column(name = "token")
-  private String token;
+    @Id
+    @Column(name = "token")
+    private String token;
 
-  @Column(name = "access_token")
-  private String accessToken;
+    @Column(name = "access_token")
+    private String accessToken;
 
-  @Column(name = "member_id")
-  private Long memberId;
+    @Column(name = "member_id")
+    private Long memberId;
 
-  @Column(name = "user_agent")
-  private String userAgent;
+    @Column(name = "user_agent")
+    private String userAgent;
 
-  @Column(name = "expire_at")
-  private LocalDateTime expireAt;
+    @Column(name = "expire_at")
+    private LocalDateTime expireAt;
 
-  public static TempRefreshToken from(RefreshToken refreshToken) {
-    return TempRefreshToken.builder()
-        .token(refreshToken.getToken())
-        .accessToken(refreshToken.getAccessToken())
-        .memberId(refreshToken.getMemberId())
-        .userAgent(refreshToken.getUserAgent())
-        .expireAt(LocalDateTime.now().plusSeconds(refreshToken.getExpireSec()))
-        .build();
-  }
-
+    public static TempRefreshToken from(RefreshToken refreshToken) {
+        return TempRefreshToken.builder()
+                .token(refreshToken.getToken())
+                .accessToken(refreshToken.getAccessToken())
+                .memberId(refreshToken.getMemberId())
+                .userAgent(refreshToken.getUserAgent())
+                .expireAt(LocalDateTime.now().plusSeconds(refreshToken.getExpireSec()))
+                .build();
+    }
 }

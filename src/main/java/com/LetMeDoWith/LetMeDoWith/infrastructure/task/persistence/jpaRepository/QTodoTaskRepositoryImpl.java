@@ -14,62 +14,64 @@ import org.springframework.stereotype.Repository;
 @Repository
 @RequiredArgsConstructor
 public class QTodoTaskRepositoryImpl implements QTodoTaskRepository {
-    
+
     private final JPAQueryFactory jpaQueryFactory;
-    
+
     private final QTodoTask qTodoTask = QTodoTask.todoTask;
     private final QTodoTask qTodoTaskRoutine = QTodoTask.todoTask;
-    
+
     @Override
     public Optional<TodoTask> findTodoTaskAggregate(Long id) {
         return Optional.ofNullable(
-            jpaQueryFactory.selectFrom(qTodoTask)
-                           .leftJoin(qTodoTask.routine)
-                           .where(qTodoTask.id.eq(id))
-                           .fetchJoin()
-                           .fetchOne());
+                jpaQueryFactory
+                        .selectFrom(qTodoTask)
+                        .leftJoin(qTodoTask.routine)
+                        .where(qTodoTask.id.eq(id))
+                        .fetchJoin()
+                        .fetchOne());
     }
-    
+
     @Override
     public Optional<TodoTask> findTodoTaskAggregate(Long id, Long memberId) {
         return Optional.ofNullable(
-            jpaQueryFactory.selectFrom(qTodoTask)
-                           .leftJoin(qTodoTask.routine)
-                           .where(qTodoTask.id.eq(id)
-                                              .and(qTodoTask.memberId.eq(memberId)))
-                           .fetchJoin()
-                           .fetchOne());
+                jpaQueryFactory
+                        .selectFrom(qTodoTask)
+                        .leftJoin(qTodoTask.routine)
+                        .where(qTodoTask.id.eq(id).and(qTodoTask.memberId.eq(memberId)))
+                        .fetchJoin()
+                        .fetchOne());
     }
-    
+
     @Override
     public List<TodoTask> findAllTodoTaskAggregates(Long memberId, LocalDate date) {
-        return jpaQueryFactory.selectFrom(qTodoTask)
-                              .leftJoin(qTodoTask.routine)
-                              .where(qTodoTask.memberId.eq(memberId)
-                                                       .and(qTodoTask.date.eq(date)))
-                              .orderBy(qTodoTask.createdAt.asc())
-                              .fetchJoin()
-                              .fetch();
+        return jpaQueryFactory
+                .selectFrom(qTodoTask)
+                .leftJoin(qTodoTask.routine)
+                .where(qTodoTask.memberId.eq(memberId).and(qTodoTask.date.eq(date)))
+                .orderBy(qTodoTask.createdAt.asc())
+                .fetchJoin()
+                .fetch();
     }
-    
+
     @Override
     public List<TodoTask> findAllTodoTaskAggregates(Long memberId, Set<LocalDate> dates) {
-        return jpaQueryFactory.selectFrom(qTodoTask)
-                              .leftJoin(qTodoTask.routine)
-                              .where(qTodoTask.memberId.eq(memberId)
-                                                       .and(qTodoTask.date.in(dates)))
-                              .orderBy(qTodoTask.createdAt.asc())
-                              .fetchJoin()
-                              .fetch();
+        return jpaQueryFactory
+                .selectFrom(qTodoTask)
+                .leftJoin(qTodoTask.routine)
+                .where(qTodoTask.memberId.eq(memberId).and(qTodoTask.date.in(dates)))
+                .orderBy(qTodoTask.createdAt.asc())
+                .fetchJoin()
+                .fetch();
     }
-    
+
     @Override
     public List<TodoTask> findAllTodoTaskAggregates(TodoTaskRoutine todoTaskRoutine) {
-        return jpaQueryFactory.selectFrom(qTodoTask)
-                              .leftJoin(qTodoTask.routine)
-                              .where(qTodoTask.routine.eq(todoTaskRoutine))
-                              .orderBy(qTodoTask.createdAt.asc())
-                              .fetchJoin()
-                              .fetch();
+        return jpaQueryFactory
+                .selectFrom(qTodoTask)
+                .leftJoin(qTodoTask.routine)
+                .where(qTodoTask.routine.eq(todoTaskRoutine))
+                .orderBy(qTodoTask.createdAt.asc())
+                .fetchJoin()
+                .fetch();
     }
 }

@@ -9,23 +9,22 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class TaskCategoryVO {
-    
+
     private Long id;
     private String title;
     private TaskCategoryCreationType creationType;
     private String emoji;
     private Long categoryHolderId;
-    
+
     public static TaskCategoryVO from(TaskCategory category) {
         return new TaskCategoryVO(
-            category.getId(),
-            category.getTitle(),
-            category.getCreationType(),
-            category.getEmoji(),
-            category.getCategoryHolderId()
-        );
+                category.getId(),
+                category.getTitle(),
+                category.getCreationType(),
+                category.getEmoji(),
+                category.getCategoryHolderId());
     }
-    
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -37,7 +36,7 @@ public class TaskCategoryVO {
         TaskCategoryVO that = (TaskCategoryVO) o;
         return Objects.equals(id, that.id) && creationType == that.creationType;
     }
-    
+
     @Override
     public int hashCode() {
         return Objects.hash(id, creationType);

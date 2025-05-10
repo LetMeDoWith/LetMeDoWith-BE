@@ -14,29 +14,28 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class RefreshTokenProvider {
 
-  @Value("${auth.jwt.rtk-duration-day}")
-  private Long rtkDurationDay;
+    @Value("${auth.jwt.rtk-duration-day}")
+    private Long rtkDurationDay;
 
-  private final RefreshTokenRepository refreshTokenRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
 
-  /**
-   * 서버 Refresh Token 생성
-   *
-   * @param memberId
-   * @param accessToken
-   * @param userAgent
-   * @return
-   */
-  public RefreshToken createRefreshToken(Long memberId, String accessToken, String userAgent) {
-    // redis에 저장
-    return refreshTokenRepository.save(RefreshToken.of(memberId, accessToken, userAgent, rtkDurationDay * 24 * 60 * 60));
-  }
+    /**
+     * 서버 Refresh Token 생성
+     *
+     * @param memberId
+     * @param accessToken
+     * @param userAgent
+     * @return
+     */
+    public RefreshToken createRefreshToken(Long memberId, String accessToken, String userAgent) {
+        // redis에 저장
+        return refreshTokenRepository.save(
+                RefreshToken.of(memberId, accessToken, userAgent, rtkDurationDay * 24 * 60 * 60));
+    }
 
-  public RefreshToken findRefreshToken(String token) {
-    return refreshTokenRepository.getRefreshToken(token).orElseThrow(
-        () -> new RestApiException(
-            FailResponseStatus.TOKEN_EXPIRED_BY_ADMIN));
-  }
-
-
+    public RefreshToken findRefreshToken(String token) {
+        return refreshTokenRepository
+                .getRefreshToken(token)
+                .orElseThrow(() -> new RestApiException(FailResponseStatus.TOKEN_EXPIRED_BY_ADMIN));
+    }
 }

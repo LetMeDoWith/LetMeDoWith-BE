@@ -17,31 +17,30 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SignupToken {
 
-  private String token;
-  private LocalDateTime expireAt;
+    private String token;
+    private LocalDateTime expireAt;
 
-  public static SignupToken of(Long memberId, String issuer, Long signUpTokenDurationMin, SecretKey secretKey) {
-    Date nowDate = new Date();
+    public static SignupToken of(
+            Long memberId, String issuer, Long signUpTokenDurationMin, SecretKey secretKey) {
+        Date nowDate = new Date();
 
-    long accessExpireTime = signUpTokenDurationMin * 60 * 1000L;
-    Date expireAt = new Date(nowDate.getTime() + accessExpireTime);
+        long accessExpireTime = signUpTokenDurationMin * 60 * 1000L;
+        Date expireAt = new Date(nowDate.getTime() + accessExpireTime);
 
-    String signupToken = Jwts.builder()
-        .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
-        .setIssuer(issuer)
-        .setIssuedAt(nowDate)
-        .setExpiration(expireAt)
-        .setSubject("SIGNUP")
-        .claim("memberId", memberId)
-        .signWith(secretKey)
-        .compact();
+        String signupToken =
+                Jwts.builder()
+                        .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
+                        .setIssuer(issuer)
+                        .setIssuedAt(nowDate)
+                        .setExpiration(expireAt)
+                        .setSubject("SIGNUP")
+                        .claim("memberId", memberId)
+                        .signWith(secretKey)
+                        .compact();
 
-    return SignupToken.builder()
-        .token(signupToken)
-        .expireAt(LocalDateTime.ofInstant(expireAt.toInstant(),
-            ZoneId.systemDefault()))
-        .build();
-
-  }
-
+        return SignupToken.builder()
+                .token(signupToken)
+                .expireAt(LocalDateTime.ofInstant(expireAt.toInstant(), ZoneId.systemDefault()))
+                .build();
+    }
 }

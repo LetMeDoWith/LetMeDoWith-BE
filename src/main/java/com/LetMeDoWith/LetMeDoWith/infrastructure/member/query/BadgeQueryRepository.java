@@ -4,6 +4,6 @@ import com.LetMeDoWith.LetMeDoWith.infrastructure.member.query.dto.MemberBadgeQu
 import java.util.List;
 
 public interface BadgeQueryRepository {
-    
+
     List<MemberBadgeQueryDto> getBadges(Long memberId);
 }

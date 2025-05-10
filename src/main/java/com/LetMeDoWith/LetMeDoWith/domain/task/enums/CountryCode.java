@@ -12,7 +12,7 @@ public enum CountryCode implements BaseEnum {
     JP("JP", "일본"),
     CN("CN", "중국"),
     UK("UK", "영국");
-    
+
     private final String code;
     private final String description;
 }

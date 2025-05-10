@@ -20,32 +20,31 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration
 @Profile("!dev")
 public class CacheConfig {
-    
+
     @Bean
     public CacheManager socialProviderPublicKeyCacheManager(RedisConnectionFactory cf) {
-        RedisCacheConfiguration defaultConfig = RedisCacheConfiguration.defaultCacheConfig()
-                                                                       .serializeKeysWith(
-                                                                           RedisSerializationContext.SerializationPair.fromSerializer(
-                                                                               new StringRedisSerializer()))
-                                                                       .serializeValuesWith(
-                                                                           RedisSerializationContext.SerializationPair.fromSerializer(
-                                                                               new GenericJackson2JsonRedisSerializer()))
-                                                                       .entryTtl(Duration.ofMinutes(
-                                                                           1L));// TODO - default TTL
-        
+        RedisCacheConfiguration defaultConfig =
+                RedisCacheConfiguration.defaultCacheConfig()
+                        .serializeKeysWith(
+                                RedisSerializationContext.SerializationPair.fromSerializer(
+                                        new StringRedisSerializer()))
+                        .serializeValuesWith(
+                                RedisSerializationContext.SerializationPair.fromSerializer(
+                                        new GenericJackson2JsonRedisSerializer()))
+                        .entryTtl(Duration.ofMinutes(1L)); // TODO - default TTL
+
         Map<String, RedisCacheConfiguration> individualConfiguration = new HashMap<>();
         // TODO - 각 Social Provider 마다 API Refresh Time 고려하여 TTL 설정 변경 필요
-        individualConfiguration.put(SocialProvider.APPLE.getCode(),
-                                    defaultConfig.entryTtl(Duration.ofMinutes(1L)));
-        individualConfiguration.put(SocialProvider.GOOGLE.getCode(),
-                                    defaultConfig.entryTtl(Duration.ofMinutes(1L)));
-        individualConfiguration.put(SocialProvider.KAKAO.getCode(),
-                                    defaultConfig.entryTtl(Duration.ofMinutes(1L)));
-        
-        return RedisCacheManager.RedisCacheManagerBuilder
-            .fromConnectionFactory(cf)
-            .cacheDefaults(defaultConfig)
-            .withInitialCacheConfigurations(individualConfiguration)
-            .build();
+        individualConfiguration.put(
+                SocialProvider.APPLE.getCode(), defaultConfig.entryTtl(Duration.ofMinutes(1L)));
+        individualConfiguration.put(
+                SocialProvider.GOOGLE.getCode(), defaultConfig.entryTtl(Duration.ofMinutes(1L)));
+        individualConfiguration.put(
+                SocialProvider.KAKAO.getCode(), defaultConfig.entryTtl(Duration.ofMinutes(1L)));
+
+        return RedisCacheManager.RedisCacheManagerBuilder.fromConnectionFactory(cf)
+                .cacheDefaults(defaultConfig)
+                .withInitialCacheConfigurations(individualConfiguration)
+                .build();
     }
 }

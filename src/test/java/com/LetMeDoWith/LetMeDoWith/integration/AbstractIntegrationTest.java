@@ -35,41 +35,35 @@ import org.springframework.util.LinkedMultiValueMap;
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
 public abstract class AbstractIntegrationTest {
-    
+
     protected Member requestMember;
-    @Autowired
-    ObjectMapper objectMapper;
-    @Autowired
-    MockMvc mockMvc;
-    @Autowired
-    MemberJpaRepository memberJpaRepository;
-    @Autowired
-    AccessTokenProvider accessTokenProvider;
+    @Autowired ObjectMapper objectMapper;
+    @Autowired MockMvc mockMvc;
+    @Autowired MemberJpaRepository memberJpaRepository;
+    @Autowired AccessTokenProvider accessTokenProvider;
     private AccessToken requestMemberAccessToken;
-    
-    
+
     @BeforeEach
     void beforeEach() {
         createMemberTestData();
         createTestData();
     }
-    
+
     @AfterEach
     void afterEach() {
         deleteTestData();
         memberJpaRepository.deleteAll();
     }
-    
+
     /**
      * Test 환경 시간대 설정
      *
      * @param dateTime
      */
     protected void setFixedClock(LocalDateTime dateTime) {
-        SystemTimeUtil.setClock(Clock.fixed(dateTime.toInstant(ZoneOffset.UTC),
-                                            ZoneOffset.UTC));
+        SystemTimeUtil.setClock(Clock.fixed(dateTime.toInstant(ZoneOffset.UTC), ZoneOffset.UTC));
     }
-    
+
     protected String writeRequestBodyAsString(Object requestBody) {
         try {
             return this.objectMapper.writeValueAsString(requestBody);
@@ -79,36 +73,31 @@ public abstract class AbstractIntegrationTest {
             return null;
         }
     }
-    
-    /**
-     * 해당 Abstract Class 상속 받은 테스트는 모든 Test 메서드 시작전에 request Member 세팅
-     */
+
+    /** 해당 Abstract Class 상속 받은 테스트는 모든 Test 메서드 시작전에 request Member 세팅 */
     private void createMemberTestData() {
-        requestMember = memberJpaRepository.save(Member.builder()
-                                                       .status(MemberStatus.NORMAL)
-                                                       .taskCompleteLevel(TaskCompleteLevel.AVERAGE)
-                                                       .nickname("test")
-                                                       .selfDescription("test description")
-                                                       .gender(Gender.MALE)
-                                                       .dateOfBirth(LocalDate.of(1995, 11, 4))
-                                                       .type(MemberType.USER)
-                                                       .build());
+        requestMember =
+                memberJpaRepository.save(
+                        Member.builder()
+                                .status(MemberStatus.NORMAL)
+                                .taskCompleteLevel(TaskCompleteLevel.AVERAGE)
+                                .nickname("test")
+                                .selfDescription("test description")
+                                .gender(Gender.MALE)
+                                .dateOfBirth(LocalDate.of(1995, 11, 4))
+                                .type(MemberType.USER)
+                                .build());
         requestMemberAccessToken = accessTokenProvider.createAccessToken(requestMember.getId());
     }
-    
-    /**
-     * 이전 Test의 test data 삭제 - abstract method
-     */
+
+    /** 이전 Test의 test data 삭제 - abstract method */
     protected abstract void deleteTestData();
-    
-    /**
-     * Test Data 생성 - abstract method
-     */
+
+    /** Test Data 생성 - abstract method */
     protected abstract void createTestData();
-    
+
     /**
-     * MockMvc Request
-     * 해당 abstract class 상속 받은 테스트에서 MockHttpServletRequestBuilder 만 넘겨서 사용
+     * MockMvc Request 해당 abstract class 상속 받은 테스트에서 MockHttpServletRequestBuilder 만 넘겨서 사용
      *
      * @param requestBuilder
      * @return
@@ -117,20 +106,18 @@ public abstract class AbstractIntegrationTest {
     public ResultActions request(MockHttpServletRequestBuilder requestBuilder) {
         LinkedMultiValueMap<String, String> headerMap = new LinkedMultiValueMap<>();
         headerMap.add("AUTHORIZATION", "Bearer" + requestMemberAccessToken.getToken());
-        
-        requestBuilder.headers(new HttpHeaders(headerMap))
-                      .contentType(MediaType.APPLICATION_JSON)
-                      .accept(MediaType.APPLICATION_JSON)
-                      .characterEncoding(StandardCharsets.UTF_8);
+
+        requestBuilder
+                .headers(new HttpHeaders(headerMap))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .characterEncoding(StandardCharsets.UTF_8);
         try {
-            return mockMvc.perform(requestBuilder)
-                          .andDo(System.out::println);
+            return mockMvc.perform(requestBuilder).andDo(System.out::println);
         } catch (Exception e) {
             log.error("request error", e);
             Assertions.fail("MockMvc 요청 중 에러 발생" + e.getMessage());
             return null;
         }
-        
     }
-    
 }

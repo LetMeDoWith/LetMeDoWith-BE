@@ -5,6 +5,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface DowithTaskQueryRepository {
-    
+
     List<DowithTaskQueryDto> getDowithTasks(Long memberId, LocalDate startDate, LocalDate endDate);
 }

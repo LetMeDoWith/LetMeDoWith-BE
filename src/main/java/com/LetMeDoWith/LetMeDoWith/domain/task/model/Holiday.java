@@ -21,25 +21,21 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Holiday extends BaseAuditEntity {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     @Column(name = "country_code", nullable = false)
     private CountryCode countryCode = CountryCode.KR;
-    
+
     @Column(nullable = false)
     private LocalDate date; // 공휴일 날짜
-    
+
     @Column(nullable = false)
     private String name; // 공휴일 명칭 (예: 설날, 추석)
-    
+
     public static Holiday of(CountryCode countryCode, LocalDate date, String name) {
-        return Holiday.builder()
-                      .countryCode(countryCode)
-                      .date(date)
-                      .name(name)
-                      .build();
+        return Holiday.builder().countryCode(countryCode).date(date).name(name).build();
     }
 }

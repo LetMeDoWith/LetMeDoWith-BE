@@ -5,8 +5,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface TodoTaskQueryRepository {
-    
+
     List<TodoTaskQueryDto> getTodoTasks(Long memberId, LocalDate startDate, LocalDate endDate);
-    
-    
 }

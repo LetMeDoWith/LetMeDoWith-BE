@@ -6,9 +6,8 @@ import jakarta.persistence.Converter;
 
 @Converter(autoApply = true)
 public class TodoTaskStatusConverter extends AbstractCombinedConverter<TodoTaskStatus> {
-    
+
     public TodoTaskStatusConverter() {
         super(TodoTaskStatus.class);
     }
-    
 }

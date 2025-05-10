@@ -8,9 +8,8 @@ import org.springframework.stereotype.Component;
 @Converter(autoApply = true)
 @Component
 public class FollowTypeConverter extends AbstractCombinedConverter<FollowType> {
-	
-	public FollowTypeConverter() {
-		super(FollowType.class);
-	}
-	
+
+    public FollowTypeConverter() {
+        super(FollowType.class);
+    }
 }

@@ -26,9 +26,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/tasks")
 public class TaskController {
-    
+
     private final RetrieveTaskService retrieveTaskService;
-    
+
     @Operation(summary = "테스크 목록 조회", description = "테스크 목록을 조회합니다.")
     @ApiSuccessResponse(description = "TodoTask 목록과 DowithTask 목록을 Query Parameter 조건에 맞게 반환합니다")
     @ApiErrorResponses({
@@ -36,17 +36,13 @@ public class TaskController {
     })
     @GetMapping("")
     public ResponseEntity<ResponseDto<RetrieveTasksResDto>> retrieveMonthTasks(
-        @RequestParam(value = "year") int year,
-        @RequestParam(value = "month") int month) {
-        
+            @RequestParam(value = "year") int year, @RequestParam(value = "month") int month) {
+
         Long memberId = AuthUtil.getMemberId();
-        
-        RetrieveTasksResult result = retrieveTaskService.retrieveMonthTasks(memberId,
-                                                                            Year.of(year),
-                                                                            Month.of(month));
-        
+
+        RetrieveTasksResult result =
+                retrieveTaskService.retrieveMonthTasks(memberId, Year.of(year), Month.of(month));
+
         return ResponseUtil.createSuccessResponse(RetrieveTasksResDto.from(result));
-        
     }
-    
 }
