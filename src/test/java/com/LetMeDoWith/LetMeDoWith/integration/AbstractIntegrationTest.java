@@ -57,6 +57,7 @@ public abstract class AbstractIntegrationTest {
     @AfterEach
     void afterEach() {
         deleteTestData();
+        memberJpaRepository.deleteAll();
     }
     
     /**
@@ -69,12 +70,20 @@ public abstract class AbstractIntegrationTest {
                                             ZoneOffset.UTC));
     }
     
+    protected String writeRequestBodyAsString(Object requestBody) {
+        try {
+            return this.objectMapper.writeValueAsString(requestBody);
+        } catch (Exception e) {
+            log.error("writeRequestBodyAsString error", e);
+            Assertions.fail("Request Body String 변환 중 에러 발생" + e.getMessage());
+            return null;
+        }
+    }
+    
     /**
      * 해당 Abstract Class 상속 받은 테스트는 모든 Test 메서드 시작전에 request Member 세팅
      */
     private void createMemberTestData() {
-        memberJpaRepository.deleteAll();
-        
         requestMember = memberJpaRepository.save(Member.builder()
                                                        .status(MemberStatus.NORMAL)
                                                        .taskCompleteLevel(TaskCompleteLevel.AVERAGE)

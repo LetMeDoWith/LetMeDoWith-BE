@@ -6,146 +6,63 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.LetMeDoWith.LetMeDoWith.application.auth.provider.AccessTokenProvider;
-import com.LetMeDoWith.LetMeDoWith.common.enums.member.Gender;
-import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
-import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
-import com.LetMeDoWith.LetMeDoWith.common.enums.member.TaskCompleteLevel;
-import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
-import com.LetMeDoWith.LetMeDoWith.domain.auth.model.AccessToken;
-import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskCategory;
-import com.LetMeDoWith.LetMeDoWith.infrastructure.member.persistence.jpaRepository.MemberJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.DowithTaskJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.TaskCategoryJpaRepository;
+import com.LetMeDoWith.LetMeDoWith.integration.AbstractIntegrationTest;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.UpdateDowithTaskReqDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.UpdateDowithTaskRoutineReqDto;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.nio.charset.StandardCharsets;
-import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.util.LinkedMultiValueMap;
 
-@Slf4j
-@SpringBootTest
-@ActiveProfiles("test") // TODO - 추후 AbstractIntegrationTest에서 설정하도록 변경
-@AutoConfigureMockMvc
-public class UpdateDowithTaskIntegrationTest {
+public class UpdateDowithTaskIntegrationTest extends AbstractIntegrationTest {
     
-    static final String BASE_URL = "/api/v1/tasks/dowith";
+    static final String UPDATE_DOWITH_TASK = "/api/v1/tasks/dowith";
+    static final String UPDATE_DOWITH_TASK_ROUTINE = UPDATE_DOWITH_TASK + "/routine";
     
-    @Autowired
-    ObjectMapper objectMapper;
-    @Autowired
-    MockMvc mockMvc;
-    
-    @Autowired
-    MemberJpaRepository memberJpaRepository;
-    @Autowired
-    AccessTokenProvider accessTokenProvider;
     @Autowired
     DowithTaskJpaRepository dowithTaskJpaRepository;
     @Autowired
     TaskCategoryJpaRepository taskCategoryJpaRepository;
     
-    private Member member;
-    private AccessToken memberAccessToken;
     private TaskCategory taskCategory;
     private TaskCategory taskCategory2;
     
-    @BeforeEach
-    void beforeEach() {
-        memberJpaRepository.deleteAll();
+    @Override
+    protected void deleteTestData() {
         dowithTaskJpaRepository.deleteAll();
-        
-        member = memberJpaRepository.save(Member.builder()
-                                                .status(MemberStatus.NORMAL)
-                                                .taskCompleteLevel(TaskCompleteLevel.AVERAGE)
-                                                .nickname("test")
-                                                .selfDescription("test description")
-                                                .gender(Gender.MALE)
-                                                .dateOfBirth(LocalDate.of(1995, 11, 4))
-                                                .type(MemberType.USER)
-                                                .build());
-        memberAccessToken = accessTokenProvider.createAccessToken(member.getId());
-        
+        taskCategoryJpaRepository.deleteAll();
+    }
+    
+    @Override
+    protected void createTestData() {
         taskCategory = taskCategoryJpaRepository.save(TaskCategory.of("test category 1",
                                                                       TaskCategory.TaskCategoryCreationType.COMMON,
                                                                       "test",
-                                                                      member.getId()));
+                                                                      this.requestMember.getId()));
         
         taskCategory2 = taskCategoryJpaRepository.save(TaskCategory.of("test category 2",
                                                                        TaskCategory.TaskCategoryCreationType.COMMON,
                                                                        "test",
-                                                                       member.getId()));
-    }
-    
-    // DowithTask 수정
-    private ResultActions requestUpdateDowithTask(UpdateDowithTaskReqDto requestBody)
-        throws Exception {
-        LinkedMultiValueMap<String, String> headerMap = new LinkedMultiValueMap<>();
-        headerMap.add("AUTHORIZATION", "Bearer" + memberAccessToken.getToken());
-        
-        return mockMvc.perform(MockMvcRequestBuilders.put(BASE_URL)
-                                                     .headers(new HttpHeaders(headerMap))
-                                                     .contentType(MediaType.APPLICATION_JSON)
-                                                     .accept(MediaType.APPLICATION_JSON)
-                                                     .characterEncoding(StandardCharsets.UTF_8)
-                                                     .content(objectMapper.writeValueAsString(
-                                                         requestBody))
-                      
-                      )
-                      .andDo(System.out::println);
-    }
-    
-    // DowithTask 루틴 수정
-    private ResultActions requestUpdateDowithTaskRoutine(
-        UpdateDowithTaskRoutineReqDto requestBody)
-        throws Exception {
-        LinkedMultiValueMap<String, String> headerMap = new LinkedMultiValueMap<>();
-        headerMap.add("AUTHORIZATION", "Bearer" + memberAccessToken.getToken());
-        
-        return mockMvc.perform(MockMvcRequestBuilders.put(BASE_URL + "/routine")
-                                                     .headers(new HttpHeaders(headerMap))
-                                                     .contentType(MediaType.APPLICATION_JSON)
-                                                     .accept(MediaType.APPLICATION_JSON)
-                                                     .characterEncoding(StandardCharsets.UTF_8)
-                                                     .content(objectMapper.writeValueAsString(
-                                                         requestBody))
-                      
-                      )
-                      .andDo(System.out::println);
+                                                                       this.requestMember.getId()));
     }
     
     @Test
     @DisplayName("[SUCCESS] 두윗모드 테스크 수정 - 루틴 생성이 포함된 경우")
     void updateDowithTaskWithRoutine1() throws Exception {
         // given
-        SystemTimeUtil.setClock(Clock.fixed(LocalDateTime.of(2024, 3, 1, 0, 0)
-                                                         .toInstant(ZoneOffset.UTC),
-                                            ZoneId.of("UTC")));
-        DowithTask dowithTask = dowithTaskJpaRepository.save(DowithTask.of(member.getId(),
+        setFixedClock(LocalDateTime.of(2024, 3, 1, 0, 0));
+        DowithTask dowithTask = dowithTaskJpaRepository.save(DowithTask.of(this.requestMember.getId(),
                                                                            taskCategory.getId(),
                                                                            "설거지 하기",
                                                                            LocalDate.of(2024, 3, 2),
@@ -168,7 +85,9 @@ public class UpdateDowithTaskIntegrationTest {
                                                                        LocalDate.of(2024, 3, 10),
                                                                        LocalDate.of(2024, 3, 11)))
                                                                    .build();
-        ResultActions resultActions = requestUpdateDowithTask(requestBody);
+        ResultActions resultActions = this.request(MockMvcRequestBuilders.put(UPDATE_DOWITH_TASK)
+                                                                         .content(this.writeRequestBodyAsString(
+                                                                             requestBody)));
         
         // then
         resultActions.andExpect(status().isOk());
@@ -202,16 +121,14 @@ public class UpdateDowithTaskIntegrationTest {
     @DisplayName("[FAIL] 두윗모드 테스크 수정 - 루틴일에 Task 등록 가능 개수 초과한 경우")
     void updateDowithTaskWithRoutine2() throws Exception {
         // given
-        SystemTimeUtil.setClock(Clock.fixed(LocalDateTime.of(2024, 3, 1, 0, 0)
-                                                         .toInstant(ZoneOffset.UTC),
-                                            ZoneId.of("UTC")));
-        DowithTask dowithTask = dowithTaskJpaRepository.save(DowithTask.of(member.getId(),
+        setFixedClock(LocalDateTime.of(2024, 3, 1, 0, 0));
+        DowithTask dowithTask = dowithTaskJpaRepository.save(DowithTask.of(requestMember.getId(),
                                                                            taskCategory.getId(),
                                                                            "설거지 하기",
                                                                            LocalDate.of(2024, 3, 2),
                                                                            LocalTime.of(13, 0)));
         // 루틴일에 Task 하나 생성
-        dowithTaskJpaRepository.save(DowithTask.of(member.getId(),
+        dowithTaskJpaRepository.save(DowithTask.of(requestMember.getId(),
                                                    taskCategory.getId(),
                                                    "설거지 하기2",
                                                    LocalDate.of(2024, 3, 10),
@@ -233,7 +150,9 @@ public class UpdateDowithTaskIntegrationTest {
                                                                        LocalDate.of(2024, 3, 10),
                                                                        LocalDate.of(2024, 3, 11)))
                                                                    .build();
-        ResultActions resultActions = requestUpdateDowithTask(requestBody);
+        ResultActions resultActions = this.request(MockMvcRequestBuilders.put(UPDATE_DOWITH_TASK)
+                                                                         .content(this.writeRequestBodyAsString(
+                                                                             requestBody)));
         
         // then
         resultActions.andExpect(status().is4xxClientError())
@@ -246,10 +165,8 @@ public class UpdateDowithTaskIntegrationTest {
     @DisplayName("[SUCCESS] 두윗모드 테스크 수정 - 루틴 생성이 포함되지 않은 경우")
     void updateDowithTaskWithRoutine3() throws Exception {
         // given
-        SystemTimeUtil.setClock(Clock.fixed(LocalDateTime.of(2024, 3, 1, 0, 0)
-                                                         .toInstant(ZoneOffset.UTC),
-                                            ZoneId.of("UTC")));
-        DowithTask dowithTask = dowithTaskJpaRepository.save(DowithTask.of(member.getId(),
+        setFixedClock(LocalDateTime.of(2024, 3, 1, 0, 0));
+        DowithTask dowithTask = dowithTaskJpaRepository.save(DowithTask.of(this.requestMember.getId(),
                                                                            taskCategory.getId(),
                                                                            "설거지 하기",
                                                                            LocalDate.of(2024, 3, 2),
@@ -268,7 +185,9 @@ public class UpdateDowithTaskIntegrationTest {
                                                                        0))
                                                                    .isRoutineCreate(false)
                                                                    .build();
-        ResultActions resultActions = requestUpdateDowithTask(requestBody);
+        ResultActions resultActions = request(MockMvcRequestBuilders.put(UPDATE_DOWITH_TASK)
+                                                                    .content(this.writeRequestBodyAsString(
+                                                                        requestBody)));
         
         // then
         resultActions.andExpect(status().isOk());
@@ -288,11 +207,9 @@ public class UpdateDowithTaskIntegrationTest {
     @DisplayName("[SUCCESS] 두윗모드 테스크 루틴 수정")
     void updateDowithTaskWithRoutine4() throws Exception {
         // given
-        SystemTimeUtil.setClock(Clock.fixed(LocalDateTime.of(2024, 3, 1, 0, 0)
-                                                         .toInstant(ZoneOffset.UTC),
-                                            ZoneId.of("UTC")));
+        setFixedClock(LocalDateTime.of(2024, 3, 1, 0, 0));
         DowithTask dowithTask = dowithTaskJpaRepository.saveAll(DowithTask.ofWithRoutine(
-                                                           member.getId(),
+                                                           requestMember.getId(),
                                                            taskCategory.getId(),
                                                            "설거지 하기",
                                                            LocalDate.of(2024, 3, 2),
@@ -308,9 +225,7 @@ public class UpdateDowithTaskIntegrationTest {
                                                        .findFirst().get();
         
         // when
-        SystemTimeUtil.setClock(Clock.fixed(LocalDateTime.of(2024, 3, 15, 0, 0)
-                                                         .toInstant(ZoneOffset.UTC),
-                                            ZoneId.of("UTC")));
+        setFixedClock(LocalDateTime.of(2024, 3, 15, 0, 0));
         List<LocalDate> newRoutineDates = List.of(
             LocalDate.of(2024,
                          3,
@@ -330,7 +245,10 @@ public class UpdateDowithTaskIntegrationTest {
                                                                                  .routineDates(
                                                                                      newRoutineDates)
                                                                                  .build();
-        ResultActions resultActions = requestUpdateDowithTaskRoutine(requestBody);
+        ResultActions resultActions = this.request(MockMvcRequestBuilders.put(
+                                                                             UPDATE_DOWITH_TASK_ROUTINE)
+                                                                         .content(this.writeRequestBodyAsString(
+                                                                             requestBody)));
         
         // then
         resultActions.andExpect(status().isOk());
@@ -357,11 +275,9 @@ public class UpdateDowithTaskIntegrationTest {
     @DisplayName("[FAIL] 두윗모드 테스크 루틴 수정 - input routineDates 중에서 업데이트 불가한 routine 일자(과거일자)가 DB에 저장된 routine 중 업데이트 불가한 일자와 일치하지 않는 경우")
     void updateDowithTaskWithRoutine5() throws Exception {
         // given
-        SystemTimeUtil.setClock(Clock.fixed(LocalDateTime.of(2024, 3, 1, 0, 0)
-                                                         .toInstant(ZoneOffset.UTC),
-                                            ZoneId.of("UTC")));
+        setFixedClock(LocalDateTime.of(2024, 3, 1, 0, 0));
         DowithTask dowithTask = dowithTaskJpaRepository.saveAll(DowithTask.ofWithRoutine(
-                                                           member.getId(),
+                                                           this.requestMember.getId(),
                                                            taskCategory.getId(),
                                                            "설거지 하기",
                                                            LocalDate.of(2024, 3, 2),
@@ -377,9 +293,7 @@ public class UpdateDowithTaskIntegrationTest {
                                                        .findFirst().get();
         
         // when
-        SystemTimeUtil.setClock(Clock.fixed(LocalDateTime.of(2024, 3, 15, 0, 0)
-                                                         .toInstant(ZoneOffset.UTC),
-                                            ZoneId.of("UTC")));
+        setFixedClock(LocalDateTime.of(2024, 3, 15, 0, 0));
         List<LocalDate> newRoutineDates = List.of(
             LocalDate.of(2024,
                          3,
@@ -399,7 +313,10 @@ public class UpdateDowithTaskIntegrationTest {
                                                                                  .routineDates(
                                                                                      newRoutineDates)
                                                                                  .build();
-        ResultActions resultActions = requestUpdateDowithTaskRoutine(requestBody);
+        ResultActions resultActions = this.request(MockMvcRequestBuilders.put(
+                                                                             UPDATE_DOWITH_TASK_ROUTINE)
+                                                                         .content(this.writeRequestBodyAsString(
+                                                                             requestBody)));
         
         // then
         resultActions.andExpect(status().is4xxClientError())
@@ -411,11 +328,9 @@ public class UpdateDowithTaskIntegrationTest {
     @DisplayName("[FAIL] 두윗모드 테스크 루틴 수정 - 수정하는 routineDate 중에 이미 등록된 Task가 있어 등록 가능 개수 초과한 경우")
     void updateDowithTaskWithRoutine6() throws Exception {
         // given
-        SystemTimeUtil.setClock(Clock.fixed(LocalDateTime.of(2024, 3, 1, 0, 0)
-                                                         .toInstant(ZoneOffset.UTC),
-                                            ZoneId.of("UTC")));
+        setFixedClock(LocalDateTime.of(2024, 3, 1, 0, 0));
         DowithTask dowithTask = dowithTaskJpaRepository.saveAll(DowithTask.ofWithRoutine(
-                                                           member.getId(),
+                                                           this.requestMember.getId(),
                                                            taskCategory.getId(),
                                                            "설거지 하기",
                                                            LocalDate.of(2024, 3, 2),
@@ -431,16 +346,14 @@ public class UpdateDowithTaskIntegrationTest {
                                                        .findFirst().get();
         
         // 이미 등록된 Task
-        dowithTaskJpaRepository.save(DowithTask.of(member.getId(),
+        dowithTaskJpaRepository.save(DowithTask.of(this.requestMember.getId(),
                                                    taskCategory.getId(),
                                                    "설거지 하기2",
                                                    LocalDate.of(2024, 3, 20),
                                                    LocalTime.of(13, 0)));
         
         // when
-        SystemTimeUtil.setClock(Clock.fixed(LocalDateTime.of(2024, 3, 15, 0, 0)
-                                                         .toInstant(ZoneOffset.UTC),
-                                            ZoneId.of("UTC")));
+        setFixedClock(LocalDateTime.of(2024, 3, 15, 0, 0));
         List<LocalDate> newRoutineDates = List.of(
             LocalDate.of(2024,
                          3,
@@ -460,7 +373,10 @@ public class UpdateDowithTaskIntegrationTest {
                                                                                  .routineDates(
                                                                                      newRoutineDates)
                                                                                  .build();
-        ResultActions resultActions = requestUpdateDowithTaskRoutine(requestBody);
+        ResultActions resultActions = this.request(MockMvcRequestBuilders.put(
+                                                                             UPDATE_DOWITH_TASK_ROUTINE)
+                                                                         .content(this.writeRequestBodyAsString(
+                                                                             requestBody)));
         
         // then
         resultActions.andExpect(status().is4xxClientError())
