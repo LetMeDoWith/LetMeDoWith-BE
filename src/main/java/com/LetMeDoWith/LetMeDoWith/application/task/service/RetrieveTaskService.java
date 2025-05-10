@@ -1,34 +1,40 @@
 package com.LetMeDoWith.LetMeDoWith.application.task.service;
 
-import com.LetMeDoWith.LetMeDoWith.domain.task.dto.DowithTaskQueryDto;
-import com.LetMeDoWith.LetMeDoWith.domain.task.dto.TodoTaskQueryDto;
-import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TaskQueryRepository;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.RetrieveTasksResult;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.DowithTaskQueryRepository;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.TodoTaskQueryRepository;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.dto.DowithTaskQueryDto;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.dto.TodoTaskQueryDto;
 import java.time.LocalDate;
+import java.time.Month;
+import java.time.Year;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class RetrieveTaskService {
     
-    private final TaskQueryRepository taskQueryRepository;
+    private final TodoTaskQueryRepository todoTaskQueryRepository;
+    private final DowithTaskQueryRepository dowithTaskQueryRepository;
     
-    public List<TodoTaskQueryDto> retrieveTodoTasks(Long memberId, LocalDate startDate,
-                                                    LocalDate endDate) {
+    @Transactional(readOnly = true)
+    public RetrieveTasksResult retrieveMonthTasks(Long memberId, Year year, Month month) {
+        LocalDate startDate = LocalDate.of(year.getValue(), month, 1);
+        LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
         
-        return taskQueryRepository.getTodoTasks(memberId,
-                                                startDate,
-                                                endDate);
-    }
-    
-    public List<DowithTaskQueryDto> retrieveDowithTasks(Long memberId, LocalDate startDate,
-                                                        LocalDate endDate) {
+        // TODO - 추후 Cache 적용
         
-        return taskQueryRepository.getDowithTasks(memberId,
-                                                  startDate,
-                                                  endDate);
+        List<TodoTaskQueryDto> todoTasks = todoTaskQueryRepository.getTodoTasks(memberId,
+                                                                                startDate,
+                                                                                endDate);
+        List<DowithTaskQueryDto> dowithTasks = dowithTaskQueryRepository.getDowithTasks(memberId,
+                                                                                        startDate,
+                                                                                        endDate);
         
+        return RetrieveTasksResult.of(todoTasks, dowithTasks);
     }
     
 }

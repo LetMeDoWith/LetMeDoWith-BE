@@ -1,7 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.task.dto;
 
-import com.LetMeDoWith.LetMeDoWith.domain.task.dto.DowithTaskQueryDto;
-import com.LetMeDoWith.LetMeDoWith.domain.task.dto.TodoTaskQueryDto;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.RetrieveTasksResult;
+import com.LetMeDoWith.LetMeDoWith.common.util.EnumUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TodoTaskStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -16,40 +16,37 @@ public record RetrieveTasksResDto(
     List<DowithTaskDto> dowithTasks
 ) {
     
-    public static RetrieveTasksResDto of(
-        List<TodoTaskQueryDto> todoTaskQueryDtos,
-        List<DowithTaskQueryDto> dowithTaskQueryDtos
-    ) {
-        List<TodoTaskDto> todoTasks = todoTaskQueryDtos.stream()
-                                                       .map(todoTaskQueryDto -> new TodoTaskDto(
-                                                           todoTaskQueryDto.id(),
-                                                           todoTaskQueryDto.taskCategoryId(),
-                                                           todoTaskQueryDto.taskCategoryName(),
-                                                           todoTaskQueryDto.title(),
-                                                           todoTaskQueryDto.status(),
-                                                           todoTaskQueryDto.date(),
-                                                           todoTaskQueryDto.startTime()
-                                                       )).toList();
+    public static RetrieveTasksResDto from(RetrieveTasksResult result) {
+        List<TodoTaskDto> todoTasks = result.todoTasks().stream()
+                                            .map(todoTaskQueryDto -> new TodoTaskDto(
+                                                todoTaskQueryDto.id(),
+                                                todoTaskQueryDto.taskCategoryId(),
+                                                todoTaskQueryDto.taskCategoryName(),
+                                                todoTaskQueryDto.title(),
+                                                EnumUtil.getEnum(TodoTaskStatus.class,
+                                                                 todoTaskQueryDto.status()),
+                                                todoTaskQueryDto.date(),
+                                                todoTaskQueryDto.startTime()
+                                            )).toList();
         
-        List<DowithTaskDto> dowithTasks = dowithTaskQueryDtos.stream()
-                                                             .map(dowithTaskQueryDto -> new DowithTaskDto(
-                                                                 dowithTaskQueryDto.id(),
-                                                                 dowithTaskQueryDto.taskCategoryId(),
-                                                                 dowithTaskQueryDto.taskCategoryName(),
-                                                                 dowithTaskQueryDto.title(),
-                                                                 dowithTaskQueryDto.status(),
-                                                                 dowithTaskQueryDto.date(),
-                                                                 dowithTaskQueryDto.startTime(),
-                                                                 dowithTaskQueryDto.confirmedImageUrl(),
-                                                                 dowithTaskQueryDto.feedBackCount()
-                                                             )).toList();
+        List<DowithTaskDto> dowithTasks = result.dowithTasks().stream()
+                                                .map(dowithTaskQueryDto -> new DowithTaskDto(
+                                                    dowithTaskQueryDto.id(),
+                                                    dowithTaskQueryDto.taskCategoryId(),
+                                                    dowithTaskQueryDto.taskCategoryName(),
+                                                    dowithTaskQueryDto.title(),
+                                                    EnumUtil.getEnum(DowithTaskStatus.class,
+                                                                     dowithTaskQueryDto.status()),
+                                                    dowithTaskQueryDto.date(),
+                                                    dowithTaskQueryDto.startTime(),
+                                                    dowithTaskQueryDto.confirmedImageUrl(),
+                                                    dowithTaskQueryDto.feedBackCount()
+                                                )).toList();
         
-        return RetrieveTasksResDto.builder()
-                                  .todoTasks(todoTasks)
-                                  .dowithTasks(dowithTasks)
-                                  .build();
+        return new RetrieveTasksResDto(todoTasks, dowithTasks);
     }
     
+    @Builder
     public record TodoTaskDto(
         @Schema(description = "투두모드Task ID", defaultValue = "1")
         Long id,
@@ -69,6 +66,7 @@ public record RetrieveTasksResDto(
     
     }
     
+    @Builder
     public record DowithTaskDto(
         @Schema(description = "두윗모드Task ID", defaultValue = "1")
         Long id,

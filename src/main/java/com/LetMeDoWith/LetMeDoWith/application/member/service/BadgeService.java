@@ -9,13 +9,13 @@ import com.LetMeDoWith.LetMeDoWith.application.member.dto.RetrieveBadgesInfoResu
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.BadgeStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
-import com.LetMeDoWith.LetMeDoWith.domain.member.dto.MemberBadgeDto;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.Badge;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.MemberBadge;
-import com.LetMeDoWith.LetMeDoWith.domain.member.repository.BadgeQueryRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.member.repository.BadgeRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.member.repository.MemberRepository;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.member.query.BadgeQueryRepository;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.member.query.dto.MemberBadgeDto;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;

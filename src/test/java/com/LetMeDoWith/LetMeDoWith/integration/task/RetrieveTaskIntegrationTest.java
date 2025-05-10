@@ -104,8 +104,8 @@ public class RetrieveTaskIntegrationTest extends AbstractIntegrationTest {
         
         // when
         var result = request(get(RETRIEVE_TASKS_URL)
-                                 .param("startDate", startDate.toString())
-                                 .param("endDate", endDate.toString()));
+                                 .param("year", "2024")
+                                 .param("month", "3"));
         
         // then
         result.andExpect(status().isOk())

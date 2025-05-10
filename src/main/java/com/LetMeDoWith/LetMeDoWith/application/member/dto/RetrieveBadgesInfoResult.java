@@ -1,6 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.application.member.dto;
 
-import com.LetMeDoWith.LetMeDoWith.domain.member.dto.MemberBadgeDto;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.member.query.dto.MemberBadgeDto;
 import java.util.List;
 import lombok.Builder;
 import lombok.Data;

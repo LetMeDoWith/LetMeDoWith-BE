@@ -1,21 +1,19 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.task.controller;
 
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.RetrieveTasksResult;
 import com.LetMeDoWith.LetMeDoWith.application.task.service.RetrieveTaskService;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiErrorResponse;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiErrorResponses;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiSuccessResponse;
 import com.LetMeDoWith.LetMeDoWith.common.dto.ResponseDto;
-import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
-import com.LetMeDoWith.LetMeDoWith.domain.task.dto.DowithTaskQueryDto;
-import com.LetMeDoWith.LetMeDoWith.domain.task.dto.TodoTaskQueryDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.RetrieveTasksResDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.time.LocalDate;
-import java.util.List;
+import java.time.Month;
+import java.time.Year;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,34 +35,17 @@ public class TaskController {
         @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청입니다."),
     })
     @GetMapping("")
-    public ResponseEntity<ResponseDto<RetrieveTasksResDto>> retrieveTasks(
-        @RequestParam(value = "startDate") LocalDate startDate,
-        @RequestParam(value = "endDate") LocalDate endDate) {
-        
-        if (endDate.isBefore(startDate)) {
-            throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
-        }
-        
-        if (endDate.minusDays(startDate.toEpochDay()).getDayOfYear() > 40) {
-            throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
-        }
+    public ResponseEntity<ResponseDto<RetrieveTasksResDto>> retrieveMonthTasks(
+        @RequestParam(value = "year") int year,
+        @RequestParam(value = "month") int month) {
         
         Long memberId = AuthUtil.getMemberId();
         
-        List<TodoTaskQueryDto> todoTaskQueryDtos = retrieveTaskService.retrieveTodoTasks(
-            memberId,
-            startDate,
-            endDate);
+        RetrieveTasksResult result = retrieveTaskService.retrieveMonthTasks(memberId,
+                                                                            Year.of(year),
+                                                                            Month.of(month));
         
-        List<DowithTaskQueryDto> dowithTaskQueryDtos = retrieveTaskService.retrieveDowithTasks(
-            memberId,
-            startDate,
-            endDate);
-        
-        return ResponseUtil.createSuccessResponse(RetrieveTasksResDto.of(
-            todoTaskQueryDtos,
-            dowithTaskQueryDtos
-        ));
+        return ResponseUtil.createSuccessResponse(RetrieveTasksResDto.from(result));
         
     }
     

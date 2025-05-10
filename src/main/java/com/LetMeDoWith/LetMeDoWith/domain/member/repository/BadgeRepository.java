@@ -1,6 +1,5 @@
 package com.LetMeDoWith.LetMeDoWith.domain.member.repository;
 
-import com.LetMeDoWith.LetMeDoWith.domain.member.dto.MemberBadgeDto;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.BadgeStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.Badge;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.MemberBadge;
