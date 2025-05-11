@@ -28,59 +28,61 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class Member extends BaseAuditEntity {
-
+    
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     @Builder.Default
     List<MemberSocialAccount> socialAccountList = new ArrayList<>();
-
+    
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     @Builder.Default
     List<MemberStatusHistory> statusHistoryList = new ArrayList<>();
-
+    
     @OneToMany(mappedBy = "followerMember", fetch = FetchType.LAZY)
     List<MemberFollow> followingMembers = new ArrayList<>();
-
+    
     @OneToMany(mappedBy = "followingMember", fetch = FetchType.LAZY)
     List<MemberFollow> followerMembers = new ArrayList<>();
-
+    
     @OneToOne(mappedBy = "member", fetch = FetchType.LAZY)
     MemberTermAgree termAgree;
-
+    
     @OneToOne(mappedBy = "member")
     MemberAlarmSetting alarmSetting;
-
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-
+    
     // OpenID Connect id token의 sub 필드와 동일
     // (sub, provider) 조합으로 uniqueness 판단함.
-    @Column private String subject;
-
+    @Column
+    private String subject;
+    
     @Column(nullable = false)
     private MemberStatus status;
-
+    
     @Column(name = "task_complete_level")
     private TaskCompleteLevel taskCompleteLevel;
-
-    @Column private String nickname;
-
+    
+    @Column
+    private String nickname;
+    
     @Column(name = "self_description")
     private String selfDescription;
-
+    
     @Column(columnDefinition = "VARCHAR(2)")
     private Gender gender;
-
+    
     @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
-
+    
     @Column(nullable = false)
     private MemberType type;
-
+    
     @Column(name = "profile_image_url")
     private String profileImageUrl;
-
+    
     /**
      * 소셜 로그인이 완료된 직후 상태(초기 상태)의 Member를 생성한다.
      *
@@ -89,39 +91,43 @@ public class Member extends BaseAuditEntity {
      */
     public static Member ofSocialAuthenticated(String subject) {
         return Member.builder()
-                .subject(subject)
-                .type(MemberType.USER)
-                .status(MemberStatus.SOCIAL_AUTHENTICATED)
-                .taskCompleteLevel(TaskCompleteLevel.GOOD)
-                .build();
+                     .subject(subject)
+                     .type(MemberType.USER)
+                     .status(MemberStatus.SOCIAL_AUTHENTICATED)
+                     .taskCompleteLevel(TaskCompleteLevel.GOOD)
+                     .build();
     }
-
+    
     public static List<MemberStatus> getAllMemberStatus() {
         return List.of(
-                MemberStatus.NORMAL,
-                MemberStatus.SUSPENDED,
-                MemberStatus.WITHDRAWN,
-                MemberStatus.SOCIAL_AUTHENTICATED);
+            MemberStatus.NORMAL,
+            MemberStatus.SUSPENDED,
+            MemberStatus.WITHDRAWN,
+            MemberStatus.SOCIAL_AUTHENTICATED);
     }
-
+    
     public static List<MemberStatus> getActiveMemberStatus() {
         return List.of(MemberStatus.NORMAL);
     }
-
+    
     public static List<MemberStatus> getInactiveMemberStatus() {
         return List.of(
-                MemberStatus.SUSPENDED, MemberStatus.WITHDRAWN, MemberStatus.SOCIAL_AUTHENTICATED);
+            MemberStatus.SUSPENDED, MemberStatus.WITHDRAWN, MemberStatus.SOCIAL_AUTHENTICATED);
     }
-
+    
     public boolean isNormal() {
         return this.status.equals(MemberStatus.NORMAL);
     }
-
+    
+    public boolean isSocialAuthenticated() {
+        return this.status.equals(MemberStatus.SOCIAL_AUTHENTICATED);
+    }
+    
     // LAZY Badge 획득 레벨인지 확인
     public boolean isLazyBadgeAcquireLevel() {
         return TaskCompleteLevel.BAD.equals(this.taskCompleteLevel);
     }
-
+    
     /**
      * Member의 개인정보를 업데이트 한다.
      *
@@ -133,25 +139,27 @@ public class Member extends BaseAuditEntity {
             if (!personalInfo.nickname().trim().isEmpty()) {
                 this.nickname = personalInfo.nickname();
             }
-
-            if (personalInfo.profileImageUrl() != null && !personalInfo.profileImageUrl().isEmpty()) {
+            
+            if (personalInfo.profileImageUrl() != null && !personalInfo.profileImageUrl()
+                                                                       .isEmpty()) {
                 this.profileImageUrl = personalInfo.profileImageUrl();
             }
-
-            if (personalInfo.selfDescription() != null && !personalInfo.selfDescription().isEmpty()) {
+            
+            if (personalInfo.selfDescription() != null && !personalInfo.selfDescription()
+                                                                       .isEmpty()) {
                 this.selfDescription = personalInfo.selfDescription();
             }
-
+            
             if (personalInfo.dateOfBirth() != null) {
                 this.dateOfBirth = personalInfo.dateOfBirth();
             }
-
+            
             this.gender = personalInfo.gender();
         }
-
+        
         return this;
     }
-
+    
     /**
      * Member의 개인정보를 업데이트 하고, 회원 가입 완료 상태로 변경한다.
      *
@@ -161,59 +169,64 @@ public class Member extends BaseAuditEntity {
     public Member updatePersonalInfoWithCompletingSignUp(MemberPersonalInfoVO personalInfoVO) {
         return this.updatePersonalInfo(personalInfoVO).changeStatusTo(MemberStatus.NORMAL);
     }
-
+    
     /**
      * Member의 약관 동의 객체를 업데이트한다. 약관 동의 객체가 없는 경우 초기 생성한다.
      *
-     * @param isTermsOfAgree 사용 약관 동의 여부
-     * @param isPrivacy 개인정보 활용 동의 여부
+     * @param isTermsOfAgree  사용 약관 동의 여부
+     * @param isPrivacy       개인정보 활용 동의 여부
      * @param isAdvertisement 광고성 메세지 수신 동의 여부
      * @return 약관 동의 여부가 업데이트된 Member
      */
     public Member updateTermAgree(
-            boolean isTermsOfAgree, boolean isPrivacy, boolean isAdvertisement) {
+        boolean isTermsOfAgree, boolean isPrivacy, boolean isAdvertisement) {
         if (termAgree != null) {
             this.termAgree.update(isTermsOfAgree, isPrivacy, isAdvertisement);
         } else {
-            this.termAgree = MemberTermAgree.ofInit(this, isTermsOfAgree, isPrivacy, isAdvertisement);
+            this.termAgree = MemberTermAgree.ofInit(this,
+                                                    isTermsOfAgree,
+                                                    isPrivacy,
+                                                    isAdvertisement);
         }
-
+        
         return this;
     }
-
+    
     public Member withdraw() {
         this.status = MemberStatus.WITHDRAWN;
-
+        
         return this;
     }
-
+    
     private Member changeStatusTo(MemberStatus status) {
         this.status = status;
-
+        
         return this;
     }
-
+    
     private Member changeTaskCompleteLevelTo(TaskCompleteLevel taskCompleteLevel) {
         this.taskCompleteLevel = taskCompleteLevel;
-
+        
         return this;
     }
-
+    
     public Member linkTermAgree(MemberTermAgree termAgree) {
         this.termAgree = termAgree;
-
+        
         return this;
     }
-
+    
     public Member addSocialAccount(MemberSocialAccount memberSocialAccount) {
         this.socialAccountList.add(memberSocialAccount);
-
+        
         return this;
     }
-
+    
     public Member linkAlarmSetting(MemberAlarmSetting alarmSetting) {
         this.alarmSetting = alarmSetting;
-
+        
         return this;
     }
+    
+    
 }
