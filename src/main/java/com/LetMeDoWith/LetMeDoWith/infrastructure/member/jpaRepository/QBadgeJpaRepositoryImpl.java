@@ -16,11 +16,11 @@ public class QBadgeJpaRepositoryImpl implements QBadgeJpaRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    private QBadge qBadge = QBadge.badge;
-    private QMemberBadge qMemberBadge = QMemberBadge.memberBadge;
+    private final QBadge qBadge = QBadge.badge;
+    private final QMemberBadge qMemberBadge = QMemberBadge.memberBadge;
 
     @Override
-    public List<MemberBadgeVO> findAllJoinMemberBadge(Long memberId, BadgeStatus badgeStatus) {
+    public List<MemberBadgeVO> findAllJoinMemberBadge(String memberId, BadgeStatus badgeStatus) {
         return jpaQueryFactory
                 .select(
                         Projections.bean(

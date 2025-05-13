@@ -21,7 +21,7 @@ public class AccessToken {
     private LocalDateTime expireAt;
 
     public static AccessToken of(
-            Long memberId, String issuer, Long atkDurationMin, SecretKey secretKey) {
+            String memberId, String issuer, Long atkDurationMin, SecretKey secretKey) {
         Date nowDate = new Date();
 
         long accessExpireTime = atkDurationMin * 60 * 1000L;

@@ -12,11 +12,11 @@ public interface TaskCategoryRepository {
 
     Optional<TaskCategory> getTaskCategory(Long id, Yn isActive);
 
-    Optional<TaskCategory> getActiveTaskCategory(Long id, Long holderId);
+    Optional<TaskCategory> getActiveTaskCategory(Long id, String holderId);
 
     List<TaskCategory> getAllTaskCategories(Yn isActive);
 
-    List<TaskCategory> getCategories(Long memberId, Yn isActive);
+    List<TaskCategory> getCategories(String memberId, Yn isActive);
 
     List<TaskCategory> getCategories(TaskCategoryCreationType creationType, Yn isActive);
 }

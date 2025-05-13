@@ -41,7 +41,7 @@ public class FollowRepositoryImpl implements FollowRepository {
     }
 
     @Override
-    public Optional<MemberFollow> getFollowing(Long memberId, Long followingMemberId) {
+    public Optional<MemberFollow> getFollowing(String memberId, String followingMemberId) {
         return memberFollowJpaRepository.findByFollowerMemberIdAndFollowingMemberId(
                 memberId, followingMemberId);
     }

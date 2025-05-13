@@ -14,7 +14,7 @@ public class TaskCategoryVO {
     private String title;
     private TaskCategoryCreationType creationType;
     private String emoji;
-    private Long categoryHolderId;
+    private String categoryHolderId;
 
     public static TaskCategoryVO from(TaskCategory category) {
         return new TaskCategoryVO(

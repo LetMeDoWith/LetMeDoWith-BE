@@ -143,7 +143,7 @@ class MemberServiceTest {
     void withdrawMemberTest() {
         Member member =
                 Member.builder()
-                        .id(1L)
+                        .id("1L")
                         .subject("subject")
                         .nickname("nickname")
                         .selfDescription("self desc")
@@ -155,10 +155,10 @@ class MemberServiceTest {
 
         Mockito.when(
                         memberRepository.getMember(
-                                ArgumentMatchers.eq(1L), ArgumentMatchers.eq(MemberStatus.NORMAL)))
+                                ArgumentMatchers.eq("1L"), ArgumentMatchers.eq(MemberStatus.NORMAL)))
                 .thenReturn(Optional.of(member));
 
-        memberService.withdrawMember(1L);
+        memberService.withdrawMember("1L");
 
         Assertions.assertEquals(member.getStatus(), MemberStatus.WITHDRAWN);
     }
@@ -168,7 +168,7 @@ class MemberServiceTest {
     void withdrawAbnormalStatusMemberTest() {
         Member member =
                 Member.builder()
-                        .id(1L)
+                        .id("1L")
                         .subject("subject")
                         .nickname("nickname")
                         .selfDescription("self desc")
@@ -180,13 +180,13 @@ class MemberServiceTest {
 
         Mockito.when(
                         memberRepository.getMember(
-                                ArgumentMatchers.eq(1L), ArgumentMatchers.eq(MemberStatus.NORMAL)))
+                                ArgumentMatchers.eq("1L"), ArgumentMatchers.eq(MemberStatus.NORMAL)))
                 .thenReturn(Optional.empty());
 
         Assertions.assertThrows(
                 RestApiException.class,
                 () -> {
-                    memberService.withdrawMember(1L);
+                    memberService.withdrawMember("1L");
                 },
                 FailResponseStatus.MEMBER_CANNOT_WITHDRAW.getMessage());
     }

@@ -12,12 +12,12 @@ public interface TaskCategoryJpaRepository extends JpaRepository<TaskCategory, L
     Optional<TaskCategory> findByIdAndIsActive(Long id, Yn isActive);
 
     Optional<TaskCategory> findByIdAndCategoryHolderIdInAndIsActive(
-            Long id, List<Long> categoryHolderId, Yn isActive);
+            Long id, List<String> categoryHolderId, Yn isActive);
 
     List<TaskCategory> findAllByIsActive(Yn isActive);
 
     List<TaskCategory> findAllByCategoryHolderIdAndCreationTypeAndIsActive(
-            Long holderId, TaskCategoryCreationType taskCategoryCreationType, Yn isActive);
+            String holderId, TaskCategoryCreationType taskCategoryCreationType, Yn isActive);
 
     List<TaskCategory> findAllByCreationTypeAndIsActive(
             TaskCategoryCreationType creationType, Yn isActive);

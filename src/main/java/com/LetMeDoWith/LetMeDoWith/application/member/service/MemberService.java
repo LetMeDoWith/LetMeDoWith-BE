@@ -113,7 +113,7 @@ public class MemberService {
      * @param memberId 탈퇴하려는 멤버의 id
      * @return 탈퇴요청 성공 여부
      */
-    public void withdrawMember(Long memberId) {
+    public void withdrawMember(String memberId) {
         Member member =
                 memberRepository
                         .getMember(memberId, MemberStatus.NORMAL)

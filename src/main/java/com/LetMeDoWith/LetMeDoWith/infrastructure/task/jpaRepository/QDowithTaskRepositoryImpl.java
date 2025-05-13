@@ -38,7 +38,7 @@ public class QDowithTaskRepositoryImpl implements QDowithTaskRepository {
     }
 
     @Override
-    public List<DowithTask> findAllDowithTaskAggregates(Long memberId, LocalDate date) {
+    public List<DowithTask> findAllDowithTaskAggregates(String memberId, LocalDate date) {
         Date targetDate = Date.valueOf(date);
         return jpaQueryFactory
                 .selectFrom(qDowithTask)
@@ -54,7 +54,7 @@ public class QDowithTaskRepositoryImpl implements QDowithTaskRepository {
     }
 
     @Override
-    public List<DowithTask> findAllDowithTaskAggregates(Long memberId, Set<LocalDate> dates) {
+    public List<DowithTask> findAllDowithTaskAggregates(String memberId, Set<LocalDate> dates) {
         List<Date> targetDates = dates.stream().map(Date::valueOf).toList();
         return jpaQueryFactory
                 .selectFrom(qDowithTask)
@@ -70,7 +70,7 @@ public class QDowithTaskRepositoryImpl implements QDowithTaskRepository {
     }
 
     @Override
-    public Optional<DowithTask> findDowithTaskAggregate(Long id, Long memberId) {
+    public Optional<DowithTask> findDowithTaskAggregate(Long id, String memberId) {
         return Optional.ofNullable(
                 jpaQueryFactory
                         .selectFrom(qDowithTask)

@@ -58,7 +58,7 @@ public class RefreshTokenTempRepositoryImpl implements RefreshTokenRepository {
     }
 
     @Override
-    public void deleteRefreshTokens(Long memberId) {
+    public void deleteRefreshTokens(String memberId) {
         repository.deleteByMemberId(memberId);
     }
 }

@@ -21,7 +21,7 @@ public class SignupToken {
     private LocalDateTime expireAt;
 
     public static SignupToken of(
-            Long memberId, String issuer, Long signUpTokenDurationMin, SecretKey secretKey) {
+            String memberId, String issuer, Long signUpTokenDurationMin, SecretKey secretKey) {
         Date nowDate = new Date();
 
         long accessExpireTime = signUpTokenDurationMin * 60 * 1000L;

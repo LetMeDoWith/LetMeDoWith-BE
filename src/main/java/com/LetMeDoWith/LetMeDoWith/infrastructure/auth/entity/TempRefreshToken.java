@@ -25,7 +25,7 @@ public class TempRefreshToken {
     private String accessToken;
 
     @Column(name = "member_id")
-    private Long memberId;
+    private String memberId;
 
     @Column(name = "user_agent")
     private String userAgent;

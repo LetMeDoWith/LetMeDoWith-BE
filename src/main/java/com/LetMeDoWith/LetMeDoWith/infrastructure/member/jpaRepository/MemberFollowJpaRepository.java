@@ -10,5 +10,5 @@ public interface MemberFollowJpaRepository
         extends JpaRepository<MemberFollow, Long>, QMemberFollowJpaRepository {
 
     Optional<MemberFollow> findByFollowerMemberIdAndFollowingMemberId(
-            Long followerMemberId, Long followingMemberId);
+            String followerMemberId, String followingMemberId);
 }

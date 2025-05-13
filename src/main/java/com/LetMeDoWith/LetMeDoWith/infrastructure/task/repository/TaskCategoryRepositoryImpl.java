@@ -28,7 +28,7 @@ public class TaskCategoryRepositoryImpl implements TaskCategoryRepository {
     }
 
     @Override
-    public Optional<TaskCategory> getActiveTaskCategory(Long id, Long holderId) {
+    public Optional<TaskCategory> getActiveTaskCategory(Long id, String holderId) {
         return taskCategoryJpaRepository.findByIdAndCategoryHolderIdInAndIsActive(
                 id, Arrays.asList(holderId, null), Yn.TRUE);
     }
@@ -39,7 +39,7 @@ public class TaskCategoryRepositoryImpl implements TaskCategoryRepository {
     }
 
     @Override
-    public List<TaskCategory> getCategories(Long holderId, Yn isActive) {
+    public List<TaskCategory> getCategories(String holderId, Yn isActive) {
         return taskCategoryJpaRepository.findAllByCategoryHolderIdAndCreationTypeAndIsActive(
                 holderId, TaskCategoryCreationType.USER_CUSTOM, isActive);
     }

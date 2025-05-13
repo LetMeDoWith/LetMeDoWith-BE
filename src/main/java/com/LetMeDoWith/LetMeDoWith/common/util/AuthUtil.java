@@ -47,10 +47,10 @@ public class AuthUtil {
         return authorizationHeader;
     }
 
-    public Long getMemberId() {
+    public String getMemberId() {
 
         HttpServletRequest request =
                 ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-        return (Long) request.getAttribute("memberId");
+        return request.getAttribute("memberId").toString();
     }
 }

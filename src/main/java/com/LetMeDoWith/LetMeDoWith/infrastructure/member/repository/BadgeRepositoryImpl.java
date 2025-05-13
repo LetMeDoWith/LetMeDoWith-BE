@@ -31,17 +31,17 @@ public class BadgeRepositoryImpl implements BadgeRepository {
     }
 
     @Override
-    public List<MemberBadgeVO> getBadges(Long memberId) {
+    public List<MemberBadgeVO> getBadges(String memberId) {
         return badgeJpaRepository.findAllJoinMemberBadge(memberId, BadgeStatus.ACTIVE);
     }
 
     @Override
-    public Optional<MemberBadge> getMemberBadge(Long memberId, Badge badge) {
+    public Optional<MemberBadge> getMemberBadge(String memberId, Badge badge) {
         return memberBadgeJpaRepository.findByMemberIdAndBadge(memberId, badge);
     }
 
     @Override
-    public Optional<MemberBadge> getMainMemberBadge(Long memberId) {
+    public Optional<MemberBadge> getMainMemberBadge(String memberId) {
         return memberBadgeJpaRepository.findByMemberIdAndIsMain(memberId, Yn.TRUE);
     }
 

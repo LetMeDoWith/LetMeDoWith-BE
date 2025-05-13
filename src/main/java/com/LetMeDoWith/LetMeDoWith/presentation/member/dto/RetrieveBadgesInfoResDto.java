@@ -10,32 +10,13 @@ import org.springframework.lang.Nullable;
 @Data
 @Builder
 public class RetrieveBadgesInfoResDto {
+
     private Boolean isLazyMember;
     private MainBadge mainBadge;
     private List<Badge> badges;
 
-    @Data
-    @Builder
-    public static class MainBadge {
-        private Long id;
-        private String name;
-        private String imageUrl;
-        private String description;
-    }
-
-    @Data
-    @Builder
-    public static class Badge {
-        private Long id;
-        private Boolean isAcquired;
-        private String name;
-        private String imageUrl;
-        private String description;
-        private String acquireHint;
-    }
-
     public static RetrieveBadgesInfoResDto of(
-            Long memberId,
+            String memberId,
             boolean isLazy,
             @Nullable MemberBadgeVO mainBadgeVO,
             List<MemberBadgeVO> badgeVOs) {
@@ -66,5 +47,27 @@ public class RetrieveBadgesInfoResDto {
                                         .build())
                 .badges(badgesResult)
                 .build();
+    }
+
+    @Data
+    @Builder
+    public static class MainBadge {
+
+        private Long id;
+        private String name;
+        private String imageUrl;
+        private String description;
+    }
+
+    @Data
+    @Builder
+    public static class Badge {
+
+        private Long id;
+        private Boolean isAcquired;
+        private String name;
+        private String imageUrl;
+        private String description;
+        private String acquireHint;
     }
 }

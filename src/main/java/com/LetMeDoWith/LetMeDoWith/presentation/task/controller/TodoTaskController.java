@@ -41,7 +41,7 @@ public class TodoTaskController {
     @PostMapping("")
     public ResponseEntity<ResponseDto<CreateTodoTaskResDto>> registerTodoTask(
             @Valid @RequestBody CreateTodoTaskReqDto request) {
-        Long memberId = AuthUtil.getMemberId();
+        String memberId = AuthUtil.getMemberId();
 
         RegisterTodoTaskResult result;
 

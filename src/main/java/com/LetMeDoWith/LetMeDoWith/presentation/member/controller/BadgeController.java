@@ -30,7 +30,7 @@ public class BadgeController {
     @GetMapping("")
     public ResponseEntity retrieveBadgesInfo() {
 
-        Long memberId = AuthUtil.getMemberId();
+        String memberId = AuthUtil.getMemberId();
         GetBadgesInfoResult result = badgeService.getBadgesInfo(memberId);
 
         MemberBadgeVO mainBadge =
@@ -48,7 +48,7 @@ public class BadgeController {
     @PutMapping("/main")
     public ResponseEntity updateMainBadge(@RequestBody UpdateMainBadgeReqDto request) {
 
-        Long memberId = AuthUtil.getMemberId();
+        String memberId = AuthUtil.getMemberId();
         badgeService.updateMainBadge(memberId, request.badgeId());
 
         return ResponseUtil.createSuccessResponse();

@@ -35,7 +35,7 @@ class AccessTokenProviderTest {
      * You cannot utilize this token for any purpose on this system.
      */
 
-    public final Long MEMBER_ID = 1L;
+    public final String MEMBER_ID = "1L";
     public final String SAMPLE_TOKEN_NORMAL =
             "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjllMjQxM2UzODI1YWMyYmFiMTdmZTRkNGJhZDkxMjhjIn0.eyJpc3MiOiJodHRwczovL21vY2suYXV0aGVudGljYXRlLmxldG1lZG93aXRoLmRvIiwiYXVkIjoibGV0bWVkb3dpdGhTYW1wbGVBcHBsaWNhdGlvbiIsInN1YiI6IjViZTg2MzU5MDczYzQzNGJhZDJkYTM5MzIyMjJkYWJlIiwiZXhwIjoxOTk5OTk5OTk5LCJpYXQiOjE3MTI1NjM1MDMsIm5pY2tuYW1lIjoiSm9uaCBEb2UiLCJlbWFpbCI6ImpkMTIzQGxldG1lZG93aXRoLmNvbSJ9.zJMubgT5utETNIaUjuAkoRC74-eyPjVOaiiYIFlzv3eVOrbj7bM7RxpZtFeiYdvmpyiEH7sHbo-qVnTukeLlTaT_wNDeLSS7GYskbC75T_zCGx4e5vt4fgDTI4ov_iVWq9RzawTwFzJqj0b3j9hNST4HkuizQymAt5tnFClEa2fE_ojikecBEhfqdn3PAgOzq-pcHM-7-q1cs0QWrseFeouGvVmsOoiRTyewQ8ouuCf9zaYIf6KUu-lAQPsmsjYmNI2MHlPLCZbnnp3qZo7R-ozX66ZELbZwVZxPvrLqLOjdS4yPk_-aaQhT9s5sB0SljmWh9LLYELyXXkiQbVkx9QU-W0TjgnDpb-ScLQ2C5NXgEAF6OHBGynjyymwi_rvBxfY4l22evluOzBp18ECpc7DOhlcnwrPrS5M4pSCpEd8CLlYTyNvYWBJ7umhhDcub5ZLh6cqZ2LJanDG-UM1nLxRB6QGOFZcazyR1rPeGb7kiXiOh6-E7Wz7zwKvhcAUB";
     public final String SAMPLE_TOKEN_ILLEGAL_SIGNATURE =
@@ -91,7 +91,7 @@ class AccessTokenProviderTest {
         System.out.println(accessToken.getToken());
 
         // when
-        Long memberId = accessTokenProvider.validateAccessToken(accessToken.getToken());
+        String memberId = accessTokenProvider.validateAccessToken(accessToken.getToken());
 
         // then
         Assertions.assertThat(memberId).isEqualTo(MEMBER_ID);

@@ -23,13 +23,13 @@ public class RefreshToken {
 
     private String accessToken;
 
-    private Long memberId;
+    private String memberId;
     private String userAgent;
 
     @TimeToLive private Long expireSec;
 
     public static RefreshToken of(
-            Long memberId, String accessToken, String userAgent, Long expireSec) {
+            String memberId, String accessToken, String userAgent, Long expireSec) {
         String refreshToken = UUID.randomUUID().toString();
         return RefreshToken.builder()
                 .token(refreshToken)
@@ -40,7 +40,7 @@ public class RefreshToken {
                 .build();
     }
 
-    public void checkTokenOwnership(Long reqMemberId, String reqAccessToken, String reqUserAgent) {
+    public void checkTokenOwnership(String reqMemberId, String reqAccessToken, String reqUserAgent) {
 
         if (!reqMemberId.equals(memberId)) {
             throw new RestApiException(FailResponseStatus.INVALID_RTK_TOKEN_MEMBER_NOT_MATCHED);

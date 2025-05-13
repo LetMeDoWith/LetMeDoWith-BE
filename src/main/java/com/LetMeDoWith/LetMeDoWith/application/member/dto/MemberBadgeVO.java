@@ -8,7 +8,7 @@ import lombok.Data;
 public class MemberBadgeVO {
 
     private Long memberBadgeId;
-    private Long memberId;
+    private String memberId;
     private Yn isMain;
 
     private Long badgeId;

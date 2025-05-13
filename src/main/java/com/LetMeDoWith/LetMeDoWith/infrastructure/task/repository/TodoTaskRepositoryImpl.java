@@ -18,17 +18,17 @@ public class TodoTaskRepositoryImpl implements TodoTaskRepository {
     private final TodoTaskJpaRepository todoTaskJpaRepository;
 
     @Override
-    public Optional<TodoTask> getTodoTask(Long id, Long memberId) {
+    public Optional<TodoTask> getTodoTask(Long id, String memberId) {
         return todoTaskJpaRepository.findTodoTaskAggregate(id, memberId);
     }
 
     @Override
-    public List<TodoTask> getTodoTasks(Long memberId, LocalDate date) {
+    public List<TodoTask> getTodoTasks(String memberId, LocalDate date) {
         return todoTaskJpaRepository.findAllTodoTaskAggregates(memberId, date);
     }
 
     @Override
-    public List<TodoTask> getTodoTasks(Long memberId, Set<LocalDate> dates) {
+    public List<TodoTask> getTodoTasks(String memberId, Set<LocalDate> dates) {
         return todoTaskJpaRepository.findAllTodoTaskAggregates(memberId, dates);
     }
 
