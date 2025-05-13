@@ -9,8 +9,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MemberBadgeJpaRepository extends JpaRepository<MemberBadge, Long> {
-    
+
     Optional<MemberBadge> findByMemberIdAndIsMain(String memberId, Yn isMain);
-    
+
     Optional<MemberBadge> findByMemberIdAndBadge(String memberId, Badge badge);
 }

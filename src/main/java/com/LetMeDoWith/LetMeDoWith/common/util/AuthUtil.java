@@ -11,11 +11,12 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 @UtilityClass
 @Slf4j
 public class AuthUtil {
-    
+
     private final String AUTHORIZATION_KEY = "AUTHORIZATION";
-    
+
     public String getAccessToken() {
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+        HttpServletRequest request =
+                ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
         String authorizationHeader = request.getHeader(AUTHORIZATION_KEY);
         if (authorizationHeader == null) {
             throw new RestApiException(FailResponseStatus.ATK_NOT_EXIST);
@@ -30,26 +31,26 @@ public class AuthUtil {
             return accessToken;
         }
     }
-    
+
     /**
      * Request 에서 Signup Token을 가져온다.
      *
-     * TODO: Signup Token임을 구별할 수 있는 접두어가 필요할 것으로 보임.
+     * <p>TODO: Signup Token임을 구별할 수 있는 접두어가 필요할 것으로 보임.
      *
      * @return
      */
     public String getSignupToken() {
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+        HttpServletRequest request =
+                ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
         String authorizationHeader = request.getHeader(AUTHORIZATION_KEY);
-        
+
         return authorizationHeader;
     }
-    
+
     public String getMemberId() {
-        
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+
+        HttpServletRequest request =
+                ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
         return request.getAttribute("memberId").toString();
-        
     }
-    
 }

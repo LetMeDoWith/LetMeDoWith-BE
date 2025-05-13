@@ -7,9 +7,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MemberFollowJpaRepository
-    extends JpaRepository<MemberFollow, Long>, QMemberFollowJpaRepository {
-    
-    Optional<MemberFollow> findByFollowerMemberIdAndFollowingMemberId(String followerMemberId,
-                                                                      String followingMemberId);
-    
+        extends JpaRepository<MemberFollow, Long>, QMemberFollowJpaRepository {
+
+    Optional<MemberFollow> findByFollowerMemberIdAndFollowingMemberId(
+            String followerMemberId, String followingMemberId);
 }

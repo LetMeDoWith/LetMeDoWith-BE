@@ -14,14 +14,14 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Slf4j
 public class TaskCategoryService {
-    
+
     private final TaskCategoryRepository taskCategoryRepository;
-    
+
     // TODO: 이 메서드는 추후 캐싱하여 응답한다.
     public List<TaskCategory> getAllCommonCategory() {
         return taskCategoryRepository.getCategories(TaskCategoryCreationType.COMMON, Yn.TRUE);
     }
-    
+
     /**
      * 한 멤버가 조회 가능한 모든 카테고리를 조회한다.
      *
@@ -29,11 +29,9 @@ public class TaskCategoryService {
      * @return 멤버가 생성한 개인 카테고리 + 공통 카테고리
      */
     public List<TaskCategory> getAllCategory(String memberId) {
-        List<TaskCategory> userCreatedCategories = taskCategoryRepository.getCategories(memberId,
-                                                                                        Yn.TRUE);
-        
-        return Stream.concat(getAllCommonCategory().stream(),
-                             userCreatedCategories.stream()).toList();
+        List<TaskCategory> userCreatedCategories =
+                taskCategoryRepository.getCategories(memberId, Yn.TRUE);
+
+        return Stream.concat(getAllCommonCategory().stream(), userCreatedCategories.stream()).toList();
     }
-    
 }

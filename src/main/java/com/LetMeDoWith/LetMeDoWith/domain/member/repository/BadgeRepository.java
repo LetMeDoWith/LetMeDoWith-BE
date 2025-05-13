@@ -8,17 +8,16 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BadgeRepository {
-    
+
     void save(List<MemberBadge> memberBadges);
-    
+
     void save(MemberBadge memberBadge);
-    
+
     Optional<MemberBadge> getMemberBadge(String memberId, Badge badge);
-    
+
     Optional<MemberBadge> getMainMemberBadge(String memberId);
-    
+
     Optional<Badge> getBadge(Long badgeId, BadgeStatus badgeStatus);
-    
+
     List<MemberBadgeVO> getBadges(String memberId);
-    
 }

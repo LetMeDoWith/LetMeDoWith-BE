@@ -23,19 +23,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class MemberServiceTest {
-    
-    @Mock
-    MemberJpaRepository memberJpaRepository;
-    
-    @Mock
-    MemberSocialAccountJpaRepository memberSocialAccountJpaRepository;
-    
-    @Mock
-    MemberRepository memberRepository;
-    
-    @InjectMocks
-    MemberService memberService;
-    
+
+    @Mock MemberJpaRepository memberJpaRepository;
+
+    @Mock MemberSocialAccountJpaRepository memberSocialAccountJpaRepository;
+
+    @Mock MemberRepository memberRepository;
+
+    @InjectMocks MemberService memberService;
+
     // @Test
     // @DisplayName("[SUCCESS] 기 가입 유저 조회")
     // void findAlreadyRegisteredMemberTest() {
@@ -50,7 +46,8 @@ class MemberServiceTest {
     //
     //     MemberSocialAccount memberSocialAccountKaKao = MemberSocialAccount.builder()
     //                                                                       .member(testMemberObj)
-    //                                                                       .provider(SocialProvider.KAKAO)
+    //
+    // .provider(SocialProvider.KAKAO)
     //                                                                       .build();
     //
     //     when(memberJpaRepository.findByProviderAndEmail(any(SocialProvider.class), anyString()))
@@ -74,7 +71,8 @@ class MemberServiceTest {
     //
     //     MemberSocialAccount temporalSocialAccount = MemberSocialAccount.builder()
     //                                                                    .member(temporalMember)
-    //                                                                    .provider(SocialProvider.KAKAO)
+    //
+    // .provider(SocialProvider.KAKAO)
     //                                                                    .build();
     //
     //     when(memberJpaRepository.save(any(Member.class)))
@@ -139,52 +137,57 @@ class MemberServiceTest {
     //
     //
     // }
-    
+
     @Test
     @DisplayName("[SUCCESS] 유저 탈퇴")
     void withdrawMemberTest() {
-        Member member = Member.builder()
-                              .id("1L")
-                              .subject("subject")
-                              .nickname("nickname")
-                              .selfDescription("self desc")
-                              .status(MemberStatus.NORMAL)
-                              .type(MemberType.USER)
-                              .gender(Gender.FEMALE)
-                              .profileImageUrl("image.jpeg")
-                              .build();
-        
-        Mockito.when(memberRepository.getMember(ArgumentMatchers.eq("1L"),
-                                                ArgumentMatchers.eq(MemberStatus.NORMAL)))
-               .thenReturn(Optional.of(member));
-        
+        Member member =
+                Member.builder()
+                        .id("1L")
+                        .subject("subject")
+                        .nickname("nickname")
+                        .selfDescription("self desc")
+                        .status(MemberStatus.NORMAL)
+                        .type(MemberType.USER)
+                        .gender(Gender.FEMALE)
+                        .profileImageUrl("image.jpeg")
+                        .build();
+
+        Mockito.when(
+                        memberRepository.getMember(
+                                ArgumentMatchers.eq("1L"), ArgumentMatchers.eq(MemberStatus.NORMAL)))
+                .thenReturn(Optional.of(member));
+
         memberService.withdrawMember("1L");
-        
+
         Assertions.assertEquals(member.getStatus(), MemberStatus.WITHDRAWN);
     }
-    
+
     @Test
     @DisplayName("[FAIL] 일반 상태 외에서 탈퇴 시도")
     void withdrawAbnormalStatusMemberTest() {
-        Member member = Member.builder()
-                              .id("1L")
-                              .subject("subject")
-                              .nickname("nickname")
-                              .selfDescription("self desc")
-                              .status(MemberStatus.WITHDRAWN)
-                              .type(MemberType.USER)
-                              .gender(Gender.FEMALE)
-                              .profileImageUrl("image.jpeg")
-                              .build();
-        
-        Mockito.when(memberRepository.getMember(ArgumentMatchers.eq("1L"),
-                                                ArgumentMatchers.eq(MemberStatus.NORMAL)))
-               .thenReturn(Optional.empty());
-        
-        Assertions.assertThrows(RestApiException.class,
-                                () -> {
-                                    memberService.withdrawMember("1L");
-                                },
-                                FailResponseStatus.MEMBER_CANNOT_WITHDRAW.getMessage());
+        Member member =
+                Member.builder()
+                        .id("1L")
+                        .subject("subject")
+                        .nickname("nickname")
+                        .selfDescription("self desc")
+                        .status(MemberStatus.WITHDRAWN)
+                        .type(MemberType.USER)
+                        .gender(Gender.FEMALE)
+                        .profileImageUrl("image.jpeg")
+                        .build();
+
+        Mockito.when(
+                        memberRepository.getMember(
+                                ArgumentMatchers.eq("1L"), ArgumentMatchers.eq(MemberStatus.NORMAL)))
+                .thenReturn(Optional.empty());
+
+        Assertions.assertThrows(
+                RestApiException.class,
+                () -> {
+                    memberService.withdrawMember("1L");
+                },
+                FailResponseStatus.MEMBER_CANNOT_WITHDRAW.getMessage());
     }
 }

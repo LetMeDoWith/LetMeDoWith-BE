@@ -1,17 +1,15 @@
 package com.LetMeDoWith.LetMeDoWith.application.auth.repository;
 
-import java.util.Optional;
-
 import com.LetMeDoWith.LetMeDoWith.domain.auth.model.RefreshToken;
+import java.util.Optional;
 
 public interface RefreshTokenRepository {
 
-	Optional<RefreshToken> getRefreshToken(String refreshToken);
+    Optional<RefreshToken> getRefreshToken(String refreshToken);
 
-	RefreshToken save(RefreshToken refreshToken);
+    RefreshToken save(RefreshToken refreshToken);
 
-	void deleteRefreshToken(RefreshToken refreshToken);
+    void deleteRefreshToken(RefreshToken refreshToken);
 
-	void deleteRefreshTokens(String memberId);
-
+    void deleteRefreshTokens(String memberId);
 }

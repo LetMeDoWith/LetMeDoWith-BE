@@ -16,33 +16,31 @@ import lombok.RequiredArgsConstructor;
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class SignupToken {
-    
+
     private String token;
     private LocalDateTime expireAt;
-    
-    public static SignupToken of(String memberId, String issuer, Long signUpTokenDurationMin,
-                                 SecretKey secretKey) {
+
+    public static SignupToken of(
+            String memberId, String issuer, Long signUpTokenDurationMin, SecretKey secretKey) {
         Date nowDate = new Date();
-        
+
         long accessExpireTime = signUpTokenDurationMin * 60 * 1000L;
         Date expireAt = new Date(nowDate.getTime() + accessExpireTime);
-        
-        String signupToken = Jwts.builder()
-                                 .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
-                                 .setIssuer(issuer)
-                                 .setIssuedAt(nowDate)
-                                 .setExpiration(expireAt)
-                                 .setSubject("SIGNUP")
-                                 .claim("memberId", memberId)
-                                 .signWith(secretKey)
-                                 .compact();
-        
+
+        String signupToken =
+                Jwts.builder()
+                        .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
+                        .setIssuer(issuer)
+                        .setIssuedAt(nowDate)
+                        .setExpiration(expireAt)
+                        .setSubject("SIGNUP")
+                        .claim("memberId", memberId)
+                        .signWith(secretKey)
+                        .compact();
+
         return SignupToken.builder()
-                          .token(signupToken)
-                          .expireAt(LocalDateTime.ofInstant(expireAt.toInstant(),
-                                                            ZoneId.systemDefault()))
-                          .build();
-        
+                .token(signupToken)
+                .expireAt(LocalDateTime.ofInstant(expireAt.toInstant(), ZoneId.systemDefault()))
+                .build();
     }
-    
 }

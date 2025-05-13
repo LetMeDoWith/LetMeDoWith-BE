@@ -12,11 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class DeleteDowithTaskService {
-    
+
     private final DowithTaskRepository dowithTaskRepository;
     private final DowithTaskRoutineRepository dowithTaskRoutineRepository;
-    
-    
+
     /**
      * 두윗모드 Task 삭제
      *
@@ -25,15 +24,15 @@ public class DeleteDowithTaskService {
      */
     @Transactional
     public void delete(String memberId, Long dowithTaskId) {
-        
-        DowithTask dowithTask = dowithTaskRepository.getDowithTask(dowithTaskId, memberId)
-                                                    .orElseThrow(() -> new RestApiException(
-                                                        FailResponseStatus.INVALID_REQUEST));
-        
+
+        DowithTask dowithTask =
+                dowithTaskRepository
+                        .getDowithTask(dowithTaskId, memberId)
+                        .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
+
         dowithTask.delete(dowithTaskRepository, dowithTaskRoutineRepository);
-        
     }
-    
+
     /**
      * 두윗모드 Task + 루틴으로 등록된 모든 Task 삭제
      *
@@ -42,14 +41,12 @@ public class DeleteDowithTaskService {
      */
     @Transactional
     public void deleteWithRoutines(String memberId, Long dowithTaskId) {
-        
-        DowithTask dowithTask = dowithTaskRepository.getDowithTask(dowithTaskId, memberId)
-                                                    .orElseThrow(() -> new RestApiException(
-                                                        FailResponseStatus.INVALID_REQUEST));
-        
-        dowithTask.deleteWithRoutine(dowithTaskRepository,
-                                     dowithTaskRoutineRepository);
-        
+
+        DowithTask dowithTask =
+                dowithTaskRepository
+                        .getDowithTask(dowithTaskId, memberId)
+                        .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
+
+        dowithTask.deleteWithRoutine(dowithTaskRepository, dowithTaskRoutineRepository);
     }
-    
 }
