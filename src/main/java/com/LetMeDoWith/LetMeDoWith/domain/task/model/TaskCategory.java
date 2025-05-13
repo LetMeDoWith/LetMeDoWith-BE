@@ -23,44 +23,44 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Table(name = "task_category")
 public class TaskCategory extends BaseAuditEntity {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-    
+
     @Column(name = "title", nullable = false)
     private String title;
-    
+
     @Column(name = "active_yn", nullable = false)
     @Builder.Default
     private Yn isActive = Yn.TRUE;
-    
+
     @Column(name = "creation_type", nullable = false)
     private TaskCategoryCreationType creationType;
-    
+
     @Column(name = "emoji", nullable = false)
     private String emoji;
-    
+
     @Column(name = "category_holder_id", length = 26)
     private String categoryHolderId;
-    
-    public static TaskCategory of(String title, TaskCategoryCreationType creationType, String emoji,
-                                  String categoryHolderId) {
+
+    public static TaskCategory of(
+            String title, TaskCategoryCreationType creationType, String emoji, String categoryHolderId) {
         return TaskCategory.builder()
-                           .title(title)
-                           .creationType(creationType)
-                           .emoji(emoji)
-                           .categoryHolderId(categoryHolderId)
-                           .build();
+                .title(title)
+                .creationType(creationType)
+                .emoji(emoji)
+                .categoryHolderId(categoryHolderId)
+                .build();
     }
-    
+
     @Getter
     @AllArgsConstructor
     public enum TaskCategoryCreationType implements BaseEnum {
         COMMON("COMMON", "공통"),
         USER_CUSTOM("USER_CUSTOM", "유저 개인");
-        
+
         private final String code;
         private final String description;
     }

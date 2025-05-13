@@ -43,19 +43,19 @@ public class UpdateDowithTaskService {
      * @param routineDates
      */
     @Transactional
-    public DowithTask updateContentsAndCreateRoutine(String memberId,
-                                                     UpdateDowithTaskContentsCommand command,
-                                                     Set<LocalDate> routineDates) {
-        
-        DowithTask dowithTask = dowithTaskRepository.getDowithTask(command.id(), memberId)
-                                                    .orElseThrow(() -> new RestApiException(
-                                                        INVALID_REQUEST));
-        
-        TaskCategory taskCategory = taskCategoryRepository.getActiveTaskCategory(
-                                                              command.taskCategoryId(), memberId)
-                                                          .orElseThrow(() -> new RestApiException(
-                                                              INVALID_REQUEST));
-        
+    public DowithTask updateContentsAndCreateRoutine(
+            String memberId, UpdateDowithTaskContentsCommand command, Set<LocalDate> routineDates) {
+
+        DowithTask dowithTask =
+                dowithTaskRepository
+                        .getDowithTask(command.id(), memberId)
+                        .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
+
+        TaskCategory taskCategory =
+                taskCategoryRepository
+                        .getActiveTaskCategory(command.taskCategoryId(), memberId)
+                        .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
+
         if (dowithTask.isContentsEditable()) {
             dowithTask.updateContents(
                     command.title(), taskCategory.getId(), command.date(), command.startTime());
@@ -89,18 +89,18 @@ public class UpdateDowithTaskService {
      * @param command
      */
     @Transactional
-    public DowithTask updateContentsOnly(String memberId,
-                                         UpdateDowithTaskContentsCommand command) {
-        
-        DowithTask dowithTask = dowithTaskRepository.getDowithTask(command.id(), memberId)
-                                                    .orElseThrow(() -> new RestApiException(
-                                                        INVALID_REQUEST));
-        
-        TaskCategory taskCategory = taskCategoryRepository.getActiveTaskCategory(
-                                                              command.taskCategoryId(), memberId)
-                                                          .orElseThrow(() -> new RestApiException(
-                                                              INVALID_REQUEST));
-        
+    public DowithTask updateContentsOnly(String memberId, UpdateDowithTaskContentsCommand command) {
+
+        DowithTask dowithTask =
+                dowithTaskRepository
+                        .getDowithTask(command.id(), memberId)
+                        .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
+
+        TaskCategory taskCategory =
+                taskCategoryRepository
+                        .getActiveTaskCategory(command.taskCategoryId(), memberId)
+                        .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
+
         if (dowithTask.isRoutine()) {
 
             // TODO- 수정 대상이 어디까지인지 해당 정책 확인 필요 to 기획
@@ -139,13 +139,13 @@ public class UpdateDowithTaskService {
      * @param routineDates
      */
     @Transactional
-    public DowithTask updateRoutine(String memberId, Long dowithTaskId,
-                                    Set<LocalDate> routineDates) {
-        
-        final DowithTask dowithTask = dowithTaskRepository.getDowithTask(dowithTaskId, memberId)
-                                                          .orElseThrow(() -> new RestApiException(
-                                                              INVALID_REQUEST));
-        
+    public DowithTask updateRoutine(String memberId, Long dowithTaskId, Set<LocalDate> routineDates) {
+
+        final DowithTask dowithTask =
+                dowithTaskRepository
+                        .getDowithTask(dowithTaskId, memberId)
+                        .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
+
         LocalDateTime now = SystemTimeUtil.now();
         LocalDate nowDate = now.toLocalDate();
         LocalTime nowTime = now.toLocalTime();

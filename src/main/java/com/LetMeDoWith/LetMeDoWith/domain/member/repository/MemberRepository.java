@@ -9,19 +9,18 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MemberRepository {
-    
+
     Member save(Member member);
-    
+
     MemberTermAgree save(MemberTermAgree memberTermAgree);
-    
+
     void saveSocialAccount(MemberSocialAccount memberSocialAccount);
-    
+
     Optional<Member> getMember(String id, MemberStatus memberStatus);
-    
+
     Optional<Member> getNormalStatusMember(String id);
-    
+
     List<Member> getMembers(String nickname, List<MemberStatus> memberStatuses);
-    
+
     Optional<Member> getMember(SocialProvider provider, String subject);
-    
 }

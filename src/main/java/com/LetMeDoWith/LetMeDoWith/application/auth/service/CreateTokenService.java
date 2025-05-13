@@ -27,32 +27,32 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class CreateTokenService {
-    
+
     private final AccessTokenProvider accessTokenProvider;
     private final SignupTokenProvider signupTokenProvider;
     private final RefreshTokenProvider refreshTokenProvider;
-    
+
     private final RefreshTokenRepository refreshTokenRepository;
-    
+
     private final MemberRepository memberRepository;
     private final SocialAuthMemberService socialAuthMemberService;
-    
+
     private final OidcIdTokenProvider oidcIdTokenProvider;
-    
+
     @Transactional
     public CreateTokenResult createToken(Member member) {
         if (member.isNormal()) {
             AccessToken accessToken = accessTokenProvider.createAccessToken(member.getId());
             RefreshToken refreshToken =
-                refreshTokenProvider.createRefreshToken(
-                    member.getId(), accessToken.getToken(), HeaderUtil.getUserAgent());
-            
+                    refreshTokenProvider.createRefreshToken(
+                            member.getId(), accessToken.getToken(), HeaderUtil.getUserAgent());
+
             return CreateTokenResult.of(accessToken, refreshToken);
         } else {
             throw new RestApiException(member.getStatus().getApiResponseStatus());
         }
     }
-    
+
     /**
      * 회원가입 여부를 판단하여 ATK를 발급한다.
      *
@@ -65,13 +65,13 @@ public class CreateTokenService {
     @Transactional
     public CreateTokenResult createToken(SocialProvider socialProvider, String idToken) {
         Jws<Claims> verifiedIdToken =
-            oidcIdTokenProvider.getVerifiedOidcIdToken(socialProvider, idToken);
-        
+                oidcIdTokenProvider.getVerifiedOidcIdToken(socialProvider, idToken);
+
         Claims body = verifiedIdToken.getBody();
         String subject = body.get("sub", String.class);
-        
+
         Optional<Member> optionalMember = memberRepository.getMember(socialProvider, subject);
-        
+
         if (optionalMember.isPresent()) {
             Member member = optionalMember.get();
             if (member.isNormal()) {
@@ -86,13 +86,13 @@ public class CreateTokenService {
             // 가입된 유저가 없으면, 회원가입 프로세스를 진행한다.
             // 최초 소셜 로그인 시도시 회원가입 단계를 진행하기 위해 임시 Member를 생성.
             Member member =
-                socialAuthMemberService.createSocialAuthenticatedMember(
-                    socialProvider, subject, memberRepository);
-            
+                    socialAuthMemberService.createSocialAuthenticatedMember(
+                            socialProvider, subject, memberRepository);
+
             return CreateTokenResult.of(signupTokenProvider.createSignupToken(member.getId()));
         }
     }
-    
+
     /**
      * Refresh 토큰 생성
      *
@@ -103,20 +103,20 @@ public class CreateTokenService {
      */
     @Transactional
     public CreateRefreshTokenResult createRefreshToken(
-        String accessToken, String refreshToken, String userAgent) {
-        
+            String accessToken, String refreshToken, String userAgent) {
+
         String memberId = accessTokenProvider.getMemberIdWithoutVerify(accessToken);
-        
+
         RefreshToken savedRefreshToken = null;
         savedRefreshToken = refreshTokenProvider.findRefreshToken(refreshToken);
         savedRefreshToken.checkTokenOwnership(memberId, accessToken, userAgent);
-        
+
         AccessToken newAccessToken = accessTokenProvider.createAccessToken(memberId);
         RefreshToken newRefreshToken =
-            refreshTokenProvider.createRefreshToken(memberId, accessToken, userAgent);
-        
+                refreshTokenProvider.createRefreshToken(memberId, accessToken, userAgent);
+
         refreshTokenRepository.deleteRefreshToken(savedRefreshToken);
-        
+
         return new CreateRefreshTokenResult(newAccessToken, newRefreshToken);
     }
 }

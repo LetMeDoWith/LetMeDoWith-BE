@@ -16,32 +16,30 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TempRefreshToken {
-    
+
     @Id
     @Column(name = "token")
     private String token;
-    
+
     @Column(name = "access_token")
     private String accessToken;
-    
+
     @Column(name = "member_id")
     private String memberId;
-    
+
     @Column(name = "user_agent")
     private String userAgent;
-    
+
     @Column(name = "expire_at")
     private LocalDateTime expireAt;
-    
+
     public static TempRefreshToken from(RefreshToken refreshToken) {
         return TempRefreshToken.builder()
-                               .token(refreshToken.getToken())
-                               .accessToken(refreshToken.getAccessToken())
-                               .memberId(refreshToken.getMemberId())
-                               .userAgent(refreshToken.getUserAgent())
-                               .expireAt(LocalDateTime.now()
-                                                      .plusSeconds(refreshToken.getExpireSec()))
-                               .build();
+                .token(refreshToken.getToken())
+                .accessToken(refreshToken.getAccessToken())
+                .memberId(refreshToken.getMemberId())
+                .userAgent(refreshToken.getUserAgent())
+                .expireAt(LocalDateTime.now().plusSeconds(refreshToken.getExpireSec()))
+                .build();
     }
-    
 }
