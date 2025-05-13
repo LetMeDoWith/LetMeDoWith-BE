@@ -5,17 +5,14 @@ import lombok.Builder;
 
 @Builder
 public record UpdateMemberAlarmSettingCommand(
-    boolean baseAlarmYn,
-    boolean todoBotYn,
-    boolean feedbackYn,
-    boolean marketingYn
-) {
-    
+        boolean baseAlarmYn, boolean todoBotYn, boolean feedbackYn, boolean marketingYn) {
+
     public static UpdateMemberAlarmSettingCommand fromReq(UpdateMemberAlarmSettingReq req) {
         return UpdateMemberAlarmSettingCommand.builder()
-                                              .baseAlarmYn(req.baseAlarmYn())
-                                              .todoBotYn(req.todoBotYn())
-                                              .feedbackYn(req.feedbackYn())
-                                              .marketingYn(req.marketingYn()).build();
+                .baseAlarmYn(req.baseAlarmYn())
+                .todoBotYn(req.todoBotYn())
+                .feedbackYn(req.feedbackYn())
+                .marketingYn(req.marketingYn())
+                .build();
     }
 }

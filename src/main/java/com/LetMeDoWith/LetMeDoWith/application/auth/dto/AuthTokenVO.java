@@ -8,12 +8,9 @@ import java.time.LocalDateTime;
 
 @Schema(description = "인증 과정에서 사용되는 토큰")
 public record AuthTokenVO(
-    @Schema(description = "토큰 본문")
-    String token,
-    
-    @Schema(description = "토큰 만료시기")
-    LocalDateTime expireAt) {
-    
+        @Schema(description = "토큰 본문") String token,
+        @Schema(description = "토큰 만료시기") LocalDateTime expireAt) {
+
     /**
      * Refresh Token을 AuthTokenVO 타입으로 변환
      *
@@ -21,16 +18,14 @@ public record AuthTokenVO(
      * @return
      */
     public static AuthTokenVO from(RefreshToken rtk) {
-        return new AuthTokenVO(rtk.getToken(),
-                               LocalDateTime.now().plusSeconds(rtk.getExpireSec()));
+        return new AuthTokenVO(rtk.getToken(), LocalDateTime.now().plusSeconds(rtk.getExpireSec()));
     }
-    
+
     public static AuthTokenVO from(AccessToken atk) {
         return new AuthTokenVO(atk.getToken(), atk.getExpireAt());
     }
-    
+
     public static AuthTokenVO from(SignupToken signUpToken) {
         return new AuthTokenVO(signUpToken.getToken(), signUpToken.getExpireAt());
     }
-    
 }

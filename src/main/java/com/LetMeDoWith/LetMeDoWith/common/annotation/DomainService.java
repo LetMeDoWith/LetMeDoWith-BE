@@ -9,6 +9,4 @@ import org.springframework.stereotype.Component;
 @Retention(RetentionPolicy.RUNTIME)
 @Component
 @Target(ElementType.TYPE)
-public @interface DomainService {
-
-}
+public @interface DomainService {}

@@ -11,8 +11,8 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ApiErrorResponse {
-    
+
     FailResponseStatus status();
-    
+
     String description() default "";
 }

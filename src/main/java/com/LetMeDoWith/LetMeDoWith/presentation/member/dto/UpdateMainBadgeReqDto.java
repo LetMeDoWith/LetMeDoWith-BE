@@ -1,7 +1,3 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.member.dto;
 
-public record UpdateMainBadgeReqDto(
-    Long badgeId
-) {
-
-}
+public record UpdateMainBadgeReqDto(Long badgeId) {}

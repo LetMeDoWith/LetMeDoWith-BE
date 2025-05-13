@@ -20,27 +20,24 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class MemberSocialAccount extends BaseAuditEntity {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-    
+
     @ManyToOne
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
-    
+
     @Column(name = "provider", nullable = false)
     private SocialProvider provider;
-    
+
     public static MemberSocialAccount of(Member member, SocialProvider provider) {
-        MemberSocialAccount socialAccount = MemberSocialAccount.builder()
-                                                               .member(member)
-                                                               .provider(provider)
-                                                               .build();
-        
+        MemberSocialAccount socialAccount =
+                MemberSocialAccount.builder().member(member).provider(provider).build();
+
         member.addSocialAccount(socialAccount);
         return socialAccount;
     }
-    
 }

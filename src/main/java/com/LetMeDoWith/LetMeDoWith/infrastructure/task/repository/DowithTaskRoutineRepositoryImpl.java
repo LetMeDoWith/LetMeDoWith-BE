@@ -11,20 +11,20 @@ import org.springframework.stereotype.Repository;
 @RequiredArgsConstructor
 public class DowithTaskRoutineRepositoryImpl implements DowithTaskRoutineRepository {
 
-  private final DowithTaskRoutineJpaRepository jpaRepository;
+    private final DowithTaskRoutineJpaRepository jpaRepository;
 
-  @Override
-  public DowithTaskRoutine save(DowithTaskRoutine dowithTaskRoutine) {
-    return jpaRepository.save(dowithTaskRoutine);
-  }
+    @Override
+    public DowithTaskRoutine save(DowithTaskRoutine dowithTaskRoutine) {
+        return jpaRepository.save(dowithTaskRoutine);
+    }
 
-  @Override
-  public void delete(DowithTaskRoutine dowithTaskRoutine) {
-    jpaRepository.delete(dowithTaskRoutine);
-  }
+    @Override
+    public void delete(DowithTaskRoutine dowithTaskRoutine) {
+        jpaRepository.delete(dowithTaskRoutine);
+    }
 
-  @Override
-  public void delete(List<DowithTaskRoutine> dowithTaskRoutines) {
-    jpaRepository.deleteAll(dowithTaskRoutines);
-  }
+    @Override
+    public void delete(List<DowithTaskRoutine> dowithTaskRoutines) {
+        jpaRepository.deleteAll(dowithTaskRoutines);
+    }
 }

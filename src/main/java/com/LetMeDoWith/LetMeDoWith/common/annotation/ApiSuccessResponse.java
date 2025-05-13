@@ -8,11 +8,8 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-@ApiResponse(
-    responseCode = "200",
-    useReturnTypeSchema = true
-)
+@ApiResponse(responseCode = "200", useReturnTypeSchema = true)
 public @interface ApiSuccessResponse {
-    
+
     String description() default "";
 }

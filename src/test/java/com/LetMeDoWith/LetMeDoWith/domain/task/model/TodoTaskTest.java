@@ -26,11 +26,7 @@ class TodoTaskTest {
     @DisplayName("[SUCCESS] 일반 TodoTask 생성 성공")
     void testCreateNormalTodoTaskSuccess() {
         // when
-        TodoTask todoTask = TodoTask.of(MEMBER_ID,
-                TASK_CATEGORY_ID,
-                TITLE,
-                FUTURE_DATE,
-                VALID_TIME);
+        TodoTask todoTask = TodoTask.of(MEMBER_ID, TASK_CATEGORY_ID, TITLE, FUTURE_DATE, VALID_TIME);
 
         // then
         assertThat(todoTask).isNotNull();
@@ -47,15 +43,17 @@ class TodoTaskTest {
     @DisplayName("[SUCCESS] 루틴 TodoTask 생성 성공")
     void testCreateRoutineTodoTasksSuccess() {
         // given
-        Set<LocalDate> routineDates = Set.of(
-                FUTURE_DATE,
-                FUTURE_DATE.plusDays(7),
-                FUTURE_DATE.plusDays(14),
-                FUTURE_DATE.plusDays(21));
+        Set<LocalDate> routineDates =
+                Set.of(
+                        FUTURE_DATE,
+                        FUTURE_DATE.plusDays(7),
+                        FUTURE_DATE.plusDays(14),
+                        FUTURE_DATE.plusDays(21));
 
         // when
-        List<TodoTask> todoTasks = TodoTask.ofWithRoutine(
-                MEMBER_ID, TASK_CATEGORY_ID, TITLE, FUTURE_DATE, VALID_TIME, routineDates);
+        List<TodoTask> todoTasks =
+                TodoTask.ofWithRoutine(
+                        MEMBER_ID, TASK_CATEGORY_ID, TITLE, FUTURE_DATE, VALID_TIME, routineDates);
 
         // then
         assertThat(todoTasks).hasSize(4);
@@ -80,12 +78,11 @@ class TodoTaskTest {
     @DisplayName("[SUCCESS] 루틴 생성 후 루틴 날짜 조회 성공")
     void testGetRoutineDatesSuccess() {
         // given
-        Set<LocalDate> routineDates = Set.of(
-                FUTURE_DATE,
-                FUTURE_DATE.plusDays(7),
-                FUTURE_DATE.plusDays(14));
-        List<TodoTask> todoTasks = TodoTask.ofWithRoutine(
-                MEMBER_ID, TASK_CATEGORY_ID, TITLE, FUTURE_DATE, VALID_TIME, routineDates);
+        Set<LocalDate> routineDates =
+                Set.of(FUTURE_DATE, FUTURE_DATE.plusDays(7), FUTURE_DATE.plusDays(14));
+        List<TodoTask> todoTasks =
+                TodoTask.ofWithRoutine(
+                        MEMBER_ID, TASK_CATEGORY_ID, TITLE, FUTURE_DATE, VALID_TIME, routineDates);
         TodoTask todoTask = todoTasks.get(0);
 
         // when
@@ -99,15 +96,9 @@ class TodoTaskTest {
     @DisplayName("[SUCCESS] 일반 TodoTask에서 루틴 생성 성공")
     void testCreateRoutineFromNormalTaskSuccess() {
         // given
-        TodoTask todoTask = TodoTask.of(MEMBER_ID,
-                TASK_CATEGORY_ID,
-                TITLE,
-                FUTURE_DATE,
-                VALID_TIME);
-        Set<LocalDate> routineDates = Set.of(
-                FUTURE_DATE,
-                FUTURE_DATE.plusDays(7),
-                FUTURE_DATE.plusDays(14));
+        TodoTask todoTask = TodoTask.of(MEMBER_ID, TASK_CATEGORY_ID, TITLE, FUTURE_DATE, VALID_TIME);
+        Set<LocalDate> routineDates =
+                Set.of(FUTURE_DATE, FUTURE_DATE.plusDays(7), FUTURE_DATE.plusDays(14));
 
         // when
         List<TodoTask> routineTasks = todoTask.createRoutine(routineDates);
@@ -127,11 +118,7 @@ class TodoTaskTest {
     @DisplayName("[SUCCESS] TodoTask 내용 업데이트 성공")
     void testUpdateContentSuccess() {
         // given
-        TodoTask todoTask = TodoTask.of(MEMBER_ID,
-                TASK_CATEGORY_ID,
-                TITLE,
-                FUTURE_DATE,
-                VALID_TIME);
+        TodoTask todoTask = TodoTask.of(MEMBER_ID, TASK_CATEGORY_ID, TITLE, FUTURE_DATE, VALID_TIME);
         String newTitle = "수정된 제목";
         Long newCategoryId = 200L;
         LocalDate newDate = FUTURE_DATE.plusDays(1);
@@ -151,12 +138,11 @@ class TodoTaskTest {
     @DisplayName("[SUCCESS] TodoTask 루틴 삭제 성공")
     void testDeleteRoutineSuccess() {
         // given
-        Set<LocalDate> routineDates = Set.of(
-                FUTURE_DATE,
-                FUTURE_DATE.plusDays(7),
-                FUTURE_DATE.plusDays(14));
-        List<TodoTask> todoTasks = TodoTask.ofWithRoutine(
-                MEMBER_ID, TASK_CATEGORY_ID, TITLE, FUTURE_DATE, VALID_TIME, routineDates);
+        Set<LocalDate> routineDates =
+                Set.of(FUTURE_DATE, FUTURE_DATE.plusDays(7), FUTURE_DATE.plusDays(14));
+        List<TodoTask> todoTasks =
+                TodoTask.ofWithRoutine(
+                        MEMBER_ID, TASK_CATEGORY_ID, TITLE, FUTURE_DATE, VALID_TIME, routineDates);
         TodoTask todoTask = todoTasks.get(0);
         TodoTaskRoutine routine = todoTask.getRoutine();
 
@@ -176,14 +162,9 @@ class TodoTaskTest {
         LocalDate pastDate = SystemTimeUtil.nowDate().minusDays(1);
 
         // when & then
-        assertThatThrownBy(() -> TodoTask.of(MEMBER_ID,
-                TASK_CATEGORY_ID,
-                TITLE,
-                pastDate,
-                VALID_TIME))
+        assertThatThrownBy(() -> TodoTask.of(MEMBER_ID, TASK_CATEGORY_ID, TITLE, pastDate, VALID_TIME))
                 .isInstanceOf(RestApiException.class)
-                .hasFieldOrPropertyWithValue("status",
-                        FailResponseStatus.INVALID_REQUEST);
+                .hasFieldOrPropertyWithValue("status", FailResponseStatus.INVALID_REQUEST);
     }
 
     @Test
@@ -196,66 +177,52 @@ class TodoTaskTest {
         // when & then
         assertThatThrownBy(() -> TodoTask.of(MEMBER_ID, TASK_CATEGORY_ID, TITLE, today, pastTime))
                 .isInstanceOf(RestApiException.class)
-                .hasFieldOrPropertyWithValue("status",
-                        FailResponseStatus.INVALID_REQUEST);
+                .hasFieldOrPropertyWithValue("status", FailResponseStatus.INVALID_REQUEST);
     }
 
     @Test
     @DisplayName("[FAIL] 지난 날짜로 TodoTask 내용 업데이트 실패")
     void testUpdateContentWithPastDateFail() {
         // given
-        TodoTask todoTask = TodoTask.of(MEMBER_ID,
-                TASK_CATEGORY_ID,
-                TITLE,
-                FUTURE_DATE,
-                VALID_TIME);
+        TodoTask todoTask = TodoTask.of(MEMBER_ID, TASK_CATEGORY_ID, TITLE, FUTURE_DATE, VALID_TIME);
         LocalDate pastDate = SystemTimeUtil.nowDate().minusDays(1);
 
         // when & then
-        assertThatThrownBy(() -> todoTask.updateContent(TITLE,
-                TASK_CATEGORY_ID,
-                pastDate,
-                VALID_TIME))
+        assertThatThrownBy(() -> todoTask.updateContent(TITLE, TASK_CATEGORY_ID, pastDate, VALID_TIME))
                 .isInstanceOf(RestApiException.class)
-                .hasFieldOrPropertyWithValue("status",
-                        FailResponseStatus.INVALID_REQUEST);
+                .hasFieldOrPropertyWithValue("status", FailResponseStatus.INVALID_REQUEST);
     }
 
     @Test
     @DisplayName("[FAIL] 오늘 날짜이지만 지난 시간으로 내용 업데이트 실패")
     void testUpdateContentWithPastTimeFail() {
         // given
-        TodoTask todoTask = TodoTask.of(MEMBER_ID,
-                TASK_CATEGORY_ID,
-                TITLE,
-                FUTURE_DATE,
-                VALID_TIME);
+        TodoTask todoTask = TodoTask.of(MEMBER_ID, TASK_CATEGORY_ID, TITLE, FUTURE_DATE, VALID_TIME);
         LocalDate today = SystemTimeUtil.nowDate();
         LocalTime pastTime = SystemTimeUtil.nowTime().minusHours(1);
 
         // when & then
         assertThatThrownBy(() -> todoTask.updateContent(TITLE, TASK_CATEGORY_ID, today, pastTime))
                 .isInstanceOf(RestApiException.class)
-                .hasFieldOrPropertyWithValue("status",
-                        FailResponseStatus.INVALID_REQUEST);
+                .hasFieldOrPropertyWithValue("status", FailResponseStatus.INVALID_REQUEST);
     }
 
     @Test
     @DisplayName("[SUCCESS] 공휴일 제외 루틴 TodoTask 생성 성공")
     void testCreateRoutineTodoTasksWithHolidayExclusionSuccess() {
         // given
-        Set<LocalDate> routineDates = Set.of(
-                FUTURE_DATE,
-                FUTURE_DATE.plusDays(7),
-                FUTURE_DATE.plusDays(14),
-                FUTURE_DATE.plusDays(21));
-        Set<LocalDate> holidays = Set.of(
-                FUTURE_DATE.plusDays(7),
-                FUTURE_DATE.plusDays(21));
+        Set<LocalDate> routineDates =
+                Set.of(
+                        FUTURE_DATE,
+                        FUTURE_DATE.plusDays(7),
+                        FUTURE_DATE.plusDays(14),
+                        FUTURE_DATE.plusDays(21));
+        Set<LocalDate> holidays = Set.of(FUTURE_DATE.plusDays(7), FUTURE_DATE.plusDays(21));
 
         // when
-        List<TodoTask> todoTasks = TodoTask.ofWithRoutine(
-                MEMBER_ID, TASK_CATEGORY_ID, TITLE, FUTURE_DATE, VALID_TIME, routineDates, holidays);
+        List<TodoTask> todoTasks =
+                TodoTask.ofWithRoutine(
+                        MEMBER_ID, TASK_CATEGORY_ID, TITLE, FUTURE_DATE, VALID_TIME, routineDates, holidays);
 
         // then
         assertThat(todoTasks).hasSize(2);
@@ -276,9 +243,8 @@ class TodoTaskTest {
         }
 
         // 공휴일이 제외되었는지 확인
-        Set<LocalDate> taskDates = todoTasks.stream()
-                .map(TodoTask::getDate)
-                .collect(java.util.stream.Collectors.toSet());
+        Set<LocalDate> taskDates =
+                todoTasks.stream().map(TodoTask::getDate).collect(java.util.stream.Collectors.toSet());
         assertThat(taskDates).containsExactlyInAnyOrder(FUTURE_DATE, FUTURE_DATE.plusDays(14));
     }
 }

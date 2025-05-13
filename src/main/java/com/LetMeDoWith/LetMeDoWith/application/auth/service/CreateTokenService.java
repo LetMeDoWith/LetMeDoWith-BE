@@ -43,9 +43,9 @@ public class CreateTokenService {
     public CreateTokenResult createToken(Member member) {
         if (member.isNormal()) {
             AccessToken accessToken = accessTokenProvider.createAccessToken(member.getId());
-            RefreshToken refreshToken = refreshTokenProvider.createRefreshToken(member.getId(),
-                                                                                accessToken.getToken(),
-                                                                                HeaderUtil.getUserAgent());
+            RefreshToken refreshToken =
+                refreshTokenProvider.createRefreshToken(
+                    member.getId(), accessToken.getToken(), HeaderUtil.getUserAgent());
             
             return CreateTokenResult.of(accessToken, refreshToken);
         } else {
@@ -55,8 +55,8 @@ public class CreateTokenService {
     
     /**
      * 회원가입 여부를 판단하여 ATK를 발급한다.
-     * <p>
-     * 입력으로 받은 DTO의 정보를 통해 기 가입 여부를 판단하여, 이미 가입된 유저가 발급을 요청하는 경우 ATK를 발급하고, 아닌 경우 회원가입 프로세스를 진행한다.
+     *
+     * <p>입력으로 받은 DTO의 정보를 통해 기 가입 여부를 판단하여, 이미 가입된 유저가 발급을 요청하는 경우 ATK를 발급하고, 아닌 경우 회원가입 프로세스를 진행한다.
      *
      * @param socialProvider
      * @param idToken
@@ -64,8 +64,8 @@ public class CreateTokenService {
      */
     @Transactional
     public CreateTokenResult createToken(SocialProvider socialProvider, String idToken) {
-        Jws<Claims> verifiedIdToken = oidcIdTokenProvider.getVerifiedOidcIdToken(socialProvider,
-                                                                                 idToken);
+        Jws<Claims> verifiedIdToken =
+            oidcIdTokenProvider.getVerifiedOidcIdToken(socialProvider, idToken);
         
         Claims body = verifiedIdToken.getBody();
         String subject = body.get("sub", String.class);
@@ -73,18 +73,24 @@ public class CreateTokenService {
         Optional<Member> optionalMember = memberRepository.getMember(socialProvider, subject);
         
         if (optionalMember.isPresent()) {
-            // 기 가입된 유저가 있으면, 로그인(액세스 토큰을 발급)한다.
-            return createToken(optionalMember.get());
+            Member member = optionalMember.get();
+            if (member.isNormal()) {
+                return createToken(member);
+            } else if (member.isSocialAuthenticated()) {
+                // 기 가입된 유저가 있으면, 로그인(액세스 토큰을 발급)한다.
+                return CreateTokenResult.of(signupTokenProvider.createSignupToken(member.getId()));
+            } else {
+                throw new RestApiException(member.getStatus().getApiResponseStatus());
+            }
         } else {
             // 가입된 유저가 없으면, 회원가입 프로세스를 진행한다.
             // 최초 소셜 로그인 시도시 회원가입 단계를 진행하기 위해 임시 Member를 생성.
-            Member member = socialAuthMemberService.createSocialAuthenticatedMember(socialProvider,
-                                                                                    subject,
-                                                                                    memberRepository);
+            Member member =
+                socialAuthMemberService.createSocialAuthenticatedMember(
+                    socialProvider, subject, memberRepository);
             
             return CreateTokenResult.of(signupTokenProvider.createSignupToken(member.getId()));
         }
-        
     }
     
     /**
@@ -96,9 +102,8 @@ public class CreateTokenService {
      * @return
      */
     @Transactional
-    public CreateRefreshTokenResult createRefreshToken(String accessToken,
-                                                       String refreshToken,
-                                                       String userAgent) {
+    public CreateRefreshTokenResult createRefreshToken(
+        String accessToken, String refreshToken, String userAgent) {
         
         String memberId = accessTokenProvider.getMemberIdWithoutVerify(accessToken);
         
@@ -107,14 +112,11 @@ public class CreateTokenService {
         savedRefreshToken.checkTokenOwnership(memberId, accessToken, userAgent);
         
         AccessToken newAccessToken = accessTokenProvider.createAccessToken(memberId);
-        RefreshToken newRefreshToken = refreshTokenProvider.createRefreshToken(memberId,
-                                                                               accessToken,
-                                                                               userAgent);
+        RefreshToken newRefreshToken =
+            refreshTokenProvider.createRefreshToken(memberId, accessToken, userAgent);
         
         refreshTokenRepository.deleteRefreshToken(savedRefreshToken);
         
         return new CreateRefreshTokenResult(newAccessToken, newRefreshToken);
-        
     }
-    
 }

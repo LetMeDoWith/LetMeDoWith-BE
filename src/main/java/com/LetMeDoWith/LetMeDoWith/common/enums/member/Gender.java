@@ -15,7 +15,7 @@ import lombok.Getter;
 public enum Gender implements BaseEnum {
     MALE("M", "남성"),
     FEMALE("F", "여성");
-    
+
     public final String code;
     public final String description;
 }
