@@ -1,7 +1,8 @@
 package com.LetMeDoWith.LetMeDoWith.domain.task.model;
 
+import com.LetMeDoWith.LetMeDoWith.common.converter.task.TodoTaskRooutineCycleConverter;
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
-import com.LetMeDoWith.LetMeDoWith.infrastructure.task.converter.TodoTaskRoutineDatesConverter;
+import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TodoTaskRoutineCycle;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
@@ -24,37 +25,47 @@ import lombok.NoArgsConstructor;
 @Builder(access = AccessLevel.PRIVATE)
 @Table(name = "todo_task_routine")
 public class TodoTaskRoutine extends BaseAuditEntity {
-
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-
+    
     @Column(name = "dates", columnDefinition = "TEXT")
-    @Convert(converter = TodoTaskRoutineDatesConverter.class)
     private TodoTaskRoutineDates routineDates;
-
+    
+    @Column(name = "cycle", nullable = false)
+    @Convert(converter = TodoTaskRooutineCycleConverter.class)
+    private TodoTaskRoutineCycle cycle;
+    
+    @Column(name = "pattern")
+    private TodoTaskRoutinePattern pattern;
+    
+    @Column(name = "is_exclude_holidays")
+    private boolean isExcludeHolidays;
+    
+    
     public static TodoTaskRoutine from(Set<LocalDate> dates) {
         return TodoTaskRoutine.builder().routineDates(TodoTaskRoutineDates.from(dates)).build();
     }
-
+    
     public void updateRoutineDates(Set<LocalDate> dates) {
         this.routineDates = TodoTaskRoutineDates.from(dates);
     }
-
+    
     public Set<LocalDate> getDates() {
         return this.routineDates.getDates();
     }
-
+    
     public Set<LocalDate> getDatesBefore(LocalDate standardDate) {
         return this.routineDates.getDates().stream()
-                .filter(date -> date.isBefore(standardDate))
-                .collect(java.util.stream.Collectors.toSet());
+                                .filter(date -> date.isBefore(standardDate))
+                                .collect(java.util.stream.Collectors.toSet());
     }
-
+    
     public Set<LocalDate> getDatesAfterAndEqual(LocalDate standardDate) {
         return this.routineDates.getDates().stream()
-                .filter(date -> !date.isBefore(standardDate))
-                .collect(java.util.stream.Collectors.toSet());
+                                .filter(date -> !date.isBefore(standardDate))
+                                .collect(java.util.stream.Collectors.toSet());
     }
 }
