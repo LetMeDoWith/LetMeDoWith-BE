@@ -19,15 +19,15 @@ import org.springframework.core.convert.converter.Converter;
  *
  * @param <T> Converter가 필요한 Enum
  */
-public abstract class AbstractCombinedConverter<T extends BaseEnum> extends JsonDeserializer<T>
-        implements Converter<String, T>, AttributeConverter<T, String> {
-
+public abstract class AbstractCombinedEnumConverter<T extends BaseEnum> extends JsonDeserializer<T>
+    implements Converter<String, T>, AttributeConverter<T, String> {
+    
     private final Class<T> targetClass;
-
-    public AbstractCombinedConverter(Class<T> targetClass) {
+    
+    public AbstractCombinedEnumConverter(Class<T> targetClass) {
         this.targetClass = targetClass;
     }
-
+    
     // Spring Converter method
     @Override
     public T convert(String source) {
@@ -37,13 +37,13 @@ public abstract class AbstractCombinedConverter<T extends BaseEnum> extends Json
             throw new RestApiException(FailResponseStatus.BAD_REQUEST);
         }
     }
-
+    
     // JPA AttributeConverter methods
     @Override
     public String convertToDatabaseColumn(T attribute) {
         return attribute == null ? null : attribute.getCode();
     }
-
+    
     @Override
     public T convertToEntityAttribute(String dbData) {
         try {
@@ -53,12 +53,12 @@ public abstract class AbstractCombinedConverter<T extends BaseEnum> extends Json
             throw new RuntimeException(e);
         }
     }
-
+    
     @Override
     public T deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
         try {
             String code = p.getText();
-
+            
             return EnumUtil.getEnum(targetClass, code);
         } catch (Exception e) {
             throw new RestApiException(FailResponseStatus.INVALID_PARAM_ERROR);
