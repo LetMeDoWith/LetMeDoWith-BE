@@ -122,6 +122,11 @@ dependencies {
 
     implementation 'io.hypersistence:hypersistence-utils-hibernate-63:3.9.10'
 
+    // AWS SDK
+    implementation(platform("software.amazon.awssdk:bom:2.27.21"))
+    implementation("software.amazon.awssdk:s3")
+    implementation("software.amazon.awssdk:s3-presigner")
+
 }
 
 
