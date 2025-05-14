@@ -4,6 +4,6 @@ import java.time.Duration;
 
 public interface FileClient {
 
-    String getPresignedUrl(String bucketName, String fileName, Duration expires);
+    String getUploadPresignedUrl(String keyName, Duration expires);
 
 }

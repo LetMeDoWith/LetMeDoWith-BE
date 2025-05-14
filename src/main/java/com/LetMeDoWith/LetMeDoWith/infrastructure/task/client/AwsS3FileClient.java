@@ -2,11 +2,12 @@ package com.LetMeDoWith.LetMeDoWith.infrastructure.task.client;
 
 import com.LetMeDoWith.LetMeDoWith.application.task.client.FileClient;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
-import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
-import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 
 import java.time.Duration;
 
@@ -16,16 +17,20 @@ public class AwsS3FileClient implements FileClient {
 
     private final S3Presigner s3Presigner;
 
-    @Override
-    public String getPresignedUrl(String bucketName, String fileName, Duration expires) {
-        GetObjectRequest getObjectRequest = GetObjectRequest.builder()
+    @Value("${cloud.aws.s3.bucketName}")
+    private String bucketName;
+
+    public String getUploadPresignedUrl(String keyName, Duration expires) {
+        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(bucketName)
-                .key(fileName)
+                .key(keyName)
                 .build();
-        GetObjectPresignRequest getPresignedRequest = GetObjectPresignRequest.builder()
+
+        PutObjectPresignRequest putObjectPresignRequest = PutObjectPresignRequest.builder()
                 .signatureDuration(expires)
-                .getObjectRequest(getObjectRequest)
+                .putObjectRequest(putObjectRequest)
                 .build();
-        PresignedGetObjectRequest presignedRequest = s3Presigner.presignGetObject(getPresignedRequest);
+        PresignedPutObjectRequest presignedRequest = s3Presigner.presignPutObject(putObjectPresignRequest);
+        return presignedRequest.url().toString();
     }
 }

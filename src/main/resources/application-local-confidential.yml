@@ -23,5 +23,8 @@ auth:
       google: google
       apple: apple
 
-aws:
-  region: ap-northeast-2
+cloud:
+  aws:
+    region: ap-northeast-2
+    s3:
+      bucketName: letmedowith-dev
