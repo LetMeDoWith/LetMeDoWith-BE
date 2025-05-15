@@ -1,20 +1,20 @@
-//package com.LetMeDoWith.LetMeDoWith.domain.task.model;
+// package com.LetMeDoWith.LetMeDoWith.domain.task.model;
 //
-//import static org.assertj.core.api.Assertions.assertThat;
-//import static org.assertj.core.api.Assertions.assertThatThrownBy;
+// import static org.assertj.core.api.Assertions.assertThat;
+// import static org.assertj.core.api.Assertions.assertThatThrownBy;
 //
-//import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
-//import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
-//import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
-//import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TodoTaskStatus;
-//import java.time.LocalDate;
-//import java.time.LocalTime;
-//import java.util.List;
-//import java.util.Set;
-//import org.junit.jupiter.api.DisplayName;
-//import org.junit.jupiter.api.Test;
+// import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
+// import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
+// import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
+// import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TodoTaskStatus;
+// import java.time.LocalDate;
+// import java.time.LocalTime;
+// import java.util.List;
+// import java.util.Set;
+// import org.junit.jupiter.api.DisplayName;
+// import org.junit.jupiter.api.Test;
 //
-//class TodoTaskTest {
+// class TodoTaskTest {
 //
 //    private static final Long MEMBER_ID = 1L;
 //    private static final Long TASK_CATEGORY_ID = 100L;
@@ -26,7 +26,8 @@
 //    @DisplayName("[SUCCESS] 일반 TodoTask 생성 성공")
 //    void testCreateNormalTodoTaskSuccess() {
 //        // when
-//        TodoTask todoTask = TodoTask.of(MEMBER_ID, TASK_CATEGORY_ID, TITLE, FUTURE_DATE, VALID_TIME);
+//        TodoTask todoTask = TodoTask.of(MEMBER_ID, TASK_CATEGORY_ID, TITLE, FUTURE_DATE,
+// VALID_TIME);
 //
 //        // then
 //        assertThat(todoTask).isNotNull();
@@ -53,7 +54,8 @@
 //        // when
 //        List<TodoTask> todoTasks =
 //                TodoTask.ofWithRoutine(
-//                        MEMBER_ID, TASK_CATEGORY_ID, TITLE, FUTURE_DATE, VALID_TIME, routineDates);
+//                        MEMBER_ID, TASK_CATEGORY_ID, TITLE, FUTURE_DATE, VALID_TIME,
+// routineDates);
 //
 //        // then
 //        assertThat(todoTasks).hasSize(4);
@@ -82,7 +84,8 @@
 //                Set.of(FUTURE_DATE, FUTURE_DATE.plusDays(7), FUTURE_DATE.plusDays(14));
 //        List<TodoTask> todoTasks =
 //                TodoTask.ofWithRoutine(
-//                        MEMBER_ID, TASK_CATEGORY_ID, TITLE, FUTURE_DATE, VALID_TIME, routineDates);
+//                        MEMBER_ID, TASK_CATEGORY_ID, TITLE, FUTURE_DATE, VALID_TIME,
+// routineDates);
 //        TodoTask todoTask = todoTasks.get(0);
 //
 //        // when
@@ -96,7 +99,8 @@
 //    @DisplayName("[SUCCESS] 일반 TodoTask에서 루틴 생성 성공")
 //    void testCreateRoutineFromNormalTaskSuccess() {
 //        // given
-//        TodoTask todoTask = TodoTask.of(MEMBER_ID, TASK_CATEGORY_ID, TITLE, FUTURE_DATE, VALID_TIME);
+//        TodoTask todoTask = TodoTask.of(MEMBER_ID, TASK_CATEGORY_ID, TITLE, FUTURE_DATE,
+// VALID_TIME);
 //        Set<LocalDate> routineDates =
 //                Set.of(FUTURE_DATE, FUTURE_DATE.plusDays(7), FUTURE_DATE.plusDays(14));
 //
@@ -118,7 +122,8 @@
 //    @DisplayName("[SUCCESS] TodoTask 내용 업데이트 성공")
 //    void testUpdateContentSuccess() {
 //        // given
-//        TodoTask todoTask = TodoTask.of(MEMBER_ID, TASK_CATEGORY_ID, TITLE, FUTURE_DATE, VALID_TIME);
+//        TodoTask todoTask = TodoTask.of(MEMBER_ID, TASK_CATEGORY_ID, TITLE, FUTURE_DATE,
+// VALID_TIME);
 //        String newTitle = "수정된 제목";
 //        Long newCategoryId = 200L;
 //        LocalDate newDate = FUTURE_DATE.plusDays(1);
@@ -142,7 +147,8 @@
 //                Set.of(FUTURE_DATE, FUTURE_DATE.plusDays(7), FUTURE_DATE.plusDays(14));
 //        List<TodoTask> todoTasks =
 //                TodoTask.ofWithRoutine(
-//                        MEMBER_ID, TASK_CATEGORY_ID, TITLE, FUTURE_DATE, VALID_TIME, routineDates);
+//                        MEMBER_ID, TASK_CATEGORY_ID, TITLE, FUTURE_DATE, VALID_TIME,
+// routineDates);
 //        TodoTask todoTask = todoTasks.get(0);
 //        TodoTaskRoutine routine = todoTask.getRoutine();
 //
@@ -162,7 +168,8 @@
 //        LocalDate pastDate = SystemTimeUtil.nowDate().minusDays(1);
 //
 //        // when & then
-//        assertThatThrownBy(() -> TodoTask.of(MEMBER_ID, TASK_CATEGORY_ID, TITLE, pastDate, VALID_TIME))
+//        assertThatThrownBy(() -> TodoTask.of(MEMBER_ID, TASK_CATEGORY_ID, TITLE, pastDate,
+// VALID_TIME))
 //                .isInstanceOf(RestApiException.class)
 //                .hasFieldOrPropertyWithValue("status", FailResponseStatus.INVALID_REQUEST);
 //    }
@@ -184,11 +191,13 @@
 //    @DisplayName("[FAIL] 지난 날짜로 TodoTask 내용 업데이트 실패")
 //    void testUpdateContentWithPastDateFail() {
 //        // given
-//        TodoTask todoTask = TodoTask.of(MEMBER_ID, TASK_CATEGORY_ID, TITLE, FUTURE_DATE, VALID_TIME);
+//        TodoTask todoTask = TodoTask.of(MEMBER_ID, TASK_CATEGORY_ID, TITLE, FUTURE_DATE,
+// VALID_TIME);
 //        LocalDate pastDate = SystemTimeUtil.nowDate().minusDays(1);
 //
 //        // when & then
-//        assertThatThrownBy(() -> todoTask.updateContent(TITLE, TASK_CATEGORY_ID, pastDate, VALID_TIME))
+//        assertThatThrownBy(() -> todoTask.updateContent(TITLE, TASK_CATEGORY_ID, pastDate,
+// VALID_TIME))
 //                .isInstanceOf(RestApiException.class)
 //                .hasFieldOrPropertyWithValue("status", FailResponseStatus.INVALID_REQUEST);
 //    }
@@ -197,7 +206,8 @@
 //    @DisplayName("[FAIL] 오늘 날짜이지만 지난 시간으로 내용 업데이트 실패")
 //    void testUpdateContentWithPastTimeFail() {
 //        // given
-//        TodoTask todoTask = TodoTask.of(MEMBER_ID, TASK_CATEGORY_ID, TITLE, FUTURE_DATE, VALID_TIME);
+//        TodoTask todoTask = TodoTask.of(MEMBER_ID, TASK_CATEGORY_ID, TITLE, FUTURE_DATE,
+// VALID_TIME);
 //        LocalDate today = SystemTimeUtil.nowDate();
 //        LocalTime pastTime = SystemTimeUtil.nowTime().minusHours(1);
 //
@@ -222,7 +232,8 @@
 //        // when
 //        List<TodoTask> todoTasks =
 //                TodoTask.ofWithRoutine(
-//                        MEMBER_ID, TASK_CATEGORY_ID, TITLE, FUTURE_DATE, VALID_TIME, routineDates, holidays);
+//                        MEMBER_ID, TASK_CATEGORY_ID, TITLE, FUTURE_DATE, VALID_TIME, routineDates,
+// holidays);
 //
 //        // then
 //        assertThat(todoTasks).hasSize(2);
@@ -244,7 +255,8 @@
 //
 //        // 공휴일이 제외되었는지 확인
 //        Set<LocalDate> taskDates =
-//                todoTasks.stream().map(TodoTask::getDate).collect(java.util.stream.Collectors.toSet());
+//
+// todoTasks.stream().map(TodoTask::getDate).collect(java.util.stream.Collectors.toSet());
 //        assertThat(taskDates).containsExactlyInAnyOrder(FUTURE_DATE, FUTURE_DATE.plusDays(14));
 //    }
-//}
+// }

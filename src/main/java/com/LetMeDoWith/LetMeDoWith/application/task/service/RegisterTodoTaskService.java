@@ -82,27 +82,20 @@ public class RegisterTodoTaskService {
             Set<LocalDate> holidays =
                     holidayService.getHolidays(CountryCode.KR, command.startDate(), command.endDate());
 
-            // 공휴일 제외 메서드 사용
-            todoTasks =
-                    TodoTask.ofWithRoutine(
-                            memberId,
-                            command.taskCategoryId(),
-                            command.title(),
-                            command.startDate(),
-                            command.startTime(),
-                            routineDates,
-                            holidays);
-        } else {
-            // 기본 메서드 사용
-            todoTasks =
-                    TodoTask.ofWithRoutine(
-                            memberId,
-                            command.taskCategoryId(),
-                            command.title(),
-                            command.startDate(),
-                            command.startTime(),
-                            routineDates);
+            routineDates.removeAll(holidays);
         }
+
+        todoTasks =
+                TodoTask.ofWithRoutine(
+                        memberId,
+                        command.taskCategoryId(),
+                        command.title(),
+                        command.startDate(),
+                        command.startTime(),
+                        routineDates,
+                        command.routineCondition().cycle(),
+                        command.routineCondition().pattern(),
+                        command.routineCondition().isExcludeHolidays());
 
         return RegisterTodoTaskResult.of(todoTaskRepository.saveTodoTasks(todoTasks), routineDates);
     }

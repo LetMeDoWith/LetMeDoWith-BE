@@ -1,44 +1,47 @@
-//package com.LetMeDoWith.LetMeDoWith.application.task.service;
+// package com.LetMeDoWith.LetMeDoWith.application.task.service;
 //
-//import static org.assertj.core.api.Assertions.assertThat;
-//import static org.assertj.core.api.Assertions.assertThatThrownBy;
-//import static org.mockito.ArgumentMatchers.any;
-//import static org.mockito.ArgumentMatchers.eq;
-//import static org.mockito.Mockito.verify;
-//import static org.mockito.Mockito.when;
+// import static org.assertj.core.api.Assertions.assertThat;
+// import static org.assertj.core.api.Assertions.assertThatThrownBy;
+// import static org.mockito.ArgumentMatchers.any;
+// import static org.mockito.ArgumentMatchers.eq;
+// import static org.mockito.Mockito.verify;
+// import static org.mockito.Mockito.when;
 //
-//import com.LetMeDoWith.LetMeDoWith.application.task.dto.RegisterTodoTaskCommand;
-//import com.LetMeDoWith.LetMeDoWith.application.task.dto.RegisterTodoTaskCommand.TodoTaskRoutineCondition;
-//import com.LetMeDoWith.LetMeDoWith.application.task.dto.RegisterTodoTaskResult;
-//import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
-//import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
-//import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
-//import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
-//import com.LetMeDoWith.LetMeDoWith.domain.task.enums.CountryCode;
-//import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TodoTaskRoutineCycle;
-//import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskCategory;
-//import com.LetMeDoWith.LetMeDoWith.domain.task.model.TodoTask;
-//import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TaskCategoryRepository;
-//import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TodoTaskRepository;
-//import com.LetMeDoWith.LetMeDoWith.domain.task.service.TodoTaskRoutineDateCalculator;
-//import com.LetMeDoWith.LetMeDoWith.domain.task.service.strategy.DailyRoutineDateCalculateStrategy;
-//import com.LetMeDoWith.LetMeDoWith.domain.task.service.strategy.TodoTaskRoutineDateCalculateStrategy;
-//import java.time.LocalDate;
-//import java.time.LocalTime;
-//import java.util.List;
-//import java.util.Map;
-//import java.util.Optional;
-//import java.util.Set;
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.DisplayName;
-//import org.junit.jupiter.api.Test;
-//import org.junit.jupiter.api.extension.ExtendWith;
-//import org.mockito.InjectMocks;
-//import org.mockito.Mock;
-//import org.mockito.junit.jupiter.MockitoExtension;
+// import com.LetMeDoWith.LetMeDoWith.application.task.dto.RegisterTodoTaskCommand;
+// import
+// com.LetMeDoWith.LetMeDoWith.application.task.dto.RegisterTodoTaskCommand.TodoTaskRoutineCondition;
+// import com.LetMeDoWith.LetMeDoWith.application.task.dto.RegisterTodoTaskResult;
+// import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
+// import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
+// import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
+// import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
+// import com.LetMeDoWith.LetMeDoWith.domain.task.enums.CountryCode;
+// import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TodoTaskRoutineCycle;
+// import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskCategory;
+// import com.LetMeDoWith.LetMeDoWith.domain.task.model.TodoTask;
+// import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TaskCategoryRepository;
+// import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TodoTaskRepository;
+// import com.LetMeDoWith.LetMeDoWith.domain.task.service.TodoTaskRoutineDateCalculator;
+// import
+// com.LetMeDoWith.LetMeDoWith.domain.task.service.strategy.DailyRoutineDateCalculateStrategy;
+// import
+// com.LetMeDoWith.LetMeDoWith.domain.task.service.strategy.TodoTaskRoutineDateCalculateStrategy;
+// import java.time.LocalDate;
+// import java.time.LocalTime;
+// import java.util.List;
+// import java.util.Map;
+// import java.util.Optional;
+// import java.util.Set;
+// import org.junit.jupiter.api.BeforeEach;
+// import org.junit.jupiter.api.DisplayName;
+// import org.junit.jupiter.api.Test;
+// import org.junit.jupiter.api.extension.ExtendWith;
+// import org.mockito.InjectMocks;
+// import org.mockito.Mock;
+// import org.mockito.junit.jupiter.MockitoExtension;
 //
-//@ExtendWith(MockitoExtension.class)
-//class RegisterTodoTaskServiceTest {
+// @ExtendWith(MockitoExtension.class)
+// class RegisterTodoTaskServiceTest {
 //
 //    @Mock private TodoTaskRepository todoTaskRepository;
 //
@@ -76,7 +79,8 @@
 //        when(todoTaskRepository.saveTodoTask(any(TodoTask.class)))
 //                .thenReturn(
 //                        TodoTask.of(
-//                                1L, 1L, "Test Task", SystemTimeUtil.nowDate().plusDays(1), LocalTime.of(10, 0)));
+//                                1L, 1L, "Test Task", SystemTimeUtil.nowDate().plusDays(1),
+// LocalTime.of(10, 0)));
 //
 //        // when
 //        RegisterTodoTaskResult result = registerTodoTaskService.registerTodoTask(1L, command);
@@ -115,14 +119,16 @@
 //        when(taskCategoryRepository.getTaskCategory(routineCommand.taskCategoryId(), Yn.TRUE))
 //                .thenReturn(Optional.of(new TaskCategory()));
 //
-//        Set<LocalDate> routineDates = Set.of(startDate, startDate.plusDays(1), startDate.plusDays(2));
+//        Set<LocalDate> routineDates = Set.of(startDate, startDate.plusDays(1),
+// startDate.plusDays(2));
 //        when(routineDateCalculator.computeRoutineDates(
 //                        eq(cycle), eq(startDate), eq(endDate), eq(Set.of())))
 //                .thenReturn(routineDates);
 //
 //        List<TodoTask> todoTasks =
 //                TodoTask.ofWithRoutine(
-//                        1L, 1L, title, startDate, SystemTimeUtil.nowTime().plusHours(1), routineDates);
+//                        1L, 1L, title, startDate, SystemTimeUtil.nowTime().plusHours(1),
+// routineDates);
 //        when(todoTaskRepository.saveTodoTasks(any(List.class))).thenReturn(todoTasks);
 //
 //        // when
@@ -164,7 +170,8 @@
 //        when(taskCategoryRepository.getTaskCategory(routineCommand.taskCategoryId(), Yn.TRUE))
 //                .thenReturn(Optional.of(new TaskCategory()));
 //
-//        Set<LocalDate> routineDates = Set.of(startDate, startDate.plusDays(1), startDate.plusDays(2));
+//        Set<LocalDate> routineDates = Set.of(startDate, startDate.plusDays(1),
+// startDate.plusDays(2));
 //        when(routineDateCalculator.computeRoutineDates(
 //                        eq(cycle), eq(startDate), eq(endDate), eq(Set.of())))
 //                .thenReturn(routineDates);
@@ -238,7 +245,8 @@
 //
 //        // when & then
 //        assertThatThrownBy(
-//                        () -> registerTodoTaskService.registerTodoTaskWithRoutine(1L, routineCommand))
+//                        () -> registerTodoTaskService.registerTodoTaskWithRoutine(1L,
+// routineCommand))
 //                .isInstanceOf(RestApiException.class)
 //                .hasFieldOrPropertyWithValue("status", FailResponseStatus.INVALID_REQUEST);
 //    }
@@ -274,7 +282,8 @@
 //
 //        // when & then
 //        assertThatThrownBy(
-//                        () -> registerTodoTaskService.registerTodoTaskWithRoutine(1L, routineCommand))
+//                        () -> registerTodoTaskService.registerTodoTaskWithRoutine(1L,
+// routineCommand))
 //                .isInstanceOf(RestApiException.class)
 //                .hasFieldOrPropertyWithValue("status", FailResponseStatus.INVALID_REQUEST);
 //    }
@@ -309,13 +318,16 @@
 //                .thenReturn(Optional.of(new TaskCategory()));
 //
 //        when(routineDateCalculator.computeRoutineDates(
-//                        eq(cycle), eq(startDate), eq(endDate), eq(Set.of(1, 2, 3, 4, 5, 6, 7, 8))))
+//                        eq(cycle), eq(startDate), eq(endDate), eq(Set.of(1, 2, 3, 4, 5, 6, 7,
+// 8))))
 //                .thenThrow(new RestApiException(FailResponseStatus.DOWITH_TASK_NOT_AVAIL_DATE));
 //
 //        // when & then
 //        assertThatThrownBy(
-//                        () -> registerTodoTaskService.registerTodoTaskWithRoutine(1L, routineCommand))
+//                        () -> registerTodoTaskService.registerTodoTaskWithRoutine(1L,
+// routineCommand))
 //                .isInstanceOf(RestApiException.class)
-//                .hasFieldOrPropertyWithValue("status", FailResponseStatus.DOWITH_TASK_NOT_AVAIL_DATE);
+//                .hasFieldOrPropertyWithValue("status",
+// FailResponseStatus.DOWITH_TASK_NOT_AVAIL_DATE);
 //    }
-//}
+// }
