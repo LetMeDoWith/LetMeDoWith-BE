@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Converter(autoApply = true)
 @Component
 public class CountryCodeConverter extends AbstractCombinedEnumConverter<CountryCode> {
-    
+
     public CountryCodeConverter() {
         super(CountryCode.class);
     }

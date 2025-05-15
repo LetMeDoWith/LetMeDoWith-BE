@@ -6,7 +6,7 @@ import jakarta.persistence.Converter;
 
 @Converter(autoApply = true)
 public class TaskLevelConverter extends AbstractCombinedEnumConverter<TaskCompleteLevel> {
-    
+
     public TaskLevelConverter() {
         super(TaskCompleteLevel.class);
     }

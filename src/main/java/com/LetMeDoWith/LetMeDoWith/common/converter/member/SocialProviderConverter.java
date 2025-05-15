@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Converter(autoApply = true)
 @Component
 public class SocialProviderConverter extends AbstractCombinedEnumConverter<SocialProvider> {
-    
+
     public SocialProviderConverter() {
         super(SocialProvider.class);
     }

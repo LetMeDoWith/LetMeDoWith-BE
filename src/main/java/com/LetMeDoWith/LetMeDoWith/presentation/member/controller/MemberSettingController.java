@@ -8,7 +8,7 @@ import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiSuccessResponse;
 import com.LetMeDoWith.LetMeDoWith.common.dto.ResponseDto;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
-import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.UpdateMemberAlarmSettingReq;
+import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.UpdateMemberNotiSettingReq;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Member Setting", description = "회원 설정")
 @RestController
-@RequestMapping("/api/v1/member/setting")
+@RequestMapping("/api/v1/members/settings")
 @RequiredArgsConstructor
 public class MemberSettingController {
 
@@ -35,9 +35,9 @@ public class MemberSettingController {
     @Operation(summary = "알림 수신 상태 변경", description = "회원의 알림 수신 상태를 변경합니다.")
     @ApiSuccessResponse(description = "회원 알림 수신상태 변경 성공")
     @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.MEMBER_NOT_EXIST)})
-    @PutMapping("/alarm")
-    public <T> ResponseEntity<ResponseDto<T>> updateAlarm(
-            @RequestBody UpdateMemberAlarmSettingReq req) {
+    @PutMapping("/notification")
+    public <T> ResponseEntity<ResponseDto<T>> updateNotificationSetting(
+            @RequestBody UpdateMemberNotiSettingReq req) {
         memberSettingService.updateAlarmSetting(UpdateMemberAlarmSettingCommand.fromReq(req));
 
         return ResponseUtil.createSuccessResponse();

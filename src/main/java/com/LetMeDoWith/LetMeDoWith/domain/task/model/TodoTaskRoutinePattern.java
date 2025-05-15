@@ -12,9 +12,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class TodoTaskRoutinePattern {
-    
+
     private Set<Integer> pattern;
-    
+
     public static TodoTaskRoutinePattern from(Set<Integer> pattern) {
         return new TodoTaskRoutinePattern(pattern);
     }

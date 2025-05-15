@@ -6,7 +6,7 @@ import jakarta.persistence.Converter;
 
 @Converter(autoApply = true)
 public class BadgeStatusConverter extends AbstractCombinedEnumConverter<BadgeStatus> {
-    
+
     public BadgeStatusConverter() {
         super(BadgeStatus.class);
     }

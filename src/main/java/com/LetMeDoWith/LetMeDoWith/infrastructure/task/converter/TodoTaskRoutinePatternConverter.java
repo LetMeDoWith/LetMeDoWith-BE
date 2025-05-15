@@ -9,28 +9,23 @@ import java.util.stream.Collectors;
 
 @Converter(autoApply = true)
 public class TodoTaskRoutinePatternConverter
-    implements AttributeConverter<TodoTaskRoutinePattern, String> {
-    
+        implements AttributeConverter<TodoTaskRoutinePattern, String> {
+
     @Override
     public String convertToDatabaseColumn(TodoTaskRoutinePattern pattern) {
-        return pattern.getPattern()
-                      .stream()
-                      .map(String::valueOf)
-                      .reduce((a, b) -> a + "," + b)
-                      .orElse("");
+        return pattern.getPattern().stream()
+                .map(String::valueOf)
+                .reduce((a, b) -> a + "," + b)
+                .orElse("");
     }
-    
+
     @Override
     public TodoTaskRoutinePattern convertToEntityAttribute(String dbData) {
-        if (dbData.isEmpty()) {
+        if (dbData.isBlank()) {
             return TodoTaskRoutinePattern.from(Set.of());
         } else {
-            return
-                TodoTaskRoutinePattern.from(
-                    Arrays.stream(dbData.split(","))
-                          .map(Integer::valueOf)
-                          .collect(Collectors.toSet()));
-            
+            return TodoTaskRoutinePattern.from(
+                    Arrays.stream(dbData.split(",")).map(Integer::valueOf).collect(Collectors.toSet()));
         }
     }
 }

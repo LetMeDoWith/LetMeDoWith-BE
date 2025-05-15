@@ -6,7 +6,7 @@ import jakarta.persistence.Converter;
 
 @Converter(autoApply = true)
 public class DowithTaskStatusConverter extends AbstractCombinedEnumConverter<DowithTaskStatus> {
-    
+
     public DowithTaskStatusConverter() {
         super(DowithTaskStatus.class);
     }

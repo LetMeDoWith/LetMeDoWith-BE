@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Converter(autoApply = true)
 @Component
 public class MemberTypeConverter extends AbstractCombinedEnumConverter<MemberType> {
-    
+
     public MemberTypeConverter() {
         super(MemberType.class);
     }

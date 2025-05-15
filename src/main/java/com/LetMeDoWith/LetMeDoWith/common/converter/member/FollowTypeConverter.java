@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Converter(autoApply = true)
 @Component
 public class FollowTypeConverter extends AbstractCombinedEnumConverter<FollowType> {
-    
+
     public FollowTypeConverter() {
         super(FollowType.class);
     }
