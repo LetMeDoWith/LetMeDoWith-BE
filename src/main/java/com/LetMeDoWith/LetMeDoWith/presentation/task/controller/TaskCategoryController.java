@@ -19,23 +19,24 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Task Category", description = "테스크 카테고리")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/task/category")
+@RequestMapping("/api/v1/tasks/categories")
 public class TaskCategoryController {
-
-    @Autowired private TaskCategoryService taskCategoryService;
-
+    
+    @Autowired
+    private TaskCategoryService taskCategoryService;
+    
     @Operation(summary = "태스크 카테고리 조회", description = "모든 태스크 카테고리를 조회합니다. (공통 + 유저 생성)")
     @ApiSuccessResponse(description = "카테고리 조회 성공")
     @GetMapping("")
     public ResponseEntity<ResponseDto<List<GetAllTaskCategoryRes>>> getAllTaskCategories() {
-
+        
         String memberId = AuthUtil.getMemberId();
-
+        
         List<GetAllTaskCategoryRes> res =
-                taskCategoryService.getAllCategory(memberId).stream()
-                        .map(GetAllTaskCategoryRes::from)
-                        .toList();
-
+            taskCategoryService.getAllCategory(memberId).stream()
+                               .map(GetAllTaskCategoryRes::from)
+                               .toList();
+        
         return ResponseUtil.createSuccessResponse(res);
     }
 }
