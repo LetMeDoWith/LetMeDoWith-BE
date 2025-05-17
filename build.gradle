@@ -54,6 +54,7 @@ configurations {
 
 // 환경변수 설정
 ext {
+    awsSdkVersion = '2.27.21'
     awsCliProfile = System.getenv("AWS_CLI_PROFILE")
     dockerImageName = System.getenv("DOCKER_IMAGE_NAME")
     dockerImageTag = System.getenv("DOCKER_IMAGE_TAG")
@@ -123,9 +124,14 @@ dependencies {
     implementation 'io.hypersistence:hypersistence-utils-hibernate-63:3.9.10'
 
     // AWS SDK
-    implementation(platform("software.amazon.awssdk:bom:2.27.21"))
-    implementation("software.amazon.awssdk:s3")
-    implementation("software.amazon.awssdk:s3-presigner")
+    implementation platform("software.amazon.awssdk:bom:${awsSdkVersion}")
+    implementation "software.amazon.awssdk:s3"
+
+    // localStack for AWS
+//    implementation "com.amazonaws:aws-java-sdk-s3"
+//    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.783'
+//    implementation 'org.testcontainers:localstack:1.21.0'
+//    testImplementation 'org.testcontainers:junit-jupiter'
 
 }
 

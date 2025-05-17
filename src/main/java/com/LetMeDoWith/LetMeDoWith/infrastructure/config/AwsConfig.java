@@ -15,10 +15,9 @@ public class AwsConfig {
     @Value("${cloud.aws.region}")
     private String region;
 
-
     @Bean
     public AwsCredentialsProvider awsCredentialsProvider() {
-        return DefaultCredentialsProvider.create();
+        return DefaultCredentialsProvider.builder().profileName("letmedowith").build();
     }
 
     @Bean
@@ -36,5 +35,4 @@ public class AwsConfig {
                 .credentialsProvider(awsCredentialsProvider)
                 .build();
     }
-
 }
