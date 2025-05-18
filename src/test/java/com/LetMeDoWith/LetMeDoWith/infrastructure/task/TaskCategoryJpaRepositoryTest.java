@@ -1,9 +1,13 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.task;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.config.TestQueryDslConfig;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskCategory;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.TaskCategoryJpaRepository;
+import java.util.List;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,11 +19,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @Slf4j
@@ -27,10 +26,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class TaskCategoryJpaRepositoryTest {
 
     private static final String MEMBER_ID = "01HXQ2X7Z7Q6XJX4X2X7Z7Q6XA";
-    @Autowired
-    TestEntityManager entityManager;
-    @Autowired
-    private TaskCategoryJpaRepository taskCategoryJpaRepository;
+    @Autowired TestEntityManager entityManager;
+    @Autowired private TaskCategoryJpaRepository taskCategoryJpaRepository;
     private TaskCategory singleUserCategory;
     private List<TaskCategory> multipleUserCategories;
 
@@ -127,7 +124,6 @@ public class TaskCategoryJpaRepositoryTest {
     void testGetUserCustomCategoriesSuccess() {
         // Given: 유저 커스텀 카테고리 저장
         taskCategoryJpaRepository.saveAll(multipleUserCategories);
-
 
         // When: 특정 홀더 ID로 유저 커스텀 카테고리를 조회하는 메서드 호출
         List<TaskCategory> result =

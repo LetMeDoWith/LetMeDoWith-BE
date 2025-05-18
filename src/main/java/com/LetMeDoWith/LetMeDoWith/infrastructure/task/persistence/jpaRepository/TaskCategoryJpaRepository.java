@@ -3,10 +3,9 @@ package com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepositor
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskCategory;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskCategory.TaskCategoryCreationType;
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TaskCategoryJpaRepository extends JpaRepository<TaskCategory, Long> {
 

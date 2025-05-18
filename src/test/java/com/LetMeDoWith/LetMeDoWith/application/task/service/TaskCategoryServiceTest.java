@@ -1,9 +1,13 @@
 package com.LetMeDoWith.LetMeDoWith.application.task.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.TaskCategoryVO;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskCategory;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TaskCategoryRepository;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,20 +16,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
-
 @ExtendWith(MockitoExtension.class)
 class TaskCategoryServiceTest {
 
     // 테스트에 사용할 멤버 ID
     private static final String TEST_MEMBER_ID = "01HXQ2X7Z7Q6XJX4X2X7Z7Q6XA";
-    @Mock
-    private TaskCategoryRepository taskCategoryRepository;
-    @InjectMocks
-    private TaskCategoryService taskCategoryService;
+    @Mock private TaskCategoryRepository taskCategoryRepository;
+    @InjectMocks private TaskCategoryService taskCategoryService;
     private List<TaskCategory> mockUserCategories;
     private List<TaskCategoryVO> mockUserCategoryVOs;
 

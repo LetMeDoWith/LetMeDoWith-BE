@@ -17,8 +17,7 @@ public class RefreshTokenRefreshTokenRepositoryTest {
     private final String accessToken = "accessTokenTestTest";
     private final String memberId = "01HXQ2X7Z7Q6XJX4X2X7Z7Q6XA";
     private final String userAgent = "I-PHONE";
-    @Autowired
-    private RefreshTokenRedisRepository repository;
+    @Autowired private RefreshTokenRedisRepository repository;
 
     @DisplayName("[SUCCESS] refreshToken Redis 저장 성공")
     @Test
