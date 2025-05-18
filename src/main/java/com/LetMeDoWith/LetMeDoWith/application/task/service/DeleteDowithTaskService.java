@@ -23,7 +23,7 @@ public class DeleteDowithTaskService {
      * @param dowithTaskId
      */
     @Transactional
-    public void delete(Long memberId, Long dowithTaskId) {
+    public void delete(String memberId, Long dowithTaskId) {
 
         DowithTask dowithTask =
                 dowithTaskRepository
@@ -40,7 +40,7 @@ public class DeleteDowithTaskService {
      * @param dowithTaskId
      */
     @Transactional
-    public void deleteWithRoutines(Long memberId, Long dowithTaskId) {
+    public void deleteWithRoutines(String memberId, Long dowithTaskId) {
 
         DowithTask dowithTask =
                 dowithTaskRepository

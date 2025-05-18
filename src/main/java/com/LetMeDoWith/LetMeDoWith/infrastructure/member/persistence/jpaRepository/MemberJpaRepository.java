@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface MemberJpaRepository extends JpaRepository<Member, Long>, QMemberJpaRepository {
+public interface MemberJpaRepository extends JpaRepository<Member, String>, QMemberJpaRepository {
 
     Optional<Member> findByNickname(String nickname);
 
-    Optional<Member> findByIdAndStatus(Long id, MemberStatus status);
+    Optional<Member> findByIdAndStatus(String id, MemberStatus status);
 
     Optional<Member> findBySubject(String subject);
 

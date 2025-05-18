@@ -37,7 +37,7 @@ public class BadgeService {
      * @param memberId
      * @return
      */
-    public RetrieveBadgesInfoResult retrieveBadgesInfo(Long memberId) {
+    public RetrieveBadgesInfoResult retrieveBadgesInfo(String memberId) {
 
         Member member =
                 memberRepository
@@ -56,7 +56,7 @@ public class BadgeService {
      * @param badgeId
      */
     @Transactional
-    public void updateMainBadge(Long memberId, Long badgeId) {
+    public void updateMainBadge(String memberId, Long badgeId) {
 
         Member member =
                 memberRepository

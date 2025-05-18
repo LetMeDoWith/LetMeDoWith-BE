@@ -25,6 +25,7 @@ import org.springframework.stereotype.Component;
 public class AccessTokenProvider {
 
     private final SecretKey secretKey;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Value("${auth.jwt.atk-duration-min}")
     private Long atkDurationMin;
@@ -34,8 +35,6 @@ public class AccessTokenProvider {
 
     @Value("${auth.jwt.issuer}")
     private String issuer;
-
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
     // private final long refreshExpireTime = 1 * 60 * 1000L * 60 * 24 * 14; // 14일
 
@@ -55,7 +54,7 @@ public class AccessTokenProvider {
      * @param memberId
      * @return
      */
-    public AccessToken createAccessToken(Long memberId) {
+    public AccessToken createAccessToken(String memberId) {
         return AccessToken.of(memberId, issuer, atkDurationMin, secretKey);
     }
 
@@ -65,12 +64,13 @@ public class AccessTokenProvider {
      * @param token
      * @return
      */
-    public Long getMemberIdWithoutVerify(final String token) {
+    public String getMemberIdWithoutVerify(final String token) {
 
         String[] parts = token.split("\\.");
         System.out.println(parts);
-        if (parts.length != 3)
+        if (parts.length != 3) {
             throw new RestApiAuthException(FailResponseStatus.INVALID_JWT_TOKEN_FORMAT);
+        }
 
         byte[] decodeBytes = Base64.getUrlDecoder().decode(parts[1]);
         String payload = new String(decodeBytes, StandardCharsets.UTF_8);
@@ -82,7 +82,7 @@ public class AccessTokenProvider {
             throw new RestApiAuthException(FailResponseStatus.INVALID_JWT_TOKEN_FORMAT);
         }
 
-        return Long.valueOf(map.get("memberId"));
+        return map.get("memberId");
     }
 
     /**
@@ -91,12 +91,12 @@ public class AccessTokenProvider {
      * @param token
      * @return
      */
-    public Long validateAccessToken(final String token) {
+    public String validateAccessToken(final String token) {
         final Jws<Claims> claims = JwtUtil.parseTokenToJws(token, secretKey);
 
         if (claims.getBody().get("sub").equals(TokenType.ATK.getCode())
                 && claims.getBody().get("iss").equals(this.issuer)) {
-            return Long.parseLong(claims.getBody().get("memberId").toString());
+            return claims.getBody().get("memberId").toString();
         } else {
             throw new RestApiAuthException(FailResponseStatus.INVALID_TOKEN);
         }

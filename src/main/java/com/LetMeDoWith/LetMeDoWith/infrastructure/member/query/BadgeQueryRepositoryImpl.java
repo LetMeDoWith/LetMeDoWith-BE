@@ -6,9 +6,10 @@ import com.LetMeDoWith.LetMeDoWith.domain.member.model.QMemberBadge;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.member.query.dto.MemberBadgeQueryDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
@@ -20,7 +21,7 @@ public class BadgeQueryRepositoryImpl implements BadgeQueryRepository {
     private final QMemberBadge qMemberBadge = QMemberBadge.memberBadge;
 
     @Override
-    public List<MemberBadgeQueryDto> getBadges(Long memberId) {
+    public List<MemberBadgeQueryDto> getBadges(String memberId) {
 
         return jpaQueryFactory
                 .select(

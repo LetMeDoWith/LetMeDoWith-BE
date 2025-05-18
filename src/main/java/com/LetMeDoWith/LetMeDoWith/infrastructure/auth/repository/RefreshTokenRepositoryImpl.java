@@ -26,7 +26,7 @@ public class RefreshTokenRepositoryImpl implements RefreshTokenRepository {
     }
 
     @Override
-    public void deleteRefreshTokens(Long memberId) {
+    public void deleteRefreshTokens(String memberId) {
         refreshTokenRedisRepository.deleteByMemberId(memberId);
     }
 

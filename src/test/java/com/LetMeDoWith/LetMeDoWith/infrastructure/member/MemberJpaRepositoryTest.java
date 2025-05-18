@@ -1,10 +1,5 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.member;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.TaskCompleteLevel;
@@ -14,8 +9,6 @@ import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.MemberSocialAccount;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.member.persistence.jpaRepository.MemberJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.member.persistence.jpaRepository.MemberSocialAccountJpaRepository;
-import java.util.NoSuchElementException;
-import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,22 +20,30 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 
+import java.util.NoSuchElementException;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Slf4j
 @Import(TestQueryDslConfig.class)
 class MemberJpaRepositoryTest {
 
-    @Autowired private TestEntityManager entityManager;
+    @Autowired
+    private TestEntityManager entityManager;
 
-    @Autowired private MemberJpaRepository memberJpaRepository;
+    @Autowired
+    private MemberJpaRepository memberJpaRepository;
 
-    @Autowired private MemberSocialAccountJpaRepository memberSocialAccountJpaRepository;
+    @Autowired
+    private MemberSocialAccountJpaRepository memberSocialAccountJpaRepository;
 
     private static Member getMember() {
         Member testMemberObj =
                 Member.builder()
-                        .id(1L)
+                        .id("01HXQ2X7Z7Q6XJX4X2X7Z7Q6XA")
                         .subject("test@email.com")
                         .nickname("nickname")
                         .selfDescription("self desc")

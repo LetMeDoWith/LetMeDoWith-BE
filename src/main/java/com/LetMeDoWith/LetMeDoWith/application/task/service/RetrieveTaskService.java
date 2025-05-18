@@ -5,13 +5,14 @@ import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.DowithTaskQueryRepo
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.TodoTaskQueryRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.dto.DowithTaskQueryDto;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.dto.TodoTaskQueryDto;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.Year;
 import java.util.List;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +22,7 @@ public class RetrieveTaskService {
     private final DowithTaskQueryRepository dowithTaskQueryRepository;
 
     @Transactional(readOnly = true)
-    public RetrieveTasksResult retrieveMonthTasks(Long memberId, Year year, Month month) {
+    public RetrieveTasksResult retrieveMonthTasks(String memberId, Year year, Month month) {
         LocalDate startDate = LocalDate.of(year.getValue(), month, 1);
         LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
 

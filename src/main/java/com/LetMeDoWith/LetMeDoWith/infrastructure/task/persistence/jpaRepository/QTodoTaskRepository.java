@@ -11,11 +11,11 @@ public interface QTodoTaskRepository {
 
     Optional<TodoTask> findTodoTaskAggregate(Long id);
 
-    Optional<TodoTask> findTodoTaskAggregate(Long id, Long memberId);
+    Optional<TodoTask> findTodoTaskAggregate(Long id, String memberId);
 
-    List<TodoTask> findAllTodoTaskAggregates(Long memberId, LocalDate date);
+    List<TodoTask> findAllTodoTaskAggregates(String memberId, LocalDate date);
 
-    List<TodoTask> findAllTodoTaskAggregates(Long memberId, Set<LocalDate> dates);
+    List<TodoTask> findAllTodoTaskAggregates(String memberId, Set<LocalDate> dates);
 
     List<TodoTask> findAllTodoTaskAggregates(TodoTaskRoutine todoTaskRoutine);
 }

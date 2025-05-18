@@ -9,11 +9,11 @@ import java.util.Set;
 
 public interface TodoTaskRepository {
 
-    Optional<TodoTask> getTodoTask(Long id, Long memberId);
+    Optional<TodoTask> getTodoTask(Long id, String memberId);
 
-    List<TodoTask> getTodoTasks(Long memberId, LocalDate date);
+    List<TodoTask> getTodoTasks(String memberId, LocalDate date);
 
-    List<TodoTask> getTodoTasks(Long memberId, Set<LocalDate> dates);
+    List<TodoTask> getTodoTasks(String memberId, Set<LocalDate> dates);
 
     List<TodoTask> getTodoTasks(TodoTaskRoutine todoTaskRoutine);
 

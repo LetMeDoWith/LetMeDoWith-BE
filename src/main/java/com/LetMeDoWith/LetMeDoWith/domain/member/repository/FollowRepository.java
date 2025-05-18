@@ -14,7 +14,7 @@ public interface FollowRepository {
 
     List<MemberFollow> getFollowings(Member followerMember, Pageable pageable);
 
-    Optional<MemberFollow> getFollowing(Long memberId, Long followingMemberId);
+    Optional<MemberFollow> getFollowing(String memberId, String followingMemberId);
 
     void delete(MemberFollow memberFollow);
 }

@@ -5,10 +5,11 @@ import com.LetMeDoWith.LetMeDoWith.domain.task.model.QTodoTask;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.dto.TodoTaskQueryDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import java.time.LocalDate;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
@@ -21,7 +22,7 @@ public class TodoTaskQueryRepositoryImpl implements TodoTaskQueryRepository {
 
     @Override
     public List<TodoTaskQueryDto> getTodoTasks(
-            Long memberId, LocalDate startDate, LocalDate endDate) {
+            String memberId, LocalDate startDate, LocalDate endDate) {
         return queryFactory
                 .select(
                         Projections.constructor(

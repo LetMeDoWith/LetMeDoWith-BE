@@ -1,17 +1,10 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.task;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-
 import com.LetMeDoWith.LetMeDoWith.config.TestQueryDslConfig;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.DowithTaskJpaRepository;
 import jakarta.persistence.NoResultException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.List;
-import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -23,6 +16,14 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
+import java.util.Set;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @Slf4j
@@ -30,7 +31,7 @@ import org.springframework.context.annotation.Import;
 public class DowithTaskJpaRepositoryTest {
 
     // DowithTask 테스트 data
-    private static final Long memberId = 1L;
+    private static final String memberId = "01HXQ2X7Z7Q6XJX4X2X7Z7Q6XA";
     private static final Long taskCategoryId1 = 1L;
     private static final Long taskCategoryId2 = 2L;
     private static final String title1 = "아침 먹기";
@@ -47,8 +48,10 @@ public class DowithTaskJpaRepositoryTest {
     private static final LocalDate routineDate2_1 = date2.plusDays(2);
     private static final LocalDate routineDate2_2 = date2.plusDays(4);
     private final LocalDateTime completeDateTime = null;
-    @Autowired private TestEntityManager entityManager;
-    @Autowired private DowithTaskJpaRepository dowithTaskJpaRepository;
+    @Autowired
+    private TestEntityManager entityManager;
+    @Autowired
+    private DowithTaskJpaRepository dowithTaskJpaRepository;
 
     @BeforeEach
     void beforeEach() {

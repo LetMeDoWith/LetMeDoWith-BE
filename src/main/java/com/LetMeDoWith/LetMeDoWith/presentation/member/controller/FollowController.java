@@ -33,11 +33,11 @@ public class FollowController {
     @Operation(summary = "팔로우 목록 조회", description = "유져의 팔로우 목록을 조회합니다.")
     @GetMapping("/{memberId}")
     public ResponseEntity retrieveFollows(
-            @PathVariable(name = "memberId") Long memberId,
+            @PathVariable(name = "memberId") String memberId,
             @RequestParam(name = "followType") FollowType type,
             Pageable pageable) {
 
-        Long tokenMemberId = AuthUtil.getMemberId();
+        String tokenMemberId = AuthUtil.getMemberId();
         if (!tokenMemberId.equals(memberId)) {
             throw new RestApiException(FailResponseStatus.UNAUTHORIZED);
         }
@@ -58,7 +58,7 @@ public class FollowController {
 
     @Operation(summary = "팔로우 취소", description = "팔로우를 취소합니다.")
     @DeleteMapping("/{followingId}")
-    public ResponseEntity deleteFollow(@PathVariable Long followingId) {
+    public ResponseEntity deleteFollow(@PathVariable String followingId) {
 
         followService.deleteFollow(AuthUtil.getMemberId(), followingId);
 

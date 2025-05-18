@@ -73,8 +73,15 @@ public class CreateTokenService {
         Optional<Member> optionalMember = memberRepository.getMember(socialProvider, subject);
 
         if (optionalMember.isPresent()) {
-            // 기 가입된 유저가 있으면, 로그인(액세스 토큰을 발급)한다.
-            return createToken(optionalMember.get());
+            Member member = optionalMember.get();
+            if (member.isNormal()) {
+                return createToken(member);
+            } else if (member.isSocialAuthenticated()) {
+                // 기 가입된 유저가 있으면, 로그인(액세스 토큰을 발급)한다.
+                return CreateTokenResult.of(signupTokenProvider.createSignupToken(member.getId()));
+            } else {
+                throw new RestApiException(member.getStatus().getApiResponseStatus());
+            }
         } else {
             // 가입된 유저가 없으면, 회원가입 프로세스를 진행한다.
             // 최초 소셜 로그인 시도시 회원가입 단계를 진행하기 위해 임시 Member를 생성.
@@ -98,7 +105,7 @@ public class CreateTokenService {
     public CreateRefreshTokenResult createRefreshToken(
             String accessToken, String refreshToken, String userAgent) {
 
-        Long memberId = accessTokenProvider.getMemberIdWithoutVerify(accessToken);
+        String memberId = accessTokenProvider.getMemberIdWithoutVerify(accessToken);
 
         RefreshToken savedRefreshToken = null;
         savedRefreshToken = refreshTokenProvider.findRefreshToken(refreshToken);

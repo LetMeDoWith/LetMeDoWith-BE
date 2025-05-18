@@ -24,7 +24,7 @@ public record RetrieveTaskCategoriesResDto(
         String title,
         TaskCategoryCreationType creationType,
         String emoji,
-        Long categoryHolderId) {
+        String categoryHolderId) {
 
     // todo: 단일 객체 형태 말고 List 형태로 수정할 것.
 

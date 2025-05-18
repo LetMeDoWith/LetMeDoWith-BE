@@ -16,7 +16,7 @@ public class RetrieveBadgesInfoResDto {
     private List<Badge> badges;
 
     public static RetrieveBadgesInfoResDto of(
-            Long memberId,
+            String memberId,
             boolean isLazy,
             @Nullable MemberBadgeQueryDto mainBadgeVO,
             List<MemberBadgeQueryDto> badgeVOs) {

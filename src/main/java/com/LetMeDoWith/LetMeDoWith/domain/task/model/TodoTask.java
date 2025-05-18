@@ -44,8 +44,8 @@ public class TodoTask extends BaseAuditEntity {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "member_id", nullable = false)
-    private Long memberId;
+    @Column(name = "member_id", nullable = false, length = 26)
+    private String memberId;
 
     @Column(name = "task_category_id", nullable = true)
     private Long taskCategoryId;
@@ -77,7 +77,7 @@ public class TodoTask extends BaseAuditEntity {
      * @return 생성된 TodoTask 객체
      */
     public static TodoTask of(
-            Long memberId, Long taskCategoryId, String title, LocalDate date, LocalTime startTime) {
+            String memberId, Long taskCategoryId, String title, LocalDate date, LocalTime startTime) {
         TodoTask newTodoTask =
                 TodoTask.builder()
                         .memberId(memberId)
@@ -104,7 +104,7 @@ public class TodoTask extends BaseAuditEntity {
      * @return 생성된 TodoTask 객체
      */
     public static TodoTask of(
-            Long memberId,
+            String memberId,
             Long taskCategoryId,
             String title,
             LocalDate date,
@@ -136,7 +136,7 @@ public class TodoTask extends BaseAuditEntity {
      * @return 생성된 TodoTask 리스트
      */
     public static List<TodoTask> ofWithRoutine(
-            Long memberId,
+            String memberId,
             Long taskCategoryId,
             String title,
             LocalDate date,
@@ -182,7 +182,7 @@ public class TodoTask extends BaseAuditEntity {
      * @return 생성된 TodoTask 리스트
      */
     public static List<TodoTask> ofWithRoutine(
-            Long memberId,
+            String memberId,
             Long taskCategoryId,
             String title,
             LocalDate date,

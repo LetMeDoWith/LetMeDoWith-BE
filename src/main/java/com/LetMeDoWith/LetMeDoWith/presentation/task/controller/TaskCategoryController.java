@@ -29,7 +29,7 @@ public class TaskCategoryController {
     @GetMapping("")
     public ResponseEntity<ResponseDto<List<RetrieveTaskCategoriesResDto>>> getTaskCategories() {
 
-        Long memberId = AuthUtil.getMemberId();
+        String memberId = AuthUtil.getMemberId();
 
         List<RetrieveTaskCategoriesResDto> res =
                 taskCategoryService.retrieveTaskCategories(memberId).stream()

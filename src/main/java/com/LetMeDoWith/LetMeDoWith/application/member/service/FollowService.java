@@ -23,7 +23,7 @@ public class FollowService {
     private final FollowRepository followRepository;
 
     public RetrieveFollowsResDto retrieveFollows(
-            Long memberId, FollowType followType, Pageable pageable) {
+            String memberId, FollowType followType, Pageable pageable) {
 
         Member member =
                 memberRepository
@@ -70,7 +70,7 @@ public class FollowService {
     }
 
     @Transactional
-    public void createFollow(Long memberId, Long followingMemberId) {
+    public void createFollow(String memberId, String followingMemberId) {
 
         Member followerMember =
                 memberRepository
@@ -86,7 +86,7 @@ public class FollowService {
     }
 
     @Transactional
-    public void deleteFollow(Long memberId, Long followingMemberId) {
+    public void deleteFollow(String memberId, String followingMemberId) {
 
         MemberFollow memberFollow =
                 followRepository

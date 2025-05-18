@@ -1,22 +1,23 @@
 package com.LetMeDoWith.LetMeDoWith.domain.task.model;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TodoTaskStatus;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Set;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class TodoTaskTest {
 
-    private static final Long MEMBER_ID = 1L;
+    private static final String MEMBER_ID = "01HXQ2X7Z7Q6XJX4X2X7Z7Q6XA";
     private static final Long TASK_CATEGORY_ID = 100L;
     private static final String TITLE = "테스트 할 일";
     private static final LocalDate FUTURE_DATE = SystemTimeUtil.nowDate().plusDays(5);

@@ -11,11 +11,11 @@ public interface QDowithTaskRepository {
 
     Optional<DowithTask> findDowithTaskAggregate(Long id);
 
-    Optional<DowithTask> findDowithTaskAggregate(Long id, Long memberId);
+    Optional<DowithTask> findDowithTaskAggregate(Long id, String memberId);
 
-    List<DowithTask> findAllDowithTaskAggregates(Long memberId, LocalDate date);
+    List<DowithTask> findAllDowithTaskAggregates(String memberId, LocalDate date);
 
-    List<DowithTask> findAllDowithTaskAggregates(Long memberId, Set<LocalDate> dates);
+    List<DowithTask> findAllDowithTaskAggregates(String memberId, Set<LocalDate> dates);
 
     List<DowithTask> findAllDowithTaskAggregates(DowithTaskRoutine dowithTaskRoutine);
 }

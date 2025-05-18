@@ -7,10 +7,11 @@ import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.dto.DowithTaskQuery
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import java.time.LocalDate;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
@@ -24,7 +25,7 @@ public class DowithTaskQueryRespositoryImpl implements DowithTaskQueryRepository
 
     @Override
     public List<DowithTaskQueryDto> getDowithTasks(
-            Long memberId, LocalDate startDate, LocalDate endDate) {
+            String memberId, LocalDate startDate, LocalDate endDate) {
         return queryFactory
                 .select(
                         Projections.constructor(
@@ -38,7 +39,7 @@ public class DowithTaskQueryRespositoryImpl implements DowithTaskQueryRepository
                                 dowithTask.startTime,
                                 dowithTaskConfirm.imageUrl,
                                 Expressions.constant(0) // TODO - 추후 FeedBack 개발시 추가
-                                ))
+                        ))
                 .from(dowithTask)
                 .leftJoin(taskCategory)
                 .on(dowithTask.taskCategoryId.eq(taskCategory.id))

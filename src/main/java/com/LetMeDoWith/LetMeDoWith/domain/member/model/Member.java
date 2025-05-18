@@ -6,11 +6,10 @@ import com.LetMeDoWith.LetMeDoWith.common.enums.member.Gender;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.TaskCompleteLevel;
+import io.hypersistence.utils.hibernate.id.Tsid;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
@@ -50,9 +49,9 @@ public class Member extends BaseAuditEntity {
     MemberAlarmSetting alarmSetting;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private Long id;
+    @Tsid
+    @Column(name = "id", nullable = false, updatable = false, length = 26)
+    private String id;
 
     // OpenID Connect id token의 sub 필드와 동일
     // (sub, provider) 조합으로 uniqueness 판단함.
@@ -115,6 +114,10 @@ public class Member extends BaseAuditEntity {
 
     public boolean isNormal() {
         return this.status.equals(MemberStatus.NORMAL);
+    }
+
+    public boolean isSocialAuthenticated() {
+        return this.status.equals(MemberStatus.SOCIAL_AUTHENTICATED);
     }
 
     // LAZY Badge 획득 레벨인지 확인

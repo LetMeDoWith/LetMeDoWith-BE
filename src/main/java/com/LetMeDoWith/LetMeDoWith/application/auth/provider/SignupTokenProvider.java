@@ -45,16 +45,16 @@ public class SignupTokenProvider {
      * @param memberId 회원가입을 계속해서 진행할 member의 dowithTaskId.
      * @return
      */
-    public SignupToken createSignupToken(Long memberId) {
+    public SignupToken createSignupToken(String memberId) {
         return SignupToken.of(memberId, issuer, signupDurationMin, secretKey);
     }
 
-    public Long validateSignupToken(final String token) {
+    public String validateSignupToken(final String token) {
         final Jws<Claims> claims = JwtUtil.parseTokenToJws(token, secretKey);
 
         if (claims.getBody().get("sub").equals(TokenType.SIGNUP.getCode())
                 && claims.getBody().get("iss").equals(this.issuer)) {
-            return Long.parseLong(claims.getBody().get("memberId").toString());
+            return claims.getBody().get("memberId").toString();
         } else {
             throw new RestApiAuthException(FailResponseStatus.INVALID_TOKEN);
         }

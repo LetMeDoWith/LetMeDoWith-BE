@@ -1,13 +1,9 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.task;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.config.TestQueryDslConfig;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskCategory;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.TaskCategoryJpaRepository;
-import java.util.List;
-import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -19,16 +15,22 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 
+import java.util.List;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @Slf4j
 @Import(TestQueryDslConfig.class)
 public class TaskCategoryJpaRepositoryTest {
 
-    @Autowired TestEntityManager entityManager;
-
-    @Autowired private TaskCategoryJpaRepository taskCategoryJpaRepository;
-
+    private static final String MEMBER_ID = "01HXQ2X7Z7Q6XJX4X2X7Z7Q6XA";
+    @Autowired
+    TestEntityManager entityManager;
+    @Autowired
+    private TaskCategoryJpaRepository taskCategoryJpaRepository;
     private TaskCategory singleUserCategory;
     private List<TaskCategory> multipleUserCategories;
 
@@ -42,7 +44,7 @@ public class TaskCategoryJpaRepositoryTest {
                         Yn.TRUE,
                         TaskCategory.TaskCategoryCreationType.USER_CUSTOM,
                         "🔧",
-                        1L);
+                        MEMBER_ID);
 
         // 다중 TaskCategory 엔티티: 여러 엔티티 저장 및 조회 테스트에 사용
         multipleUserCategories =
@@ -53,21 +55,21 @@ public class TaskCategoryJpaRepositoryTest {
                                 Yn.TRUE,
                                 TaskCategory.TaskCategoryCreationType.USER_CUSTOM,
                                 "🔧",
-                                1L),
+                                MEMBER_ID),
                         new TaskCategory(
                                 null,
                                 "User 카테고리2",
                                 Yn.TRUE,
                                 TaskCategory.TaskCategoryCreationType.USER_CUSTOM,
                                 "📅",
-                                1L),
+                                MEMBER_ID),
                         new TaskCategory(
                                 null,
                                 "User 카테고리3",
                                 Yn.TRUE,
                                 TaskCategory.TaskCategoryCreationType.USER_CUSTOM,
                                 "📚",
-                                1L));
+                                MEMBER_ID));
     }
 
     @Test
@@ -126,10 +128,11 @@ public class TaskCategoryJpaRepositoryTest {
         // Given: 유저 커스텀 카테고리 저장
         taskCategoryJpaRepository.saveAll(multipleUserCategories);
 
+
         // When: 특정 홀더 ID로 유저 커스텀 카테고리를 조회하는 메서드 호출
         List<TaskCategory> result =
                 taskCategoryJpaRepository.findAllByCategoryHolderIdAndCreationTypeAndIsActive(
-                        1L, TaskCategory.TaskCategoryCreationType.USER_CUSTOM, Yn.TRUE);
+                        MEMBER_ID, TaskCategory.TaskCategoryCreationType.USER_CUSTOM, Yn.TRUE);
 
         // Then: 결과가 기대값과 동일한지 확인
         assertThat(result).hasSize(3);
@@ -154,7 +157,7 @@ public class TaskCategoryJpaRepositoryTest {
                         Yn.TRUE,
                         TaskCategory.TaskCategoryCreationType.USER_CUSTOM,
                         "📅",
-                        1L));
+                        MEMBER_ID));
 
         // When: creationType이 공통(COMMON)인 카테고리를 조회하는 메서드 호출
         List<TaskCategory> result =

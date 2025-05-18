@@ -16,9 +16,9 @@ public interface MemberRepository {
 
     void saveSocialAccount(MemberSocialAccount memberSocialAccount);
 
-    Optional<Member> getMember(Long id, MemberStatus memberStatus);
+    Optional<Member> getMember(String id, MemberStatus memberStatus);
 
-    Optional<Member> getNormalStatusMember(Long id);
+    Optional<Member> getNormalStatusMember(String id);
 
     List<Member> getMembers(String nickname, List<MemberStatus> memberStatuses);
 

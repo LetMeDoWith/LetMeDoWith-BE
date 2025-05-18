@@ -12,9 +12,9 @@ public interface BadgeRepository {
 
     void save(MemberBadge memberBadge);
 
-    Optional<MemberBadge> getMemberBadge(Long memberId, Badge badge);
+    Optional<MemberBadge> getMemberBadge(String memberId, Badge badge);
 
-    Optional<MemberBadge> getMainMemberBadge(Long memberId);
+    Optional<MemberBadge> getMainMemberBadge(String memberId);
 
     Optional<Badge> getBadge(Long badgeId, BadgeStatus badgeStatus);
 }

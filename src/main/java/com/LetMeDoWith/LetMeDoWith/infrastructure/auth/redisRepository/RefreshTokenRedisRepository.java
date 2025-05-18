@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface RefreshTokenRedisRepository extends CrudRepository<RefreshToken, String> {
 
-    void deleteByMemberId(Long memberId);
+    void deleteByMemberId(String memberId);
 }

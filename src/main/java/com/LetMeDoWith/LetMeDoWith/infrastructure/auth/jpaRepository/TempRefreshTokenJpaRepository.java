@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface TempRefreshTokenJpaRepository extends JpaRepository<TempRefreshToken, String> {
     void deleteByToken(String token);
 
-    void deleteByMemberId(Long memberId);
+    void deleteByMemberId(String memberId);
 }
