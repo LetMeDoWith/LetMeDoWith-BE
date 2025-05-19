@@ -20,7 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class TaskCategoryServiceTest {
 
     // 테스트에 사용할 멤버 ID
-    private static final Long TEST_MEMBER_ID = 1L;
+    private static final String TEST_MEMBER_ID = "01HXQ2X7Z7Q6XJX4X2X7Z7Q6XA";
     @Mock private TaskCategoryRepository taskCategoryRepository;
     @InjectMocks private TaskCategoryService taskCategoryService;
     private List<TaskCategory> mockUserCategories;
@@ -62,7 +62,7 @@ class TaskCategoryServiceTest {
                 .thenReturn(mockUserCategories);
 
         // When: 모든 카테고리를 조회하는 메서드 호출
-        List<TaskCategory> result = taskCategoryService.getAllCategory(TEST_MEMBER_ID);
+        List<TaskCategory> result = taskCategoryService.retrieveTaskCategories(TEST_MEMBER_ID);
 
         // Then: 결과 검증 (공통 카테고리와 유저 카테고리가 모두 포함되어야 함)
         assertThat(result).containsAll(mockUserCategories);

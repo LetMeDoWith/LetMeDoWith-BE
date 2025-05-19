@@ -31,8 +31,8 @@ spotless {
         // 구글 자바 포맷 적용
         googleJavaFormat()
 
-        indentWithTabs(2)
-        indentWithSpaces(4)
+        leadingSpacesToTabs(2)
+        leadingTabsToSpaces(4)
         // 공백 제거
         trimTrailingWhitespace()
         // 끝부분 New Line 처리

@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Dowith Task", description = "두윗모드 테스크")
 @RestController
-@RequestMapping("/api/v1/task/dowith")
+@RequestMapping("/api/v1/tasks/dowith")
 @RequiredArgsConstructor
 public class DowithTaskController {
 

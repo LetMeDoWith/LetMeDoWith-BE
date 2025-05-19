@@ -1,0 +1,24 @@
+spring:
+  config:
+    activate:
+      on-profile: test-confidential
+  datasource:
+    username: letmedowith
+    password: letmedowith@admin#2024
+  flyway:
+    user: letmedowith
+    password: letmedowith@admin#2024
+
+auth:
+  jwt:
+    issuer: letMeDoWith.co.kr
+    secret: c2lsdmVycmluZycmluZy1TEST3dC10dXRvcmlhbC1zZWNyZXTESTp1bmluZS10ZWNoLXNwib290LWTESTlsdmVybmluZS10ZWNoLXNw3dCTESTRvcmlhbC1zZWNyZXQK
+    signup-duration-min: 10
+    atk-duration-min: 180 # 개발 및 테스트 용으로 180분 설정
+    rtk-duration-day: 1 # 개발 및 테스트 용으로 1일 설정
+
+  oidc:
+    aud:
+      kakao: d94809e9a1ea2e0a8d51647b585bf68d
+      google: google
+      apple: apple

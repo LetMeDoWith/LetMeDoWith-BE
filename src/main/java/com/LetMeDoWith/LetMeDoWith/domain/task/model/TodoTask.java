@@ -3,6 +3,7 @@ package com.LetMeDoWith.LetMeDoWith.domain.task.model;
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.AggregateRoot;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TodoTaskStatus;
 import jakarta.persistence.CascadeType;
@@ -344,11 +345,14 @@ public class TodoTask extends BaseAuditEntity {
 
     /** 유효성 검사 */
     private void validate() {
-        if (LocalDate.now().isEqual(this.date) && LocalTime.now().isAfter(this.startTime)) {
+        LocalDateTime now = SystemTimeUtil.now();
+        LocalDate nowDate = now.toLocalDate();
+        LocalTime nowTime = now.toLocalTime();
+        if (SystemTimeUtil.nowDate().isEqual(this.date) && nowTime.isAfter(this.startTime)) {
             throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
         }
 
-        if (date.isBefore(LocalDate.now())) {
+        if (date.isBefore(nowDate)) {
             throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
         }
     }
