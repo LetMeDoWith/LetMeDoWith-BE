@@ -1,5 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.application.task.dto;
 
+import jakarta.annotation.Nullable;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Optional;
@@ -14,4 +15,18 @@ public record RegisterTodoTaskCommand(
     
     Optional<TodoTaskRoutineCondition> routineCondition) {
     
+    public static RegisterTodoTaskCommand of(
+        Long taskCategoryId,
+        String title,
+        LocalDate date,
+        LocalTime startTime,
+        @Nullable TodoTaskRoutineCondition routineCondition) {
+        return RegisterTodoTaskCommand.builder()
+                                      .taskCategoryId(taskCategoryId)
+                                      .title(title)
+                                      .date(date)
+                                      .startTime(startTime)
+                                      .routineCondition(Optional.ofNullable(routineCondition))
+                                      .build();
+    }
 }

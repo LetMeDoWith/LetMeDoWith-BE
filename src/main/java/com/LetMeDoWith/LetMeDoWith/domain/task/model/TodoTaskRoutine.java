@@ -46,11 +46,11 @@ public class TodoTaskRoutine extends BaseAuditEntity {
     @Column(name = "is_exclude_holidays")
     private boolean isExcludeHolidays;
 
-    public static TodoTaskRoutine from(Set<LocalDate> dates) {
+    public static TodoTaskRoutine of(Set<LocalDate> dates) {
         return TodoTaskRoutine.builder().routineDates(TodoTaskRoutineDates.from(dates)).build();
     }
 
-    public static TodoTaskRoutine from(
+    public static TodoTaskRoutine of(
             Set<LocalDate> dates,
             TodoTaskRoutineCycle cycle,
             Set<Integer> pattern,

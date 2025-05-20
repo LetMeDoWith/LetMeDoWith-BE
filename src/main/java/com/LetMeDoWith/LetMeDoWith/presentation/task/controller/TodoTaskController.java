@@ -1,7 +1,10 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.task.controller;
 
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.RegisterTodoTaskCommand;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.RegisterTodoTaskResult;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateTodoTaskCommand;
 import com.LetMeDoWith.LetMeDoWith.application.task.service.RegisterTodoTaskService;
+import com.LetMeDoWith.LetMeDoWith.application.task.service.UpdateTodoTaskService;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiErrorResponse;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiErrorResponses;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiSuccessResponse;
@@ -11,12 +14,15 @@ import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.CreateTodoTaskReqDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.CreateTodoTaskResDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.UpdateTodoTaskReqDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,6 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class TodoTaskController {
     
     private final RegisterTodoTaskService registerTodoTaskService;
+    private final UpdateTodoTaskService updateTodoTaskService;
     
     @Operation(
         summary = "투두모드 태스크 등록",
@@ -45,17 +52,40 @@ public class TodoTaskController {
         
         RegisterTodoTaskResult result;
         
+        RegisterTodoTaskCommand command = RegisterTodoTaskCommand.of(
+            request.taskCategoryId(),
+            request.title(),
+            request.date(),
+            request.startTime(),
+            request.routineCondition().orElse(null)
+        );
+        
         if (request.routineCondition().isPresent()) {
             result =
-                registerTodoTaskService.registerTodoTaskWithRoutine(
-                    memberId, request.toCreateTodoTaskCommand());
+                registerTodoTaskService.registerTodoTaskWithRoutine(memberId, command);
         } else {
             result =
-                registerTodoTaskService.registerTodoTask(memberId,
-                                                         request.toCreateTodoTaskCommand());
+                registerTodoTaskService.registerTodoTask(memberId, command);
         }
         
         // 생성은 성공 여부만 반환, 이후 데이터는 조회 API에서 확인
+        return ResponseUtil.createSuccessResponse();
+    }
+    
+    @PutMapping("/{todoTaskId}")
+    public ResponseEntity updateSingleTodoTask(@PathVariable Long todoTaskId,
+                                               @RequestBody UpdateTodoTaskReqDto request) {
+        String memberId = AuthUtil.getMemberId();
+        
+        updateTodoTaskService.updateSingleTodoTask(memberId,
+                                                   todoTaskId,
+                                                   UpdateTodoTaskCommand.of(
+                                                       request.title(),
+                                                       request.startTime(),
+                                                       request.taskCategoryId(),
+                                                       request.routineCondition().orElse(null)
+                                                   ));
+        
         return ResponseUtil.createSuccessResponse();
     }
 }
