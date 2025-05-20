@@ -292,6 +292,11 @@ public class TodoTask extends BaseAuditEntity {
      */
     public void updateContent(
         String title, Long taskCategoryId, LocalDate date, LocalTime startTime) {
+        
+        if (!isContentsEditable()) {
+            throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
+        }
+        
         this.title = title;
         this.taskCategoryId = taskCategoryId;
         this.date = date;
@@ -325,11 +330,31 @@ public class TodoTask extends BaseAuditEntity {
     
     /** 유효성 검사 */
     private void validate() {
-        if (LocalDate.now().isEqual(this.date) && LocalTime.now().isAfter(this.startTime)) {
+//        if (LocalDate.now().isEqual(this.date) && LocalTime.now().isAfter(this.startTime)) {
+//            throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
+//        }
+//
+//        if (date.isBefore(LocalDate.now())) {
+//            throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
+//        }
+        
+        if (this.title == null || this.title.isBlank()) {
             throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
         }
         
-        if (date.isBefore(LocalDate.now())) {
+        if (this.taskCategoryId == null) {
+            throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
+        }
+        
+        if (this.startTime == null) {
+            throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
+        }
+        
+        if (this.date == null) {
+            throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
+        }
+        
+        if (this.date.isBefore(LocalDate.now())) {
             throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
         }
     }

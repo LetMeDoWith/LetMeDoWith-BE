@@ -3,6 +3,7 @@ package com.LetMeDoWith.LetMeDoWith.presentation.task.controller;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.RegisterTodoTaskCommand;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.RegisterTodoTaskResult;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateTodoTaskCommand;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateTodoTaskRoutineContentCommand;
 import com.LetMeDoWith.LetMeDoWith.application.task.service.RegisterTodoTaskService;
 import com.LetMeDoWith.LetMeDoWith.application.task.service.UpdateTodoTaskService;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiErrorResponse;
@@ -15,6 +16,7 @@ import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.CreateTodoTaskReqDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.CreateTodoTaskResDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.UpdateTodoTaskReqDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.UpdateTodoTaskRoutineContentReqDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -85,6 +87,26 @@ public class TodoTaskController {
                                                        request.taskCategoryId(),
                                                        request.routineCondition().orElse(null)
                                                    ));
+        
+        return ResponseUtil.createSuccessResponse();
+    }
+    
+    @PutMapping("/{todoTaskId}/routine/content")
+    public ResponseEntity updateTodoTaskRoutineContent(@PathVariable Long todoTaskId,
+                                                       @RequestBody UpdateTodoTaskRoutineContentReqDto request) {
+        String memberId = AuthUtil.getMemberId();
+        
+        UpdateTodoTaskRoutineContentCommand command =
+            UpdateTodoTaskRoutineContentCommand.of(
+                request.title(),
+                request.startTime(),
+                request.taskCategoryId(),
+                request.isApplyToAll()
+            );
+        
+        updateTodoTaskService.updateTodoTaskRoutineContent(memberId,
+                                                           todoTaskId,
+                                                           command);
         
         return ResponseUtil.createSuccessResponse();
     }

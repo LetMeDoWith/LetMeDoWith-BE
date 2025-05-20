@@ -4,6 +4,8 @@ import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseSt
 
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.TodoTaskRoutineCondition;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateTodoTaskCommand;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateTodoTaskRoutineConditionCommand;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateTodoTaskRoutineContentCommand;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.CountryCode;
@@ -12,11 +14,14 @@ import com.LetMeDoWith.LetMeDoWith.domain.task.model.TodoTask;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TaskCategoryRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TodoTaskRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.service.TodoTaskRoutineDateCalculator;
+import com.LetMeDoWith.LetMeDoWith.domain.task.service.TodoTaskRoutineSplitter;
+import com.LetMeDoWith.LetMeDoWith.domain.task.service.TodoTaskRoutineSplitter.TodoTaskRoutineSplitResult;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +31,7 @@ public class UpdateTodoTaskService {
     private final TaskCategoryRepository taskCategoryRepository;
     
     private final TodoTaskRoutineDateCalculator routineDateCalculator;
+    private final TodoTaskRoutineSplitter splitter;
     
     private final HolidayService holidayService;
     
@@ -35,8 +41,9 @@ public class UpdateTodoTaskService {
      *
      * @param memberId   TodoTask를 업데이트할 사용자의 ID
      * @param todoTaskId 업데이트할 TodoTask의 ID
-     * @param command    업데이트할 정보 (카테고리 ID, 제목, 시작일, 시작시간, 루틴정보)
+     * @param command    업데이트할 정보 (카테고리 ID, 제목, 시작시간, 루틴정보)
      */
+    @Transactional
     public void updateSingleTodoTask(String memberId,
                                      Long todoTaskId,
                                      UpdateTodoTaskCommand command) {
@@ -48,10 +55,6 @@ public class UpdateTodoTaskService {
         TaskCategory category = taskCategoryRepository.
             getActiveTaskCategory(command.taskCategoryId(), memberId)
             .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
-        
-        if (Boolean.FALSE.equals(todoTask.isContentsEditable())) {
-            throw new RestApiException(INVALID_REQUEST);
-        }
         
         // 우선 컨텐츠를 업데이트
         todoTask.updateContent(command.title(),
@@ -91,5 +94,86 @@ public class UpdateTodoTaskService {
             
             todoTaskRepository.saveTodoTasks(todoTasksWithRoutine);
         }
+    }
+    
+    /**
+     * 루틴 TodoTask의 컨텐츠만 업데이트한다.
+     * todoTaskId에 해당하는 TodoTask만 업데이트 하거나, 루틴에 속한 모든 TodoTask에 적용 한다.
+     *
+     * @param memberId   TodoTask를 업데이트할 사용자의 ID
+     * @param todoTaskId 업데이트할 TodoTask의 ID
+     * @param command    업데이트할 정보 (카테고리 ID, 제목, 시작시간, 전체적용 여부)
+     */
+    @Transactional
+    public void updateTodoTaskRoutineContent(String memberId,
+                                             Long todoTaskId,
+                                             UpdateTodoTaskRoutineContentCommand command) {
+        TodoTask todoTask = todoTaskRepository
+            .getTodoTask(todoTaskId, memberId)
+            .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
+        
+        if (!todoTask.isRoutine()) {
+            throw new RestApiException(INVALID_REQUEST);
+        }
+        
+        List<TodoTask> todoTasksInRoutine = todoTaskRepository.getTodoTasks(todoTask.getRoutine());
+        
+        TaskCategory category = taskCategoryRepository
+            .getActiveTaskCategory(command.taskCategoryId(), memberId)
+            .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
+        
+        if (command.isApplyToAll()) {
+            // 모두 적용하는 경우, 입력받은 TodoTask를 기준으로 루틴을 분리한다.
+            TodoTaskRoutineSplitResult splitResult = splitter.splitTodoTaskRoutine(
+                todoTasksInRoutine,
+                todoTask,
+                todoTask.getRoutine());
+            
+            splitResult.getFutureTodoTasks()
+                       .forEach(task -> {
+                           task.updateContent(command.title(),
+                                              category.getId(),
+                                              task.getDate(),
+                                              command.startTime());
+                       });
+        } else {
+            // 루틴에 속한 TodoTask 중에서 todoTaskId에 해당하는 TodoTask만 업데이트 한다.
+            todoTask.updateContent(command.title(),
+                                   category.getId(),
+                                   todoTask.getDate(),
+                                   command.startTime());
+            
+            todoTask.detachRoutine();
+        }
+    }
+    
+    /**
+     * 루틴 TodoTask의 루틴 정보를 업데이트 한다.
+     *
+     * @param memberId   TodoTask를 업데이트할 사용자의 ID
+     * @param todoTaskId 업데이트할 TodoTask의 ID
+     * @param command    업데이트할 루틴 정보 (시작/종료일자, 루틴 반복 주기, 루틴 반복 패턴, 루틴 제외 공휴일 여부)
+     */
+    @Transactional
+    public void updateTodoTaskRoutineCondition(String memberId,
+                                               Long todoTaskId,
+                                               UpdateTodoTaskRoutineConditionCommand command) {
+        
+        TodoTask todoTask = todoTaskRepository
+            .getTodoTask(todoTaskId, memberId)
+            .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
+        
+        if (!todoTask.isRoutine()) {
+            throw new RestApiException(INVALID_REQUEST);
+        }
+        
+        List<TodoTask> todoTasksInRoutine = todoTaskRepository.getTodoTasks(todoTask.getRoutine());
+        
+        // 루틴 분리함
+        
+        // 미래 날짜 기준으로 루틴 일자 계산 다시 계산
+        
+        // 기존의 미래 루틴과 날짜 전부 삭제
+        
     }
 }
