@@ -13,6 +13,7 @@ import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskCategory;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TodoTask;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TaskCategoryRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TodoTaskRepository;
+import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TodoTaskRoutineRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.service.TodoTaskRoutineDateCalculator;
 import com.LetMeDoWith.LetMeDoWith.domain.task.service.TodoTaskRoutineSplitter;
 import com.LetMeDoWith.LetMeDoWith.domain.task.service.TodoTaskRoutineSplitter.TodoTaskRoutineSplitResult;
@@ -28,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UpdateTodoTaskService {
     
     private final TodoTaskRepository todoTaskRepository;
+    private final TodoTaskRoutineRepository todoTaskRoutineRepository;
     private final TaskCategoryRepository taskCategoryRepository;
     
     private final TodoTaskRoutineDateCalculator routineDateCalculator;
@@ -170,10 +172,45 @@ public class UpdateTodoTaskService {
         List<TodoTask> todoTasksInRoutine = todoTaskRepository.getTodoTasks(todoTask.getRoutine());
         
         // 루틴 분리함
-        
-        // 미래 날짜 기준으로 루틴 일자 계산 다시 계산
+        TodoTaskRoutineSplitResult splitResult = splitter.splitTodoTaskRoutine(
+            todoTasksInRoutine,
+            todoTask,
+            todoTask.getRoutine());
         
         // 기존의 미래 루틴과 날짜 전부 삭제
+        todoTaskRepository.deleteTodoTasks(splitResult.getFutureTodoTasks());
+        todoTaskRoutineRepository.delete(splitResult.getNewRoutine());
         
+        // 입력받은 TodoTask를 시작으로 루틴 일자 다시 계산해서 루틴 재생성
+        Set<LocalDate> routineDates =
+            routineDateCalculator.computeRoutineDates(
+                command.cycle(),
+                command.startDate(),
+                command.endDate(),
+                command.pattern());
+        
+        if (Boolean.TRUE.equals(command.isExcludeHolidays())) {
+            Set<LocalDate> holidays =
+                holidayService.getHolidays(CountryCode.KR,
+                                           command.startDate(),
+                                           command.endDate());
+            
+            routineDates.removeAll(holidays);
+        }
+        
+        List<TodoTask> todoTasks = TodoTask.ofWithRoutine(
+            memberId,
+            todoTask.getTaskCategoryId(),
+            todoTask.getTitle(),
+            todoTask.getDate(),
+            todoTask.getStartTime(),
+            routineDates,
+            command.cycle(),
+            command.pattern(),
+            command.isExcludeHolidays()
+        );
+        
+        todoTaskRepository.saveTodoTasks(todoTasks);
     }
+    
 }

@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -61,7 +62,7 @@ public class TodoTask extends BaseAuditEntity {
     @Column(name = "start_time", nullable = true)
     private LocalTime startTime;
     
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "todo_task_routine_id")
     private TodoTaskRoutine routine;
     
@@ -318,9 +319,10 @@ public class TodoTask extends BaseAuditEntity {
      *
      * @return 삭제된 루틴
      */
-    public TodoTaskRoutine deleteRoutine() {
+    public TodoTaskRoutine detachRoutine() {
         if (isRoutine()) {
             TodoTaskRoutine toDelete = this.routine;
+            this.routine.removeRoutineDate(this.date);
             this.routine = null;
             return toDelete;
         } else {
@@ -357,5 +359,20 @@ public class TodoTask extends BaseAuditEntity {
         if (this.date.isBefore(LocalDate.now())) {
             throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
         }
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        TodoTask todoTask = (TodoTask) o;
+        return Objects.equals(id, todoTask.id) && Objects.equals(memberId,
+                                                                 todoTask.memberId);
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, memberId);
     }
 }

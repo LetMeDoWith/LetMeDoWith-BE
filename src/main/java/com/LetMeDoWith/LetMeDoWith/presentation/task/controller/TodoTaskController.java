@@ -16,6 +16,7 @@ import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.CreateTodoTaskReqDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.CreateTodoTaskResDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.UpdateTodoTaskReqDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.UpdateTodoTaskRoutineConditionReqDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.UpdateTodoTaskRoutineContentReqDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -107,6 +108,14 @@ public class TodoTaskController {
         updateTodoTaskService.updateTodoTaskRoutineContent(memberId,
                                                            todoTaskId,
                                                            command);
+        
+        return ResponseUtil.createSuccessResponse();
+    }
+    
+    @PutMapping("/{todoTaskId}/routine/condition")
+    public ResponseEntity updateTodoTaskRoutineCondition(@PathVariable Long todoTaskId,
+                                                         @RequestBody UpdateTodoTaskRoutineConditionReqDto request) {
+        String memberId = AuthUtil.getMemberId();
         
         return ResponseUtil.createSuccessResponse();
     }

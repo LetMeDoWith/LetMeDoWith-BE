@@ -153,7 +153,7 @@
 //        TodoTaskRoutine routine = todoTask.getRoutine();
 //
 //        // when
-//        TodoTaskRoutine deletedRoutine = todoTask.deleteRoutine();
+//        TodoTaskRoutine deletedRoutine = todoTask.detachRoutine();
 //
 //        // then
 //        assertThat(deletedRoutine).isSameAs(routine);
