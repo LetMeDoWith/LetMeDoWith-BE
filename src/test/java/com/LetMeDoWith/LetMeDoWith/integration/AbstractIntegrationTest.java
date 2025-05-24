@@ -1,6 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.integration;
 
 import com.LetMeDoWith.LetMeDoWith.application.auth.provider.AccessTokenProvider;
+import com.LetMeDoWith.LetMeDoWith.common.dto.ResponseDto;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.Gender;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
@@ -9,6 +10,7 @@ import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.auth.model.AccessToken;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.member.persistence.jpaRepository.MemberJpaRepository;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.charset.StandardCharsets;
 import java.time.Clock;
@@ -37,10 +39,14 @@ import org.springframework.util.LinkedMultiValueMap;
 public abstract class AbstractIntegrationTest {
 
     protected Member requestMember;
-    @Autowired ObjectMapper objectMapper;
-    @Autowired MockMvc mockMvc;
-    @Autowired MemberJpaRepository memberJpaRepository;
-    @Autowired AccessTokenProvider accessTokenProvider;
+    @Autowired
+    protected ObjectMapper objectMapper;
+    @Autowired
+    MockMvc mockMvc;
+    @Autowired
+    MemberJpaRepository memberJpaRepository;
+    @Autowired
+    AccessTokenProvider accessTokenProvider;
     private AccessToken requestMemberAccessToken;
 
     @BeforeEach
@@ -76,17 +82,16 @@ public abstract class AbstractIntegrationTest {
 
     /** 해당 Abstract Class 상속 받은 테스트는 모든 Test 메서드 시작전에 request Member 세팅 */
     private void createMemberTestData() {
-        requestMember =
-                memberJpaRepository.save(
-                        Member.builder()
-                                .status(MemberStatus.NORMAL)
-                                .taskCompleteLevel(TaskCompleteLevel.AVERAGE)
-                                .nickname("test")
-                                .selfDescription("test description")
-                                .gender(Gender.MALE)
-                                .dateOfBirth(LocalDate.of(1995, 11, 4))
-                                .type(MemberType.USER)
-                                .build());
+        requestMember = memberJpaRepository.save(
+                Member.builder()
+                        .status(MemberStatus.NORMAL)
+                        .taskCompleteLevel(TaskCompleteLevel.AVERAGE)
+                        .nickname("test")
+                        .selfDescription("test description")
+                        .gender(Gender.MALE)
+                        .dateOfBirth(LocalDate.of(1995, 11, 4))
+                        .type(MemberType.USER)
+                        .build());
         requestMemberAccessToken = accessTokenProvider.createAccessToken(requestMember.getId());
     }
 
@@ -97,7 +102,8 @@ public abstract class AbstractIntegrationTest {
     protected abstract void createTestData();
 
     /**
-     * MockMvc Request 해당 abstract class 상속 받은 테스트에서 MockHttpServletRequestBuilder 만 넘겨서 사용
+     * MockMvc Request 해당 abstract class 상속 받은 테스트에서 MockHttpServletRequestBuilder 만
+     * 넘겨서 사용
      *
      * @param requestBuilder
      * @return
@@ -117,6 +123,30 @@ public abstract class AbstractIntegrationTest {
         } catch (Exception e) {
             log.error("request error", e);
             Assertions.fail("MockMvc 요청 중 에러 발생" + e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * MockMvc ResultActions를 통해 받은 응답을 지정된 타입으로 변환합니다.
+     *
+     * @param responseBody API Response 원문
+     * @param responseType 변환하려는 응답 타입
+     * @param <T>          변환하려는 응답 타입의 제네릭
+     * @return 변환된 응답 객체
+     */
+    public <T> T readResponse(String responseBody, Class<T> responseType) {
+        try {
+            JavaType type = objectMapper.getTypeFactory()
+                    .constructParametricType(ResponseDto.class,
+                            responseType);
+
+            ResponseDto<T> responseDto = objectMapper.readValue(responseBody, type);
+
+            return responseDto.data();
+        } catch (Exception e) {
+            log.error("readResponse error", e);
+            Assertions.fail("Response 변환 중 에러 발생" + e.getMessage());
             return null;
         }
     }

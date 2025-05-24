@@ -1,0 +1,124 @@
+package com.LetMeDoWith.LetMeDoWith.integration.task;
+
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskCategory;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.TodoTask;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.TaskCategoryJpaRepository;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.TodoTaskJpaRepository;
+import com.LetMeDoWith.LetMeDoWith.integration.AbstractIntegrationTest;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.RetrieveTasksResDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.UpdateTodoTaskReqDto;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
+    
+    static final String URL = "/api/v1/tasks/todo";
+    
+    @Autowired
+    private TodoTaskJpaRepository todoTaskRepository;
+    @Autowired
+    private TaskCategoryJpaRepository taskCategoryRepository;
+    @Autowired
+    private com.fasterxml.jackson.databind.ObjectMapper objectMapper;
+    
+    private TaskCategory taskCategory;
+    private TaskCategory taskCategory2;
+    
+    @Override
+    protected void deleteTestData() {
+        todoTaskRepository.deleteAll();
+        taskCategoryRepository.deleteAll();
+    }
+    
+    @Override
+    protected void createTestData() {
+        taskCategory = taskCategoryRepository.save(
+            TaskCategory.of(
+                "test category 1",
+                TaskCategory.TaskCategoryCreationType.COMMON,
+                "test",
+                this.requestMember.getId()));
+        
+        taskCategory2 = taskCategoryRepository.save(
+            TaskCategory.of(
+                "test category 2",
+                TaskCategory.TaskCategoryCreationType.COMMON,
+                "test",
+                this.requestMember.getId()));
+    }
+    
+    @Test
+    @DisplayName("투두모드 단일 Task 수정 - 컨텐츠만 수정")
+    void updateSingleTodoTaskTestContentOnly() throws Exception {
+        // given
+        setFixedClock(LocalDateTime.of(2024, 6, 1, 0, 0));
+        String originalTitle = "원래 타이틀";
+        LocalDate originalDate = LocalDate.of(2024, 6, 2);
+        LocalTime originalStartTime = LocalTime.of(9, 0);
+        TodoTask todoTask = todoTaskRepository.save(
+            TodoTask.of(
+                this.requestMember.getId(),
+                taskCategory.getId(),
+                originalTitle,
+                originalDate,
+                originalStartTime));
+        
+        // when
+        String updatedTitle = "수정된 타이틀";
+        LocalTime updatedStartTime = LocalTime.of(10, 0);
+        Long updatedCategoryId = taskCategory2.getId();
+        UpdateTodoTaskReqDto updateReq = new com.LetMeDoWith.LetMeDoWith.presentation.task.dto.UpdateTodoTaskReqDto(
+            updatedTitle,
+            updatedStartTime,
+            updatedCategoryId,
+            null);
+        
+        ResultActions resultActions = this.request(
+            org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                .put(URL + "/" + todoTask.getId())
+                .content(this.writeRequestBodyAsString(updateReq)));
+        
+        // then
+        resultActions.andExpect(status()
+                                    .isOk());
+        
+        // 조회 API를 통해 변경사항 검증
+        MvcResult retrieveResult = this.request(
+                                           MockMvcRequestBuilders
+                                               .get("/api/v1/tasks")
+                                               .param("year", "2024")
+                                               .param("month", "6"))
+                                       .andExpect(status()
+                                                      .isOk())
+                                       .andReturn();
+        
+        MockHttpServletResponse response = retrieveResult.getResponse();
+        response.setCharacterEncoding("UTF-8");
+        String content = response.getContentAsString();
+        RetrieveTasksResDto tasks = this.readResponse(content,
+                                                      RetrieveTasksResDto.class);
+        
+        tasks.todoTasks().stream()
+             .filter(task -> task.id().equals(todoTask.getId()))
+             .findFirst()
+             .ifPresent(task -> {
+                 org.assertj.core.api.Assertions.assertThat(task.title())
+                                                .isEqualTo(updatedTitle);
+                 org.assertj.core.api.Assertions.assertThat(task.startTime())
+                                                .isEqualTo(updatedStartTime);
+                 org.assertj.core.api.Assertions.assertThat(task.taskCategoryId())
+                                                .isEqualTo(updatedCategoryId);
+             });
+        
+    }
+}
