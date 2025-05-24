@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
 
 class TodoTaskTest {
 
-    private static final Long MEMBER_ID = 1L;
+    private static final String MEMBER_ID = "01HXQ2X7Z7Q6XJX4X2X7Z7Q6XA";
     private static final Long TASK_CATEGORY_ID = 100L;
     private static final String TITLE = "테스트 할 일";
     private static final LocalDate FUTURE_DATE = SystemTimeUtil.nowDate().plusDays(5);

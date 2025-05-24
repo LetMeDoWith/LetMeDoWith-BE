@@ -1,6 +1,5 @@
 package com.LetMeDoWith.LetMeDoWith.domain.member.repository;
 
-import com.LetMeDoWith.LetMeDoWith.application.member.dto.MemberBadgeVO;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.BadgeStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.Badge;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.MemberBadge;
@@ -18,6 +17,4 @@ public interface BadgeRepository {
     Optional<MemberBadge> getMainMemberBadge(String memberId);
 
     Optional<Badge> getBadge(Long badgeId, BadgeStatus badgeStatus);
-
-    List<MemberBadgeVO> getBadges(String memberId);
 }
