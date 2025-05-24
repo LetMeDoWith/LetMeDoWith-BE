@@ -86,7 +86,7 @@ public class TodoTaskController {
                                                        request.title(),
                                                        request.startTime(),
                                                        request.taskCategoryId(),
-                                                       request.routineCondition().orElse(null)
+                                                       request.routineCondition()
                                                    ));
         
         return ResponseUtil.createSuccessResponse();

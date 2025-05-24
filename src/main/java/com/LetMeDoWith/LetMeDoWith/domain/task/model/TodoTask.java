@@ -3,6 +3,7 @@ package com.LetMeDoWith.LetMeDoWith.domain.task.model;
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.AggregateRoot;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TodoTaskRoutineCycle;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TodoTaskStatus;
@@ -356,7 +357,7 @@ public class TodoTask extends BaseAuditEntity {
             throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
         }
         
-        if (this.date.isBefore(LocalDate.now())) {
+        if (this.date.isBefore(SystemTimeUtil.nowDate())) {
             throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
         }
     }
