@@ -206,6 +206,14 @@ public class DowithTask extends BaseAuditEntity {
             throw new RestApiException(INVALID_REQUEST);
         }
 
+        if (!status.equals(DowithTaskStatus.WAIT)) {
+            throw new RestApiException(INVALID_REQUEST);
+        }
+
+        if (SystemTimeUtil.now().isAfter(LocalDateTime.of(this.date, this.startTime))) {
+            throw new RestApiException(INVALID_REQUEST);
+        }
+
         int shardIndex = (int) (this.id % 16);
 
         List<String> confirmImageKeys = new ArrayList<>();
@@ -228,6 +236,10 @@ public class DowithTask extends BaseAuditEntity {
     public void confirm(List<String> imageUrls) {
 
         if (!status.equals(DowithTaskStatus.WAIT)) {
+            throw new RestApiException(INVALID_REQUEST);
+        }
+
+        if (SystemTimeUtil.now().isAfter(LocalDateTime.of(this.date, this.startTime))) {
             throw new RestApiException(INVALID_REQUEST);
         }
 
