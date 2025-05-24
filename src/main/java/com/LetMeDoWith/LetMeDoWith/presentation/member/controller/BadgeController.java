@@ -1,11 +1,11 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.member.controller;
 
-import com.LetMeDoWith.LetMeDoWith.application.member.dto.GetBadgesInfoResult;
-import com.LetMeDoWith.LetMeDoWith.application.member.dto.MemberBadgeVO;
+import com.LetMeDoWith.LetMeDoWith.application.member.dto.RetrieveBadgesInfoResult;
 import com.LetMeDoWith.LetMeDoWith.application.member.service.BadgeService;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.member.query.dto.MemberBadgeQueryDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.RetrieveBadgesInfoResDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,9 +30,9 @@ public class BadgeController {
     public ResponseEntity retrieveBadgesInfo() {
 
         String memberId = AuthUtil.getMemberId();
-        GetBadgesInfoResult result = badgeService.getBadgesInfo(memberId);
+        RetrieveBadgesInfoResult result = badgeService.retrieveBadgesInfo(memberId);
 
-        MemberBadgeVO mainBadge =
+        MemberBadgeQueryDto mainBadge =
                 result.getBadges().stream()
                         .filter(e -> Yn.TRUE.equals(e.getIsMain()))
                         .findFirst()

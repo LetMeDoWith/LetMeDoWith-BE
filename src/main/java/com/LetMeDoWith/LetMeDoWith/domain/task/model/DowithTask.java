@@ -217,13 +217,13 @@ public class DowithTask extends BaseAuditEntity {
     public void confirm(String imageUrl) {
         confirms = DowithTaskConfirm.of(this, imageUrl);
         this.status = DowithTaskStatus.SUCCESS;
-        this.successDateTime = LocalDateTime.now();
+        this.successDateTime = SystemTimeUtil.now();
     }
 
     /** 두윗모드Task 완료 */
     public void complete() {
         this.status = DowithTaskStatus.COMPLETE;
-        this.completeDateTime = LocalDateTime.now();
+        this.completeDateTime = SystemTimeUtil.now();
     }
 
     /**
@@ -490,8 +490,10 @@ public class DowithTask extends BaseAuditEntity {
 
     private void validate() {
         LocalDateTime nowDateTime = SystemTimeUtil.now();
-        if (nowDateTime.toLocalDate().isEqual(date)) {
-            if (nowDateTime.toLocalTime().isAfter(startTime)) {
+        LocalDate nowData = nowDateTime.toLocalDate();
+        LocalTime nowTime = nowDateTime.toLocalTime();
+        if (nowData.isEqual(date)) {
+            if (nowTime.isAfter(startTime)) {
                 throw new RestApiException(INVALID_REQUEST);
             }
         }
