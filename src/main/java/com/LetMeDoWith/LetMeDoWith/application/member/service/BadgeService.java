@@ -5,8 +5,7 @@ import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseSt
 import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.MEMBER_BADGE_NOT_EXIST;
 import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.MEMBER_NOT_EXIST_BADGE;
 
-import com.LetMeDoWith.LetMeDoWith.application.member.dto.GetBadgesInfoResult;
-import com.LetMeDoWith.LetMeDoWith.application.member.dto.MemberBadgeVO;
+import com.LetMeDoWith.LetMeDoWith.application.member.dto.RetrieveBadgesInfoResult;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.BadgeStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
@@ -15,6 +14,8 @@ import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.MemberBadge;
 import com.LetMeDoWith.LetMeDoWith.domain.member.repository.BadgeRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.member.repository.MemberRepository;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.member.query.BadgeQueryRepository;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.member.query.dto.MemberBadgeQueryDto;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class BadgeService {
 
     private final BadgeRepository badgeRepository;
+    private final BadgeQueryRepository badgeQueryRepository;
+
     private final MemberRepository memberRepository;
 
     /**
@@ -34,16 +37,16 @@ public class BadgeService {
      * @param memberId
      * @return
      */
-    public GetBadgesInfoResult getBadgesInfo(String memberId) {
+    public RetrieveBadgesInfoResult retrieveBadgesInfo(String memberId) {
 
         Member member =
                 memberRepository
                         .getNormalStatusMember(memberId)
                         .orElseThrow(() -> new RestApiException(MEMBER_NOT_EXIST_BADGE));
 
-        List<MemberBadgeVO> badges = badgeRepository.getBadges(memberId);
+        List<MemberBadgeQueryDto> badges = badgeQueryRepository.getBadges(memberId);
 
-        return GetBadgesInfoResult.of(member.isLazyBadgeAcquireLevel(), badges);
+        return RetrieveBadgesInfoResult.of(member.isLazyBadgeAcquireLevel(), badges);
     }
 
     /**
@@ -71,9 +74,7 @@ public class BadgeService {
 
         // 기존 Main Badge cancel
         Optional<MemberBadge> mainMemberBadge = badgeRepository.getMainMemberBadge(memberId);
-        if (mainMemberBadge.isPresent()) {
-            mainMemberBadge.get().cancelMainBadge();
-        }
+        mainMemberBadge.ifPresent(MemberBadge::cancelMainBadge);
 
         // 새로운 Main Badge 등록
         MemberBadge memberBadge =

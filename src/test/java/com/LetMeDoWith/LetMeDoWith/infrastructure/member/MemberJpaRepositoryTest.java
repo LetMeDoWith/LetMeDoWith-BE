@@ -1,9 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.member;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
@@ -12,8 +9,8 @@ import com.LetMeDoWith.LetMeDoWith.config.TestQueryDslConfig;
 import com.LetMeDoWith.LetMeDoWith.domain.auth.enums.SocialProvider;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.MemberSocialAccount;
-import com.LetMeDoWith.LetMeDoWith.infrastructure.member.jpaRepository.MemberJpaRepository;
-import com.LetMeDoWith.LetMeDoWith.infrastructure.member.jpaRepository.MemberSocialAccountJpaRepository;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.member.persistence.jpaRepository.MemberJpaRepository;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.member.persistence.jpaRepository.MemberSocialAccountJpaRepository;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +39,7 @@ class MemberJpaRepositoryTest {
     private static Member getMember() {
         Member testMemberObj =
                 Member.builder()
-                        .id(1L)
+                        .id("01HXQ2X7Z7Q6XJX4X2X7Z7Q6XA")
                         .subject("test@email.com")
                         .nickname("nickname")
                         .selfDescription("self desc")

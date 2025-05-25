@@ -13,14 +13,11 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class RefreshTokenRefreshTokenRepositoryTest {
 
-    @Autowired private RefreshTokenRedisRepository repository;
-
     private final String refreshToken = "refreshTokenTestTest";
     private final String accessToken = "accessTokenTestTest";
-
-    private final Long memberId = 1L;
-
+    private final String memberId = "01HXQ2X7Z7Q6XJX4X2X7Z7Q6XA";
     private final String userAgent = "I-PHONE";
+    @Autowired private RefreshTokenRedisRepository repository;
 
     @DisplayName("[SUCCESS] refreshToken Redis 저장 성공")
     @Test
@@ -30,7 +27,7 @@ public class RefreshTokenRefreshTokenRepositoryTest {
                 RefreshToken.builder()
                         .token(this.refreshToken)
                         .accessToken(this.accessToken)
-                        .memberId(1L)
+                        .memberId(memberId)
                         .userAgent(this.userAgent)
                         .expireSec(30L)
                         .build();

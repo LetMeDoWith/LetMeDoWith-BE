@@ -39,7 +39,7 @@ public class TodoTaskController {
         @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청입니다."),
     })
     @PostMapping("")
-    public ResponseEntity<ResponseDto<CreateTodoTaskResDto>> registerTodoTask(
+    public ResponseEntity<ResponseDto<CreateTodoTaskResDto>> createTodoTask(
             @Valid @RequestBody CreateTodoTaskReqDto request) {
         String memberId = AuthUtil.getMemberId();
 
@@ -47,11 +47,10 @@ public class TodoTaskController {
 
         if (request.isRoutine()) {
             result =
-                    registerTodoTaskService.registerTodoTaskWithRoutine(
+                    registerTodoTaskService.createTodoTaskWithRoutine(
                             memberId, request.toCreateTodoTaskCommand());
         } else {
-            result =
-                    registerTodoTaskService.registerTodoTask(memberId, request.toCreateTodoTaskCommand());
+            result = registerTodoTaskService.createTodoTask(memberId, request.toCreateTodoTaskCommand());
         }
 
         // 생성은 성공 여부만 반환, 이후 데이터는 조회 API에서 확인

@@ -32,7 +32,7 @@ public class RegisterTodoTaskService {
      * @param command 생성할 TodoTask의 정보 (카테고리 ID, 제목, 시작일, 시작시간, 루틴여부)
      * @return 생성된 TodoTask
      */
-    public RegisterTodoTaskResult registerTodoTask(String memberId, RegisterTodoTaskCommand command) {
+    public RegisterTodoTaskResult createTodoTask(String memberId, RegisterTodoTaskCommand command) {
         if (command.taskCategoryId() != null) {
             taskCategoryRepository
                     .getActiveTaskCategory(command.taskCategoryId(), memberId)
@@ -58,7 +58,7 @@ public class RegisterTodoTaskService {
      * @param command 생성할 TodoTask의 정보 (카테고리 ID, 제목, 시작일, 종료일, 시작시간, 루틴여부, 루틴 반복 주기, 루틴 반복 패턴)
      * @return 생성된 루틴의 TodoTask 목록
      */
-    public RegisterTodoTaskResult registerTodoTaskWithRoutine(
+    public RegisterTodoTaskResult createTodoTaskWithRoutine(
             String memberId, RegisterTodoTaskCommand command) {
 
         if (command.taskCategoryId() != null) {
