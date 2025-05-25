@@ -5,6 +5,7 @@ import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.AggregateRoot;
+import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TodoTaskRoutineCycle;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TodoTaskStatus;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -132,7 +133,7 @@ public class TodoTask extends BaseAuditEntity {
      * @param title 제목
      * @param date 날짜
      * @param startTime 시작 시간
-     * @param routineDateSet 루틴 날짜 세트
+     * @param routineDates 루틴 날짜 세트
      * @return 생성된 TodoTask 리스트
      */
     public static List<TodoTask> ofWithRoutine(
@@ -141,12 +142,17 @@ public class TodoTask extends BaseAuditEntity {
             String title,
             LocalDate date,
             LocalTime startTime,
-            Set<LocalDate> routineDateSet) {
+            Set<LocalDate> routineDates,
+            TodoTaskRoutineCycle cycle,
+            Set<Integer> pattern,
+            boolean isExcludeHolidays) {
+
         List<TodoTask> result = new ArrayList<>();
-        Set<LocalDate> targetDateSet = new TreeSet<>(routineDateSet);
+        Set<LocalDate> targetDateSet = new TreeSet<>(routineDates);
         targetDateSet.add(date);
 
-        TodoTaskRoutine routine = TodoTaskRoutine.from(targetDateSet);
+        TodoTaskRoutine routine =
+                TodoTaskRoutine.from(targetDateSet, cycle, pattern, isExcludeHolidays);
         targetDateSet.stream()
                 .sorted()
                 .toList()
@@ -167,34 +173,6 @@ public class TodoTask extends BaseAuditEntity {
                         });
 
         return result;
-    }
-
-    /**
-     * 루틴을 포함한 TodoTask 리스트 생성 메서드 (공휴일 제외)
-     *
-     * @param memberId 회원 ID
-     * @param taskCategoryId 작업 카테고리 ID
-     * @param title 제목
-     * @param date 날짜
-     * @param startTime 시작 시간
-     * @param routineDateSet 루틴 날짜 세트
-     * @param holidays 제외할 공휴일 세트
-     * @return 생성된 TodoTask 리스트
-     */
-    public static List<TodoTask> ofWithRoutine(
-            String memberId,
-            Long taskCategoryId,
-            String title,
-            LocalDate date,
-            LocalTime startTime,
-            Set<LocalDate> routineDateSet,
-            Set<LocalDate> holidays) {
-        Set<LocalDate> filteredDates =
-                routineDateSet.stream()
-                        .filter(routineDate -> !holidays.contains(routineDate))
-                        .collect(Collectors.toSet());
-
-        return ofWithRoutine(memberId, taskCategoryId, title, date, startTime, filteredDates);
     }
 
     /**

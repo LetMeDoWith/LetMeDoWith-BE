@@ -24,14 +24,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Member Follow", description = "회원 팔로우")
 @RestController
-@RequestMapping("/api/v1/member/follow")
+@RequestMapping("/api/v1/members/follow")
 @RequiredArgsConstructor
 public class FollowController {
 
     private final FollowService followService;
 
     @Operation(summary = "팔로우 목록 조회", description = "유져의 팔로우 목록을 조회합니다.")
-    @GetMapping("/{memberId}")
+    @GetMapping("/{memberId}/followers")
     public ResponseEntity retrieveFollows(
             @PathVariable(name = "memberId") String memberId,
             @RequestParam(name = "followType") FollowType type,

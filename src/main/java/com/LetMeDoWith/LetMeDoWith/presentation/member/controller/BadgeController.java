@@ -7,20 +7,19 @@ import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.member.query.dto.MemberBadgeQueryDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.RetrieveBadgesInfoResDto;
-import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.UpdateMainBadgeReqDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Member Badge", description = "회원 뱃지")
 @RestController
-@RequestMapping("/api/v1/member/badge")
+@RequestMapping("/api/v1/members/badges")
 @RequiredArgsConstructor
 public class BadgeController {
 
@@ -45,11 +44,11 @@ public class BadgeController {
     }
 
     @Operation(summary = "대표 뱃지 등록", description = "특정 뱃지를 유져의 대표 뱃지로 등록합니다.")
-    @PutMapping("/main")
-    public ResponseEntity updateMainBadge(@RequestBody UpdateMainBadgeReqDto request) {
+    @PutMapping("/{badgeId}/main")
+    public ResponseEntity updateMainBadge(@PathVariable Long badgeId) {
 
         String memberId = AuthUtil.getMemberId();
-        badgeService.updateMainBadge(memberId, request.badgeId());
+        badgeService.updateMainBadge(memberId, badgeId);
 
         return ResponseUtil.createSuccessResponse();
     }

@@ -1,6 +1,8 @@
 package com.LetMeDoWith.LetMeDoWith.domain.task.model;
 
+import com.LetMeDoWith.LetMeDoWith.common.converter.task.TodoTaskRooutineCycleConverter;
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
+import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TodoTaskRoutineCycle;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.converter.TodoTaskRoutineDatesConverter;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -34,8 +36,31 @@ public class TodoTaskRoutine extends BaseAuditEntity {
     @Convert(converter = TodoTaskRoutineDatesConverter.class)
     private TodoTaskRoutineDates routineDates;
 
+    @Column(name = "cycle", nullable = false, length = 20)
+    @Convert(converter = TodoTaskRooutineCycleConverter.class)
+    private TodoTaskRoutineCycle cycle;
+
+    @Column(name = "pattern")
+    private TodoTaskRoutinePattern pattern;
+
+    @Column(name = "is_exclude_holidays")
+    private boolean isExcludeHolidays;
+
     public static TodoTaskRoutine from(Set<LocalDate> dates) {
         return TodoTaskRoutine.builder().routineDates(TodoTaskRoutineDates.from(dates)).build();
+    }
+
+    public static TodoTaskRoutine from(
+            Set<LocalDate> dates,
+            TodoTaskRoutineCycle cycle,
+            Set<Integer> pattern,
+            boolean isExcludeHolidays) {
+        return TodoTaskRoutine.builder()
+                .routineDates(TodoTaskRoutineDates.from(dates))
+                .cycle(cycle)
+                .pattern(TodoTaskRoutinePattern.from(pattern))
+                .isExcludeHolidays(isExcludeHolidays)
+                .build();
     }
 
     public void updateRoutineDates(Set<LocalDate> dates) {

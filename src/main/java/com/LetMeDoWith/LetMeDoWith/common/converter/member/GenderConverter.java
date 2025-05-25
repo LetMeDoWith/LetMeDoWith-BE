@@ -1,13 +1,13 @@
 package com.LetMeDoWith.LetMeDoWith.common.converter.member;
 
-import com.LetMeDoWith.LetMeDoWith.common.converter.AbstractCombinedConverter;
+import com.LetMeDoWith.LetMeDoWith.common.converter.AbstractCombinedEnumConverter;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.Gender;
 import jakarta.persistence.Converter;
 import org.springframework.stereotype.Component;
 
 @Converter(autoApply = true)
 @Component
-public class GenderConverter extends AbstractCombinedConverter<Gender> {
+public class GenderConverter extends AbstractCombinedEnumConverter<Gender> {
 
     public GenderConverter() {
         super(Gender.class);
