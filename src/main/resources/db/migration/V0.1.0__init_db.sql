@@ -16,11 +16,11 @@ CREATE TABLE badge
 
 CREATE TABLE dev_refresh_token
 (
-    token        VARCHAR(255) NOT NULL,
-    access_token VARCHAR(255) NULL,
-    member_id    VARCHAR(255) NULL,
-    user_agent   VARCHAR(255) NULL,
-    expire_at    datetime     NULL,
+    token        VARCHAR(1000) NOT NULL,
+    access_token VARCHAR(1000) NULL,
+    member_id    VARCHAR(255)  NULL,
+    user_agent   VARCHAR(255)  NULL,
+    expire_at    datetime      NULL,
     CONSTRAINT pk_dev_refresh_token PRIMARY KEY (token)
 );
 
