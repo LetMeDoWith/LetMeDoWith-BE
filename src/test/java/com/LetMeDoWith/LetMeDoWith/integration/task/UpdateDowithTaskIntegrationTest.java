@@ -78,7 +78,6 @@ public class UpdateDowithTaskIntegrationTest extends AbstractIntegrationTest {
         // when
         UpdateDowithTaskReqDto requestBody =
                 UpdateDowithTaskReqDto.builder()
-                        .dowithTaskId(dowithTask.getId())
                         .title("청소하기")
                         .taskCategoryId(taskCategory2.getId())
                         .startDateTime(LocalDateTime.of(2024, 3, 3, 14, 0))
@@ -142,7 +141,6 @@ public class UpdateDowithTaskIntegrationTest extends AbstractIntegrationTest {
         // when
         UpdateDowithTaskReqDto requestBody =
                 UpdateDowithTaskReqDto.builder()
-                        .dowithTaskId(dowithTask.getId())
                         .title("청소하기")
                         .taskCategoryId(taskCategory2.getId())
                         .startDateTime(LocalDateTime.of(2024, 3, 3, 14, 0))
@@ -178,7 +176,6 @@ public class UpdateDowithTaskIntegrationTest extends AbstractIntegrationTest {
         // when
         UpdateDowithTaskReqDto requestBody =
                 UpdateDowithTaskReqDto.builder()
-                        .dowithTaskId(dowithTask.getId())
                         .title("청소하기")
                         .taskCategoryId(taskCategory2.getId())
                         .startDateTime(LocalDateTime.of(2024, 3, 3, 14, 0))
@@ -236,10 +233,7 @@ public class UpdateDowithTaskIntegrationTest extends AbstractIntegrationTest {
                         LocalDate.of(2024, 3, 16),
                         LocalDate.of(2024, 3, 20));
         UpdateDowithTaskRoutineReqDto requestBody =
-                UpdateDowithTaskRoutineReqDto.builder()
-                        .dowithTaskId(dowithTask.getId())
-                        .routineDates(newRoutineDates)
-                        .build();
+                UpdateDowithTaskRoutineReqDto.builder().routineDates(newRoutineDates).build();
         ResultActions resultActions =
                 this.request(
                         MockMvcRequestBuilders.put(UPDATE_DOWITH_TASK_ROUTINE_URL)
@@ -301,10 +295,7 @@ public class UpdateDowithTaskIntegrationTest extends AbstractIntegrationTest {
                         LocalDate.of(2024, 3, 16),
                         LocalDate.of(2024, 3, 20));
         UpdateDowithTaskRoutineReqDto requestBody =
-                UpdateDowithTaskRoutineReqDto.builder()
-                        .dowithTaskId(dowithTask.getId())
-                        .routineDates(newRoutineDates)
-                        .build();
+                UpdateDowithTaskRoutineReqDto.builder().routineDates(newRoutineDates).build();
         ResultActions resultActions =
                 this.request(
                         MockMvcRequestBuilders.put(UPDATE_DOWITH_TASK_ROUTINE_URL)
@@ -359,10 +350,7 @@ public class UpdateDowithTaskIntegrationTest extends AbstractIntegrationTest {
                         LocalDate.of(2024, 3, 16),
                         LocalDate.of(2024, 3, 20));
         UpdateDowithTaskRoutineReqDto requestBody =
-                UpdateDowithTaskRoutineReqDto.builder()
-                        .dowithTaskId(dowithTask.getId())
-                        .routineDates(newRoutineDates)
-                        .build();
+                UpdateDowithTaskRoutineReqDto.builder().routineDates(newRoutineDates).build();
         ResultActions resultActions =
                 this.request(
                         MockMvcRequestBuilders.put(UPDATE_DOWITH_TASK_ROUTINE_URL)
