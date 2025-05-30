@@ -63,7 +63,7 @@ public class TodoTask extends BaseAuditEntity {
     @Column(name = "start_time", nullable = true)
     private LocalTime startTime;
     
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne(cascade = {CascadeType.PERSIST})
     @JoinColumn(name = "todo_task_routine_id")
     private TodoTaskRoutine routine;
     

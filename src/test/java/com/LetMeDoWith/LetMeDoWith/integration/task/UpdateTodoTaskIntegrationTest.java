@@ -2,16 +2,22 @@ package com.LetMeDoWith.LetMeDoWith.integration.task;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.TodoTaskRoutineCondition;
+import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TodoTaskRoutineCycle;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskCategory;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TodoTask;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.TaskCategoryJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.TodoTaskJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.integration.AbstractIntegrationTest;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.RetrieveTasksResDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.RetrieveTasksResDto.TodoTaskDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.UpdateTodoTaskReqDto;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +34,6 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
     private TodoTaskJpaRepository todoTaskRepository;
     @Autowired
     private TaskCategoryJpaRepository taskCategoryRepository;
-    @Autowired
-    private com.fasterxml.jackson.databind.ObjectMapper objectMapper;
     
     private TaskCategory taskCategory;
     private TaskCategory taskCategory2;
@@ -77,7 +81,7 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
         String updatedTitle = "수정된 타이틀";
         LocalTime updatedStartTime = LocalTime.of(10, 0);
         Long updatedCategoryId = taskCategory2.getId();
-        UpdateTodoTaskReqDto updateReq = new com.LetMeDoWith.LetMeDoWith.presentation.task.dto.UpdateTodoTaskReqDto(
+        UpdateTodoTaskReqDto updateReq = new UpdateTodoTaskReqDto(
             updatedTitle,
             updatedStartTime,
             updatedCategoryId,
@@ -120,5 +124,71 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
                                                 .isEqualTo(updatedCategoryId);
              });
         
+    }
+    
+    @Test
+    @DisplayName("투두모드 단일 Task 수정 - 루틴으로 변경")
+    void updateSingleTodoTaskTestConvertToRoutine() throws Exception {
+        // given
+        setFixedClock(LocalDateTime.of(2024, 6, 1, 0, 0));
+        String originalTitle = "원래 타이틀";
+        LocalDate originalDate = LocalDate.of(2024, 6, 2);
+        LocalTime originalStartTime = LocalTime.of(9, 0);
+        
+        TodoTask todoTask = todoTaskRepository.save(
+            TodoTask.of(
+                this.requestMember.getId(),
+                taskCategory.getId(),
+                originalTitle,
+                originalDate,
+                originalStartTime));
+        
+        // when
+        String updatedTitle = "수정된 타이틀";
+        LocalTime updatedStartTime = LocalTime.of(10, 0);
+        Long updatedCategoryId = taskCategory2.getId();
+        LocalDate newRoutineEndDate = LocalDate.of(2024, 6, 30);
+        UpdateTodoTaskReqDto updateReq = new UpdateTodoTaskReqDto(
+            updatedTitle,
+            updatedStartTime,
+            updatedCategoryId,
+            TodoTaskRoutineCondition.of(
+                originalDate,
+                newRoutineEndDate,
+                TodoTaskRoutineCycle.DAILY,
+                null,
+                false
+            ));
+        
+        long gap = ChronoUnit.DAYS.between(originalDate, newRoutineEndDate);
+        
+        ResultActions resultActions = this.request(
+            MockMvcRequestBuilders
+                .put(URL + "/" + todoTask.getId())
+                .content(this.writeRequestBodyAsString(updateReq)));
+        
+        // then
+        resultActions.andExpect(status()
+                                    .isOk());
+        
+        // 조회 API를 통해 변경사항 검증
+        MvcResult retrieveResult = this.request(
+                                           MockMvcRequestBuilders
+                                               .get("/api/v1/tasks")
+                                               .param("year", "2024")
+                                               .param("month", "6"))
+                                       .andExpect(status()
+                                                      .isOk())
+                                       .andReturn();
+        
+        MockHttpServletResponse response = retrieveResult.getResponse();
+        response.setCharacterEncoding("UTF-8");
+        String content = response.getContentAsString();
+        RetrieveTasksResDto tasks = this.readResponse(content,
+                                                      RetrieveTasksResDto.class);
+        
+        List<TodoTaskDto> todoTasks = tasks.todoTasks();
+        
+        Assertions.assertEquals(gap + 1, todoTasks.size(), "루틴으로 변환된 Task는 29개여야 합니다.");
     }
 }
