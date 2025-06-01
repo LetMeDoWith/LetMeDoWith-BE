@@ -11,12 +11,12 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 @UtilityClass
 @Slf4j
 public class AuthUtil {
-
+    
     private final String AUTHORIZATION_KEY = "AUTHORIZATION";
-
+    
     public String getAccessToken() {
         HttpServletRequest request =
-                ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+            ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
         String authorizationHeader = request.getHeader(AUTHORIZATION_KEY);
         if (authorizationHeader == null) {
             throw new RestApiException(FailResponseStatus.ATK_NOT_EXIST);
@@ -31,7 +31,7 @@ public class AuthUtil {
             return accessToken;
         }
     }
-
+    
     /**
      * Request 에서 Signup Token을 가져온다.
      *
@@ -41,16 +41,25 @@ public class AuthUtil {
      */
     public String getSignupToken() {
         HttpServletRequest request =
-                ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+            ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
         String authorizationHeader = request.getHeader(AUTHORIZATION_KEY);
-
-        return authorizationHeader;
+        
+        if (!authorizationHeader.startsWith("Bearer")) {
+            throw new RestApiException(FailResponseStatus.INVALID_TOKEN);
+        }
+        
+        String signupToken = authorizationHeader.substring(6).trim();
+        if (signupToken.isEmpty()) {
+            throw new RestApiException(FailResponseStatus.INVALID_TOKEN);
+        }
+        
+        return signupToken;
     }
-
+    
     public String getMemberId() {
-
+        
         HttpServletRequest request =
-                ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+            ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
         return request.getAttribute("memberId").toString();
     }
 }

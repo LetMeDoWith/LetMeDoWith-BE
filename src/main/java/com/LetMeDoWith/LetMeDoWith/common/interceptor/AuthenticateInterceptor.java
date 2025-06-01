@@ -18,7 +18,7 @@ public class AuthenticateInterceptor implements HandlerInterceptor {
     private final AccessTokenProvider accessTokenProvider;
     private final SignupTokenProvider signupTokenProvider;
 
-    private final String SIGNUP_COMPLETE_API_URI = "/api/v1/member";
+    private final String SIGNUP_COMPLETE_API_URI = "/api/v1/members";
     private final String SIGNUP_COMPLETE_API_METHOD = "PUT";
 
     @Override
