@@ -14,6 +14,7 @@ import com.LetMeDoWith.LetMeDoWith.integration.AbstractIntegrationTest;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.RetrieveTasksResDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.RetrieveTasksResDto.TodoTaskDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.UpdateTodoTaskReqDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.UpdateTodoTaskRoutineConditionReqDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.UpdateTodoTaskRoutineContentReqDto;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -212,7 +213,6 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
             this.requestMember.getId(),
             taskCategory.getId(),
             originalTitle,
-            startDate,
             startTime,
             routineDates,
             TodoTaskRoutineCycle.DAILY,
@@ -305,7 +305,6 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
             this.requestMember.getId(),
             taskCategory.getId(),
             originalTitle,
-            startDate,
             startTime,
             routineDates,
             TodoTaskRoutineCycle.DAILY,
@@ -379,5 +378,99 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
                                   assertThat(task.startTime()).isEqualTo(startTime);
                                   assertThat(task.taskCategoryId()).isEqualTo(taskCategory.getId());
                               });
+    }
+    
+    @Test
+    @DisplayName("[SUCCESS] 투두모드 루틴 조건 수정")
+    void updateTodoTaskRoutineConditionTest() throws Exception {
+        // given
+        setFixedClock(LocalDateTime.of(2024, 6, 1, 0, 0));
+        String title = "원래 타이틀";
+        LocalDate startDate = LocalDate.of(2024, 6, 2);
+        LocalDate endDate = LocalDate.of(2024, 6, 30);
+        LocalTime startTime = LocalTime.of(9, 0);
+        
+        Set<LocalDate> routineDates = todoTaskRoutineDateCalculator.computeRoutineDates(
+            TodoTaskRoutineCycle.DAILY,
+            startDate,
+            endDate,
+            null
+        );
+        
+        List<TodoTask> todoTasks = TodoTask.ofWithRoutine(
+            this.requestMember.getId(),
+            taskCategory.getId(),
+            title,
+            startTime,
+            routineDates,
+            TodoTaskRoutineCycle.DAILY,
+            null,
+            false
+        );
+        
+        List<TodoTask> savedTodoTasks = todoTaskRepository.saveAll(todoTasks);
+        
+        // when
+        Set<Integer> updatedPattern = Set.of(20, 21, 22);// 20, 21, 22일로 변경
+        Integer updatedRoutineSize = updatedPattern.size();
+        
+        // ID가 필요하므로 Task를 가져옴
+        TodoTask sample = savedTodoTasks.stream()
+                                        .filter(task -> task.getDate()
+                                                            .isEqual(LocalDate.of(2024,
+                                                                                  6,
+                                                                                  15)))
+                                        .findFirst()
+                                        .get();
+        
+        UpdateTodoTaskRoutineConditionReqDto req =
+            new UpdateTodoTaskRoutineConditionReqDto(
+                LocalDate.of(2024, 6, 3),
+                LocalDate.of(2024, 6, 30),
+                TodoTaskRoutineCycle.MONTHLY,
+                updatedPattern, // 10, 20, 30일로 변경
+                false // 공휴일 제외 여부는 false로 유지
+            );
+        
+        ResultActions resultActions = this.request(
+            MockMvcRequestBuilders.put(URL + "/" + sample.getId() + "/routine/condition")
+                                  .content(this.writeRequestBodyAsString(req)));
+        
+        // then
+        resultActions.andExpect(status().isOk());
+        
+        MvcResult retrieveResult =
+            this.request(
+                    MockMvcRequestBuilders.get("/api/v1/tasks")
+                                          .param("year", "2024")
+                                          .param("month", "6"))
+                .andExpect(status().isOk())
+                .andReturn();
+        
+        MockHttpServletResponse response = retrieveResult.getResponse();
+        response.setCharacterEncoding("UTF-8");
+        String content = response.getContentAsString();
+        RetrieveTasksResDto tasks = this.readResponse(content, RetrieveTasksResDto.class);
+        
+        List<TodoTaskDto> retrievedTodoTasks = tasks.todoTasks();
+        
+        retrievedTodoTasks
+            .stream()
+            .filter(
+                task -> task.date().isBefore(sample.getDate()))
+            .forEach(
+                task -> {
+                    assertThat(task.title()).isEqualTo(title);
+                    assertThat(task.startTime()).isEqualTo(startTime);
+                    assertThat(task.taskCategoryId()).isEqualTo(taskCategory.getId());
+                });
+        
+        assertThat(retrievedTodoTasks
+                       .stream()
+                       .filter(
+                           task -> task.date().isEqual(sample.getDate())
+                               || task.date().isAfter(sample.getDate()))
+                       .count())
+            .isEqualTo(3);
     }
 }
