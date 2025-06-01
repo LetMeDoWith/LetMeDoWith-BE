@@ -3,6 +3,7 @@ package com.LetMeDoWith.LetMeDoWith.presentation.task.controller;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.RegisterTodoTaskCommand;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.RegisterTodoTaskResult;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateTodoTaskCommand;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateTodoTaskRoutineConditionCommand;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateTodoTaskRoutineContentCommand;
 import com.LetMeDoWith.LetMeDoWith.application.task.service.RegisterTodoTaskService;
 import com.LetMeDoWith.LetMeDoWith.application.task.service.UpdateTodoTaskService;
@@ -55,20 +56,18 @@ public class TodoTaskController {
         
         RegisterTodoTaskResult result;
         
-        RegisterTodoTaskCommand command = RegisterTodoTaskCommand.of(
-            request.taskCategoryId(),
-            request.title(),
-            request.date(),
-            request.startTime(),
-            request.routineCondition().orElse(null)
-        );
+        RegisterTodoTaskCommand command =
+            RegisterTodoTaskCommand.of(
+                request.taskCategoryId(),
+                request.title(),
+                request.date(),
+                request.startTime(),
+                request.routineCondition().orElse(null));
         
         if (request.routineCondition().isPresent()) {
-            result =
-                registerTodoTaskService.registerTodoTaskWithRoutine(memberId, command);
+            result = registerTodoTaskService.registerTodoTaskWithRoutine(memberId, command);
         } else {
-            result =
-                registerTodoTaskService.registerTodoTask(memberId, command);
+            result = registerTodoTaskService.registerTodoTask(memberId, command);
         }
         
         // 생성은 성공 여부만 반환, 이후 데이터는 조회 API에서 확인
@@ -76,25 +75,25 @@ public class TodoTaskController {
     }
     
     @PutMapping("/{todoTaskId}")
-    public ResponseEntity updateSingleTodoTask(@PathVariable Long todoTaskId,
-                                               @RequestBody UpdateTodoTaskReqDto request) {
+    public ResponseEntity updateSingleTodoTask(
+        @PathVariable Long todoTaskId, @RequestBody UpdateTodoTaskReqDto request) {
         String memberId = AuthUtil.getMemberId();
         
-        updateTodoTaskService.updateSingleTodoTask(memberId,
-                                                   todoTaskId,
-                                                   UpdateTodoTaskCommand.of(
-                                                       request.title(),
-                                                       request.startTime(),
-                                                       request.taskCategoryId(),
-                                                       request.routineCondition()
-                                                   ));
+        updateTodoTaskService.updateSingleTodoTask(
+            memberId,
+            todoTaskId,
+            UpdateTodoTaskCommand.of(
+                request.title(),
+                request.startTime(),
+                request.taskCategoryId(),
+                request.routineCondition()));
         
         return ResponseUtil.createSuccessResponse();
     }
     
     @PutMapping("/{todoTaskId}/routine/content")
-    public ResponseEntity updateTodoTaskRoutineContent(@PathVariable Long todoTaskId,
-                                                       @RequestBody UpdateTodoTaskRoutineContentReqDto request) {
+    public ResponseEntity updateTodoTaskRoutineContent(
+        @PathVariable Long todoTaskId, @RequestBody UpdateTodoTaskRoutineContentReqDto request) {
         String memberId = AuthUtil.getMemberId();
         
         UpdateTodoTaskRoutineContentCommand command =
@@ -102,20 +101,28 @@ public class TodoTaskController {
                 request.title(),
                 request.startTime(),
                 request.taskCategoryId(),
-                request.isApplyToAll()
-            );
+                request.isApplyToAll());
         
-        updateTodoTaskService.updateTodoTaskRoutineContent(memberId,
-                                                           todoTaskId,
-                                                           command);
+        updateTodoTaskService.updateTodoTaskRoutineContent(memberId, todoTaskId, command);
         
         return ResponseUtil.createSuccessResponse();
     }
     
     @PutMapping("/{todoTaskId}/routine/condition")
-    public ResponseEntity updateTodoTaskRoutineCondition(@PathVariable Long todoTaskId,
-                                                         @RequestBody UpdateTodoTaskRoutineConditionReqDto request) {
+    public ResponseEntity updateTodoTaskRoutineCondition(
+        @PathVariable Long todoTaskId, @RequestBody UpdateTodoTaskRoutineConditionReqDto request) {
         String memberId = AuthUtil.getMemberId();
+        
+        UpdateTodoTaskRoutineConditionCommand command =
+            UpdateTodoTaskRoutineConditionCommand.of(
+                request.startDate(),
+                request.endDate(),
+                request.cycle(),
+                request.pattern(),
+                request.isExcludeHolidays()
+            );
+        
+        updateTodoTaskService.updateTodoTaskRoutineCondition(memberId, todoTaskId, command);
         
         return ResponseUtil.createSuccessResponse();
     }
