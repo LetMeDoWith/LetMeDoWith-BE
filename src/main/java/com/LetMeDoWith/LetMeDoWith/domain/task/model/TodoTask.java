@@ -131,7 +131,6 @@ public class TodoTask extends BaseAuditEntity {
      * @param memberId       회원 ID
      * @param taskCategoryId 작업 카테고리 ID
      * @param title          제목
-     * @param date           날짜
      * @param startTime      시작 시간
      * @param routineDates   루틴 날짜 세트
      * @return 생성된 TodoTask 리스트
@@ -140,7 +139,6 @@ public class TodoTask extends BaseAuditEntity {
         String memberId,
         Long taskCategoryId,
         String title,
-        LocalDate date,
         LocalTime startTime,
         Set<LocalDate> routineDates,
         TodoTaskRoutineCycle cycle,
@@ -149,10 +147,11 @@ public class TodoTask extends BaseAuditEntity {
         
         List<TodoTask> result = new ArrayList<>();
         Set<LocalDate> targetDateSet = new TreeSet<>(routineDates);
-        targetDateSet.add(date);
         
-        TodoTaskRoutine routine =
-            TodoTaskRoutine.of(targetDateSet, cycle, pattern, isExcludeHolidays);
+        TodoTaskRoutine routine = TodoTaskRoutine.of(targetDateSet,
+                                                     cycle,
+                                                     pattern,
+                                                     isExcludeHolidays);
         targetDateSet.stream()
                      .sorted()
                      .toList()
@@ -181,10 +180,11 @@ public class TodoTask extends BaseAuditEntity {
      * @param routineDates 루틴 날짜 세트
      * @return 생성된 TodoTask 리스트
      */
-    public List<TodoTask> createRoutine(Set<LocalDate> routineDates,
-                                        TodoTaskRoutineCycle cycle,
-                                        Set<Integer> pattern,
-                                        boolean isExcludeHolidays) {
+    public List<TodoTask> createRoutine(
+        Set<LocalDate> routineDates,
+        TodoTaskRoutineCycle cycle,
+        Set<Integer> pattern,
+        boolean isExcludeHolidays) {
         TodoTaskRoutine routine = TodoTaskRoutine.of(routineDates,
                                                      cycle,
                                                      pattern,
@@ -220,8 +220,7 @@ public class TodoTask extends BaseAuditEntity {
     }
     
     /**
-     * 내용 수정 가능 여부 확인
-     * 현재 비즈니스 요구사항에 의해 TodoTask는 조건 없이 수정 가능.
+     * 내용 수정 가능 여부 확인 현재 비즈니스 요구사항에 의해 TodoTask는 조건 없이 수정 가능.
      *
      * @return 내용 수정 가능 여부
      */
@@ -333,13 +332,13 @@ public class TodoTask extends BaseAuditEntity {
     
     /** 유효성 검사 */
     private void validate() {
-//        if (LocalDate.now().isEqual(this.date) && LocalTime.now().isAfter(this.startTime)) {
-//            throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
-//        }
-//
-//        if (date.isBefore(LocalDate.now())) {
-//            throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
-//        }
+        //        if (LocalDate.now().isEqual(this.date) && LocalTime.now().isAfter(this.startTime)) {
+        //            throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
+        //        }
+        //
+        //        if (date.isBefore(LocalDate.now())) {
+        //            throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
+        //        }
         
         if (this.title == null || this.title.isBlank()) {
             throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
@@ -368,8 +367,7 @@ public class TodoTask extends BaseAuditEntity {
             return false;
         }
         TodoTask todoTask = (TodoTask) o;
-        return Objects.equals(id, todoTask.id) && Objects.equals(memberId,
-                                                                 todoTask.memberId);
+        return Objects.equals(id, todoTask.id) && Objects.equals(memberId, todoTask.memberId);
     }
     
     @Override

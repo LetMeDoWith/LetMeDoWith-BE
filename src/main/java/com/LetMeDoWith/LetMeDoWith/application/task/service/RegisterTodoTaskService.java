@@ -69,9 +69,10 @@ public class RegisterTodoTaskService {
                 .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
         }
         
-        TodoTaskRoutineCondition routineCondition = command.routineCondition()
-                                                           .orElseThrow(() -> new RestApiException(
-                                                               FailResponseStatus.INVALID_REQUEST));
+        TodoTaskRoutineCondition routineCondition =
+            command
+                .routineCondition()
+                .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
         
         // 루틴 반복 주기에 따른 루틴 수행일자 계산
         Set<LocalDate> routineDates =
@@ -84,23 +85,22 @@ public class RegisterTodoTaskService {
         if (Boolean.TRUE.equals(routineCondition.isExcludeHolidays())) {
             // 공휴일 목록 조회
             Set<LocalDate> holidays =
-                holidayService.getHolidays(CountryCode.KR,
-                                           routineCondition.startDate(),
-                                           routineCondition.endDate());
+                holidayService.getHolidays(
+                    CountryCode.KR, routineCondition.startDate(), routineCondition.endDate());
             
             routineDates.removeAll(holidays);
         }
         
-        List<TodoTask> todoTasks = TodoTask.ofWithRoutine(
-            memberId,
-            command.taskCategoryId(),
-            command.title(),
-            command.date(),
-            command.startTime(),
-            routineDates,
-            routineCondition.cycle(),
-            routineCondition.pattern(),
-            routineCondition.isExcludeHolidays());
+        List<TodoTask> todoTasks =
+            TodoTask.ofWithRoutine(
+                memberId,
+                command.taskCategoryId(),
+                command.title(),
+                command.startTime(),
+                routineDates,
+                routineCondition.cycle(),
+                routineCondition.pattern(),
+                routineCondition.isExcludeHolidays());
         
         return RegisterTodoTaskResult.of(todoTaskRepository.saveTodoTasks(todoTasks), routineDates);
     }
