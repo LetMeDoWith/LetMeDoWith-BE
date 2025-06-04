@@ -74,6 +74,15 @@ public class TodoTaskController {
         return ResponseUtil.createSuccessResponse();
     }
     
+    @Operation(
+        summary = "단일 투두모드 태스크 수정",
+        description = "투두모드 태스크를 수정합니다. 컨텐츠를 수정하거나, 루틴으로 변환할 수 있습니다."
+    )
+    @ApiSuccessResponse(
+        description = "투두모드 Task 수정 성공. 본 API는 생성 성공 여부만 반환합니다. 이후 데이터는 조회 API에서 확인할 수 있습니다.")
+    @ApiErrorResponses({
+        @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청입니다."),
+    })
     @PutMapping("/{todoTaskId}")
     public ResponseEntity updateSingleTodoTask(
         @PathVariable Long todoTaskId, @RequestBody UpdateTodoTaskReqDto request) {
@@ -91,6 +100,15 @@ public class TodoTaskController {
         return ResponseUtil.createSuccessResponse();
     }
     
+    @Operation(
+        summary = "투두모드 루틴 -  할 일 수정하기",
+        description = "투두모드 루틴을 수정합니다. 할 일을 수정합니다."
+    )
+    @ApiSuccessResponse(
+        description = "투두모드 루틴 수정 성공. 본 API는 생성 성공 여부만 반환합니다. 이후 데이터는 조회 API에서 확인할 수 있습니다.")
+    @ApiErrorResponses({
+        @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청입니다."),
+    })
     @PutMapping("/{todoTaskId}/routine/content")
     public ResponseEntity updateTodoTaskRoutineContent(
         @PathVariable Long todoTaskId, @RequestBody UpdateTodoTaskRoutineContentReqDto request) {
@@ -108,6 +126,15 @@ public class TodoTaskController {
         return ResponseUtil.createSuccessResponse();
     }
     
+    @Operation(
+        summary = "투두모드 루틴 -  루틴 수정하기",
+        description = "투두모드 루틴을 수정합니다. 루틴 조건을 수정합니다."
+    )
+    @ApiSuccessResponse(
+        description = "투두모드 루틴 수정 성공. 본 API는 생성 성공 여부만 반환합니다. 이후 데이터는 조회 API에서 확인할 수 있습니다.")
+    @ApiErrorResponses({
+        @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청입니다."),
+    })
     @PutMapping("/{todoTaskId}/routine/condition")
     public ResponseEntity updateTodoTaskRoutineCondition(
         @PathVariable Long todoTaskId, @RequestBody UpdateTodoTaskRoutineConditionReqDto request) {
