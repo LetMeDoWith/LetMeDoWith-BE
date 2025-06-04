@@ -247,13 +247,14 @@ public class TodoTask extends BaseAuditEntity {
      *
      * @return 수정 가능한 루틴 날짜 세트
      */
-    public Set<LocalDate> getUpdateAvailRoutineDates() {
+    public Set<LocalDate> getRoutineDateFromThis() {
         if (isRoutine()) {
-            return this.routine.getDatesAfterAndEqual(LocalDate.now());
+            return this.routine.getDatesAfterAndEqual(this.date);
         } else {
             return Set.of();
         }
     }
+    
     
     /**
      * 루틴 ID 조회

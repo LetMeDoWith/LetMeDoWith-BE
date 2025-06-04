@@ -11,6 +11,7 @@ import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.CountryCode;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskCategory;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TodoTask;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.TodoTaskRoutine;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TaskCategoryRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TodoTaskRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TodoTaskRoutineRepository;
@@ -129,7 +130,7 @@ public class UpdateTodoTaskService {
                 splitter.splitTodoTaskRoutine(todoTasksInRoutine, todoTask, todoTask.getRoutine());
             
             splitResult
-                .getFutureTodoTasks()
+                .getNewTodoTasks()
                 .forEach(
                     task -> {
                         task.updateContent(
@@ -163,40 +164,46 @@ public class UpdateTodoTaskService {
         if (!todoTask.isRoutine()) {
             throw new RestApiException(INVALID_REQUEST);
         }
+        TodoTaskRoutine originalRoutine = todoTask.getRoutine();
+        List<TodoTask> todoTasksInRoutine = todoTaskRepository.getTodoTasks(originalRoutine);
         
-        List<TodoTask> todoTasksInRoutine = todoTaskRepository.getTodoTasks(todoTask.getRoutine());
-        
-        // 루틴 분리함
+        // 루틴 분할
         TodoTaskRoutineSplitResult splitResult =
-            splitter.splitTodoTaskRoutine(todoTasksInRoutine, todoTask, todoTask.getRoutine());
-        
-        // 기존의 미래 루틴과 날짜 전부 삭제
-        todoTaskRepository.deleteTodoTasks(splitResult.getFutureTodoTasks());
-        todoTaskRoutineRepository.delete(splitResult.getNewRoutine());
+            splitter.splitTodoTaskRoutine(todoTasksInRoutine, todoTask, originalRoutine);
         
         // 입력받은 TodoTask를 시작으로 루틴 일자 다시 계산해서 루틴 재생성
-        Set<LocalDate> routineDates =
+        Set<LocalDate> newRoutineDates =
             routineDateCalculator.computeRoutineDates(
                 command.cycle(), command.startDate(), command.endDate(), command.pattern());
+        
+        // 루틴의 조건을 재 설정해도, 수정 요청한 Task는 포함.
+        newRoutineDates.add(todoTask.getDate());
         
         if (Boolean.TRUE.equals(command.isExcludeHolidays())) {
             Set<LocalDate> holidays =
                 holidayService.getHolidays(CountryCode.KR, command.startDate(), command.endDate());
             
-            routineDates.removeAll(holidays);
+            newRoutineDates.removeAll(holidays);
         }
         
-        List<TodoTask> todoTasks =
-            TodoTask.ofWithRoutine(
-                memberId,
-                todoTask.getTaskCategoryId(),
-                todoTask.getTitle(),
-                todoTask.getStartTime(),
-                routineDates,
-                command.cycle(),
-                command.pattern(),
-                command.isExcludeHolidays());
+        // 기존 루틴에서 새롭게 계산된 루틴 일자와 겹치지 않는 날짜들은 삭제되어야 한다.
+        Set<LocalDate> originalRoutineDatesFromThisTask = todoTask.getRoutineDateFromThis();
+        originalRoutineDatesFromThisTask.removeAll(newRoutineDates);
         
-        todoTaskRepository.saveTodoTasks(todoTasks);
+        List<TodoTask> todoTasksToDelete =
+            todoTasksInRoutine
+                .stream()
+                .filter(
+                    task -> originalRoutineDatesFromThisTask.contains(task.getDate())
+                ).toList();
+        
+        todoTaskRepository.deleteTodoTasks(todoTasksToDelete);
+        
+        // 분할된 루틴의 조건 업데이트
+        splitResult.getNewRoutine().update(
+            newRoutineDates,
+            command.cycle(),
+            command.pattern(),
+            command.isExcludeHolidays());
     }
 }
