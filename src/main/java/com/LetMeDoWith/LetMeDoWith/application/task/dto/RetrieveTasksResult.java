@@ -6,6 +6,7 @@ import lombok.Builder;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -51,13 +52,7 @@ public record RetrieveTasksResult(List<TodoTaskDto> todoTasks, List<DowithTaskDt
                                     first.feedBackCount());
                         })
                         .sorted(
-                                (o1, o2) -> {
-                                    int dateComparison = o1.date().compareTo(o2.date());
-                                    if (dateComparison != 0) {
-                                        return dateComparison;
-                                    }
-                                    return o1.startTime().compareTo(o2.startTime());
-                                })
+                                Comparator.comparing(DowithTaskDto::date).thenComparing(DowithTaskDto::startTime))
                         .toList();
 
         return new RetrieveTasksResult(todoTasks, dowithTaskDtos);
