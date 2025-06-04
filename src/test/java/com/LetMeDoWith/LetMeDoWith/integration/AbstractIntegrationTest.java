@@ -10,6 +10,11 @@ import com.LetMeDoWith.LetMeDoWith.domain.auth.model.AccessToken;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.member.persistence.jpaRepository.MemberJpaRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.nio.charset.StandardCharsets;
+import java.time.Clock;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
@@ -25,12 +30,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.util.LinkedMultiValueMap;
 
-import java.nio.charset.StandardCharsets;
-import java.time.Clock;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-
 @Slf4j
 @SpringBootTest
 @ActiveProfiles("test")
@@ -38,14 +37,10 @@ import java.time.ZoneOffset;
 public abstract class AbstractIntegrationTest {
 
     protected Member requestMember;
-    @Autowired
-    ObjectMapper objectMapper;
-    @Autowired
-    MockMvc mockMvc;
-    @Autowired
-    MemberJpaRepository memberJpaRepository;
-    @Autowired
-    AccessTokenProvider accessTokenProvider;
+    @Autowired ObjectMapper objectMapper;
+    @Autowired MockMvc mockMvc;
+    @Autowired MemberJpaRepository memberJpaRepository;
+    @Autowired AccessTokenProvider accessTokenProvider;
     private AccessToken requestMemberAccessToken;
 
     @BeforeEach
@@ -79,9 +74,7 @@ public abstract class AbstractIntegrationTest {
         }
     }
 
-    /**
-     * 해당 Abstract Class 상속 받은 테스트는 모든 Test 메서드 시작전에 request Member 세팅
-     */
+    /** 해당 Abstract Class 상속 받은 테스트는 모든 Test 메서드 시작전에 request Member 세팅 */
     private void createMemberTestData() {
         requestMember =
                 memberJpaRepository.save(
@@ -97,14 +90,10 @@ public abstract class AbstractIntegrationTest {
         requestMemberAccessToken = accessTokenProvider.createAccessToken(requestMember.getId());
     }
 
-    /**
-     * 이전 Test의 test data 삭제 - abstract method
-     */
+    /** 이전 Test의 test data 삭제 - abstract method */
     protected abstract void deleteTestData();
 
-    /**
-     * Test Data 생성 - abstract method
-     */
+    /** Test Data 생성 - abstract method */
     protected abstract void createTestData();
 
     /**

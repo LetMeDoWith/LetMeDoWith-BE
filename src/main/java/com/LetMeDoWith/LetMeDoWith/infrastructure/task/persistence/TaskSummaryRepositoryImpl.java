@@ -3,10 +3,9 @@ package com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskSummary;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TaskSummaryRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.TaskSummaryJpaRepository;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-
-import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor

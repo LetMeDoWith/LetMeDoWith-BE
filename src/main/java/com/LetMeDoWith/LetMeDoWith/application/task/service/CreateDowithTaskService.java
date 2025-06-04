@@ -1,5 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.application.task.service;
 
+import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.*;
+
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.CreateDowithTaskCommand;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.CreateDowithTaskWithRoutineCommand;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
@@ -10,15 +12,12 @@ import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TaskCategoryRepository
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TaskSummaryRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.service.DowithTaskRegisterAvailChecker;
 import com.LetMeDoWith.LetMeDoWith.domain.task.service.DowithTaskRegisterAvailChecker.RegisterAvailResult;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
-
-import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.*;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -47,12 +46,16 @@ public class CreateDowithTaskService {
                     .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
         }
 
-        TaskSummary taskSummary = taskSummaryRepository.getTaskSummary(memberId)
-                .orElseThrow(() -> new RestApiException(INTERNAL_SERVER_ERROR));
+        TaskSummary taskSummary =
+                taskSummaryRepository
+                        .getTaskSummary(memberId)
+                        .orElseThrow(() -> new RestApiException(INTERNAL_SERVER_ERROR));
 
         RegisterAvailResult registerAvailResult =
                 dowithTaskRegisterAvailChecker.isRegisterAvail(
-                        targetDateSet, dowithTaskRepository.getDowithTasks(memberId, targetDateSet), taskSummary);
+                        targetDateSet,
+                        dowithTaskRepository.getDowithTasks(memberId, targetDateSet),
+                        taskSummary);
 
         if (!registerAvailResult.isAvail()) {
             throw new RestApiException(DOWITH_TASK_CREATE_COUNT_EXCEED);
@@ -82,12 +85,16 @@ public class CreateDowithTaskService {
 
         Set<LocalDate> targetDateSet = command.getTargetDateSet();
 
-        TaskSummary taskSummary = taskSummaryRepository.getTaskSummary(memberId)
-                .orElseThrow(() -> new RestApiException(INTERNAL_SERVER_ERROR));
+        TaskSummary taskSummary =
+                taskSummaryRepository
+                        .getTaskSummary(memberId)
+                        .orElseThrow(() -> new RestApiException(INTERNAL_SERVER_ERROR));
 
         RegisterAvailResult registerAvailResult =
                 dowithTaskRegisterAvailChecker.isRegisterAvail(
-                        targetDateSet, dowithTaskRepository.getDowithTasks(memberId, targetDateSet), taskSummary);
+                        targetDateSet,
+                        dowithTaskRepository.getDowithTasks(memberId, targetDateSet),
+                        taskSummary);
 
         if (command.taskCategoryId() != null) {
             taskCategoryRepository

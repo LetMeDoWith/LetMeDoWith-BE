@@ -3,7 +3,6 @@ package com.LetMeDoWith.LetMeDoWith.domain.task.service;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.DomainService;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskSummary;
-
 import java.time.LocalDate;
 import java.util.*;
 
@@ -34,6 +33,5 @@ public class DowithTaskRegisterAvailChecker {
         return new RegisterAvailResult(isAvail, notAvailDates);
     }
 
-    public record RegisterAvailResult(boolean isAvail, List<LocalDate> notAvailDates) {
-    }
+    public record RegisterAvailResult(boolean isAvail, List<LocalDate> notAvailDates) {}
 }
