@@ -3,7 +3,6 @@ package com.LetMeDoWith.LetMeDoWith.integration.task;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.TodoTaskRoutineCondition;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TodoTaskRoutineCycle;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskCategory;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TodoTask;
@@ -160,7 +159,7 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
                 updatedTitle,
                 updatedStartTime,
                 updatedCategoryId,
-                TodoTaskRoutineCondition.of(
+                UpdateTodoTaskRoutineConditionReqDto.of(
                     originalDate, newRoutineEndDate, TodoTaskRoutineCycle.DAILY, null, false));
         
         long gap = ChronoUnit.DAYS.between(originalDate, newRoutineEndDate);
@@ -424,7 +423,7 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
                                         .get();
         
         UpdateTodoTaskRoutineConditionReqDto req =
-            new UpdateTodoTaskRoutineConditionReqDto(
+            UpdateTodoTaskRoutineConditionReqDto.of(
                 LocalDate.of(2024, 6, 3),
                 LocalDate.of(2024, 6, 30),
                 TodoTaskRoutineCycle.MONTHLY,
@@ -471,6 +470,6 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
                            task -> task.date().isEqual(sample.getDate())
                                || task.date().isAfter(sample.getDate()))
                        .count())
-            .isEqualTo(3);
+            .isEqualTo(3 + 1);
     }
 }

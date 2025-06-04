@@ -2,6 +2,7 @@ package com.LetMeDoWith.LetMeDoWith.presentation.task.controller;
 
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.RegisterTodoTaskCommand;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.RegisterTodoTaskResult;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.TodoTaskRoutineCondition;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateTodoTaskCommand;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateTodoTaskRoutineConditionCommand;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateTodoTaskRoutineContentCommand;
@@ -88,6 +89,18 @@ public class TodoTaskController {
         @PathVariable Long todoTaskId, @RequestBody UpdateTodoTaskReqDto request) {
         String memberId = AuthUtil.getMemberId();
         
+        TodoTaskRoutineCondition routineCondition = null;
+        
+        if (request.routineCondition() != null) {
+            routineCondition =
+                TodoTaskRoutineCondition.of(
+                    request.routineCondition().startDate(),
+                    request.routineCondition().endDate(),
+                    request.routineCondition().cycle(),
+                    request.routineCondition().pattern(),
+                    request.routineCondition().isExcludeHolidays());
+        }
+        
         updateTodoTaskService.updateSingleTodoTask(
             memberId,
             todoTaskId,
@@ -95,7 +108,7 @@ public class TodoTaskController {
                 request.title(),
                 request.startTime(),
                 request.taskCategoryId(),
-                request.routineCondition()));
+                routineCondition));
         
         return ResponseUtil.createSuccessResponse();
     }
