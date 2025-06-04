@@ -6,4 +6,4 @@ COPY ${JAR_FILE} LetMeDoWith.jar
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "LetMeDoWith.jar"]
+ENTRYPOINT ["java", "-jar", "-Duser.timezone=Asia/Seoul", "LetMeDoWith.jar"]
