@@ -63,6 +63,18 @@ public class TodoTaskRoutine extends BaseAuditEntity {
                               .build();
     }
     
+    public TodoTaskRoutine update(
+        Set<LocalDate> dates,
+        TodoTaskRoutineCycle cycle,
+        Set<Integer> pattern,
+        boolean isExcludeHolidays) {
+        this.routineDates = TodoTaskRoutineDates.from(dates);
+        this.cycle = cycle;
+        this.pattern = TodoTaskRoutinePattern.from(pattern);
+        this.isExcludeHolidays = isExcludeHolidays;
+        return this;
+    }
+    
     public void updateRoutineDates(Set<LocalDate> dates) {
         this.routineDates = TodoTaskRoutineDates.from(dates);
     }
