@@ -2,12 +2,10 @@ package com.LetMeDoWith.LetMeDoWith.domain.task.service;
 
 import com.LetMeDoWith.LetMeDoWith.common.annotation.DomainService;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskSummary;
+
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @DomainService
 public class DowithTaskRegisterAvailChecker {
@@ -16,7 +14,7 @@ public class DowithTaskRegisterAvailChecker {
     private static final int FEED_BACK_COUNT_PER_DAY_FOR_NEW_TASK = 3; // 두윗모드 생성 위한 일별 잔소리
 
     public RegisterAvailResult isRegisterAvail(
-            Set<LocalDate> targetDates, List<DowithTask> existingTasks) {
+            Set<LocalDate> targetDates, List<DowithTask> existingTasks, TaskSummary taskSummary) {
 
         Map<LocalDate, List<DowithTask>> dowithTaskMap = new HashMap<>();
         targetDates.forEach(date -> dowithTaskMap.computeIfAbsent(date, key -> new ArrayList<>()));
@@ -36,5 +34,6 @@ public class DowithTaskRegisterAvailChecker {
         return new RegisterAvailResult(isAvail, notAvailDates);
     }
 
-    public record RegisterAvailResult(boolean isAvail, List<LocalDate> notAvailDates) {}
+    public record RegisterAvailResult(boolean isAvail, List<LocalDate> notAvailDates) {
+    }
 }

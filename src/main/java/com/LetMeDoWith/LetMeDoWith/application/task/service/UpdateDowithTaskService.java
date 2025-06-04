@@ -1,27 +1,30 @@
 package com.LetMeDoWith.LetMeDoWith.application.task.service;
 
-import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.DOWITH_TASK_CREATE_COUNT_EXCEED;
-import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.INVALID_REQUEST;
-
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateDowithTaskContentsCommand;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskCategory;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskSummary;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskRoutineRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TaskCategoryRepository;
+import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TaskSummaryRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.service.DowithTaskRegisterAvailChecker;
 import com.LetMeDoWith.LetMeDoWith.domain.task.service.DowithTaskRoutineDateCalculator;
 import com.LetMeDoWith.LetMeDoWith.domain.task.service.DowithTaskRoutineDateCalculator.RoutineDateResult;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Set;
 import java.util.stream.Collectors;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
+import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.DOWITH_TASK_CREATE_COUNT_EXCEED;
+import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.INVALID_REQUEST;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +35,7 @@ public class UpdateDowithTaskService {
 
     private final DowithTaskRepository dowithTaskRepository;
     private final DowithTaskRoutineRepository dowithTaskRoutineRepository;
+    private final TaskSummaryRepository taskSummaryRepository;
 
     private final TaskCategoryRepository taskCategoryRepository;
 
@@ -73,9 +77,11 @@ public class UpdateDowithTaskService {
                         .collect(Collectors.toSet());
 
         // 새 DowithTask 생성 가능 여부 validation
+        TaskSummary taskSummary = taskSummaryRepository.getTaskSummary(memberId)
+                .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
         if (!registerAvailChecker
                 .isRegisterAvail(
-                        toCreateDates, dowithTaskRepository.getDowithTasks(memberId, toCreateDates))
+                        toCreateDates, dowithTaskRepository.getDowithTasks(memberId, toCreateDates), taskSummary)
                 .isAvail()) {
             throw new RestApiException(DOWITH_TASK_CREATE_COUNT_EXCEED);
         }
@@ -174,10 +180,12 @@ public class UpdateDowithTaskService {
 
         // 새 루틴 등록으로, 새 루틴 생성 + 연관 DowithTask 생성
         Set<LocalDate> toCreateRoutineDates = RoutineDatesToModifyResult.getToCreateRoutineDates();
+        TaskSummary taskSummary = taskSummaryRepository.getTaskSummary(memberId)
+                .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
         if (!registerAvailChecker
                 .isRegisterAvail(
                         toCreateRoutineDates,
-                        dowithTaskRepository.getDowithTasks(dowithTask.getMemberId(), toCreateRoutineDates))
+                        dowithTaskRepository.getDowithTasks(dowithTask.getMemberId(), toCreateRoutineDates), taskSummary)
                 .isAvail()) {
             throw new RestApiException(DOWITH_TASK_CREATE_COUNT_EXCEED);
         }
