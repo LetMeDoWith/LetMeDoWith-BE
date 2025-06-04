@@ -1,8 +1,5 @@
 package com.LetMeDoWith.LetMeDoWith.application.task.service;
 
-import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.DOWITH_TASK_CREATE_COUNT_EXCEED;
-import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.INVALID_REQUEST;
-
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateDowithTaskContentsCommand;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
@@ -16,14 +13,17 @@ import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TaskSummaryRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.service.DowithTaskRegisterAvailChecker;
 import com.LetMeDoWith.LetMeDoWith.domain.task.service.DowithTaskRoutineDateCalculator;
 import com.LetMeDoWith.LetMeDoWith.domain.task.service.DowithTaskRoutineDateCalculator.RoutineDateResult;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Set;
 import java.util.stream.Collectors;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
+import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.INVALID_REQUEST;
 
 @Service
 @RequiredArgsConstructor
@@ -80,14 +80,7 @@ public class UpdateDowithTaskService {
                 taskSummaryRepository
                         .getTaskSummary(memberId)
                         .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
-        if (!registerAvailChecker
-                .isRegisterAvail(
-                        toCreateDates,
-                        dowithTaskRepository.getDowithTasks(memberId, toCreateDates),
-                        taskSummary)
-                .isAvail()) {
-            throw new RestApiException(DOWITH_TASK_CREATE_COUNT_EXCEED);
-        }
+        taskSummary.deductRemainedDowithTaskCount(toCreateDates.size());
 
         dowithTaskRepository.saveDowithTasks(dowithTask.createRoutine(routineDates));
 
@@ -187,14 +180,7 @@ public class UpdateDowithTaskService {
                 taskSummaryRepository
                         .getTaskSummary(memberId)
                         .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
-        if (!registerAvailChecker
-                .isRegisterAvail(
-                        toCreateRoutineDates,
-                        dowithTaskRepository.getDowithTasks(dowithTask.getMemberId(), toCreateRoutineDates),
-                        taskSummary)
-                .isAvail()) {
-            throw new RestApiException(DOWITH_TASK_CREATE_COUNT_EXCEED);
-        }
+        taskSummary.deductRemainedDowithTaskCount(toCreateRoutineDates.size());
 
         dowithTask.addRoutine(toCreateRoutineDates, dowithTaskRepository);
 
