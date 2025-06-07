@@ -122,9 +122,6 @@ public class UpdateDowithTaskService {
             }
 
         } else {
-            // 루틴이 없는 DowithTask인 경우에만 TodoTask로 전환 가능
-            // TODO - TodoTask Aggregate Merge 후 개발
-
             if (dowithTask.isContentsEditable()) {
                 dowithTask.updateContents(
                         command.title(), taskCategory.getId(), command.date(), command.startTime());
@@ -150,6 +147,10 @@ public class UpdateDowithTaskService {
                 dowithTaskRepository
                         .getDowithTask(dowithTaskId, memberId)
                         .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
+        final TaskSummary taskSummary =
+                taskSummaryRepository
+                        .getTaskSummary(memberId)
+                        .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
 
         LocalDateTime now = SystemTimeUtil.now();
         LocalDate nowDate = now.toLocalDate();
@@ -170,15 +171,12 @@ public class UpdateDowithTaskService {
         }
 
         // 새 루틴 등록으로, 삭제할 루틴 일자 + 연관 DowithTask 삭제
-        dowithTask.deleteRoutine(
-                RoutineDatesToModifyResult.getToDeleteRoutineDates(), dowithTaskRepository);
+        Set<LocalDate> toDeleteRoutineDates = RoutineDatesToModifyResult.getToDeleteRoutineDates();
+        dowithTask.deleteRoutine(toDeleteRoutineDates, dowithTaskRepository);
+        taskSummary.plusRemainedDowithTaskCount(toDeleteRoutineDates.size());
 
         // 새 루틴 등록으로, 새 루틴 생성 + 연관 DowithTask 생성
         Set<LocalDate> toCreateRoutineDates = RoutineDatesToModifyResult.getToCreateRoutineDates();
-        TaskSummary taskSummary =
-                taskSummaryRepository
-                        .getTaskSummary(memberId)
-                        .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
         taskSummary.deductRemainedDowithTaskCount(toCreateRoutineDates.size());
 
         dowithTask.addRoutine(toCreateRoutineDates, dowithTaskRepository);

@@ -14,12 +14,18 @@ public class TaskSummaryService {
 
     private final TaskSummaryRepository taskSummaryRepository;
 
+    /**
+     * 잔여 DowithTask 개수 조회
+     *
+     * @param memberId
+     * @return
+     */
     @Transactional
     public int getRemainedDowithTaskCount(String memberId) {
         TaskSummary taskSummary =
                 taskSummaryRepository
                         .getTaskSummary(memberId)
-                        .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
+                        .orElseThrow(() -> new RestApiException(FailResponseStatus.INTERNAL_SERVER_ERROR));
         return taskSummary.getRemainedDowithTaskCount();
     }
 
@@ -33,7 +39,7 @@ public class TaskSummaryService {
         TaskSummary taskSummary =
                 taskSummaryRepository
                         .getTaskSummary(memberId)
-                        .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
+                        .orElseThrow(() -> new RestApiException(FailResponseStatus.INTERNAL_SERVER_ERROR));
         taskSummary.rewardAttendance();
     }
 }

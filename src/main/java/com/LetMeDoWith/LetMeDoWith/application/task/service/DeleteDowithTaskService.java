@@ -36,7 +36,7 @@ public class DeleteDowithTaskService {
         TaskSummary taskSummary =
                 taskSummaryRepository
                         .getTaskSummary(memberId)
-                        .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
+                        .orElseThrow(() -> new RestApiException(FailResponseStatus.INTERNAL_SERVER_ERROR));
 
         dowithTask.delete(dowithTaskRepository, dowithTaskRoutineRepository);
         taskSummary.plusRemainedDowithTaskCount(1);
@@ -59,7 +59,7 @@ public class DeleteDowithTaskService {
         TaskSummary taskSummary =
                 taskSummaryRepository
                         .getTaskSummary(memberId)
-                        .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
+                        .orElseThrow(() -> new RestApiException(FailResponseStatus.INTERNAL_SERVER_ERROR));
 
         int deletedDowithTaskCount =
                 dowithTask.deleteWithRoutine(dowithTaskRepository, dowithTaskRoutineRepository);
