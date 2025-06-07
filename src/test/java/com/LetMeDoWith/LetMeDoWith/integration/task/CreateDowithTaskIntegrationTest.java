@@ -1,32 +1,32 @@
 package com.LetMeDoWith.LetMeDoWith.integration.task;
 
-import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.DOWITH_TASK_CREATE_COUNT_EXCEED;
-import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.DOWITH_TASK_NOT_AVAIL_DATE;
-import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.INVALID_REQUEST;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
-import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.DowithTaskJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.integration.AbstractIntegrationTest;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.CreateDowithTaskReqDto;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 public class CreateDowithTaskIntegrationTest extends AbstractIntegrationTest {
 
     static final String CREATE_DOWITH_TASK_URL = "/api/v1/tasks/dowith";
 
-    @Autowired DowithTaskJpaRepository dowithTaskJpaRepository;
+    @Autowired
+    DowithTaskJpaRepository dowithTaskJpaRepository;
 
     @Override
     protected void deleteTestData() {
@@ -34,7 +34,10 @@ public class CreateDowithTaskIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Override
-    protected void createTestData() {}
+    protected void createTestData() {
+        this.taskSummary.plusRemainedDowithTaskCount(5);
+        this.taskSummaryJpaRepository.saveAndFlush(this.taskSummary);
+    }
 
     @Test
     @DisplayName("[SUCCESS] 성공 - 루틴이 없는 경우")
@@ -96,6 +99,7 @@ public class CreateDowithTaskIntegrationTest extends AbstractIntegrationTest {
                                 .content(this.writeRequestBodyAsString(requestBody)));
 
         // then
+        assertThat(this.taskSummaryJpaRepository.findById(this.taskSummary.getId()).get().getRemainedDowithTaskCount()).isEqualTo(2);
         for (int i = 0; i < targetDates.size(); i++) {
             resultActions
                     .andExpect(status().is2xxSuccessful())
@@ -148,6 +152,7 @@ public class CreateDowithTaskIntegrationTest extends AbstractIntegrationTest {
                                 .content(this.writeRequestBodyAsString(requestBody)));
 
         // then
+        assertThat(this.taskSummaryJpaRepository.findById(this.taskSummary.getId()).get().getRemainedDowithTaskCount()).isEqualTo(5);
         resultActions
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$.statusCode").value(INVALID_REQUEST.getStatusCode()))
@@ -155,23 +160,18 @@ public class CreateDowithTaskIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @DisplayName("[FAIL] Task일자에 이미 Task 등록된 경우")
+    @DisplayName("[FAIL] 잔여 개수 초과하여 DowithTask를 생성 시도하는 경우")
     void createDowithTaskWithRoutine_taskCreateCountExceed1() throws Exception {
         // given
         LocalDateTime startDateTime = SystemTimeUtil.now().plusDays(1);
         LocalDate routineDate1 = startDateTime.plusMonths(3).toLocalDate();
         LocalDate routineDate2 = startDateTime.plusDays(2).toLocalDate();
+        LocalDate routineDate3 = startDateTime.plusMonths(4).toLocalDate();
+        LocalDate routineDate4 = startDateTime.plusDays(5).toLocalDate();
+        LocalDate routineDate5 = startDateTime.plusDays(6).toLocalDate();
         List<LocalDate> targetDates =
-                Arrays.asList(startDateTime.toLocalDate(), routineDate1, routineDate2);
+                Arrays.asList(startDateTime.toLocalDate(), routineDate1, routineDate2, routineDate3, routineDate4, routineDate5);
         Collections.sort(targetDates);
-
-        dowithTaskJpaRepository.saveAndFlush(
-                DowithTask.of(
-                        this.requestMember.getId(),
-                        1L,
-                        "이미 있던 Task",
-                        startDateTime.toLocalDate(),
-                        startDateTime.toLocalTime()));
 
         // when
         CreateDowithTaskReqDto requestBody =
@@ -180,52 +180,14 @@ public class CreateDowithTaskIntegrationTest extends AbstractIntegrationTest {
                         null,
                         startDateTime,
                         Boolean.TRUE,
-                        List.of(startDateTime.toLocalDate(), routineDate1, routineDate2));
+                        targetDates);
         ResultActions resultActions =
                 this.request(
                         MockMvcRequestBuilders.post(CREATE_DOWITH_TASK_URL)
                                 .content(this.writeRequestBodyAsString(requestBody)));
 
         // then
-        resultActions
-                .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("$.statusCode").value(DOWITH_TASK_CREATE_COUNT_EXCEED.getStatusCode()))
-                .andDo(System.out::println);
-    }
-
-    @Test
-    @DisplayName("[FAIL] 루틴일자에 이미 Task 등록된 경우")
-    void createDowithTaskWithRoutine_taskCreateCountExceed2() throws Exception {
-        // given
-        LocalDateTime startDateTime = LocalDateTime.now().plusDays(1);
-        LocalDate routineDate1 = startDateTime.plusMonths(3).toLocalDate();
-        LocalDate routineDate2 = startDateTime.plusDays(2).toLocalDate();
-        List<LocalDate> targetDates =
-                Arrays.asList(startDateTime.toLocalDate(), routineDate1, routineDate2);
-        Collections.sort(targetDates);
-
-        // when
-        dowithTaskJpaRepository.saveAndFlush(
-                DowithTask.of(
-                        this.requestMember.getId(),
-                        null,
-                        "이미 있던 Task",
-                        routineDate1,
-                        startDateTime.toLocalTime()));
-
-        CreateDowithTaskReqDto requestBody =
-                new CreateDowithTaskReqDto(
-                        "테스트",
-                        null,
-                        startDateTime,
-                        Boolean.TRUE,
-                        List.of(startDateTime.toLocalDate(), routineDate1, routineDate2));
-        ResultActions resultActions =
-                this.request(
-                        MockMvcRequestBuilders.post(CREATE_DOWITH_TASK_URL)
-                                .content(this.writeRequestBodyAsString(requestBody)));
-
-        // then
+        assertThat(this.taskSummaryJpaRepository.findById(this.taskSummary.getId()).get().getRemainedDowithTaskCount()).isEqualTo(5);
         resultActions
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$.statusCode").value(DOWITH_TASK_CREATE_COUNT_EXCEED.getStatusCode()))
@@ -257,6 +219,7 @@ public class CreateDowithTaskIntegrationTest extends AbstractIntegrationTest {
                                 .content(this.writeRequestBodyAsString(requestBody)));
 
         // then
+        assertThat(this.taskSummaryJpaRepository.findById(this.taskSummary.getId()).get().getRemainedDowithTaskCount()).isEqualTo(5);
         resultActions
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$.statusCode").value(DOWITH_TASK_NOT_AVAIL_DATE.getStatusCode()))
@@ -288,6 +251,7 @@ public class CreateDowithTaskIntegrationTest extends AbstractIntegrationTest {
                                 .content(this.writeRequestBodyAsString(requestBody)));
 
         // then
+        assertThat(this.taskSummaryJpaRepository.findById(this.taskSummary.getId()).get().getRemainedDowithTaskCount()).isEqualTo(5);
         resultActions
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$.statusCode").value(INVALID_REQUEST.getStatusCode()))
