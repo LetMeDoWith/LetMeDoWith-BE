@@ -15,13 +15,16 @@ import com.LetMeDoWith.LetMeDoWith.domain.auth.model.RefreshToken;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
 import com.LetMeDoWith.LetMeDoWith.domain.member.repository.MemberRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.member.service.SocialAuthMemberService;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskSummary;
+import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TaskSummaryRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -31,13 +34,14 @@ public class CreateTokenService {
     private final AccessTokenProvider accessTokenProvider;
     private final SignupTokenProvider signupTokenProvider;
     private final RefreshTokenProvider refreshTokenProvider;
-
-    private final RefreshTokenRepository refreshTokenRepository;
+    private final OidcIdTokenProvider oidcIdTokenProvider;
 
     private final MemberRepository memberRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final TaskSummaryRepository taskSummaryRepository;
+
     private final SocialAuthMemberService socialAuthMemberService;
 
-    private final OidcIdTokenProvider oidcIdTokenProvider;
 
     @Transactional
     public CreateTokenResult createToken(Member member) {
@@ -74,6 +78,8 @@ public class CreateTokenService {
 
         if (optionalMember.isPresent()) {
             Member member = optionalMember.get();
+            TaskSummary taskSummary = TaskSummary.of(member.getId());
+            taskSummaryRepository.save(taskSummary);
             if (member.isNormal()) {
                 return createToken(member);
             } else if (member.isSocialAuthenticated()) {
@@ -88,6 +94,8 @@ public class CreateTokenService {
             Member member =
                     socialAuthMemberService.createSocialAuthenticatedMember(
                             socialProvider, subject, memberRepository);
+            TaskSummary taskSummary = TaskSummary.of(member.getId());
+            taskSummaryRepository.save(taskSummary);
 
             return CreateTokenResult.of(signupTokenProvider.createSignupToken(member.getId()));
         }
