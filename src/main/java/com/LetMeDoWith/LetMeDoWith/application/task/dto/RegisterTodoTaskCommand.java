@@ -20,7 +20,10 @@ public record RegisterTodoTaskCommand(
     @Builder
     @Schema(description = "투두 태스크 루틴 조건 정보")
     public record TodoTaskRoutineCondition(
-            @Schema(description = "루틴 반복 주기 (DAILY: 매일, WEEKLY: 매주, MONTHLY: 매월)", example = "WEEKLY")
+            @Schema(
+                            description = "루틴 반복 주기 (DAILY: 매일, WEEKLY: 매주, MONTHLY: 매월)",
+                            example = "WEEKLY",
+                            implementation = TodoTaskRoutineCycle.class)
                     TodoTaskRoutineCycle cycle,
             @Schema(
                             description = "루틴 패턴 (DAILY: 사용 안함, WEEKLY: 1-7 요일, MONTHLY: 1-31 일자, 99: 마지막일)",
