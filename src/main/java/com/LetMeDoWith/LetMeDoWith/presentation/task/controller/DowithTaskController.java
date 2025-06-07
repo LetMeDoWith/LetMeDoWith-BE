@@ -1,31 +1,25 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.task.controller;
 
+import com.LetMeDoWith.LetMeDoWith.application.task.service.ConfirmDowithTaskService;
 import com.LetMeDoWith.LetMeDoWith.application.task.service.CreateDowithTaskService;
 import com.LetMeDoWith.LetMeDoWith.application.task.service.DeleteDowithTaskService;
 import com.LetMeDoWith.LetMeDoWith.application.task.service.UpdateDowithTaskService;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiErrorResponse;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiErrorResponses;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiSuccessResponse;
+import com.LetMeDoWith.LetMeDoWith.common.dto.ResponseDto;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
-import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.CreateDowithTaskReqDto;
-import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.UpdateDowithTaskReqDto;
-import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.UpdateDowithTaskRoutineReqDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.HashSet;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Dowith Task", description = "두윗모드 테스크")
 @RestController
@@ -36,6 +30,7 @@ public class DowithTaskController {
     private final CreateDowithTaskService createDowithTaskService;
     private final UpdateDowithTaskService updateDowithTaskService;
     private final DeleteDowithTaskService deleteDowithTaskService;
+    private final ConfirmDowithTaskService confirmDowithTaskService;
 
     @Operation(
             summary = "두윗모드 Task 생성",
@@ -134,6 +129,48 @@ public class DowithTaskController {
         } else {
             deleteDowithTaskService.delete(memberId, dowithTaskId);
         }
+
+        return ResponseUtil.createSuccessResponse();
+    }
+
+    @Operation(summary = "두윗모드 Task 인증 이미지 upload presigned url 발급")
+    @ApiSuccessResponse(
+            description =
+                    "요청 시의 imageFileNames 수 만큼 presigned url이 발급됩니다. method를 참고하여 presigned url 하나당 이미지 하나를 http request 하여 업로드합니다.")
+    @ApiErrorResponses({
+        @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")
+    })
+    @PostMapping("/{dowithTaskId}/confirm/image/upload-presigned-url")
+    public ResponseEntity<ResponseDto<GenerateDowithTaskConfirmImageUploadPresignedUrlsResDto>>
+            generateDowithTaskConfirmImageUploadPresignedUrls(
+                    @PathVariable Long dowithTaskId,
+                    @RequestBody GenerateDowithTaskConfirmImageUploadPresignedUrlsReqDto requestBody) {
+
+        String memberId = AuthUtil.getMemberId();
+
+        List<String> presignedUrls =
+                confirmDowithTaskService.generateDowithTaskConfirmImageUploadPresignedUrls(
+                        memberId, dowithTaskId, requestBody.imageFileNames());
+
+        return ResponseUtil.createSuccessResponse(
+                new GenerateDowithTaskConfirmImageUploadPresignedUrlsResDto(presignedUrls, "POST"));
+    }
+
+    @Operation(
+            summary = "두윗모드 Task 인증",
+            description = "Presigned url을 통해서 업로드한 파일의 public url을 body에 담아 요청합니다.")
+    @ApiSuccessResponse(description = "두윗모드 Task 인증 성공")
+    @ApiErrorResponses({
+        @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")
+    })
+    @PostMapping("/{dowithTaskId}/confirm")
+    public ResponseEntity<ResponseDto<Object>> confirmDowithTask(
+            @PathVariable Long dowithTaskId, @RequestBody ConfirmDowithTaskReqDto requestBody) {
+
+        String memberId = AuthUtil.getMemberId();
+
+        confirmDowithTaskService.confirmDowithTask(
+                memberId, dowithTaskId, requestBody.publicImageUrls());
 
         return ResponseUtil.createSuccessResponse();
     }

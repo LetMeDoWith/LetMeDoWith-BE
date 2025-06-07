@@ -39,7 +39,7 @@ public record RetrieveTasksResDto(List<TodoTaskDto> todoTasks, List<DowithTaskDt
                                                 dowithTaskQueryDto.status(),
                                                 dowithTaskQueryDto.date(),
                                                 dowithTaskQueryDto.startTime(),
-                                                dowithTaskQueryDto.confirmedImageUrl(),
+                                                dowithTaskQueryDto.confirmedImageUrls(),
                                                 dowithTaskQueryDto.feedBackCount()))
                         .toList();
 
@@ -66,6 +66,6 @@ public record RetrieveTasksResDto(List<TodoTaskDto> todoTasks, List<DowithTaskDt
             @Schema(description = "일자", defaultValue = "2025-01-30") LocalDate date,
             @Schema(description = "시작시간", defaultValue = "11:30:00") LocalTime startTime,
             @Schema(description = "인증 이미지 URL", defaultValue = "https://example.com/image.jpg")
-                    String confirmedImageUrl,
+                    List<String> confirmedImageUrls,
             @Schema(description = "피드백 개수", defaultValue = "5") int feedBackCount) {}
 }

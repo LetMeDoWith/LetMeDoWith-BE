@@ -22,3 +22,9 @@ auth:
       kakao: d94809e9a1ea2e0a8d51647b585bf68d
       google: google
       apple: apple
+
+cloud:
+  aws:
+    region: ap-northeast-2
+    s3:
+      bucketName: letmedowith-dev

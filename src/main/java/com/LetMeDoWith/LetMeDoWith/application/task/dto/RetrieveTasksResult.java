@@ -4,7 +4,10 @@ import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.dto.DowithTaskQuery
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.dto.TodoTaskQueryDto;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import lombok.Builder;
 
 public record RetrieveTasksResult(List<TodoTaskDto> todoTasks, List<DowithTaskDto> dowithTasks) {
@@ -25,23 +28,35 @@ public record RetrieveTasksResult(List<TodoTaskDto> todoTasks, List<DowithTaskDt
                                                 todoTaskQueryDto.startTime()))
                         .toList();
 
-        List<DowithTaskDto> dowithTasks =
+        List<DowithTaskDto> dowithTaskDtos =
                 dowithTaskQueryDtos.stream()
+                        .collect(Collectors.groupingBy(DowithTaskQueryDto::id))
+                        .values()
+                        .stream()
                         .map(
-                                dowithTaskQueryDto ->
-                                        new DowithTaskDto(
-                                                dowithTaskQueryDto.id(),
-                                                dowithTaskQueryDto.taskCategoryId(),
-                                                dowithTaskQueryDto.taskCategoryName(),
-                                                dowithTaskQueryDto.title(),
-                                                dowithTaskQueryDto.status(),
-                                                dowithTaskQueryDto.date(),
-                                                dowithTaskQueryDto.startTime(),
-                                                dowithTaskQueryDto.confirmedImageUrl(),
-                                                dowithTaskQueryDto.feedBackCount()))
+                                list -> {
+                                    DowithTaskQueryDto first = list.get(0);
+                                    List<String> confirmImageUrls =
+                                            list.stream()
+                                                    .map(DowithTaskQueryDto::confirmedImageUrl)
+                                                    .filter(Objects::nonNull)
+                                                    .toList();
+                                    return new DowithTaskDto(
+                                            first.id(),
+                                            first.taskCategoryId(),
+                                            first.taskCategoryName(),
+                                            first.title(),
+                                            first.status(),
+                                            first.date(),
+                                            first.startTime(),
+                                            confirmImageUrls,
+                                            first.feedBackCount());
+                                })
+                        .sorted(
+                                Comparator.comparing(DowithTaskDto::date).thenComparing(DowithTaskDto::startTime))
                         .toList();
 
-        return new RetrieveTasksResult(todoTasks, dowithTasks);
+        return new RetrieveTasksResult(todoTasks, dowithTaskDtos);
     }
 
     @Builder
@@ -62,6 +77,6 @@ public record RetrieveTasksResult(List<TodoTaskDto> todoTasks, List<DowithTaskDt
             String status,
             LocalDate date,
             LocalTime startTime,
-            String confirmedImageUrl,
+            List<String> confirmedImageUrls,
             int feedBackCount) {}
 }
