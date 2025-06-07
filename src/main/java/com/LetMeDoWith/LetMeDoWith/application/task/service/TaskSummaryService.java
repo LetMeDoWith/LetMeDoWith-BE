@@ -16,8 +16,10 @@ public class TaskSummaryService {
 
     @Transactional
     public int getRemainedDowithTaskCount(String memberId) {
-        TaskSummary taskSummary = taskSummaryRepository.getTaskSummary(memberId)
-                .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
+        TaskSummary taskSummary =
+                taskSummaryRepository
+                        .getTaskSummary(memberId)
+                        .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
         return taskSummary.getRemainedDowithTaskCount();
     }
 
@@ -28,9 +30,10 @@ public class TaskSummaryService {
      */
     @Transactional
     public void rewardAttendance(String memberId) {
-        TaskSummary taskSummary = taskSummaryRepository.getTaskSummary(memberId)
-                .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
+        TaskSummary taskSummary =
+                taskSummaryRepository
+                        .getTaskSummary(memberId)
+                        .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
         taskSummary.rewardAttendance();
     }
-
 }
