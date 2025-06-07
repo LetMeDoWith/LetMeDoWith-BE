@@ -75,7 +75,7 @@ public class TaskSummary extends BaseAuditEntity {
      */
     public void rewardAttendance() {
         if (this.lastAttendanceDate.equals(SystemTimeUtil.now().toLocalDate())) {
-            throw new RestApiException(FailResponseStatus.BAD_REQUEST);
+            throw new RestApiException(FailResponseStatus.DOWITH_TASK_ATTENDACE_REWARD_EXCEED);
         }
         this.lastAttendanceDate = SystemTimeUtil.now().toLocalDate();
         this.plusRemainedDowithTaskCount(1);

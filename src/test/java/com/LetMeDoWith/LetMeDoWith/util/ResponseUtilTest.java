@@ -1,9 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.util;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import com.LetMeDoWith.LetMeDoWith.common.dto.ResponseDto;
-import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.SuccessResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
 import org.junit.jupiter.api.DisplayName;
@@ -12,10 +9,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 class ResponseUtilTest {
 
     public SuccessResponseStatus successResponseStatus = SuccessResponseStatus.OK;
-    public FailResponseStatus failResponseStatus = FailResponseStatus.BAD_REQUEST;
 
     @Test
     @DisplayName("성공응답 테스트 - no parameter")

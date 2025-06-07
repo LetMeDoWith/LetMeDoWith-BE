@@ -33,7 +33,7 @@ public class DeleteDowithTaskService {
                         .getDowithTask(dowithTaskId, memberId)
                         .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
 
-        TaskSummary taskSummary = taskSummaryRepository.getTaskSummary(memberId).orElseThrow(() -> new RestApiException(FailResponseStatus.BAD_REQUEST));
+        TaskSummary taskSummary = taskSummaryRepository.getTaskSummary(memberId).orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
 
         dowithTask.delete(dowithTaskRepository, dowithTaskRoutineRepository);
         taskSummary.plusRemainedDowithTaskCount(1);
@@ -53,7 +53,7 @@ public class DeleteDowithTaskService {
                         .getDowithTask(dowithTaskId, memberId)
                         .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
 
-        TaskSummary taskSummary = taskSummaryRepository.getTaskSummary(memberId).orElseThrow(() -> new RestApiException(FailResponseStatus.BAD_REQUEST));
+        TaskSummary taskSummary = taskSummaryRepository.getTaskSummary(memberId).orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
 
         int deletedDowithTaskCount = dowithTask.deleteWithRoutine(dowithTaskRepository, dowithTaskRoutineRepository);
         taskSummary.plusRemainedDowithTaskCount(deletedDowithTaskCount);

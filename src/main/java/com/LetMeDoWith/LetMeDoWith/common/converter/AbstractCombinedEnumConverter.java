@@ -8,8 +8,9 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import jakarta.persistence.AttributeConverter;
-import java.io.IOException;
 import org.springframework.core.convert.converter.Converter;
+
+import java.io.IOException;
 
 /**
  * Enum에 대해 HTTP 요청, DB의 입출력 요청을 변환하는 클래스 이 클래스를 상속하는 것 만으로 아래의 3개를 모두 구현한다
@@ -34,7 +35,7 @@ public abstract class AbstractCombinedEnumConverter<T extends BaseEnum> extends 
         try {
             return EnumUtil.getEnum(targetClass, source);
         } catch (Exception e) {
-            throw new RestApiException(FailResponseStatus.BAD_REQUEST);
+            throw new RestApiException(FailResponseStatus.INVALID_PARAM_ERROR);
         }
     }
 

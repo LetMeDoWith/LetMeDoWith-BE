@@ -10,9 +10,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class TaskRewardService {
+public class TaskSummaryService {
 
     private final TaskSummaryRepository taskSummaryRepository;
+
+    @Transactional
+    public int getRemainedDowithTaskCount(String memberId) {
+        TaskSummary taskSummary = taskSummaryRepository.getTaskSummary(memberId)
+                .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
+        return taskSummary.getRemainedDowithTaskCount();
+    }
 
     /**
      * 출석 체크 보상 지급
@@ -22,7 +29,8 @@ public class TaskRewardService {
     @Transactional
     public void rewardAttendance(String memberId) {
         TaskSummary taskSummary = taskSummaryRepository.getTaskSummary(memberId)
-                .orElseThrow(() -> new RestApiException(FailResponseStatus.BAD_REQUEST));
+                .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
         taskSummary.rewardAttendance();
     }
+
 }

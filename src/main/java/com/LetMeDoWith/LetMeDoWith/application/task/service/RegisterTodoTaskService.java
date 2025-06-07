@@ -10,11 +10,12 @@ import com.LetMeDoWith.LetMeDoWith.domain.task.model.TodoTask;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TaskCategoryRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TodoTaskRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.service.TodoTaskRoutineDateCalculator;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +30,7 @@ public class RegisterTodoTaskService {
      * 루틴이 아닌 TodoTask를 생성한다.
      *
      * @param memberId TodoTask를 생성할 사용자의 ID
-     * @param command 생성할 TodoTask의 정보 (카테고리 ID, 제목, 시작일, 시작시간, 루틴여부)
+     * @param command  생성할 TodoTask의 정보 (카테고리 ID, 제목, 시작일, 시작시간, 루틴여부)
      * @return 생성된 TodoTask
      */
     public RegisterTodoTaskResult createTodoTask(String memberId, RegisterTodoTaskCommand command) {
@@ -37,7 +38,7 @@ public class RegisterTodoTaskService {
             taskCategoryRepository
                     .getActiveTaskCategory(command.taskCategoryId(), memberId)
                     .orElseThrow(
-                            () -> new RestApiException(FailResponseStatus.DOWITH_TASK_TASK_CATEGORY_NOT_EXIST));
+                            () -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
         }
 
         TodoTask todoTask =
@@ -55,7 +56,7 @@ public class RegisterTodoTaskService {
      * TodoTask 루틴을 생성한다.
      *
      * @param memberId TodoTask를 생성할 사용자의 ID
-     * @param command 생성할 TodoTask의 정보 (카테고리 ID, 제목, 시작일, 종료일, 시작시간, 루틴여부, 루틴 반복 주기, 루틴 반복 패턴)
+     * @param command  생성할 TodoTask의 정보 (카테고리 ID, 제목, 시작일, 종료일, 시작시간, 루틴여부, 루틴 반복 주기, 루틴 반복 패턴)
      * @return 생성된 루틴의 TodoTask 목록
      */
     public RegisterTodoTaskResult createTodoTaskWithRoutine(
