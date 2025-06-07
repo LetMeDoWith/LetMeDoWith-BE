@@ -4,7 +4,6 @@ import com.LetMeDoWith.LetMeDoWith.application.auth.provider.AccessTokenProvider
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.Gender;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
-import com.LetMeDoWith.LetMeDoWith.common.enums.task.TaskCompleteLevel;
 import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.auth.model.AccessToken;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
@@ -92,7 +91,6 @@ public abstract class AbstractIntegrationTest {
                 memberJpaRepository.save(
                         Member.builder()
                                 .status(MemberStatus.NORMAL)
-                                .taskCompleteLevel(TaskCompleteLevel.AVERAGE)
                                 .nickname("test")
                                 .selfDescription("test description")
                                 .gender(Gender.MALE)

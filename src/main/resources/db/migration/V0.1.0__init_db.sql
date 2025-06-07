@@ -81,20 +81,19 @@ CREATE TABLE holiday
 
 CREATE TABLE member
 (
-    id                  VARCHAR(26)  NOT NULL,
-    create_at           datetime     NULL,
-    updated_at          datetime     NULL,
-    created_by          VARCHAR(255) NULL,
-    updated_by          VARCHAR(255) NULL,
-    subject             VARCHAR(255) NULL,
-    status              VARCHAR(255) NOT NULL,
-    task_complete_level VARCHAR(255) NULL,
-    nickname            VARCHAR(255) NULL,
-    self_description    VARCHAR(255) NULL,
-    gender              VARCHAR(2)   NULL,
-    date_of_birth       date         NULL,
-    type                VARCHAR(255) NOT NULL,
-    profile_image_url   VARCHAR(255) NULL,
+    id                VARCHAR(26)  NOT NULL,
+    create_at         datetime     NULL,
+    updated_at        datetime     NULL,
+    created_by        VARCHAR(255) NULL,
+    updated_by        VARCHAR(255) NULL,
+    subject           VARCHAR(255) NULL,
+    status            VARCHAR(255) NOT NULL,
+    nickname          VARCHAR(255) NULL,
+    self_description  VARCHAR(255) NULL,
+    gender            VARCHAR(2)   NULL,
+    date_of_birth     date         NULL,
+    type              VARCHAR(255) NOT NULL,
+    profile_image_url VARCHAR(255) NULL,
     CONSTRAINT pk_member PRIMARY KEY (id)
 );
 

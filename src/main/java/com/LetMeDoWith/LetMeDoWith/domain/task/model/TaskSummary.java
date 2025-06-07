@@ -6,9 +6,10 @@ import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import jakarta.persistence.*;
+import lombok.*;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import lombok.*;
 
 @Entity
 @Getter
@@ -69,12 +70,25 @@ public class TaskSummary extends BaseAuditEntity {
         this.remainedDowithTaskCountUpdatedAt = SystemTimeUtil.now();
     }
 
-    /** 출석 보상 지급 - 출석 보상은 하루에 한 번만 지급 가능 - 출석 보상 지급 시, 오늘 날짜로 출석 날짜를 갱신하고, 남은 DowithTask 수 +1 */
+    /**
+     * 출석 보상 지급
+     * 출석 보상은 하루에 한 번만 지급 가능
+     * 출석 보상 지급 시, 오늘 날짜로 출석 날짜를 갱신하고, 남은 DowithTask 수 +1
+     */
     public void rewardAttendance() {
         if (this.lastAttendanceDate.equals(SystemTimeUtil.now().toLocalDate())) {
             throw new RestApiException(FailResponseStatus.DOWITH_TASK_ATTENDACE_REWARD_EXCEED);
         }
         this.lastAttendanceDate = SystemTimeUtil.now().toLocalDate();
         this.plusRemainedDowithTaskCount(1);
+    }
+
+    /**
+     * Lazy 뱃지 획득 레벨인지 확인
+     *
+     * @return
+     */
+    public boolean isLazyBadgeAcquireLevel() {
+        return TaskCompleteLevel.BAD.equals(this.taskCompleteLevel);
     }
 }
