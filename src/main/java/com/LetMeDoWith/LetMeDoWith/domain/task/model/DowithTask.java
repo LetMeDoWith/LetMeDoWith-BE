@@ -1,7 +1,5 @@
 package com.LetMeDoWith.LetMeDoWith.domain.task.model;
 
-import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.INVALID_REQUEST;
-
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
@@ -10,13 +8,16 @@ import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskRoutineRepository;
 import jakarta.persistence.*;
+import lombok.*;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import lombok.*;
+
+import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.INVALID_REQUEST;
 
 @Entity
 @Getter
@@ -473,7 +474,7 @@ public class DowithTask extends BaseAuditEntity {
      * @param dowithTaskRepository
      * @param dowithTaskRoutineRepository
      */
-    public void deleteWithRoutine(
+    public int deleteWithRoutine(
             DowithTaskRepository dowithTaskRepository,
             DowithTaskRoutineRepository dowithTaskRoutineRepository) {
 
@@ -481,13 +482,17 @@ public class DowithTask extends BaseAuditEntity {
             throw new RestApiException(INVALID_REQUEST);
         }
 
+        int deleteDowithTaskCount = 1;
         if (isRoutine()) {
             Set<LocalDate> toDeleteDates = this.routine.getDatesAfter(this.date);
 
-            dowithTaskRepository.delete(
-                    dowithTaskRepository.getDowithTasks(this.routine).stream()
-                            .filter(e -> toDeleteDates.contains(e.getDate()))
-                            .toList());
+            List<DowithTask> routineDowithTasks = dowithTaskRepository.getDowithTasks(this.routine).stream()
+                    .filter(e -> toDeleteDates.contains(e.getDate()))
+                    .toList();
+
+            deleteDowithTaskCount += routineDowithTasks.size();
+
+            dowithTaskRepository.delete(routineDowithTasks);
 
             this.routine.deleteDates(toDeleteDates);
             if (this.routine.getDates().isEmpty()) {
@@ -496,6 +501,7 @@ public class DowithTask extends BaseAuditEntity {
         }
 
         dowithTaskRepository.delete(this);
+        return deleteDowithTaskCount;
     }
 
     /**

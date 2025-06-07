@@ -28,10 +28,10 @@ public class TaskSummary extends BaseAuditEntity {
     private String memberId;
 
     @Column(name = "remained_dowith_task_count", nullable = false)
-    private int availDowithTaskCount = 0;
+    private int remainedDowithTaskCount = 0;
 
     @Column(name = "remained_dowith_task_count_updated_at")
-    private LocalDateTime availDowithTaskCountUpdatedAt;
+    private LocalDateTime remainedDowithTaskCountUpdatedAt;
 
     @Column(name = "last_attendance_date")
     private LocalDate lastAttendanceDate;
@@ -42,7 +42,7 @@ public class TaskSummary extends BaseAuditEntity {
     public static TaskSummary of(String memberId) {
         return TaskSummary.builder()
                 .memberId(memberId)
-                .availDowithTaskCount(0)
+                .remainedDowithTaskCount(0)
                 .taskCompleteLevel(TaskCompleteLevel.GOOD)
                 .build();
     }
@@ -52,9 +52,9 @@ public class TaskSummary extends BaseAuditEntity {
      *
      * @param count 증가할 DowithTask 수
      */
-    public void plusDowithTaskCount(int count) {
-        this.availDowithTaskCount += count;
-        this.availDowithTaskCountUpdatedAt = SystemTimeUtil.now();
+    public void plusRemainedDowithTaskCount(int count) {
+        this.remainedDowithTaskCount += count;
+        this.remainedDowithTaskCountUpdatedAt = SystemTimeUtil.now();
     }
 
     /**
@@ -63,11 +63,11 @@ public class TaskSummary extends BaseAuditEntity {
      * @param count 감소할 DowithTask 수
      */
     public void deductRemainedDowithTaskCount(int count) {
-        if (this.availDowithTaskCount < count) {
+        if (this.remainedDowithTaskCount < count) {
             throw new RestApiException(FailResponseStatus.DOWITH_TASK_CREATE_COUNT_EXCEED);
         }
-        this.availDowithTaskCount -= count;
-        this.availDowithTaskCountUpdatedAt = SystemTimeUtil.now();
+        this.remainedDowithTaskCount -= count;
+        this.remainedDowithTaskCountUpdatedAt = SystemTimeUtil.now();
     }
 
     /**
@@ -78,6 +78,6 @@ public class TaskSummary extends BaseAuditEntity {
             throw new RestApiException(FailResponseStatus.BAD_REQUEST);
         }
         this.lastAttendanceDate = SystemTimeUtil.now().toLocalDate();
-        this.plusDowithTaskCount(1);
+        this.plusRemainedDowithTaskCount(1);
     }
 }
