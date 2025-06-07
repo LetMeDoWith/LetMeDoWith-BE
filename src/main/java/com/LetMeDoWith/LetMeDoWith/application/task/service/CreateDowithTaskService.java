@@ -11,7 +11,6 @@ import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskSummary;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TaskCategoryRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TaskSummaryRepository;
-import com.LetMeDoWith.LetMeDoWith.domain.task.service.DowithTaskRegisterAvailChecker;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
@@ -22,8 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class CreateDowithTaskService {
-
-    private final DowithTaskRegisterAvailChecker dowithTaskRegisterAvailChecker;
 
     private final DowithTaskRepository dowithTaskRepository;
     private final TaskCategoryRepository taskCategoryRepository;
