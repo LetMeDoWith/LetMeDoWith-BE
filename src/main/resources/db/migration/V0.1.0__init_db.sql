@@ -81,20 +81,19 @@ CREATE TABLE holiday
 
 CREATE TABLE member
 (
-    id                  VARCHAR(26)  NOT NULL,
-    create_at           datetime     NULL,
-    updated_at          datetime     NULL,
-    created_by          VARCHAR(255) NULL,
-    updated_by          VARCHAR(255) NULL,
-    subject             VARCHAR(255) NULL,
-    status              VARCHAR(255) NOT NULL,
-    task_complete_level VARCHAR(255) NULL,
-    nickname            VARCHAR(255) NULL,
-    self_description    VARCHAR(255) NULL,
-    gender              VARCHAR(2)   NULL,
-    date_of_birth       date         NULL,
-    type                VARCHAR(255) NOT NULL,
-    profile_image_url   VARCHAR(255) NULL,
+    id                VARCHAR(26)  NOT NULL,
+    create_at         datetime     NULL,
+    updated_at        datetime     NULL,
+    created_by        VARCHAR(255) NULL,
+    updated_by        VARCHAR(255) NULL,
+    subject           VARCHAR(255) NULL,
+    status            VARCHAR(255) NOT NULL,
+    nickname          VARCHAR(255) NULL,
+    self_description  VARCHAR(255) NULL,
+    gender            VARCHAR(2)   NULL,
+    date_of_birth     date         NULL,
+    type              VARCHAR(255) NOT NULL,
+    profile_image_url VARCHAR(255) NULL,
     CONSTRAINT pk_member PRIMARY KEY (id)
 );
 
@@ -221,6 +220,21 @@ CREATE TABLE todo_task_routine
     CONSTRAINT pk_todo_task_routine PRIMARY KEY (id)
 );
 
+CREATE TABLE task_summary
+(
+    id                                    BIGINT AUTO_INCREMENT NOT NULL,
+    member_id                             VARCHAR(26)           NOT NULL,
+    remained_dowith_task_count            INT                   NOT NULL DEFAULT 0,
+    remained_dowith_task_count_updated_at datetime              NULL,
+    last_attendance_date                  date                  NULL,
+    task_complete_level                   VARCHAR(10)           NOT NULL DEFAULT 'GOOD',
+    create_at                             datetime              NULL,
+    updated_at                            datetime              NULL,
+    created_by                            VARCHAR(255)          NULL,
+    updated_by                            VARCHAR(255)          NULL,
+    CONSTRAINT pk_task_summary PRIMARY KEY (id)
+);
+
 ALTER TABLE dowith_task_confirm
     ADD CONSTRAINT uc_dowith_task_confirm_dowith_task UNIQUE (dowith_task_id);
 
@@ -259,3 +273,6 @@ ALTER TABLE member_status_history
 
 ALTER TABLE member_term_agree
     ADD CONSTRAINT FK_MEMBER_TERM_AGREE_ON_MEMBER FOREIGN KEY (member_id) REFERENCES member (id);
+
+ALTER TABLE task_summary
+    ADD CONSTRAINT FK_TASK_SUMMARY_ON_MEMBER FOREIGN KEY (member_id) REFERENCES member (id);

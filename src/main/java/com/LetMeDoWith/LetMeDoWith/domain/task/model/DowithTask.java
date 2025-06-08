@@ -473,7 +473,7 @@ public class DowithTask extends BaseAuditEntity {
      * @param dowithTaskRepository
      * @param dowithTaskRoutineRepository
      */
-    public void deleteWithRoutine(
+    public int deleteWithRoutine(
             DowithTaskRepository dowithTaskRepository,
             DowithTaskRoutineRepository dowithTaskRoutineRepository) {
 
@@ -481,13 +481,18 @@ public class DowithTask extends BaseAuditEntity {
             throw new RestApiException(INVALID_REQUEST);
         }
 
+        int deleteDowithTaskCount = 1;
         if (isRoutine()) {
             Set<LocalDate> toDeleteDates = this.routine.getDatesAfter(this.date);
 
-            dowithTaskRepository.delete(
+            List<DowithTask> routineDowithTasks =
                     dowithTaskRepository.getDowithTasks(this.routine).stream()
                             .filter(e -> toDeleteDates.contains(e.getDate()))
-                            .toList());
+                            .toList();
+
+            deleteDowithTaskCount += routineDowithTasks.size();
+
+            dowithTaskRepository.delete(routineDowithTasks);
 
             this.routine.deleteDates(toDeleteDates);
             if (this.routine.getDates().isEmpty()) {
@@ -496,6 +501,7 @@ public class DowithTask extends BaseAuditEntity {
         }
 
         dowithTaskRepository.delete(this);
+        return deleteDowithTaskCount;
     }
 
     /**

@@ -34,7 +34,7 @@ public abstract class AbstractCombinedEnumConverter<T extends BaseEnum> extends 
         try {
             return EnumUtil.getEnum(targetClass, source);
         } catch (Exception e) {
-            throw new RestApiException(FailResponseStatus.BAD_REQUEST);
+            throw new RestApiException(FailResponseStatus.INVALID_PARAM_ERROR);
         }
     }
 

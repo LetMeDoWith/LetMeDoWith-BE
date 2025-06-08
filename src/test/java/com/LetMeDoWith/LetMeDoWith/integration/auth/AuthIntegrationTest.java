@@ -8,7 +8,7 @@
 // import com.LetMeDoWith.LetMeDoWith.common.enums.member.Gender;
 // import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 // import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
-// import com.LetMeDoWith.LetMeDoWith.common.enums.member.TaskCompleteLevel;
+// import com.LetMeDoWith.LetMeDoWith.common.enums.task.TaskCompleteLevel;
 // import com.LetMeDoWith.LetMeDoWith.domain.auth.model.AccessToken;
 // import com.LetMeDoWith.LetMeDoWith.domain.auth.model.RefreshToken;
 // import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
