@@ -4,8 +4,8 @@ import com.LetMeDoWith.LetMeDoWith.application.task.dto.RegisterTodoTaskCommand;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.RegisterTodoTaskResult;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.TodoTaskRoutineCondition;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateTodoTaskCommand;
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateTodoTaskRoutineConditionCommand;
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateTodoTaskRoutineContentCommand;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateTodoTaskRoutineCommand;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateTodoTaskWithRoutineCommand;
 import com.LetMeDoWith.LetMeDoWith.application.task.service.RegisterTodoTaskService;
 import com.LetMeDoWith.LetMeDoWith.application.task.service.UpdateTodoTaskService;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiErrorResponse;
@@ -18,8 +18,8 @@ import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.CreateTodoTaskReqDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.CreateTodoTaskResDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.UpdateTodoTaskReqDto;
-import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.UpdateTodoTaskRoutineConditionReqDto;
-import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.UpdateTodoTaskRoutineContentReqDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.UpdateTodoTaskRoutineReqDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.UpdateTodoTaskWithRoutineReqDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -76,8 +76,8 @@ public class TodoTaskController {
     }
     
     @Operation(
-        summary = "단일 투두모드 태스크 수정",
-        description = "투두모드 태스크를 수정합니다. 컨텐츠를 수정하거나, 루틴으로 변환할 수 있습니다."
+        summary = "투두모드 태스크 수정",
+        description = "투두모드 태스크를 1개 수정합니다. 컨텐츠를 수정하거나, 루틴이 아닌 경우 루틴으로 변환할 수 있습니다."
     )
     @ApiSuccessResponse(
         description = "투두모드 Task 수정 성공. 본 API는 생성 성공 여부만 반환합니다. 이후 데이터는 조회 API에서 확인할 수 있습니다.")
@@ -106,7 +106,7 @@ public class TodoTaskController {
             todoTaskId,
             UpdateTodoTaskCommand.of(
                 request.title(),
-                request.startTime(),
+                request.startDateTime().toLocalTime(),
                 request.taskCategoryId(),
                 routineCondition));
         
@@ -114,33 +114,32 @@ public class TodoTaskController {
     }
     
     @Operation(
-        summary = "투두모드 루틴 -  할 일 수정하기",
-        description = "투두모드 루틴을 수정합니다. 할 일을 수정합니다."
+        summary = "투두모드 태스크(루틴포함) 수정",
+        description = "투두모드 루틴의 모든 태스크를 수정합니다."
     )
     @ApiSuccessResponse(
-        description = "투두모드 루틴 수정 성공. 본 API는 생성 성공 여부만 반환합니다. 이후 데이터는 조회 API에서 확인할 수 있습니다.")
+        description = "투두모드 태스크 수정 성공. 본 API는 생성 성공 여부만 반환합니다. 이후 데이터는 조회 API에서 확인할 수 있습니다.")
     @ApiErrorResponses({
         @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청입니다."),
     })
-    @PutMapping("/{todoTaskId}/routine/content")
-    public ResponseEntity updateTodoTaskRoutineContent(
-        @PathVariable Long todoTaskId, @RequestBody UpdateTodoTaskRoutineContentReqDto request) {
+    @PutMapping("/{todoTaskId}/with-routine")
+    public ResponseEntity updateTodoTaskWithRoutine(
+        @PathVariable Long todoTaskId, @RequestBody UpdateTodoTaskWithRoutineReqDto request) {
         String memberId = AuthUtil.getMemberId();
         
-        UpdateTodoTaskRoutineContentCommand command =
-            UpdateTodoTaskRoutineContentCommand.of(
+        UpdateTodoTaskWithRoutineCommand command =
+            UpdateTodoTaskWithRoutineCommand.of(
                 request.title(),
-                request.startTime(),
-                request.taskCategoryId(),
-                request.isApplyToAll());
+                request.startDateTime().toLocalTime(),
+                request.taskCategoryId());
         
-        updateTodoTaskService.updateTodoTaskRoutineContent(memberId, todoTaskId, command);
+        updateTodoTaskService.updateTodoTaskWithRoutine(memberId, todoTaskId, command);
         
         return ResponseUtil.createSuccessResponse();
     }
     
     @Operation(
-        summary = "투두모드 루틴 -  루틴 수정하기",
+        summary = "투두모드 태스크 루틴 수정",
         description = "투두모드 루틴을 수정합니다. 루틴 조건을 수정합니다."
     )
     @ApiSuccessResponse(
@@ -148,13 +147,13 @@ public class TodoTaskController {
     @ApiErrorResponses({
         @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청입니다."),
     })
-    @PutMapping("/{todoTaskId}/routine/condition")
-    public ResponseEntity updateTodoTaskRoutineCondition(
-        @PathVariable Long todoTaskId, @RequestBody UpdateTodoTaskRoutineConditionReqDto request) {
+    @PutMapping("/{todoTaskId}/routine")
+    public ResponseEntity updateTodoTaskRoutine(
+        @PathVariable Long todoTaskId, @RequestBody UpdateTodoTaskRoutineReqDto request) {
         String memberId = AuthUtil.getMemberId();
         
-        UpdateTodoTaskRoutineConditionCommand command =
-            UpdateTodoTaskRoutineConditionCommand.of(
+        UpdateTodoTaskRoutineCommand command =
+            UpdateTodoTaskRoutineCommand.of(
                 request.startDate(),
                 request.endDate(),
                 request.cycle(),
@@ -162,7 +161,7 @@ public class TodoTaskController {
                 request.isExcludeHolidays()
             );
         
-        updateTodoTaskService.updateTodoTaskRoutineCondition(memberId, todoTaskId, command);
+        updateTodoTaskService.updateTodoTaskRoutine(memberId, todoTaskId, command);
         
         return ResponseUtil.createSuccessResponse();
     }

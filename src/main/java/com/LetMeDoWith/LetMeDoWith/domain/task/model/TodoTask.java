@@ -244,10 +244,11 @@ public class TodoTask extends BaseAuditEntity {
     
     /**
      * 수정 가능한 루틴 날짜 조회
+     * todo: 비즈니스 의미있는 이름으로 수정
      *
      * @return 수정 가능한 루틴 날짜 세트
      */
-    public Set<LocalDate> getRoutineDateFromThis() {
+    public Set<LocalDate> getUpdateAvailableDates() {
         if (isRoutine()) {
             return this.routine.getDatesAfterAndEqual(this.date);
         } else {

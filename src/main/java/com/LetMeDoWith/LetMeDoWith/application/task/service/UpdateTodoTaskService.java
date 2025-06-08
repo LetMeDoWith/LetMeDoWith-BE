@@ -4,8 +4,8 @@ import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseSt
 
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.TodoTaskRoutineCondition;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateTodoTaskCommand;
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateTodoTaskRoutineConditionCommand;
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateTodoTaskRoutineContentCommand;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateTodoTaskRoutineCommand;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateTodoTaskWithRoutineCommand;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.CountryCode;
@@ -39,7 +39,7 @@ public class UpdateTodoTaskService {
     private final HolidayService holidayService;
     
     /**
-     * 루틴이 아닌 TodoTask를 업데이트한다. 컨텐츠를 업데이트 하거나, 루틴으로 변경할 수도 있다.
+     * 한개의 TodoTask를 업데이트한다. 컨텐츠를 업데이트 하거나, 루틴으로 변경할 수도 있다.
      *
      * @param memberId   TodoTask를 업데이트할 사용자의 ID
      * @param todoTaskId 업데이트할 TodoTask의 ID
@@ -63,8 +63,13 @@ public class UpdateTodoTaskService {
         todoTask.updateContent(
             command.title(), category.getId(), todoTask.getDate(), command.startTime());
         
+        // 루틴에 포함되는 TodoTask의 경우, 루틴을 분리한다.
+        if (todoTask.isRoutine()) {
+            todoTask.detachRoutine();
+        }
+        
+        // 루틴이 아닌 태스크를 루틴으로 변경하는 경우
         if (command.routineCondition().isPresent()) {
-            // 루틴 정보가 있다면 루틴 변환이므로 변환해주고 저장한다.
             TodoTaskRoutineCondition routineCondition =
                 command
                     .routineCondition()
@@ -99,15 +104,15 @@ public class UpdateTodoTaskService {
     }
     
     /**
-     * 루틴 TodoTask의 컨텐츠만 업데이트한다. todoTaskId에 해당하는 TodoTask만 업데이트 하거나, 루틴에 속한 모든 TodoTask에 적용 한다.
+     * 루틴인 TodoTask를 업데이트한다. 루틴에 속한 모든 TodoTask에 적용 한다.
      *
      * @param memberId   TodoTask를 업데이트할 사용자의 ID
      * @param todoTaskId 업데이트할 TodoTask의 ID
      * @param command    업데이트할 정보 (카테고리 ID, 제목, 시작시간, 전체적용 여부)
      */
     @Transactional
-    public void updateTodoTaskRoutineContent(
-        String memberId, Long todoTaskId, UpdateTodoTaskRoutineContentCommand command) {
+    public void updateTodoTaskWithRoutine(
+        String memberId, Long todoTaskId, UpdateTodoTaskWithRoutineCommand command) {
         TodoTask todoTask =
             todoTaskRepository
                 .getTodoTask(todoTaskId, memberId)
@@ -124,25 +129,18 @@ public class UpdateTodoTaskService {
                 .getActiveTaskCategory(command.taskCategoryId(), memberId)
                 .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
         
-        if (command.isApplyToAll()) {
-            // 모두 적용하는 경우, 입력받은 TodoTask를 기준으로 루틴을 분리한다.
-            TodoTaskRoutineSplitResult splitResult =
-                splitter.splitTodoTaskRoutine(todoTasksInRoutine, todoTask, todoTask.getRoutine());
-            
-            splitResult
-                .getNewTodoTasks()
-                .forEach(
-                    task -> {
-                        task.updateContent(
-                            command.title(), category.getId(), task.getDate(), command.startTime());
-                    });
-        } else {
-            // 루틴에 속한 TodoTask 중에서 todoTaskId에 해당하는 TodoTask만 업데이트 한다.
-            todoTask.updateContent(
-                command.title(), category.getId(), todoTask.getDate(), command.startTime());
-            
-            todoTask.detachRoutine();
-        }
+        // 입력받은 TodoTask를 기준으로 루틴을 분리한다.
+        TodoTaskRoutineSplitResult splitResult =
+            splitter.splitTodoTaskRoutine(todoTasksInRoutine, todoTask, todoTask.getRoutine());
+        
+        splitResult
+            .getNewTodoTasks()
+            .forEach(
+                task -> {
+                    task.updateContent(
+                        command.title(), category.getId(), task.getDate(), command.startTime());
+                });
+        
     }
     
     /**
@@ -153,8 +151,8 @@ public class UpdateTodoTaskService {
      * @param command    업데이트할 루틴 정보 (시작/종료일자, 루틴 반복 주기, 루틴 반복 패턴, 루틴 제외 공휴일 여부)
      */
     @Transactional
-    public void updateTodoTaskRoutineCondition(
-        String memberId, Long todoTaskId, UpdateTodoTaskRoutineConditionCommand command) {
+    public void updateTodoTaskRoutine(
+        String memberId, Long todoTaskId, UpdateTodoTaskRoutineCommand command) {
         
         TodoTask todoTask =
             todoTaskRepository
@@ -187,14 +185,14 @@ public class UpdateTodoTaskService {
         }
         
         // 기존 루틴에서 새롭게 계산된 루틴 일자와 겹치지 않는 날짜들은 삭제되어야 한다.
-        Set<LocalDate> originalRoutineDatesFromThisTask = todoTask.getRoutineDateFromThis();
-        originalRoutineDatesFromThisTask.removeAll(newRoutineDates);
+        Set<LocalDate> originalRoutineDates = todoTask.getUpdateAvailableDates();
+        originalRoutineDates.removeAll(newRoutineDates);
         
         List<TodoTask> todoTasksToDelete =
             todoTasksInRoutine
                 .stream()
                 .filter(
-                    task -> originalRoutineDatesFromThisTask.contains(task.getDate())
+                    task -> originalRoutineDates.contains(task.getDate())
                 ).toList();
         
         todoTaskRepository.deleteTodoTasks(todoTasksToDelete);

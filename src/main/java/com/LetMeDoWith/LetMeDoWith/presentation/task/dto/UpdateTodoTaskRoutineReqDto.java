@@ -6,7 +6,7 @@ import java.time.LocalDate;
 import java.util.Set;
 
 @Schema(description = "투두 태스크 루틴 조건 정보")
-public record UpdateTodoTaskRoutineConditionReqDto(
+public record UpdateTodoTaskRoutineReqDto(
     @Schema(description = "루틴 시작 일자", example = "2025-01-30")
     LocalDate startDate,
     @Schema(description = "루틴 종료 일자", example = "2025-01-30")
@@ -19,17 +19,17 @@ public record UpdateTodoTaskRoutineConditionReqDto(
     @Schema(description = "공휴일 제외 여부", example = "true")
     Boolean isExcludeHolidays) {
     
-    public static UpdateTodoTaskRoutineConditionReqDto of(
+    public static UpdateTodoTaskRoutineReqDto of(
         LocalDate startDate,
         LocalDate endDate,
         TodoTaskRoutineCycle cycle,
         Set<Integer> pattern,
         Boolean isExcludeHolidays) {
-        return new UpdateTodoTaskRoutineConditionReqDto(startDate,
-                                                        endDate,
-                                                        cycle,
-                                                        pattern,
-                                                        isExcludeHolidays);
+        return new UpdateTodoTaskRoutineReqDto(startDate,
+                                               endDate,
+                                               cycle,
+                                               pattern,
+                                               isExcludeHolidays);
     }
     
 }

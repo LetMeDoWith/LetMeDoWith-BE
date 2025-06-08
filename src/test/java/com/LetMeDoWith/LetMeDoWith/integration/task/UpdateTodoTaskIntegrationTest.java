@@ -13,8 +13,8 @@ import com.LetMeDoWith.LetMeDoWith.integration.AbstractIntegrationTest;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.RetrieveTasksResDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.RetrieveTasksResDto.TodoTaskDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.UpdateTodoTaskReqDto;
-import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.UpdateTodoTaskRoutineConditionReqDto;
-import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.UpdateTodoTaskRoutineContentReqDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.UpdateTodoTaskRoutineReqDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.UpdateTodoTaskWithRoutineReqDto;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -70,13 +70,16 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
     }
     
     @Test
-    @DisplayName("[SUCCESS] 투두모드 단일 Task 수정 - 컨텐츠만 수정")
+    @DisplayName("[SUCCESS] 투두모드 단일 Task 수정 - 루틴이 아닌 태스크 수정")
     void updateSingleTodoTaskTestContentOnly() throws Exception {
         // given
         setFixedClock(LocalDateTime.of(2024, 6, 1, 0, 0));
         String originalTitle = "원래 타이틀";
         LocalDate originalDate = LocalDate.of(2024, 6, 2);
         LocalTime originalStartTime = LocalTime.of(9, 0);
+        
+        LocalDateTime originalDateTime =
+            LocalDateTime.of(originalDate, originalStartTime);
         TodoTask todoTask =
             todoTaskRepository.save(
                 TodoTask.of(
@@ -89,9 +92,15 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
         // when
         String updatedTitle = "수정된 타이틀";
         LocalTime updatedStartTime = LocalTime.of(10, 0);
+        LocalDateTime updateStartDateTime = LocalDateTime.of(
+            originalDate.getYear(),
+            originalDate.getMonth(),
+            originalDate.getDayOfMonth(),
+            updatedStartTime.getHour(),
+            updatedStartTime.getMinute());
         Long updatedCategoryId = taskCategory2.getId();
         UpdateTodoTaskReqDto updateReq =
-            new UpdateTodoTaskReqDto(updatedTitle, updatedStartTime, updatedCategoryId, null);
+            new UpdateTodoTaskReqDto(updatedTitle, updateStartDateTime, updatedCategoryId, null);
         
         ResultActions resultActions =
             this.request(
@@ -152,14 +161,20 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
         // when
         String updatedTitle = "수정된 타이틀";
         LocalTime updatedStartTime = LocalTime.of(10, 0);
+        LocalDateTime updateStartDateTime = LocalDateTime.of(
+            originalDate.getYear(),
+            originalDate.getMonth(),
+            originalDate.getDayOfMonth(),
+            updatedStartTime.getHour(),
+            updatedStartTime.getMinute());
         Long updatedCategoryId = taskCategory2.getId();
         LocalDate newRoutineEndDate = LocalDate.of(2024, 6, 30);
         UpdateTodoTaskReqDto updateReq =
             new UpdateTodoTaskReqDto(
                 updatedTitle,
-                updatedStartTime,
+                updateStartDateTime,
                 updatedCategoryId,
-                UpdateTodoTaskRoutineConditionReqDto.of(
+                UpdateTodoTaskRoutineReqDto.of(
                     originalDate, newRoutineEndDate, TodoTaskRoutineCycle.DAILY, null, false));
         
         long gap = ChronoUnit.DAYS.between(originalDate, newRoutineEndDate);
@@ -192,7 +207,7 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
     }
     
     @Test
-    @DisplayName("[SUCCESS] 투두모드 루틴 컨텐츠 수정 - 이번만 적용")
+    @DisplayName("[SUCCESS] 투두모드 단일 Task 수정 - 루틴에 속하는 태스크 수정")
     void updateTodoTaskRoutineContentTestApplyRequestedTaskOnly() throws Exception {
         // given
         setFixedClock(LocalDateTime.of(2024, 6, 1, 0, 0));
@@ -224,6 +239,14 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
         // when
         String updatedTitle = "수정된 타이틀";
         LocalTime updatedStartTime = LocalTime.of(10, 0);
+        LocalDateTime updateStartDateTime = LocalDateTime.of(
+            startDate.getYear(),
+            startDate.getMonth(),
+            startDate.getDayOfMonth(),
+            updatedStartTime.getHour(),
+            updatedStartTime.getMinute());
+        Long updatedCategoryId = taskCategory2.getId();
+        
         TodoTask taskToModified = savedTodoTasks.stream()
                                                 .filter(task -> task.getDate()
                                                                     .isEqual(LocalDate.of(2024,
@@ -232,16 +255,11 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
                                                 .findFirst()
                                                 .get();
         
-        UpdateTodoTaskRoutineContentReqDto req =
-            UpdateTodoTaskRoutineContentReqDto.builder()
-                                              .title(updatedTitle)
-                                              .startTime(updatedStartTime)
-                                              .taskCategoryId(taskCategory2.getId())
-                                              .isApplyToAll(false)
-                                              .build();
+        UpdateTodoTaskReqDto req =
+            new UpdateTodoTaskReqDto(updatedTitle, updateStartDateTime, updatedCategoryId, null);
         
         ResultActions resultActions = this.request(
-            MockMvcRequestBuilders.put(URL + "/" + taskToModified.getId() + "/routine/content")
+            MockMvcRequestBuilders.put(URL + "/" + taskToModified.getId())
                                   .content(this.writeRequestBodyAsString(req)));
         
         // then
@@ -316,6 +334,12 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
         // when
         String updatedTitle = "수정된 타이틀";
         LocalTime updatedStartTime = LocalTime.of(10, 0);
+        LocalDateTime updatedStartDateTime = LocalDateTime.of(
+            startDate.getYear(),
+            startDate.getMonth(),
+            startDate.getDayOfMonth(),
+            updatedStartTime.getHour(),
+            updatedStartTime.getMinute());
         
         // 모두 적용에서 의미는 없지만 ID가 필요하므로 Task를 가져옴
         TodoTask taskToModified = savedTodoTasks.stream()
@@ -326,16 +350,15 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
                                                 .findFirst()
                                                 .get();
         
-        UpdateTodoTaskRoutineContentReqDto req =
-            UpdateTodoTaskRoutineContentReqDto.builder()
-                                              .title(updatedTitle)
-                                              .startTime(updatedStartTime)
-                                              .taskCategoryId(taskCategory2.getId())
-                                              .isApplyToAll(true)
-                                              .build();
+        UpdateTodoTaskWithRoutineReqDto req =
+            UpdateTodoTaskWithRoutineReqDto.builder()
+                                           .title(updatedTitle)
+                                           .startDateTime(updatedStartDateTime)
+                                           .taskCategoryId(taskCategory2.getId())
+                                           .build();
         
         ResultActions resultActions = this.request(
-            MockMvcRequestBuilders.put(URL + "/" + taskToModified.getId() + "/routine/content")
+            MockMvcRequestBuilders.put(URL + "/" + taskToModified.getId() + "/with-routine")
                                   .content(this.writeRequestBodyAsString(req)));
         
         // then
@@ -422,8 +445,8 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
                                         .findFirst()
                                         .get();
         
-        UpdateTodoTaskRoutineConditionReqDto req =
-            UpdateTodoTaskRoutineConditionReqDto.of(
+        UpdateTodoTaskRoutineReqDto req =
+            UpdateTodoTaskRoutineReqDto.of(
                 LocalDate.of(2024, 6, 3),
                 LocalDate.of(2024, 6, 30),
                 TodoTaskRoutineCycle.MONTHLY,
@@ -432,7 +455,7 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
             );
         
         ResultActions resultActions = this.request(
-            MockMvcRequestBuilders.put(URL + "/" + sample.getId() + "/routine/condition")
+            MockMvcRequestBuilders.put(URL + "/" + sample.getId() + "/routine")
                                   .content(this.writeRequestBodyAsString(req)));
         
         // then
