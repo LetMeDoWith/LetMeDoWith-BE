@@ -40,7 +40,7 @@ public record RetrieveTasksResDto(List<TodoTaskDto> todoTasks, List<DowithTaskDt
                                                 dowithTaskQueryDto.status(),
                                                 dowithTaskQueryDto.date(),
                                                 dowithTaskQueryDto.startTime(),
-                                                dowithTaskQueryDto.confirmedImageUrls(),
+                                                dowithTaskQueryDto.confirmedImageUrls().isEmpty() ? null : dowithTaskQueryDto.confirmedImageUrls(),
                                                 dowithTaskQueryDto.feedBackCount()))
                         .toList();
 
