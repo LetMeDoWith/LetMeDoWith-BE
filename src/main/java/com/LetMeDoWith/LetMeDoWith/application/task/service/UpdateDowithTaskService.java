@@ -1,7 +1,5 @@
 package com.LetMeDoWith.LetMeDoWith.application.task.service;
 
-import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.INVALID_REQUEST;
-
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateDowithTaskContentsCommand;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
@@ -14,14 +12,17 @@ import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TaskCategoryRepository
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TaskSummaryRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.service.DowithTaskRoutineDateCalculator;
 import com.LetMeDoWith.LetMeDoWith.domain.task.service.DowithTaskRoutineDateCalculator.RoutineDateResult;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Set;
 import java.util.stream.Collectors;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
+import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.INVALID_REQUEST;
 
 @Service
 @RequiredArgsConstructor
@@ -70,7 +71,7 @@ public class UpdateDowithTaskService {
         Set<LocalDate> toCreateDates =
                 routineDates.stream()
                         .filter(date -> !date.isEqual(dowithTask.getDate()))
-                        .collect(Collectors.toSet());
+                        .collect(Collectors.toSet()); // TODO - 명확히 수정 필요 도메인 모델 메서드로 편입
 
         // 새 DowithTask 생성 가능 여부 validation
         TaskSummary taskSummary =
@@ -107,7 +108,7 @@ public class UpdateDowithTaskService {
         if (dowithTask.isRoutine()) {
 
             // TODO- 수정 대상이 어디까지인지 해당 정책 확인 필요 to 기획
-            if (dowithTask.isContentsEditable()) {
+            if (dowithTask.isContentsEditable()) { // TODO- 메서드명 명확하게 수정
                 dowithTask.updateContentsWithRoutine(
                         command.title(),
                         taskCategory.getId(),

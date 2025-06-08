@@ -26,6 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class DeleteDowithTaskIntegrationTest extends AbstractIntegrationTest {
 
     static final String DELETE_TASK_URL = "/api/v1/tasks/dowith" + "/{dowithTaskId}";
+    static final String DELETE_TASK_WITH_ROUTINE_URL = "/api/v1/tasks/dowith" + "/{dowithTaskId}" + "/with-routine";
     static final String RETRIEVE_TASKS_URL = "/api/v1/tasks";
 
     @Autowired
@@ -73,8 +74,7 @@ public class DeleteDowithTaskIntegrationTest extends AbstractIntegrationTest {
         // when
         ResultActions deleteResultActions =
                 this.request(
-                        MockMvcRequestBuilders.delete(DELETE_TASK_URL, dowithTask.getId())
-                                .param("isRoutineInclude", String.valueOf(false)));
+                        MockMvcRequestBuilders.delete(DELETE_TASK_URL, dowithTask.getId()));
         ResultActions retrieveResultActions =
                 this.request(
                                 MockMvcRequestBuilders.get(RETRIEVE_TASKS_URL)
@@ -110,8 +110,7 @@ public class DeleteDowithTaskIntegrationTest extends AbstractIntegrationTest {
         setFixedClock(LocalDateTime.of(2024, 3, 15, 0, 0));
         ResultActions resultActions =
                 request(
-                        MockMvcRequestBuilders.delete(DELETE_TASK_URL, dowithTask.getId())
-                                .param("isRoutineInclude", String.valueOf(false)));
+                        MockMvcRequestBuilders.delete(DELETE_TASK_URL, dowithTask.getId()));
         ResultActions retrieveResultActions =
                 this.request(
                                 MockMvcRequestBuilders.get(RETRIEVE_TASKS_URL)
@@ -171,8 +170,7 @@ public class DeleteDowithTaskIntegrationTest extends AbstractIntegrationTest {
         setFixedClock(LocalDateTime.of(2024, 3, 15, 0, 0));
         ResultActions resultActions =
                 request(
-                        MockMvcRequestBuilders.delete(DELETE_TASK_URL, targetDowithTaskID)
-                                .param("isRoutineInclude", String.valueOf(true)));
+                        MockMvcRequestBuilders.delete(DELETE_TASK_WITH_ROUTINE_URL, targetDowithTaskID));
         ResultActions retrieveResultActions =
                 this.request(
                                 MockMvcRequestBuilders.get(RETRIEVE_TASKS_URL)
