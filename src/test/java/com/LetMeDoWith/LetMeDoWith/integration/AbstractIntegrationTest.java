@@ -33,12 +33,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.util.LinkedMultiValueMap;
 
-import java.nio.charset.StandardCharsets;
-import java.time.Clock;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-
 @Slf4j
 @SpringBootTest
 @ActiveProfiles("test")
@@ -47,16 +41,11 @@ public abstract class AbstractIntegrationTest {
 
     protected Member requestMember;
     protected TaskSummary taskSummary;
-    @Autowired
-    protected TaskSummaryJpaRepository taskSummaryJpaRepository;
-    @Autowired
-    ObjectMapper objectMapper;
-    @Autowired
-    MockMvc mockMvc;
-    @Autowired
-    MemberJpaRepository memberJpaRepository;
-    @Autowired
-    AccessTokenProvider accessTokenProvider;
+    @Autowired protected TaskSummaryJpaRepository taskSummaryJpaRepository;
+    @Autowired ObjectMapper objectMapper;
+    @Autowired MockMvc mockMvc;
+    @Autowired MemberJpaRepository memberJpaRepository;
+    @Autowired AccessTokenProvider accessTokenProvider;
     private AccessToken requestMemberAccessToken;
 
     @BeforeEach
@@ -90,9 +79,7 @@ public abstract class AbstractIntegrationTest {
         }
     }
 
-    /**
-     * 해당 Abstract Class 상속 받은 테스트는 모든 Test 메서드 시작전에 request Member 세팅
-     */
+    /** 해당 Abstract Class 상속 받은 테스트는 모든 Test 메서드 시작전에 request Member 세팅 */
     private void createMemberTestData() {
         requestMember =
                 memberJpaRepository.save(
@@ -108,19 +95,14 @@ public abstract class AbstractIntegrationTest {
         requestMemberAccessToken = accessTokenProvider.createAccessToken(requestMember.getId());
     }
 
-    /**
-     * 이전 Test의 test data 삭제 - abstract method
-     */
+    /** 이전 Test의 test data 삭제 - abstract method */
     protected abstract void deleteTestData();
 
-    /**
-     * Test Data 생성 - abstract method
-     */
+    /** Test Data 생성 - abstract method */
     protected abstract void createTestData();
 
     /**
-     * MockMvc Request 해당 abstract class 상속 받은 테스트에서 MockHttpServletRequestBuilder 만
-     * 넘겨서 사용
+     * MockMvc Request 해당 abstract class 상속 받은 테스트에서 MockHttpServletRequestBuilder 만 넘겨서 사용
      *
      * @param requestBuilder
      * @return
@@ -149,14 +131,13 @@ public abstract class AbstractIntegrationTest {
      *
      * @param responseBody API Response 원문
      * @param responseType 변환하려는 응답 타입
-     * @param <T>          변환하려는 응답 타입의 제네릭
+     * @param <T> 변환하려는 응답 타입의 제네릭
      * @return 변환된 응답 객체
      */
     public <T> T readResponse(String responseBody, Class<T> responseType) {
         try {
-            JavaType type = objectMapper.getTypeFactory()
-                    .constructParametricType(ResponseDto.class,
-                            responseType);
+            JavaType type =
+                    objectMapper.getTypeFactory().constructParametricType(ResponseDto.class, responseType);
 
             ResponseDto<T> responseDto = objectMapper.readValue(responseBody, type);
 

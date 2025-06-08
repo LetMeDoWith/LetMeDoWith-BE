@@ -7,14 +7,13 @@ import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
 import io.hypersistence.utils.hibernate.id.Tsid;
 import jakarta.persistence.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -50,14 +49,12 @@ public class Member extends BaseAuditEntity {
 
     // OpenID Connect id token의 sub 필드와 동일
     // (sub, provider) 조합으로 uniqueness 판단함.
-    @Column
-    private String subject;
+    @Column private String subject;
 
     @Column(nullable = false)
     private MemberStatus status;
 
-    @Column
-    private String nickname;
+    @Column private String nickname;
 
     @Column(name = "self_description")
     private String selfDescription;
@@ -156,8 +153,8 @@ public class Member extends BaseAuditEntity {
     /**
      * Member의 약관 동의 객체를 업데이트한다. 약관 동의 객체가 없는 경우 초기 생성한다.
      *
-     * @param isTermsOfAgree  사용 약관 동의 여부
-     * @param isPrivacy       개인정보 활용 동의 여부
+     * @param isTermsOfAgree 사용 약관 동의 여부
+     * @param isPrivacy 개인정보 활용 동의 여부
      * @param isAdvertisement 광고성 메세지 수신 동의 여부
      * @return 약관 동의 여부가 업데이트된 Member
      */

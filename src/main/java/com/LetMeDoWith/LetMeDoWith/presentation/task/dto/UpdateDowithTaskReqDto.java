@@ -4,21 +4,23 @@ import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateDowithTaskContents
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.Builder;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import lombok.Builder;
 
 @Builder
 public record UpdateDowithTaskReqDto(
         @Schema(description = "제목", defaultValue = "저녁 먹기") @NotBlank @Size(max = 40) String title,
         @Schema(description = "Task 카테고리 ID", defaultValue = "2") Long taskCategoryId,
         @Schema(description = "시작일시", defaultValue = "2025-03-30T11:30:00") LocalDateTime startDateTime,
-        @Schema(description = "루틴일 (루틴 생성하지 않으면 null)", defaultValue = "[\"2025-04-01\", \"2025-04-02\"]", nullable = true)
-        List<LocalDate> routineDates) {
+        @Schema(
+                        description = "루틴일 (루틴 생성하지 않으면 null)",
+                        defaultValue = "[\"2025-04-01\", \"2025-04-02\"]",
+                        nullable = true)
+                List<LocalDate> routineDates) {
 
     public UpdateDowithTaskContentsCommand toCommand() {
         return UpdateDowithTaskContentsCommand.builder()

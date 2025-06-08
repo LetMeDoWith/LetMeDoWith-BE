@@ -1,32 +1,30 @@
 package com.LetMeDoWith.LetMeDoWith.integration.task;
 
+import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.DowithTaskJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.integration.AbstractIntegrationTest;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.CreateDowithTaskReqDto;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.*;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 public class CreateDowithTaskIntegrationTest extends AbstractIntegrationTest {
 
     static final String CREATE_DOWITH_TASK_URL = "/api/v1/tasks/dowith";
 
-    @Autowired
-    DowithTaskJpaRepository dowithTaskJpaRepository;
+    @Autowired DowithTaskJpaRepository dowithTaskJpaRepository;
 
     @Override
     protected void deleteTestData() {
@@ -99,7 +97,12 @@ public class CreateDowithTaskIntegrationTest extends AbstractIntegrationTest {
                                 .content(this.writeRequestBodyAsString(requestBody)));
 
         // then
-        assertThat(this.taskSummaryJpaRepository.findById(this.taskSummary.getId()).get().getRemainedDowithTaskCount()).isEqualTo(2);
+        assertThat(
+                        this.taskSummaryJpaRepository
+                                .findById(this.taskSummary.getId())
+                                .get()
+                                .getRemainedDowithTaskCount())
+                .isEqualTo(2);
         for (int i = 0; i < targetDates.size(); i++) {
             resultActions
                     .andExpect(status().is2xxSuccessful())
@@ -152,7 +155,12 @@ public class CreateDowithTaskIntegrationTest extends AbstractIntegrationTest {
                                 .content(this.writeRequestBodyAsString(requestBody)));
 
         // then
-        assertThat(this.taskSummaryJpaRepository.findById(this.taskSummary.getId()).get().getRemainedDowithTaskCount()).isEqualTo(5);
+        assertThat(
+                        this.taskSummaryJpaRepository
+                                .findById(this.taskSummary.getId())
+                                .get()
+                                .getRemainedDowithTaskCount())
+                .isEqualTo(5);
         resultActions
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$.statusCode").value(INVALID_REQUEST.getStatusCode()))
@@ -170,24 +178,30 @@ public class CreateDowithTaskIntegrationTest extends AbstractIntegrationTest {
         LocalDate routineDate4 = startDateTime.plusDays(5).toLocalDate();
         LocalDate routineDate5 = startDateTime.plusDays(6).toLocalDate();
         List<LocalDate> targetDates =
-                Arrays.asList(startDateTime.toLocalDate(), routineDate1, routineDate2, routineDate3, routineDate4, routineDate5);
+                Arrays.asList(
+                        startDateTime.toLocalDate(),
+                        routineDate1,
+                        routineDate2,
+                        routineDate3,
+                        routineDate4,
+                        routineDate5);
         Collections.sort(targetDates);
 
         // when
         CreateDowithTaskReqDto requestBody =
-                new CreateDowithTaskReqDto(
-                        "테스트",
-                        null,
-                        startDateTime,
-                        Boolean.TRUE,
-                        targetDates);
+                new CreateDowithTaskReqDto("테스트", null, startDateTime, Boolean.TRUE, targetDates);
         ResultActions resultActions =
                 this.request(
                         MockMvcRequestBuilders.post(CREATE_DOWITH_TASK_URL)
                                 .content(this.writeRequestBodyAsString(requestBody)));
 
         // then
-        assertThat(this.taskSummaryJpaRepository.findById(this.taskSummary.getId()).get().getRemainedDowithTaskCount()).isEqualTo(5);
+        assertThat(
+                        this.taskSummaryJpaRepository
+                                .findById(this.taskSummary.getId())
+                                .get()
+                                .getRemainedDowithTaskCount())
+                .isEqualTo(5);
         resultActions
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$.statusCode").value(DOWITH_TASK_CREATE_COUNT_EXCEED.getStatusCode()))
@@ -219,7 +233,12 @@ public class CreateDowithTaskIntegrationTest extends AbstractIntegrationTest {
                                 .content(this.writeRequestBodyAsString(requestBody)));
 
         // then
-        assertThat(this.taskSummaryJpaRepository.findById(this.taskSummary.getId()).get().getRemainedDowithTaskCount()).isEqualTo(5);
+        assertThat(
+                        this.taskSummaryJpaRepository
+                                .findById(this.taskSummary.getId())
+                                .get()
+                                .getRemainedDowithTaskCount())
+                .isEqualTo(5);
         resultActions
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$.statusCode").value(DOWITH_TASK_NOT_AVAIL_DATE.getStatusCode()))
@@ -251,7 +270,12 @@ public class CreateDowithTaskIntegrationTest extends AbstractIntegrationTest {
                                 .content(this.writeRequestBodyAsString(requestBody)));
 
         // then
-        assertThat(this.taskSummaryJpaRepository.findById(this.taskSummary.getId()).get().getRemainedDowithTaskCount()).isEqualTo(5);
+        assertThat(
+                        this.taskSummaryJpaRepository
+                                .findById(this.taskSummary.getId())
+                                .get()
+                                .getRemainedDowithTaskCount())
+                .isEqualTo(5);
         resultActions
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$.statusCode").value(INVALID_REQUEST.getStatusCode()))

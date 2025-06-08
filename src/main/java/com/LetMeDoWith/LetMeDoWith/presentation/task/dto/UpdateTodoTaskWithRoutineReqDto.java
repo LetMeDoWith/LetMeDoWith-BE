@@ -5,9 +5,4 @@ import lombok.Builder;
 
 @Builder
 public record UpdateTodoTaskWithRoutineReqDto(
-    String title,
-    LocalDateTime startDateTime,
-    Long taskCategoryId
-) {
-
-}
+        String title, LocalDateTime startDateTime, Long taskCategoryId) {}

@@ -20,88 +20,87 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class RegisterTodoTaskService {
-    
+
     private final TodoTaskRepository todoTaskRepository;
     private final TaskCategoryRepository taskCategoryRepository;
     private final TodoTaskRoutineDateCalculator routineDateCalculator;
     private final HolidayService holidayService;
-    
+
     /**
      * 루틴이 아닌 TodoTask를 생성한다.
      *
      * @param memberId TodoTask를 생성할 사용자의 ID
-     * @param command  생성할 TodoTask의 정보 (카테고리 ID, 제목, 시작일, 시작시간, 루틴여부)
+     * @param command 생성할 TodoTask의 정보 (카테고리 ID, 제목, 시작일, 시작시간, 루틴여부)
      * @return 생성된 TodoTask
      */
-    public RegisterTodoTaskResult registerTodoTask(String memberId,
-                                                   RegisterTodoTaskCommand command) {
+    public RegisterTodoTaskResult registerTodoTask(String memberId, RegisterTodoTaskCommand command) {
         if (command.taskCategoryId() != null) {
             taskCategoryRepository
-                .getActiveTaskCategory(command.taskCategoryId(), memberId)
-                .orElseThrow(
-                    () -> new RestApiException(FailResponseStatus.DOWITH_TASK_TASK_CATEGORY_NOT_EXIST));
+                    .getActiveTaskCategory(command.taskCategoryId(), memberId)
+                    .orElseThrow(
+                            () -> new RestApiException(FailResponseStatus.DOWITH_TASK_TASK_CATEGORY_NOT_EXIST));
         }
-        
+
         TodoTask todoTask =
-            TodoTask.of(
-                memberId,
-                command.taskCategoryId(),
-                command.title(),
-                command.date(),
-                command.startTime());
-        
+                TodoTask.of(
+                        memberId,
+                        command.taskCategoryId(),
+                        command.title(),
+                        command.date(),
+                        command.startTime());
+
         return RegisterTodoTaskResult.of(todoTaskRepository.saveTodoTask(todoTask));
     }
-    
+
     /**
      * TodoTask 루틴을 생성한다.
      *
      * @param memberId TodoTask를 생성할 사용자의 ID
-     * @param command  생성할 TodoTask의 정보 (카테고리 ID, 제목, 시작일, 종료일, 시작시간, 루틴여부, 루틴 반복 주기, 루틴 반복 패턴)
+     * @param command 생성할 TodoTask의 정보 (카테고리 ID, 제목, 시작일, 종료일, 시작시간, 루틴여부, 루틴 반복 주기, 루틴 반복 패턴)
      * @return 생성된 루틴의 TodoTask 목록
      */
     public RegisterTodoTaskResult registerTodoTaskWithRoutine(
-        String memberId, RegisterTodoTaskCommand command) {
-        
+            String memberId, RegisterTodoTaskCommand command) {
+
         if (command.taskCategoryId() != null) {
             taskCategoryRepository
-                .getTaskCategory(command.taskCategoryId(), Yn.TRUE)
-                .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
+                    .getTaskCategory(command.taskCategoryId(), Yn.TRUE)
+                    .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
         }
-        
+
         TodoTaskRoutineCondition routineCondition =
-            command
-                .routineCondition()
-                .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
-        
+                command
+                        .routineCondition()
+                        .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
+
         // 루틴 반복 주기에 따른 루틴 수행일자 계산
         Set<LocalDate> routineDates =
-            routineDateCalculator.computeRoutineDates(
-                routineCondition.cycle(),
-                routineCondition.startDate(),
-                routineCondition.endDate(),
-                routineCondition.pattern());
-        
+                routineDateCalculator.computeRoutineDates(
+                        routineCondition.cycle(),
+                        routineCondition.startDate(),
+                        routineCondition.endDate(),
+                        routineCondition.pattern());
+
         if (Boolean.TRUE.equals(routineCondition.isExcludeHolidays())) {
             // 공휴일 목록 조회
             Set<LocalDate> holidays =
-                holidayService.getHolidays(
-                    CountryCode.KR, routineCondition.startDate(), routineCondition.endDate());
-            
+                    holidayService.getHolidays(
+                            CountryCode.KR, routineCondition.startDate(), routineCondition.endDate());
+
             routineDates.removeAll(holidays);
         }
-        
+
         List<TodoTask> todoTasks =
-            TodoTask.ofWithRoutine(
-                memberId,
-                command.taskCategoryId(),
-                command.title(),
-                command.startTime(),
-                routineDates,
-                routineCondition.cycle(),
-                routineCondition.pattern(),
-                routineCondition.isExcludeHolidays());
-        
+                TodoTask.ofWithRoutine(
+                        memberId,
+                        command.taskCategoryId(),
+                        command.title(),
+                        command.startTime(),
+                        routineDates,
+                        routineCondition.cycle(),
+                        routineCondition.pattern(),
+                        routineCondition.isExcludeHolidays());
+
         return RegisterTodoTaskResult.of(todoTaskRepository.saveTodoTasks(todoTasks), routineDates);
     }
 }

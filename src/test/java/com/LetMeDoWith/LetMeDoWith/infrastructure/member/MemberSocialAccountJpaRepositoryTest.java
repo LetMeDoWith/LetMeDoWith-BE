@@ -1,5 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.member;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
 import com.LetMeDoWith.LetMeDoWith.config.JpaAuditingConfiguration;
@@ -9,6 +11,7 @@ import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.MemberSocialAccount;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.member.persistence.jpaRepository.MemberJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.member.persistence.jpaRepository.MemberSocialAccountJpaRepository;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,23 +22,16 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @Import({JpaAuditingConfiguration.class, TestQueryDslConfig.class})
 class MemberSocialAccountJpaRepositoryTest {
 
-    @Autowired
-    TestEntityManager entityManager;
+    @Autowired TestEntityManager entityManager;
 
-    @Autowired
-    MemberJpaRepository memberJpaRepository;
+    @Autowired MemberJpaRepository memberJpaRepository;
 
-    @Autowired
-    MemberSocialAccountJpaRepository memberSocialAccountJpaRepository;
+    @Autowired MemberSocialAccountJpaRepository memberSocialAccountJpaRepository;
 
     @BeforeEach
     void beforeEach() {

@@ -29,7 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class CreateTokenService {
-    
+
     private final AccessTokenProvider accessTokenProvider;
     private final SignupTokenProvider signupTokenProvider;
     private final RefreshTokenProvider refreshTokenProvider;
@@ -46,9 +46,9 @@ public class CreateTokenService {
         if (member.isNormal()) {
             AccessToken accessToken = accessTokenProvider.createAccessToken(member.getId());
             RefreshToken refreshToken =
-                refreshTokenProvider.createRefreshToken(
-                    member.getId(), accessToken.getToken(), HeaderUtil.getUserAgent());
-            
+                    refreshTokenProvider.createRefreshToken(
+                            member.getId(), accessToken.getToken(), HeaderUtil.getUserAgent());
+
             return CreateTokenResult.of(accessToken, refreshToken, member.getId());
         } else {
             throw new RestApiException(member.getStatus().getApiResponseStatus());
@@ -109,20 +109,20 @@ public class CreateTokenService {
      */
     @Transactional
     public CreateRefreshTokenResult createRefreshToken(
-        String accessToken, String refreshToken, String userAgent) {
-        
+            String accessToken, String refreshToken, String userAgent) {
+
         String memberId = accessTokenProvider.getMemberIdWithoutVerify(accessToken);
-        
+
         RefreshToken savedRefreshToken = null;
         savedRefreshToken = refreshTokenProvider.findRefreshToken(refreshToken);
         savedRefreshToken.checkTokenOwnership(memberId, accessToken, userAgent);
-        
+
         AccessToken newAccessToken = accessTokenProvider.createAccessToken(memberId);
         RefreshToken newRefreshToken =
-            refreshTokenProvider.createRefreshToken(memberId, accessToken, userAgent);
-        
+                refreshTokenProvider.createRefreshToken(memberId, accessToken, userAgent);
+
         refreshTokenRepository.deleteRefreshToken(savedRefreshToken);
-        
+
         return new CreateRefreshTokenResult(newAccessToken, newRefreshToken);
     }
 }

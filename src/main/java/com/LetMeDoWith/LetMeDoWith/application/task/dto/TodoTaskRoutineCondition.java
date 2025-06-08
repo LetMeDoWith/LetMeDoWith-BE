@@ -7,26 +7,24 @@ import lombok.Builder;
 
 @Builder
 public record TodoTaskRoutineCondition(
-    
-    LocalDate startDate,
-    LocalDate endDate,
-    TodoTaskRoutineCycle cycle,
-    
-    Set<Integer> pattern,
-    Boolean isExcludeHolidays) {
-    
-    public static TodoTaskRoutineCondition of(
         LocalDate startDate,
         LocalDate endDate,
         TodoTaskRoutineCycle cycle,
         Set<Integer> pattern,
         Boolean isExcludeHolidays) {
+
+    public static TodoTaskRoutineCondition of(
+            LocalDate startDate,
+            LocalDate endDate,
+            TodoTaskRoutineCycle cycle,
+            Set<Integer> pattern,
+            Boolean isExcludeHolidays) {
         return TodoTaskRoutineCondition.builder()
-                                       .startDate(startDate)
-                                       .endDate(endDate)
-                                       .cycle(cycle)
-                                       .pattern(pattern)
-                                       .isExcludeHolidays(isExcludeHolidays)
-                                       .build();
+                .startDate(startDate)
+                .endDate(endDate)
+                .cycle(cycle)
+                .pattern(pattern)
+                .isExcludeHolidays(isExcludeHolidays)
+                .build();
     }
 }

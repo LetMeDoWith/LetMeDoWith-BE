@@ -8,25 +8,24 @@ import lombok.Builder;
 
 @Builder
 public record RegisterTodoTaskCommand(
-    Long taskCategoryId,
-    String title,
-    LocalDate date,
-    LocalTime startTime,
-    
-    Optional<TodoTaskRoutineCondition> routineCondition) {
-    
-    public static RegisterTodoTaskCommand of(
         Long taskCategoryId,
         String title,
         LocalDate date,
         LocalTime startTime,
-        @Nullable TodoTaskRoutineCondition routineCondition) {
+        Optional<TodoTaskRoutineCondition> routineCondition) {
+
+    public static RegisterTodoTaskCommand of(
+            Long taskCategoryId,
+            String title,
+            LocalDate date,
+            LocalTime startTime,
+            @Nullable TodoTaskRoutineCondition routineCondition) {
         return RegisterTodoTaskCommand.builder()
-                                      .taskCategoryId(taskCategoryId)
-                                      .title(title)
-                                      .date(date)
-                                      .startTime(startTime)
-                                      .routineCondition(Optional.ofNullable(routineCondition))
-                                      .build();
+                .taskCategoryId(taskCategoryId)
+                .title(title)
+                .date(date)
+                .startTime(startTime)
+                .routineCondition(Optional.ofNullable(routineCondition))
+                .build();
     }
 }

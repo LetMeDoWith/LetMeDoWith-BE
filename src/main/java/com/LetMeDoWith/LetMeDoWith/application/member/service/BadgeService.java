@@ -1,5 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.application.member.service;
 
+import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.*;
+
 import com.LetMeDoWith.LetMeDoWith.application.member.dto.RetrieveBadgesInfoResult;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.BadgeStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
@@ -13,14 +15,11 @@ import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskSummary;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TaskSummaryRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.member.query.BadgeQueryRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.member.query.dto.MemberBadgeQueryDto;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Optional;
-
-import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.*;
 
 @Service
 @RequiredArgsConstructor
@@ -46,8 +45,10 @@ public class BadgeService {
                         .getNormalStatusMember(memberId)
                         .orElseThrow(() -> new RestApiException(MEMBER_NOT_EXIST_BADGE));
 
-        TaskSummary taskSummary = taskSummaryRepository.getTaskSummary(memberId)
-                .orElseThrow(() -> new RestApiException(INTERNAL_SERVER_ERROR));
+        TaskSummary taskSummary =
+                taskSummaryRepository
+                        .getTaskSummary(memberId)
+                        .orElseThrow(() -> new RestApiException(INTERNAL_SERVER_ERROR));
 
         List<MemberBadgeQueryDto> badges = badgeQueryRepository.getBadges(memberId);
 
@@ -68,8 +69,10 @@ public class BadgeService {
                         .getMember(memberId, MemberStatus.NORMAL)
                         .orElseThrow(() -> new RestApiException(MEMBER_NOT_EXIST_BADGE));
 
-        TaskSummary taskSummary = taskSummaryRepository.getTaskSummary(memberId)
-                .orElseThrow(() -> new RestApiException(INTERNAL_SERVER_ERROR));
+        TaskSummary taskSummary =
+                taskSummaryRepository
+                        .getTaskSummary(memberId)
+                        .orElseThrow(() -> new RestApiException(INTERNAL_SERVER_ERROR));
 
         if (taskSummary.isLazyBadgeAcquireLevel()) {
             throw new RestApiException(LAZY_NOT_AVAIL_UPDATE_MAIN_BADGE);
