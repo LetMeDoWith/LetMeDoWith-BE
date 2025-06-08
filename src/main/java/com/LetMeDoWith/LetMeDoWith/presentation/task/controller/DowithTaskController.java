@@ -78,11 +78,11 @@ public class DowithTaskController {
 
         String memberId = AuthUtil.getMemberId();
 
-        if (requestBody.isRoutineCreate()) {
+        if (requestBody.getRoutineDates() == null) {
+            updateDowithTaskService.updateContentsOnly(memberId, dowithTaskId, requestBody.toCommand());
+        } else {
             updateDowithTaskService.updateContentsAndCreateRoutine(
                     memberId, dowithTaskId, requestBody.toCommand(), requestBody.getRoutineDates());
-        } else {
-            updateDowithTaskService.updateContentsOnly(memberId, dowithTaskId, requestBody.toCommand());
         }
 
         return ResponseUtil.createSuccessResponse();
@@ -118,9 +118,7 @@ public class DowithTaskController {
     })
     @DeleteMapping("/{dowithTaskId}")
     public ResponseEntity deleteDowithTask(
-            @PathVariable Long dowithTaskId,
-            @RequestParam(name = "isRoutineInclude", required = false, defaultValue = "false")
-            boolean isRoutineInclude) {
+            @PathVariable Long dowithTaskId) {
         deleteDowithTaskService.delete(AuthUtil.getMemberId(), dowithTaskId);
         return ResponseUtil.createSuccessResponse();
     }
@@ -131,7 +129,7 @@ public class DowithTaskController {
             @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")
     })
     @DeleteMapping("/{dowithTaskId}/with-routine")
-    public ResponseEntity deleteDowithTask(
+    public ResponseEntity deleteDowithTaskWithRoutine(
             @PathVariable Long dowithTaskId) {
         deleteDowithTaskService.deleteWithRoutines(AuthUtil.getMemberId(), dowithTaskId);
         return ResponseUtil.createSuccessResponse();

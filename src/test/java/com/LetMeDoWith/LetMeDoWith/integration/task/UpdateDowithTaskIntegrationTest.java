@@ -88,7 +88,6 @@ public class UpdateDowithTaskIntegrationTest extends AbstractIntegrationTest {
                         .title("청소하기")
                         .taskCategoryId(taskCategory2.getId())
                         .startDateTime(LocalDateTime.of(2024, 3, 3, 14, 0))
-                        .isRoutineCreate(true)
                         .routineDates(routineDates)
                         .build();
         ResultActions resultActions =
@@ -147,7 +146,6 @@ public class UpdateDowithTaskIntegrationTest extends AbstractIntegrationTest {
                         .title("청소하기")
                         .taskCategoryId(taskCategory2.getId())
                         .startDateTime(LocalDateTime.of(2024, 3, 3, 14, 0))
-                        .isRoutineCreate(true)
                         .routineDates(routineDates)
                         .build();
         ResultActions resultActions =
@@ -183,7 +181,7 @@ public class UpdateDowithTaskIntegrationTest extends AbstractIntegrationTest {
                         .title("청소하기")
                         .taskCategoryId(taskCategory2.getId())
                         .startDateTime(LocalDateTime.of(2024, 3, 3, 14, 0))
-                        .isRoutineCreate(false)
+                        .routineDates(null)
                         .build();
         ResultActions resultActions =
                 request(
