@@ -8,16 +8,20 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface TodoTaskRepository {
-
+    
     Optional<TodoTask> getTodoTask(Long id, String memberId);
-
+    
     List<TodoTask> getTodoTasks(String memberId, LocalDate date);
-
+    
     List<TodoTask> getTodoTasks(String memberId, Set<LocalDate> dates);
-
+    
     List<TodoTask> getTodoTasks(TodoTaskRoutine todoTaskRoutine);
-
+    
     TodoTask saveTodoTask(TodoTask todoTask);
-
+    
     List<TodoTask> saveTodoTasks(List<TodoTask> todoTasks);
+    
+    void deleteTodoTask(TodoTask todoTask);
+    
+    void deleteTodoTasks(List<TodoTask> todoTasks);
 }

@@ -14,40 +14,40 @@ import lombok.RequiredArgsConstructor;
 @DomainService
 @RequiredArgsConstructor
 public class TodoTaskRoutineDateCalculator {
-
-    private static final String ROUTINE_SCHEDULE_STRATEGY_KEY_SUFFIX = "RoutineDateScheduleStrategy";
+    
+    private static final String ROUTINE_SCHEDULE_STRATEGY_KEY_SUFFIX = "RoutineDateCalculateStrategy";
     private final Map<String, TodoTaskRoutineDateCalculateStrategy> routineScheduleStrategies;
-
+    
     /**
      * 루틴 반복 주기와 패턴에 따라 루틴 수행 일자 목록을 얻는다.
      *
-     * @param cycle 루틴 반복 주기
-     * @param startDate 루틴 시작 일자
-     * @param endDate 루틴 종료 일자
+     * @param cycle             루틴 반복 주기
+     * @param startDate         루틴 시작 일자
+     * @param endDate           루틴 종료 일자
      * @param repetitionPattern 루틴 반복 패턴
      * @return 루틴 수행 일자 목록
      */
     public Set<LocalDate> computeRoutineDates(
-            TodoTaskRoutineCycle cycle,
-            LocalDate startDate,
-            LocalDate endDate,
-            Set<Integer> repetitionPattern) {
+        TodoTaskRoutineCycle cycle,
+        LocalDate startDate,
+        LocalDate endDate,
+        Set<Integer> repetitionPattern) {
         if (startDate.isAfter(endDate)) {
             throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
         }
-
+        
         TodoTaskRoutineDateCalculateStrategy strategy = getStrategy(cycle);
         return strategy.getRoutineDates(startDate, endDate, repetitionPattern);
     }
-
+    
     private TodoTaskRoutineDateCalculateStrategy getStrategy(TodoTaskRoutineCycle cycle) {
         String strategyKey = cycle.name().toLowerCase() + ROUTINE_SCHEDULE_STRATEGY_KEY_SUFFIX;
         TodoTaskRoutineDateCalculateStrategy strategy = routineScheduleStrategies.get(strategyKey);
-
+        
         if (strategy == null) {
             throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
         }
-
+        
         return strategy;
     }
 }

@@ -65,7 +65,7 @@
 //                RegisterTodoTaskCommand.builder()
 //                        .taskCategoryId(1L)
 //                        .title("Test Task")
-//                        .startDate(SystemTimeUtil.nowDate().plusDays(1))
+//                        .date(SystemTimeUtil.nowDate().plusDays(1))
 //                        .startTime(LocalTime.of(10, 0))
 //                        .build();
 //    }
@@ -94,8 +94,8 @@
 //    @DisplayName("[SUCCESS] 루틴 TodoTask 생성 성공")
 //    void testRegisterTodoTaskWithRoutineSuccess() {
 //        // given
-//        LocalDate startDate = SystemTimeUtil.nowDate().plusDays(1);
-//        LocalDate endDate = startDate.plusDays(7);
+//        LocalDate date = SystemTimeUtil.nowDate().plusDays(1);
+//        LocalDate endDate = date.plusDays(7);
 //        String title = "매일 운동하기";
 //        TodoTaskRoutineCycle cycle = TodoTaskRoutineCycle.DAILY;
 //        TodoTaskRoutineCondition routineCondition =
@@ -109,7 +109,7 @@
 //                RegisterTodoTaskCommand.builder()
 //                        .taskCategoryId(1L)
 //                        .title(title)
-//                        .startDate(startDate)
+//                        .date(date)
 //                        .endDate(endDate)
 //                        .startTime(SystemTimeUtil.nowTime().plusHours(1))
 //                        .isRoutine(true)
@@ -119,15 +119,15 @@
 //        when(taskCategoryRepository.getTaskCategory(routineCommand.taskCategoryId(), Yn.TRUE))
 //                .thenReturn(Optional.of(new TaskCategory()));
 //
-//        Set<LocalDate> routineDates = Set.of(startDate, startDate.plusDays(1),
-// startDate.plusDays(2));
+//        Set<LocalDate> routineDates = Set.of(date, date.plusDays(1),
+// date.plusDays(2));
 //        when(routineDateCalculator.computeRoutineDates(
-//                        eq(cycle), eq(startDate), eq(endDate), eq(Set.of())))
+//                        eq(cycle), eq(date), eq(endDate), eq(Set.of())))
 //                .thenReturn(routineDates);
 //
 //        List<TodoTask> todoTasks =
 //                TodoTask.ofWithRoutine(
-//                        1L, 1L, title, startDate, SystemTimeUtil.nowTime().plusHours(1),
+//                        1L, 1L, title, date, SystemTimeUtil.nowTime().plusHours(1),
 // routineDates);
 //        when(todoTaskRepository.saveTodoTasks(any(List.class))).thenReturn(todoTasks);
 //
@@ -145,8 +145,8 @@
 //    @DisplayName("[SUCCESS] 공휴일 제외 루틴 TodoTask 생성 성공")
 //    void testRegisterTodoTaskWithRoutineWithHolidayExclusionSuccess() {
 //        // given
-//        LocalDate startDate = SystemTimeUtil.nowDate().plusDays(1);
-//        LocalDate endDate = startDate.plusDays(7);
+//        LocalDate date = SystemTimeUtil.nowDate().plusDays(1);
+//        LocalDate endDate = date.plusDays(7);
 //        String title = "매일 운동하기";
 //        TodoTaskRoutineCycle cycle = TodoTaskRoutineCycle.DAILY;
 //        TodoTaskRoutineCondition routineCondition =
@@ -160,7 +160,7 @@
 //                RegisterTodoTaskCommand.builder()
 //                        .taskCategoryId(1L)
 //                        .title(title)
-//                        .startDate(startDate)
+//                        .date(date)
 //                        .endDate(endDate)
 //                        .startTime(SystemTimeUtil.nowTime().plusHours(1))
 //                        .isRoutine(true)
@@ -170,21 +170,21 @@
 //        when(taskCategoryRepository.getTaskCategory(routineCommand.taskCategoryId(), Yn.TRUE))
 //                .thenReturn(Optional.of(new TaskCategory()));
 //
-//        Set<LocalDate> routineDates = Set.of(startDate, startDate.plusDays(1),
-// startDate.plusDays(2));
+//        Set<LocalDate> routineDates = Set.of(date, date.plusDays(1),
+// date.plusDays(2));
 //        when(routineDateCalculator.computeRoutineDates(
-//                        eq(cycle), eq(startDate), eq(endDate), eq(Set.of())))
+//                        eq(cycle), eq(date), eq(endDate), eq(Set.of())))
 //                .thenReturn(routineDates);
 //
-//        Set<LocalDate> holidays = Set.of(startDate.plusDays(1));
-//        when(holidayService.getHolidays(CountryCode.KR, startDate, endDate)).thenReturn(holidays);
+//        Set<LocalDate> holidays = Set.of(date.plusDays(1));
+//        when(holidayService.getHolidays(CountryCode.KR, date, endDate)).thenReturn(holidays);
 //
 //        List<TodoTask> todoTasks =
 //                TodoTask.ofWithRoutine(
 //                        1L,
 //                        1L,
 //                        title,
-//                        startDate,
+//                        date,
 //                        SystemTimeUtil.nowTime().plusHours(1),
 //                        routineDates,
 //                        holidays);
@@ -218,7 +218,7 @@
 //    @DisplayName("[FAIL] 존재하지 않는 카테고리로 루틴 TodoTask 생성 시도 시 실패")
 //    void testRegisterTodoTaskWithRoutineFailWhenCategoryNotExist() {
 //        // given
-//        LocalDate startDate = LocalDate.of(2024, 1, 1);
+//        LocalDate date = LocalDate.of(2024, 1, 1);
 //        LocalDate endDate = LocalDate.of(2024, 12, 31);
 //        String title = "매일 운동하기";
 //        TodoTaskRoutineCycle cycle = TodoTaskRoutineCycle.DAILY;
@@ -233,7 +233,7 @@
 //                RegisterTodoTaskCommand.builder()
 //                        .taskCategoryId(1L)
 //                        .title(title)
-//                        .startDate(startDate)
+//                        .date(date)
 //                        .endDate(endDate)
 //                        .startTime(LocalTime.of(10, 0))
 //                        .isRoutine(true)
@@ -255,7 +255,7 @@
 //    @DisplayName("[FAIL] 시작일이 종료일보다 늦은 경우 실패")
 //    void testRegisterTodoTaskWithRoutineFailWhenStartDateIsAfterEndDate() {
 //        // given
-//        LocalDate startDate = LocalDate.of(2024, 12, 31);
+//        LocalDate date = LocalDate.of(2024, 12, 31);
 //        LocalDate endDate = LocalDate.of(2024, 1, 1);
 //        String title = "매일 운동하기";
 //        TodoTaskRoutineCycle cycle = TodoTaskRoutineCycle.DAILY;
@@ -270,7 +270,7 @@
 //                RegisterTodoTaskCommand.builder()
 //                        .taskCategoryId(1L)
 //                        .title(title)
-//                        .startDate(startDate)
+//                        .date(date)
 //                        .endDate(endDate)
 //                        .startTime(LocalTime.of(10, 0))
 //                        .isRoutine(true)
@@ -292,7 +292,7 @@
 //    @DisplayName("[FAIL] 패턴이 사이클과 일치하지 않는 경우 실패")
 //    void testRegisterTodoTaskWithRoutineFailWhenPatternDoesNotMatchCycle() {
 //        // given
-//        LocalDate startDate = LocalDate.of(2024, 1, 1);
+//        LocalDate date = LocalDate.of(2024, 1, 1);
 //        LocalDate endDate = LocalDate.of(2024, 12, 31);
 //        String title = "매주 운동하기";
 //        TodoTaskRoutineCycle cycle = TodoTaskRoutineCycle.WEEKLY;
@@ -307,7 +307,7 @@
 //                RegisterTodoTaskCommand.builder()
 //                        .taskCategoryId(1L)
 //                        .title(title)
-//                        .startDate(startDate)
+//                        .date(date)
 //                        .endDate(endDate)
 //                        .startTime(LocalTime.of(10, 0))
 //                        .isRoutine(true)
@@ -318,7 +318,7 @@
 //                .thenReturn(Optional.of(new TaskCategory()));
 //
 //        when(routineDateCalculator.computeRoutineDates(
-//                        eq(cycle), eq(startDate), eq(endDate), eq(Set.of(1, 2, 3, 4, 5, 6, 7,
+//                        eq(cycle), eq(date), eq(endDate), eq(Set.of(1, 2, 3, 4, 5, 6, 7,
 // 8))))
 //                .thenThrow(new RestApiException(FailResponseStatus.DOWITH_TASK_NOT_AVAIL_DATE));
 //

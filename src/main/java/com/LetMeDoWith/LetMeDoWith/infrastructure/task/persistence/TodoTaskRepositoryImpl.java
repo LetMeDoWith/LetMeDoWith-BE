@@ -14,36 +14,46 @@ import org.springframework.stereotype.Repository;
 @Repository
 @RequiredArgsConstructor
 public class TodoTaskRepositoryImpl implements TodoTaskRepository {
-
+    
     private final TodoTaskJpaRepository todoTaskJpaRepository;
-
+    
     @Override
     public Optional<TodoTask> getTodoTask(Long id, String memberId) {
         return todoTaskJpaRepository.findTodoTaskAggregate(id, memberId);
     }
-
+    
     @Override
     public List<TodoTask> getTodoTasks(String memberId, LocalDate date) {
         return todoTaskJpaRepository.findAllTodoTaskAggregates(memberId, date);
     }
-
+    
     @Override
     public List<TodoTask> getTodoTasks(String memberId, Set<LocalDate> dates) {
         return todoTaskJpaRepository.findAllTodoTaskAggregates(memberId, dates);
     }
-
+    
     @Override
     public List<TodoTask> getTodoTasks(TodoTaskRoutine todoTaskRoutine) {
         return todoTaskJpaRepository.findAllTodoTaskAggregates(todoTaskRoutine);
     }
-
+    
     @Override
     public TodoTask saveTodoTask(TodoTask todoTask) {
         return todoTaskJpaRepository.save(todoTask);
     }
-
+    
     @Override
     public List<TodoTask> saveTodoTasks(List<TodoTask> todoTasks) {
         return todoTaskJpaRepository.saveAll(todoTasks);
+    }
+    
+    @Override
+    public void deleteTodoTask(TodoTask todoTask) {
+        todoTaskJpaRepository.delete(todoTask);
+    }
+    
+    @Override
+    public void deleteTodoTasks(List<TodoTask> todoTasks) {
+        todoTaskJpaRepository.deleteAll(todoTasks);
     }
 }

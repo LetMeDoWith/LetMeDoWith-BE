@@ -9,11 +9,16 @@ import org.springframework.stereotype.Repository;
 @Repository
 @RequiredArgsConstructor
 public class TodoTaskRoutineRepositoryImpl implements TodoTaskRoutineRepository {
-
+    
     private final TodoTaskRoutineJpaRepository jpaRepository;
-
+    
     @Override
     public TodoTaskRoutine save(TodoTaskRoutine todoTaskRoutine) {
         return jpaRepository.save(todoTaskRoutine);
+    }
+    
+    @Override
+    public void delete(TodoTaskRoutine todoTaskRoutine) {
+        jpaRepository.delete(todoTaskRoutine);
     }
 }
