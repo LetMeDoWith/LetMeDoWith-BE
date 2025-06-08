@@ -5,11 +5,12 @@ import com.LetMeDoWith.LetMeDoWith.common.dto.ResponseDto;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.Gender;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
-import com.LetMeDoWith.LetMeDoWith.common.enums.member.TaskCompleteLevel;
 import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.auth.model.AccessToken;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskSummary;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.member.persistence.jpaRepository.MemberJpaRepository;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.TaskSummaryJpaRepository;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.charset.StandardCharsets;
@@ -32,6 +33,12 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.util.LinkedMultiValueMap;
 
+import java.nio.charset.StandardCharsets;
+import java.time.Clock;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+
 @Slf4j
 @SpringBootTest
 @ActiveProfiles("test")
@@ -39,8 +46,11 @@ import org.springframework.util.LinkedMultiValueMap;
 public abstract class AbstractIntegrationTest {
 
     protected Member requestMember;
+    protected TaskSummary taskSummary;
     @Autowired
-    protected ObjectMapper objectMapper;
+    protected TaskSummaryJpaRepository taskSummaryJpaRepository;
+    @Autowired
+    ObjectMapper objectMapper;
     @Autowired
     MockMvc mockMvc;
     @Autowired
@@ -80,25 +90,32 @@ public abstract class AbstractIntegrationTest {
         }
     }
 
-    /** 해당 Abstract Class 상속 받은 테스트는 모든 Test 메서드 시작전에 request Member 세팅 */
+    /**
+     * 해당 Abstract Class 상속 받은 테스트는 모든 Test 메서드 시작전에 request Member 세팅
+     */
     private void createMemberTestData() {
-        requestMember = memberJpaRepository.save(
-                Member.builder()
-                        .status(MemberStatus.NORMAL)
-                        .taskCompleteLevel(TaskCompleteLevel.AVERAGE)
-                        .nickname("test")
-                        .selfDescription("test description")
-                        .gender(Gender.MALE)
-                        .dateOfBirth(LocalDate.of(1995, 11, 4))
-                        .type(MemberType.USER)
-                        .build());
+        requestMember =
+                memberJpaRepository.save(
+                        Member.builder()
+                                .status(MemberStatus.NORMAL)
+                                .nickname("test")
+                                .selfDescription("test description")
+                                .gender(Gender.MALE)
+                                .dateOfBirth(LocalDate.of(1995, 11, 4))
+                                .type(MemberType.USER)
+                                .build());
+        taskSummary = taskSummaryJpaRepository.save(TaskSummary.of(requestMember.getId()));
         requestMemberAccessToken = accessTokenProvider.createAccessToken(requestMember.getId());
     }
 
-    /** 이전 Test의 test data 삭제 - abstract method */
+    /**
+     * 이전 Test의 test data 삭제 - abstract method
+     */
     protected abstract void deleteTestData();
 
-    /** Test Data 생성 - abstract method */
+    /**
+     * Test Data 생성 - abstract method
+     */
     protected abstract void createTestData();
 
     /**

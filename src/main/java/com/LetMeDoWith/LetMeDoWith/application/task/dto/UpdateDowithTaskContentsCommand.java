@@ -6,4 +6,4 @@ import lombok.Builder;
 
 @Builder
 public record UpdateDowithTaskContentsCommand(
-        Long id, String title, Long taskCategoryId, LocalDate date, LocalTime startTime) {}
+        String title, Long taskCategoryId, LocalDate date, LocalTime startTime) {}

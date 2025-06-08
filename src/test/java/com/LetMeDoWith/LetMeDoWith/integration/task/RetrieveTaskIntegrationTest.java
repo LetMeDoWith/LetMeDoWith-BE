@@ -13,12 +13,9 @@ import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.TaskCategoryJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.TodoTaskJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.integration.AbstractIntegrationTest;
-import java.time.Clock;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.util.List;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +32,7 @@ public class RetrieveTaskIntegrationTest extends AbstractIntegrationTest {
 
     private TaskCategory taskCategory1, taskCategory2;
     private TodoTask todoTask1, todoTask2;
-    private DowithTask dowithTask1, dowithTask2;
+    private DowithTask dowithTask1, dowithTask2, dowithTask3;
 
     protected void deleteTestData() {
         todoTaskJpaRepository.deleteAll();
@@ -96,7 +93,19 @@ public class RetrieveTaskIntegrationTest extends AbstractIntegrationTest {
                         "test dowith task 2",
                         LocalDate.of(2024, 3, 13),
                         LocalTime.of(13, 0));
-        dowithTaskJpaRepository.saveAll(List.of(dowithTask1, dowithTask2));
+
+        dowithTask3 =
+                DowithTask.of(
+                        this.requestMember.getId(),
+                        taskCategory1.getId(),
+                        "test dowith task 3",
+                        LocalDate.of(2024, 3, 14),
+                        LocalTime.of(14, 0));
+
+        dowithTask3.confirm(
+                List.of("https://example.com/image1.jpg", "https://example.com/image2.jpg"));
+
+        dowithTaskJpaRepository.saveAll(List.of(dowithTask1, dowithTask2, dowithTask3));
     }
 
     @Test
@@ -140,6 +149,7 @@ public class RetrieveTaskIntegrationTest extends AbstractIntegrationTest {
                 .andExpect(
                         jsonPath("$.data.dowithTasks[0].startTime")
                                 .value(DateTimeUtil.toFormatString(dowithTask1.getStartTime())))
+                .andExpect(jsonPath("$.data.dowithTasks[0].confirmedImageUrls").isEmpty())
                 .andExpect(jsonPath("$.data.dowithTasks[1].id").value(dowithTask2.getId()))
                 .andExpect(jsonPath("$.data.dowithTasks[1].taskCategoryId").value(taskCategory2.getId()))
                 .andExpect(
@@ -149,6 +159,24 @@ public class RetrieveTaskIntegrationTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.data.dowithTasks[1].date").value(dowithTask2.getDate().toString()))
                 .andExpect(
                         jsonPath("$.data.dowithTasks[1].startTime")
-                                .value(DateTimeUtil.toFormatString(dowithTask2.getStartTime())));
+                                .value(DateTimeUtil.toFormatString(dowithTask2.getStartTime())))
+                .andExpect(jsonPath("$.data.dowithTasks[1].confirmedImageUrls").isEmpty())
+                .andExpect(jsonPath("$.data.dowithTasks[2].id").value(dowithTask3.getId()))
+                .andExpect(jsonPath("$.data.dowithTasks[2].taskCategoryId").value(taskCategory1.getId()))
+                .andExpect(
+                        jsonPath("$.data.dowithTasks[2].taskCategoryName").value(taskCategory1.getTitle()))
+                .andExpect(jsonPath("$.data.dowithTasks[2].title").value(dowithTask3.getTitle()))
+                .andExpect(jsonPath("$.data.dowithTasks[2].status").value(dowithTask3.getStatus().name()))
+                .andExpect(jsonPath("$.data.dowithTasks[2].date").value(dowithTask3.getDate().toString()))
+                .andExpect(
+                        jsonPath("$.data.dowithTasks[2].startTime")
+                                .value(DateTimeUtil.toFormatString(dowithTask3.getStartTime())))
+                .andExpect(jsonPath("$.data.dowithTasks[2].confirmedImageUrls").isArray())
+                .andExpect(
+                        jsonPath("$.data.dowithTasks[2].confirmedImageUrls")
+                                .value(
+                                        Matchers.is(
+                                                List.of(
+                                                        "https://example.com/image1.jpg", "https://example.com/image2.jpg"))));
     }
 }

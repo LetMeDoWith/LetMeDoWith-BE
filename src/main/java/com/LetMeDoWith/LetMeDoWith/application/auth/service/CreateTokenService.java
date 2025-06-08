@@ -15,6 +15,8 @@ import com.LetMeDoWith.LetMeDoWith.domain.auth.model.RefreshToken;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
 import com.LetMeDoWith.LetMeDoWith.domain.member.repository.MemberRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.member.service.SocialAuthMemberService;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskSummary;
+import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TaskSummaryRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import java.util.Optional;
@@ -31,14 +33,14 @@ public class CreateTokenService {
     private final AccessTokenProvider accessTokenProvider;
     private final SignupTokenProvider signupTokenProvider;
     private final RefreshTokenProvider refreshTokenProvider;
-    
-    private final RefreshTokenRepository refreshTokenRepository;
-    
-    private final MemberRepository memberRepository;
-    private final SocialAuthMemberService socialAuthMemberService;
-    
     private final OidcIdTokenProvider oidcIdTokenProvider;
-    
+
+    private final MemberRepository memberRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final TaskSummaryRepository taskSummaryRepository;
+
+    private final SocialAuthMemberService socialAuthMemberService;
+
     @Transactional
     public CreateTokenResult createToken(Member member) {
         if (member.isNormal()) {
@@ -52,7 +54,7 @@ public class CreateTokenService {
             throw new RestApiException(member.getStatus().getApiResponseStatus());
         }
     }
-    
+
     /**
      * 회원가입 여부를 판단하여 ATK를 발급한다.
      *
@@ -65,15 +67,17 @@ public class CreateTokenService {
     @Transactional
     public CreateTokenResult createToken(SocialProvider socialProvider, String idToken) {
         Jws<Claims> verifiedIdToken =
-            oidcIdTokenProvider.getVerifiedOidcIdToken(socialProvider, idToken);
-        
+                oidcIdTokenProvider.getVerifiedOidcIdToken(socialProvider, idToken);
+
         Claims body = verifiedIdToken.getBody();
         String subject = body.get("sub", String.class);
-        
+
         Optional<Member> optionalMember = memberRepository.getMember(socialProvider, subject);
-        
+
         if (optionalMember.isPresent()) {
             Member member = optionalMember.get();
+            TaskSummary taskSummary = TaskSummary.of(member.getId());
+            taskSummaryRepository.save(taskSummary);
             if (member.isNormal()) {
                 return createToken(member);
             } else if (member.isSocialAuthenticated()) {
@@ -86,13 +90,15 @@ public class CreateTokenService {
             // 가입된 유저가 없으면, 회원가입 프로세스를 진행한다.
             // 최초 소셜 로그인 시도시 회원가입 단계를 진행하기 위해 임시 Member를 생성.
             Member member =
-                socialAuthMemberService.createSocialAuthenticatedMember(
-                    socialProvider, subject, memberRepository);
-            
+                    socialAuthMemberService.createSocialAuthenticatedMember(
+                            socialProvider, subject, memberRepository);
+            TaskSummary taskSummary = TaskSummary.of(member.getId());
+            taskSummaryRepository.save(taskSummary);
+
             return CreateTokenResult.of(signupTokenProvider.createSignupToken(member.getId()));
         }
     }
-    
+
     /**
      * Refresh 토큰 생성
      *

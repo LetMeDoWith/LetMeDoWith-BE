@@ -9,7 +9,6 @@ import lombok.Getter;
 public enum DowithTaskStatus implements BaseEnum {
     WAIT("WAIT", "대기"),
     SUCCESS("SUCCESS", "성공(인증)"),
-    COMPLETE("COMPLETE", "완료"),
     FAIL("FAIL", "실패");
 
     public final String code;

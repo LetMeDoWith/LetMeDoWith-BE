@@ -9,30 +9,14 @@ import com.LetMeDoWith.LetMeDoWith.domain.AggregateRoot;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskRoutineRepository;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
@@ -72,8 +56,8 @@ public class DowithTask extends BaseAuditEntity {
     @Column(name = "complete_at")
     private LocalDateTime completeDateTime;
 
-    @OneToOne(mappedBy = "dowithTask", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private DowithTaskConfirm confirms;
+    @OneToMany(mappedBy = "dowithTask", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<DowithTaskConfirm> confirms;
 
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "dowith_task_routine_id")
@@ -210,20 +194,65 @@ public class DowithTask extends BaseAuditEntity {
     }
 
     /**
-     * 두윗모드Task 인증
+     * 두윗모드Task 인증 이미지 키 생성
      *
-     * @param imageUrl 인증이미지URl
+     * @param imageFileNames
+     * @return
      */
-    public void confirm(String imageUrl) {
-        confirms = DowithTaskConfirm.of(this, imageUrl);
-        this.status = DowithTaskStatus.SUCCESS;
-        this.successDateTime = SystemTimeUtil.now();
+    public List<String> generateConfirmImageKey(List<String> imageFileNames) {
+
+        Pattern validExtensions = Pattern.compile("(?i)^.+\\.(jpg|jpeg|png|gif|bmp|webp)$");
+        if (imageFileNames.stream().anyMatch(name -> !validExtensions.matcher(name).matches())) {
+            throw new RestApiException(INVALID_REQUEST);
+        }
+
+        if (!status.equals(DowithTaskStatus.WAIT)) {
+            throw new RestApiException(INVALID_REQUEST);
+        }
+
+        if (SystemTimeUtil.now().isAfter(LocalDateTime.of(this.date, this.startTime))) {
+            throw new RestApiException(INVALID_REQUEST);
+        }
+
+        int shardIndex = (int) (this.id % 16);
+
+        List<String> confirmImageKeys = new ArrayList<>();
+        for (String imageFileName : imageFileNames) {
+            String timestamp =
+                    SystemTimeUtil.now().toString().replace("[:\\-T]", "").substring(0, 14) + "Z";
+            String uuid = UUID.randomUUID().toString();
+            confirmImageKeys.add(
+                    String.format(
+                            "dowith_task_confirms/%02d/%s_%s.%s", shardIndex, timestamp, uuid, imageFileName));
+        }
+        return confirmImageKeys;
     }
 
-    /** 두윗모드Task 완료 */
-    public void complete() {
-        this.status = DowithTaskStatus.COMPLETE;
-        this.completeDateTime = SystemTimeUtil.now();
+    /**
+     * 두윗모드Task 인증
+     *
+     * @param imageUrls
+     */
+    public void confirm(List<String> imageUrls) {
+
+        if (!status.equals(DowithTaskStatus.WAIT)) {
+            throw new RestApiException(INVALID_REQUEST);
+        }
+
+        if (SystemTimeUtil.now().isAfter(LocalDateTime.of(this.date, this.startTime))) {
+            throw new RestApiException(INVALID_REQUEST);
+        }
+
+        if (confirms == null) {
+            confirms = new ArrayList<>();
+        }
+
+        for (String imageUrl : imageUrls) {
+            confirms.add(DowithTaskConfirm.of(this, imageUrl));
+        }
+
+        this.status = DowithTaskStatus.SUCCESS;
+        this.successDateTime = SystemTimeUtil.now();
     }
 
     /**
@@ -444,7 +473,7 @@ public class DowithTask extends BaseAuditEntity {
      * @param dowithTaskRepository
      * @param dowithTaskRoutineRepository
      */
-    public void deleteWithRoutine(
+    public int deleteWithRoutine(
             DowithTaskRepository dowithTaskRepository,
             DowithTaskRoutineRepository dowithTaskRoutineRepository) {
 
@@ -452,13 +481,18 @@ public class DowithTask extends BaseAuditEntity {
             throw new RestApiException(INVALID_REQUEST);
         }
 
+        int deleteDowithTaskCount = 1;
         if (isRoutine()) {
             Set<LocalDate> toDeleteDates = this.routine.getDatesAfter(this.date);
 
-            dowithTaskRepository.delete(
+            List<DowithTask> routineDowithTasks =
                     dowithTaskRepository.getDowithTasks(this.routine).stream()
                             .filter(e -> toDeleteDates.contains(e.getDate()))
-                            .toList());
+                            .toList();
+
+            deleteDowithTaskCount += routineDowithTasks.size();
+
+            dowithTaskRepository.delete(routineDowithTasks);
 
             this.routine.deleteDates(toDeleteDates);
             if (this.routine.getDates().isEmpty()) {
@@ -467,6 +501,7 @@ public class DowithTask extends BaseAuditEntity {
         }
 
         dowithTaskRepository.delete(this);
+        return deleteDowithTaskCount;
     }
 
     /**
