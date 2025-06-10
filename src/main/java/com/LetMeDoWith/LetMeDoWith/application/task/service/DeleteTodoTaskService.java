@@ -15,49 +15,50 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class DeleteTodoTaskService {
-    
+
     private final TodoTaskRepository todoTaskRepository;
     private final TodoTaskRoutineRepository todoTaskRoutineRepository;
     private final TodoTaskRoutineSplitter splitter;
-    
+
     /**
      * 투두모드 태스크를 삭제합니다.
      *
-     * @param memberId   투두모드 태스크를 삭제할 사용자의 ID
+     * @param memberId 투두모드 태스크를 삭제할 사용자의 ID
      * @param todoTaskId 삭제할 투두모드 태스크의 ID
      */
     public void deleteTodoTask(String memberId, Long todoTaskId) {
-        TodoTask todoTask = todoTaskRepository.getTodoTask(todoTaskId, memberId)
-                                              .orElseThrow(() -> new RestApiException(
-                                                  INVALID_REQUEST));
-        
+        TodoTask todoTask =
+                todoTaskRepository
+                        .getTodoTask(todoTaskId, memberId)
+                        .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
+
         if (todoTask.isRoutine()) {
             todoTask.detachRoutine();
         }
-        
+
         todoTaskRepository.deleteTodoTask(todoTask);
     }
-    
+
     /**
      * 루틴 TodoTask를 삭제합니다. 루틴에 속한 모든 TodoTask가 삭제됩니다.
      *
-     * @param memberId   루틴 TodoTask를 삭제할 사용자의 ID
+     * @param memberId 루틴 TodoTask를 삭제할 사용자의 ID
      * @param todoTaskId 삭제할 루틴 TodoTask의 ID
      */
     public void deleteTodoTasksWithRoutine(String memberId, Long todoTaskId) {
-        TodoTask todoTask = todoTaskRepository.getTodoTask(todoTaskId, memberId)
-                                              .orElseThrow(() -> new RestApiException(
-                                                  INVALID_REQUEST));
-        
+        TodoTask todoTask =
+                todoTaskRepository
+                        .getTodoTask(todoTaskId, memberId)
+                        .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
+
         if (!todoTask.isRoutine()) {
             throw new RestApiException(INVALID_REQUEST);
         }
-        
+
         List<TodoTask> todoTasksInRoutine = todoTaskRepository.getTodoTasks(todoTask.getRoutine());
-        TodoTaskRoutineSplitResult splitResult = splitter.splitTodoTaskRoutine(todoTasksInRoutine,
-                                                                               todoTask,
-                                                                               todoTask.getRoutine());
-        
+        TodoTaskRoutineSplitResult splitResult =
+                splitter.splitTodoTaskRoutine(todoTasksInRoutine, todoTask, todoTask.getRoutine());
+
         todoTaskRoutineRepository.delete(splitResult.getNewRoutine());
         todoTaskRepository.deleteTodoTasks(splitResult.getNewTodoTasks());
     }
