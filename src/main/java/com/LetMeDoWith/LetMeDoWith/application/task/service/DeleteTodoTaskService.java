@@ -11,6 +11,7 @@ import com.LetMeDoWith.LetMeDoWith.domain.task.service.TodoTaskRoutineSplitter.T
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +27,7 @@ public class DeleteTodoTaskService {
      * @param memberId 투두모드 태스크를 삭제할 사용자의 ID
      * @param todoTaskId 삭제할 투두모드 태스크의 ID
      */
+    @Transactional
     public void deleteTodoTask(String memberId, Long todoTaskId) {
         TodoTask todoTask =
                 todoTaskRepository
@@ -45,6 +47,7 @@ public class DeleteTodoTaskService {
      * @param memberId 루틴 TodoTask를 삭제할 사용자의 ID
      * @param todoTaskId 삭제할 루틴 TodoTask의 ID
      */
+    @Transactional
     public void deleteTodoTasksWithRoutine(String memberId, Long todoTaskId) {
         TodoTask todoTask =
                 todoTaskRepository

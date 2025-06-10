@@ -132,7 +132,8 @@ public class UpdateTodoTaskService {
                 .forEach(
                         task -> {
                             task.updateContent(
-                                    command.title(), category.getId(), task.getDate(), command.startTime());
+                                    command.title(), category.getId(),
+                                    task.getDate(), command.startTime());
                         });
     }
 
@@ -198,6 +199,7 @@ public class UpdateTodoTaskService {
      * @param memberId 투두모드 태스크를 완료할 사용자의 ID
      * @param todoTaskId 완료할 투두모드 태스크의 ID
      */
+    @Transactional
     public TodoTask completeTodoTask(String memberId, Long todoTaskId) {
         return todoTaskRepository
                 .getTodoTask(todoTaskId, memberId)
@@ -211,6 +213,7 @@ public class UpdateTodoTaskService {
      * @param memberId 투두모드 태스크를 완료 취소할 사용자의 ID
      * @param todoTaskId 완료 취소할 투두모드 태스크의 ID
      */
+    @Transactional
     public TodoTask waitTodoTask(String memberId, Long todoTaskId) {
         return todoTaskRepository
                 .getTodoTask(todoTaskId, memberId)

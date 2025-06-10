@@ -34,6 +34,23 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
 
     static final String URL = "/api/v1/tasks/todo";
 
+    // Test time constants
+    private static final LocalDateTime FIXED_CLOCK_TIME = LocalDateTime.of(2024, 6, 1, 0, 0);
+    private static final LocalDate ORIGINAL_DATE = LocalDate.of(2024, 6, 2);
+    private static final LocalDate ROUTINE_END_DATE = LocalDate.of(2024, 6, 30);
+    private static final LocalDate SAMPLE_DATE = LocalDate.of(2024, 6, 15);
+    private static final LocalTime ORIGINAL_START_TIME = LocalTime.of(9, 0);
+    private static final LocalTime UPDATED_START_TIME = LocalTime.of(10, 0);
+
+    // Test string constants
+    private static final String ORIGINAL_TITLE = "원래 타이틀";
+    private static final String UPDATED_TITLE = "수정된 타이틀";
+
+    // API constants
+    private static final String RETRIEVE_TASKS_URL = "/api/v1/tasks";
+    private static final String YEAR_PARAM = "2024";
+    private static final String MONTH_PARAM = "6";
+
     @Autowired private TodoTaskJpaRepository todoTaskRepository;
     @Autowired private TaskCategoryJpaRepository taskCategoryRepository;
     @Autowired private TodoTaskRoutineDateCalculator todoTaskRoutineDateCalculator;
@@ -70,34 +87,29 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
     @DisplayName("[SUCCESS] 투두모드 단일 Task 수정 - 루틴이 아닌 태스크 수정")
     void updateSingleTodoTaskTestContentOnly() throws Exception {
         // given
-        setFixedClock(LocalDateTime.of(2024, 6, 1, 0, 0));
-        String originalTitle = "원래 타이틀";
-        LocalDate originalDate = LocalDate.of(2024, 6, 2);
-        LocalTime originalStartTime = LocalTime.of(9, 0);
+        setFixedClock(FIXED_CLOCK_TIME);
 
-        LocalDateTime originalDateTime = LocalDateTime.of(originalDate, originalStartTime);
+        LocalDateTime originalDateTime = LocalDateTime.of(ORIGINAL_DATE, ORIGINAL_START_TIME);
         TodoTask todoTask =
                 todoTaskRepository.save(
                         TodoTask.of(
                                 this.requestMember.getId(),
                                 taskCategory.getId(),
-                                originalTitle,
-                                originalDate,
-                                originalStartTime));
+                                ORIGINAL_TITLE,
+                                ORIGINAL_DATE,
+                                ORIGINAL_START_TIME));
 
         // when
-        String updatedTitle = "수정된 타이틀";
-        LocalTime updatedStartTime = LocalTime.of(10, 0);
         LocalDateTime updateStartDateTime =
                 LocalDateTime.of(
-                        originalDate.getYear(),
-                        originalDate.getMonth(),
-                        originalDate.getDayOfMonth(),
-                        updatedStartTime.getHour(),
-                        updatedStartTime.getMinute());
+                        ORIGINAL_DATE.getYear(),
+                        ORIGINAL_DATE.getMonth(),
+                        ORIGINAL_DATE.getDayOfMonth(),
+                        UPDATED_START_TIME.getHour(),
+                        UPDATED_START_TIME.getMinute());
         Long updatedCategoryId = taskCategory2.getId();
         UpdateTodoTaskReqDto updateReq =
-                new UpdateTodoTaskReqDto(updatedTitle, updateStartDateTime, updatedCategoryId, null);
+                new UpdateTodoTaskReqDto(UPDATED_TITLE, updateStartDateTime, updatedCategoryId, null);
 
         ResultActions resultActions =
                 this.request(
@@ -111,9 +123,9 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
         // 조회 API를 통해 변경사항 검증
         MvcResult retrieveResult =
                 this.request(
-                                MockMvcRequestBuilders.get("/api/v1/tasks")
-                                        .param("year", "2024")
-                                        .param("month", "6"))
+                                MockMvcRequestBuilders.get(RETRIEVE_TASKS_URL)
+                                        .param("year", YEAR_PARAM)
+                                        .param("month", MONTH_PARAM))
                         .andExpect(status().isOk())
                         .andReturn();
 
@@ -127,8 +139,8 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
                 .findFirst()
                 .ifPresent(
                         task -> {
-                            assertThat(task.title()).isEqualTo(updatedTitle);
-                            assertThat(task.startTime()).isEqualTo(updatedStartTime);
+                            assertThat(task.title()).isEqualTo(UPDATED_TITLE);
+                            assertThat(task.startTime()).isEqualTo(UPDATED_START_TIME);
                             assertThat(task.taskCategoryId()).isEqualTo(updatedCategoryId);
                         });
     }
@@ -137,41 +149,35 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
     @DisplayName("[SUCCESS] 투두모드 단일 Task 수정 - 루틴으로 변경")
     void updateSingleTodoTaskTestConvertToRoutine() throws Exception {
         // given
-        setFixedClock(LocalDateTime.of(2024, 6, 1, 0, 0));
-        String originalTitle = "원래 타이틀";
-        LocalDate originalDate = LocalDate.of(2024, 6, 2);
-        LocalTime originalStartTime = LocalTime.of(9, 0);
+        setFixedClock(FIXED_CLOCK_TIME);
 
         TodoTask todoTask =
                 todoTaskRepository.save(
                         TodoTask.of(
                                 this.requestMember.getId(),
                                 taskCategory.getId(),
-                                originalTitle,
-                                originalDate,
-                                originalStartTime));
+                                ORIGINAL_TITLE,
+                                ORIGINAL_DATE,
+                                ORIGINAL_START_TIME));
 
         // when
-        String updatedTitle = "수정된 타이틀";
-        LocalTime updatedStartTime = LocalTime.of(10, 0);
         LocalDateTime updateStartDateTime =
                 LocalDateTime.of(
-                        originalDate.getYear(),
-                        originalDate.getMonth(),
-                        originalDate.getDayOfMonth(),
-                        updatedStartTime.getHour(),
-                        updatedStartTime.getMinute());
+                        ORIGINAL_DATE.getYear(),
+                        ORIGINAL_DATE.getMonth(),
+                        ORIGINAL_DATE.getDayOfMonth(),
+                        UPDATED_START_TIME.getHour(),
+                        UPDATED_START_TIME.getMinute());
         Long updatedCategoryId = taskCategory2.getId();
-        LocalDate newRoutineEndDate = LocalDate.of(2024, 6, 30);
         UpdateTodoTaskReqDto updateReq =
                 new UpdateTodoTaskReqDto(
-                        updatedTitle,
+                        UPDATED_TITLE,
                         updateStartDateTime,
                         updatedCategoryId,
                         UpdateTodoTaskRoutineReqDto.of(
-                                originalDate, newRoutineEndDate, TodoTaskRoutineCycle.DAILY, null, false));
+                                ORIGINAL_DATE, ROUTINE_END_DATE, TodoTaskRoutineCycle.DAILY, null, false));
 
-        long gap = ChronoUnit.DAYS.between(originalDate, newRoutineEndDate);
+        long gap = ChronoUnit.DAYS.between(ORIGINAL_DATE, ROUTINE_END_DATE);
 
         ResultActions resultActions =
                 this.request(
@@ -184,9 +190,9 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
         // 조회 API를 통해 변경사항 검증
         MvcResult retrieveResult =
                 this.request(
-                                MockMvcRequestBuilders.get("/api/v1/tasks")
-                                        .param("year", "2024")
-                                        .param("month", "6"))
+                                MockMvcRequestBuilders.get(RETRIEVE_TASKS_URL)
+                                        .param("year", YEAR_PARAM)
+                                        .param("month", MONTH_PARAM))
                         .andExpect(status().isOk())
                         .andReturn();
 
@@ -204,22 +210,18 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
     @DisplayName("[SUCCESS] 투두모드 단일 Task 수정 - 루틴에 속하는 태스크 수정")
     void updateTodoTaskRoutineContentTestApplyRequestedTaskOnly() throws Exception {
         // given
-        setFixedClock(LocalDateTime.of(2024, 6, 1, 0, 0));
-        String originalTitle = "원래 타이틀";
-        LocalDate startDate = LocalDate.of(2024, 6, 2);
-        LocalDate endDate = LocalDate.of(2024, 6, 30);
-        LocalTime startTime = LocalTime.of(9, 0);
+        setFixedClock(FIXED_CLOCK_TIME);
 
         Set<LocalDate> routineDates =
                 todoTaskRoutineDateCalculator.computeRoutineDates(
-                        TodoTaskRoutineCycle.DAILY, startDate, endDate, null);
+                        TodoTaskRoutineCycle.DAILY, ORIGINAL_DATE, ROUTINE_END_DATE, null);
 
         List<TodoTask> todoTasks =
                 TodoTask.ofWithRoutine(
                         this.requestMember.getId(),
                         taskCategory.getId(),
-                        originalTitle,
-                        startTime,
+                        ORIGINAL_TITLE,
+                        ORIGINAL_START_TIME,
                         routineDates,
                         TodoTaskRoutineCycle.DAILY,
                         null,
@@ -228,25 +230,23 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
         List<TodoTask> savedTodoTasks = todoTaskRepository.saveAll(todoTasks);
 
         // when
-        String updatedTitle = "수정된 타이틀";
-        LocalTime updatedStartTime = LocalTime.of(10, 0);
         LocalDateTime updateStartDateTime =
                 LocalDateTime.of(
-                        startDate.getYear(),
-                        startDate.getMonth(),
-                        startDate.getDayOfMonth(),
-                        updatedStartTime.getHour(),
-                        updatedStartTime.getMinute());
+                        ORIGINAL_DATE.getYear(),
+                        ORIGINAL_DATE.getMonth(),
+                        ORIGINAL_DATE.getDayOfMonth(),
+                        UPDATED_START_TIME.getHour(),
+                        UPDATED_START_TIME.getMinute());
         Long updatedCategoryId = taskCategory2.getId();
 
         TodoTask taskToModified =
                 savedTodoTasks.stream()
-                        .filter(task -> task.getDate().isEqual(LocalDate.of(2024, 6, 15)))
+                        .filter(task -> task.getDate().isEqual(SAMPLE_DATE))
                         .findFirst()
                         .get();
 
         UpdateTodoTaskReqDto req =
-                new UpdateTodoTaskReqDto(updatedTitle, updateStartDateTime, updatedCategoryId, null);
+                new UpdateTodoTaskReqDto(UPDATED_TITLE, updateStartDateTime, updatedCategoryId, null);
 
         ResultActions resultActions =
                 this.request(
@@ -258,9 +258,9 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
 
         MvcResult retrieveResult =
                 this.request(
-                                MockMvcRequestBuilders.get("/api/v1/tasks")
-                                        .param("year", "2024")
-                                        .param("month", "6"))
+                                MockMvcRequestBuilders.get(RETRIEVE_TASKS_URL)
+                                        .param("year", YEAR_PARAM)
+                                        .param("month", MONTH_PARAM))
                         .andExpect(status().isOk())
                         .andReturn();
 
@@ -276,8 +276,8 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
                 .findFirst()
                 .ifPresent(
                         task -> {
-                            assertThat(task.title()).isEqualTo(updatedTitle);
-                            assertThat(task.startTime()).isEqualTo(updatedStartTime);
+                            assertThat(task.title()).isEqualTo(UPDATED_TITLE);
+                            assertThat(task.startTime()).isEqualTo(UPDATED_START_TIME);
                             assertThat(task.taskCategoryId()).isEqualTo(taskCategory2.getId());
                         });
 
@@ -286,8 +286,8 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
                                 .filter(task -> !task.id().equals(taskToModified.getId()))
                                 .allMatch(
                                         task ->
-                                                task.title().equals(originalTitle)
-                                                        && task.startTime().equals(startTime)
+                                                task.title().equals(ORIGINAL_TITLE)
+                                                        && task.startTime().equals(ORIGINAL_START_TIME)
                                                         && task.taskCategoryId().equals(taskCategory.getId())))
                 .isTrue();
     }
@@ -296,22 +296,18 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
     @DisplayName("[SUCCESS] 투두모드 루틴 컨텐츠 수정 - 모두 적용")
     void updateTodoTaskRoutineContentTestApplyAllRoutineTasks() throws Exception {
         // given
-        setFixedClock(LocalDateTime.of(2024, 6, 1, 0, 0));
-        String originalTitle = "원래 타이틀";
-        LocalDate startDate = LocalDate.of(2024, 6, 2);
-        LocalDate endDate = LocalDate.of(2024, 6, 30);
-        LocalTime startTime = LocalTime.of(9, 0);
+        setFixedClock(FIXED_CLOCK_TIME);
 
         Set<LocalDate> routineDates =
                 todoTaskRoutineDateCalculator.computeRoutineDates(
-                        TodoTaskRoutineCycle.DAILY, startDate, endDate, null);
+                        TodoTaskRoutineCycle.DAILY, ORIGINAL_DATE, ROUTINE_END_DATE, null);
 
         List<TodoTask> todoTasks =
                 TodoTask.ofWithRoutine(
                         this.requestMember.getId(),
                         taskCategory.getId(),
-                        originalTitle,
-                        startTime,
+                        ORIGINAL_TITLE,
+                        ORIGINAL_START_TIME,
                         routineDates,
                         TodoTaskRoutineCycle.DAILY,
                         null,
@@ -320,29 +316,24 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
         List<TodoTask> savedTodoTasks = todoTaskRepository.saveAll(todoTasks);
 
         // when
-        String updatedTitle = "수정된 타이틀";
-        LocalTime updatedStartTime = LocalTime.of(10, 0);
         LocalDateTime updatedStartDateTime =
                 LocalDateTime.of(
-                        startDate.getYear(),
-                        startDate.getMonth(),
-                        startDate.getDayOfMonth(),
-                        updatedStartTime.getHour(),
-                        updatedStartTime.getMinute());
+                        ORIGINAL_DATE.getYear(),
+                        ORIGINAL_DATE.getMonth(),
+                        ORIGINAL_DATE.getDayOfMonth(),
+                        UPDATED_START_TIME.getHour(),
+                        UPDATED_START_TIME.getMinute());
 
         // 모두 적용에서 의미는 없지만 ID가 필요하므로 Task를 가져옴
         TodoTask taskToModified =
                 savedTodoTasks.stream()
-                        .filter(task -> task.getDate().isEqual(LocalDate.of(2024, 6, 15)))
+                        .filter(task -> task.getDate().isEqual(SAMPLE_DATE))
                         .findFirst()
                         .get();
 
         UpdateTodoTaskWithRoutineReqDto req =
-                UpdateTodoTaskWithRoutineReqDto.builder()
-                        .title(updatedTitle)
-                        .startDateTime(updatedStartDateTime)
-                        .taskCategoryId(taskCategory2.getId())
-                        .build();
+                new UpdateTodoTaskWithRoutineReqDto(
+                        UPDATED_TITLE, updatedStartDateTime, taskCategory2.getId());
 
         ResultActions resultActions =
                 this.request(
@@ -354,9 +345,9 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
 
         MvcResult retrieveResult =
                 this.request(
-                                MockMvcRequestBuilders.get("/api/v1/tasks")
-                                        .param("year", "2024")
-                                        .param("month", "6"))
+                                MockMvcRequestBuilders.get(RETRIEVE_TASKS_URL)
+                                        .param("year", YEAR_PARAM)
+                                        .param("month", MONTH_PARAM))
                         .andExpect(status().isOk())
                         .andReturn();
 
@@ -375,8 +366,8 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
                                         || task.date().isEqual(taskToModified.getDate()))
                 .forEach(
                         task -> {
-                            assertThat(task.title()).isEqualTo(updatedTitle);
-                            assertThat(task.startTime()).isEqualTo(updatedStartTime);
+                            assertThat(task.title()).isEqualTo(UPDATED_TITLE);
+                            assertThat(task.startTime()).isEqualTo(UPDATED_START_TIME);
                             assertThat(task.taskCategoryId()).isEqualTo(taskCategory2.getId());
                         });
 
@@ -385,8 +376,8 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
                 .filter(task -> task.date().isBefore(taskToModified.getDate()))
                 .forEach(
                         task -> {
-                            assertThat(task.title()).isEqualTo(originalTitle);
-                            assertThat(task.startTime()).isEqualTo(startTime);
+                            assertThat(task.title()).isEqualTo(ORIGINAL_TITLE);
+                            assertThat(task.startTime()).isEqualTo(ORIGINAL_START_TIME);
                             assertThat(task.taskCategoryId()).isEqualTo(taskCategory.getId());
                         });
     }
@@ -395,22 +386,18 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
     @DisplayName("[SUCCESS] 투두모드 루틴 조건 수정")
     void updateTodoTaskRoutineConditionTest() throws Exception {
         // given
-        setFixedClock(LocalDateTime.of(2024, 6, 1, 0, 0));
-        String title = "원래 타이틀";
-        LocalDate startDate = LocalDate.of(2024, 6, 2);
-        LocalDate endDate = LocalDate.of(2024, 6, 30);
-        LocalTime startTime = LocalTime.of(9, 0);
+        setFixedClock(FIXED_CLOCK_TIME);
 
         Set<LocalDate> routineDates =
                 todoTaskRoutineDateCalculator.computeRoutineDates(
-                        TodoTaskRoutineCycle.DAILY, startDate, endDate, null);
+                        TodoTaskRoutineCycle.DAILY, ORIGINAL_DATE, ROUTINE_END_DATE, null);
 
         List<TodoTask> todoTasks =
                 TodoTask.ofWithRoutine(
                         this.requestMember.getId(),
                         taskCategory.getId(),
-                        title,
-                        startTime,
+                        ORIGINAL_TITLE,
+                        ORIGINAL_START_TIME,
                         routineDates,
                         TodoTaskRoutineCycle.DAILY,
                         null,
@@ -425,14 +412,14 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
         // ID가 필요하므로 Task를 가져옴
         TodoTask sample =
                 savedTodoTasks.stream()
-                        .filter(task -> task.getDate().isEqual(LocalDate.of(2024, 6, 15)))
+                        .filter(task -> task.getDate().isEqual(SAMPLE_DATE))
                         .findFirst()
                         .get();
 
         UpdateTodoTaskRoutineReqDto req =
                 UpdateTodoTaskRoutineReqDto.of(
                         LocalDate.of(2024, 6, 3),
-                        LocalDate.of(2024, 6, 30),
+                        ROUTINE_END_DATE,
                         TodoTaskRoutineCycle.MONTHLY,
                         updatedPattern, // 10, 20, 30일로 변경
                         false // 공휴일 제외 여부는 false로 유지
@@ -448,9 +435,9 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
 
         MvcResult retrieveResult =
                 this.request(
-                                MockMvcRequestBuilders.get("/api/v1/tasks")
-                                        .param("year", "2024")
-                                        .param("month", "6"))
+                                MockMvcRequestBuilders.get(RETRIEVE_TASKS_URL)
+                                        .param("year", YEAR_PARAM)
+                                        .param("month", MONTH_PARAM))
                         .andExpect(status().isOk())
                         .andReturn();
 
@@ -465,8 +452,8 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
                 .filter(task -> task.date().isBefore(sample.getDate()))
                 .forEach(
                         task -> {
-                            assertThat(task.title()).isEqualTo(title);
-                            assertThat(task.startTime()).isEqualTo(startTime);
+                            assertThat(task.title()).isEqualTo(ORIGINAL_TITLE);
+                            assertThat(task.startTime()).isEqualTo(ORIGINAL_START_TIME);
                             assertThat(task.taskCategoryId()).isEqualTo(taskCategory.getId());
                         });
 
@@ -478,5 +465,126 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
                                                         || task.date().isAfter(sample.getDate()))
                                 .count())
                 .isEqualTo(3 + 1);
+    }
+
+    @Test
+    @DisplayName("[SUCCESS] 투두모드 태스크 완료")
+    void completeTodoTaskTest() throws Exception {
+        // given
+        setFixedClock(FIXED_CLOCK_TIME);
+
+        TodoTask todoTask =
+                todoTaskRepository.save(
+                        TodoTask.of(
+                                this.requestMember.getId(),
+                                taskCategory.getId(),
+                                ORIGINAL_TITLE,
+                                ORIGINAL_DATE,
+                                ORIGINAL_START_TIME));
+
+        // when
+        ResultActions resultActions =
+                this.request(MockMvcRequestBuilders.patch(URL + "/" + todoTask.getId() + "/complete"));
+
+        // then
+        resultActions.andExpect(status().isOk());
+
+        // API 응답에서 완료된 태스크 ID가 반환되는지 확인
+        MvcResult result = resultActions.andReturn();
+        MockHttpServletResponse response = result.getResponse();
+        response.setCharacterEncoding("UTF-8");
+        String content = response.getContentAsString();
+
+        // 응답 데이터에서 완료된 태스크 ID 확인
+        assertThat(content).contains("\"data\":" + todoTask.getId());
+
+        // 조회 API를 통해 상태 변경 검증
+        MvcResult retrieveResult =
+                this.request(
+                                MockMvcRequestBuilders.get(RETRIEVE_TASKS_URL)
+                                        .param("year", YEAR_PARAM)
+                                        .param("month", MONTH_PARAM))
+                        .andExpect(status().isOk())
+                        .andReturn();
+
+        MockHttpServletResponse retrieveResponse = retrieveResult.getResponse();
+        retrieveResponse.setCharacterEncoding("UTF-8");
+        String retrieveContent = retrieveResponse.getContentAsString();
+        RetrieveTasksResDto tasks = this.readResponse(retrieveContent, RetrieveTasksResDto.class);
+
+        // 태스크가 COMPLETE 상태로 변경되었는지 확인
+        tasks.todoTasks().stream()
+                .filter(task -> task.id().equals(todoTask.getId()))
+                .findFirst()
+                .ifPresent(
+                        task -> {
+                            assertThat(task.title()).isEqualTo(ORIGINAL_TITLE);
+                            assertThat(task.status()).isEqualTo("COMPLETE");
+                            assertThat(task.date()).isEqualTo(ORIGINAL_DATE);
+                            assertThat(task.startTime()).isEqualTo(ORIGINAL_START_TIME);
+                        });
+    }
+
+    @Test
+    @DisplayName("[SUCCESS] 투두모드 태스크 완료 취소 (대기 상태로 변경)")
+    void waitTodoTaskTest() throws Exception {
+        // given
+        setFixedClock(FIXED_CLOCK_TIME);
+
+        // 완료된 상태의 태스크를 생성하기 위해 먼저 생성 후 완료 처리
+        TodoTask todoTask =
+                todoTaskRepository.save(
+                        TodoTask.of(
+                                this.requestMember.getId(),
+                                taskCategory.getId(),
+                                ORIGINAL_TITLE,
+                                ORIGINAL_DATE,
+                                ORIGINAL_START_TIME));
+
+        // 태스크를 완료 상태로 변경 (테스트를 위해 수동으로 처리)
+        todoTask.complete();
+        todoTaskRepository.save(todoTask);
+
+        // when
+        ResultActions resultActions =
+                this.request(MockMvcRequestBuilders.patch(URL + "/" + todoTask.getId() + "/wait"));
+
+        // then
+        resultActions.andExpect(status().isOk());
+
+        // API 응답에서 대기 상태로 변경된 태스크 ID가 반환되는지 확인
+        MvcResult result = resultActions.andReturn();
+        MockHttpServletResponse response = result.getResponse();
+        response.setCharacterEncoding("UTF-8");
+        String content = response.getContentAsString();
+
+        // 응답 데이터에서 태스크 ID 확인
+        assertThat(content).contains("\"data\":" + todoTask.getId());
+
+        // 조회 API를 통해 상태 변경 검증
+        MvcResult retrieveResult =
+                this.request(
+                                MockMvcRequestBuilders.get(RETRIEVE_TASKS_URL)
+                                        .param("year", YEAR_PARAM)
+                                        .param("month", MONTH_PARAM))
+                        .andExpect(status().isOk())
+                        .andReturn();
+
+        MockHttpServletResponse retrieveResponse = retrieveResult.getResponse();
+        retrieveResponse.setCharacterEncoding("UTF-8");
+        String retrieveContent = retrieveResponse.getContentAsString();
+        RetrieveTasksResDto tasks = this.readResponse(retrieveContent, RetrieveTasksResDto.class);
+
+        // 태스크가 WAIT 상태로 변경되었는지 확인
+        tasks.todoTasks().stream()
+                .filter(task -> task.id().equals(todoTask.getId()))
+                .findFirst()
+                .ifPresent(
+                        task -> {
+                            assertThat(task.title()).isEqualTo(ORIGINAL_TITLE);
+                            assertThat(task.status()).isEqualTo("WAIT");
+                            assertThat(task.date()).isEqualTo(ORIGINAL_DATE);
+                            assertThat(task.startTime()).isEqualTo(ORIGINAL_START_TIME);
+                        });
     }
 }
