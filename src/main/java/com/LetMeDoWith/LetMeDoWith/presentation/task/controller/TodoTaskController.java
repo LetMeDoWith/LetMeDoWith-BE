@@ -6,6 +6,7 @@ import com.LetMeDoWith.LetMeDoWith.application.task.dto.TodoTaskRoutineCondition
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateTodoTaskCommand;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateTodoTaskRoutineCommand;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateTodoTaskWithRoutineCommand;
+import com.LetMeDoWith.LetMeDoWith.application.task.service.DeleteTodoTaskService;
 import com.LetMeDoWith.LetMeDoWith.application.task.service.RegisterTodoTaskService;
 import com.LetMeDoWith.LetMeDoWith.application.task.service.UpdateTodoTaskService;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiErrorResponse;
@@ -26,6 +27,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,6 +44,7 @@ public class TodoTaskController {
     
     private final RegisterTodoTaskService registerTodoTaskService;
     private final UpdateTodoTaskService updateTodoTaskService;
+    private final DeleteTodoTaskService deleteTodoTaskService;
     
     @Operation(
         summary = "투두모드 태스크 등록",
@@ -182,5 +185,35 @@ public class TodoTaskController {
         String memberId = AuthUtil.getMemberId();
         TodoTask waitTodoTask = updateTodoTaskService.waitTodoTask(memberId, todoTaskId);
         return ResponseUtil.createSuccessResponse(waitTodoTask.getId());
+    }
+    
+    @DeleteMapping("/{todoTaskId}")
+    @Operation(summary = "투두모드 태스크 삭제", description = "투두모드 태스크를 삭제합니다.")
+    @ApiSuccessResponse(
+        description = "투두모드 태스크 삭제 성공.")
+    @ApiErrorResponses({
+        @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청입니다."),
+    })
+    public ResponseEntity deleteTodoTask(@PathVariable Long todoTaskId) {
+        String memberId = AuthUtil.getMemberId();
+        
+        deleteTodoTaskService.deleteTodoTask(memberId, todoTaskId);
+        return ResponseUtil.createSuccessResponse();
+    }
+    
+    @DeleteMapping("/{todoTaskId}/with-routine")
+    @Operation(
+        summary = "투두모드 태스크(루틴포함) 삭제",
+        description = "투두모드 루틴을 포함한 태스크를 삭제합니다. 루틴이 설정된 태스크의 경우 루틴과 함께 삭제됩니다.")
+    @ApiSuccessResponse(
+        description = "투두모드 태스크(루틴포함) 삭제 성공.")
+    @ApiErrorResponses({
+        @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청입니다."),
+    })
+    public ResponseEntity deleteTodoTaskWithRoutine(@PathVariable Long todoTaskId) {
+        String memberId = AuthUtil.getMemberId();
+        
+        deleteTodoTaskService.deleteTodoTasksWithRoutine(memberId, todoTaskId);
+        return ResponseUtil.createSuccessResponse();
     }
 }
