@@ -7,7 +7,6 @@ import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateTodoTaskCommand;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateTodoTaskRoutineCommand;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateTodoTaskWithRoutineCommand;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
-import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.CountryCode;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskCategory;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TodoTask;
@@ -70,10 +69,13 @@ public class UpdateTodoTaskService {
 
         // 루틴이 아닌 태스크를 루틴으로 변경하는 경우
         if (command.routineCondition().isPresent()) {
-            TodoTaskRoutineCondition routineCondition =
-                    command
-                            .routineCondition()
-                            .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
+            TodoTaskRoutineCondition routineCondition = command.routineCondition().get();
+
+            Set<LocalDate> holidays =
+                    routineCondition.isExcludeHolidays()
+                            ? holidayService.getHolidays(
+                                    CountryCode.KR, routineCondition.startDate(), routineCondition.endDate())
+                            : Set.of();
 
             // 루틴 반복 주기에 따른 루틴 수행일자 계산
             Set<LocalDate> routineDates =
@@ -81,16 +83,8 @@ public class UpdateTodoTaskService {
                             routineCondition.cycle(),
                             routineCondition.startDate(),
                             routineCondition.endDate(),
-                            routineCondition.pattern());
-
-            if (Boolean.TRUE.equals(routineCondition.isExcludeHolidays())) {
-                // 공휴일 목록 조회
-                Set<LocalDate> holidays =
-                        holidayService.getHolidays(
-                                CountryCode.KR, routineCondition.startDate(), routineCondition.endDate());
-
-                routineDates.removeAll(holidays);
-            }
+                            routineCondition.pattern(),
+                            holidays);
 
             List<TodoTask> todoTasksWithRoutine =
                     todoTask.createRoutine(
@@ -138,7 +132,8 @@ public class UpdateTodoTaskService {
                 .forEach(
                         task -> {
                             task.updateContent(
-                                    command.title(), category.getId(), task.getDate(), command.startTime());
+                                    command.title(), category.getId(),
+                                    task.getDate(), command.startTime());
                         });
     }
 
@@ -168,20 +163,18 @@ public class UpdateTodoTaskService {
         TodoTaskRoutineSplitResult splitResult =
                 splitter.splitTodoTaskRoutine(todoTasksInRoutine, todoTask, originalRoutine);
 
+        Set<LocalDate> holidays =
+                command.isExcludeHolidays()
+                        ? holidayService.getHolidays(CountryCode.KR, command.startDate(), command.endDate())
+                        : Set.of();
+
         // 입력받은 TodoTask를 시작으로 루틴 일자 다시 계산해서 루틴 재생성
         Set<LocalDate> newRoutineDates =
                 routineDateCalculator.computeRoutineDates(
-                        command.cycle(), command.startDate(), command.endDate(), command.pattern());
+                        command.cycle(), command.startDate(), command.endDate(), command.pattern(), holidays);
 
         // 루틴의 조건을 재 설정해도, 수정 요청한 Task는 포함.
         newRoutineDates.add(todoTask.getDate());
-
-        if (Boolean.TRUE.equals(command.isExcludeHolidays())) {
-            Set<LocalDate> holidays =
-                    holidayService.getHolidays(CountryCode.KR, command.startDate(), command.endDate());
-
-            newRoutineDates.removeAll(holidays);
-        }
 
         // 기존 루틴에서 새롭게 계산된 루틴 일자와 겹치지 않는 날짜들은 삭제되어야 한다.
         Set<LocalDate> originalRoutineDates = todoTask.getUpdateAvailableDates();
@@ -198,5 +191,33 @@ public class UpdateTodoTaskService {
         splitResult
                 .getNewRoutine()
                 .update(newRoutineDates, command.cycle(), command.pattern(), command.isExcludeHolidays());
+    }
+
+    /**
+     * 투두모드 태스크를 완료합니다.
+     *
+     * @param memberId 투두모드 태스크를 완료할 사용자의 ID
+     * @param todoTaskId 완료할 투두모드 태스크의 ID
+     */
+    @Transactional
+    public TodoTask completeTodoTask(String memberId, Long todoTaskId) {
+        return todoTaskRepository
+                .getTodoTask(todoTaskId, memberId)
+                .orElseThrow(() -> new RestApiException(INVALID_REQUEST))
+                .complete();
+    }
+
+    /**
+     * 완료했던 투두모드 태스크를 취소합니다.
+     *
+     * @param memberId 투두모드 태스크를 완료 취소할 사용자의 ID
+     * @param todoTaskId 완료 취소할 투두모드 태스크의 ID
+     */
+    @Transactional
+    public TodoTask waitTodoTask(String memberId, Long todoTaskId) {
+        return todoTaskRepository
+                .getTodoTask(todoTaskId, memberId)
+                .orElseThrow(() -> new RestApiException(INVALID_REQUEST))
+                .uncomplete();
     }
 }
