@@ -17,17 +17,16 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "task_feedback_template")
 public class TaskFeedbackTemplate extends BaseAuditEntity {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "task_feedback_emoji_id", nullable = false)
     private TaskFeedbackEmoji taskFeedbackEmoji;
-    
+
     @Column(name = "is_active", nullable = false)
     private Yn isActive;
-    
 }
