@@ -9,9 +9,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 @RequiredArgsConstructor
 public class DowithTaskFeedbackRepositoryImpl implements DowithTaskFeedbackRepository {
-    
+
     private final DowithTaskFeedbackJpaRepository repository;
-    
+
     @Override
     public DowithTaskFeedback save(DowithTaskFeedback dowithTaskFeedback) {
         return repository.save(dowithTaskFeedback);
