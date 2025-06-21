@@ -1,8 +1,8 @@
 CREATE TABLE badge
 (
     id           BIGINT AUTO_INCREMENT NOT NULL,
-    create_at    datetime              NULL,
-    updated_at   datetime              NULL,
+    create_at    timestamp             NULL,
+    updated_at   timestamp             NULL,
     created_by   VARCHAR(255)          NULL,
     updated_by   VARCHAR(255)          NULL,
     status       VARCHAR(255)          NOT NULL,
@@ -20,15 +20,15 @@ CREATE TABLE dev_refresh_token
     access_token VARCHAR(800) NULL,
     member_id    VARCHAR(255) NULL,
     user_agent   VARCHAR(255) NULL,
-    expire_at    datetime     NULL,
+    expire_at    timestamp    NULL,
     CONSTRAINT pk_dev_refresh_token PRIMARY KEY (token)
 );
 
 CREATE TABLE dowith_task
 (
     id                     BIGINT AUTO_INCREMENT NOT NULL,
-    create_at              datetime              NULL,
-    updated_at             datetime              NULL,
+    create_at              timestamp             NULL,
+    updated_at             timestamp             NULL,
     created_by             VARCHAR(255)          NULL,
     updated_by             VARCHAR(255)          NULL,
     member_id              VARCHAR(26)           NOT NULL,
@@ -37,8 +37,8 @@ CREATE TABLE dowith_task
     status                 VARCHAR(255)          NOT NULL,
     date                   date                  NOT NULL,
     start_time             time                  NULL,
-    success_at             datetime              NULL,
-    complete_at            datetime              NULL,
+    success_at             timestamp             NULL,
+    complete_at            timestamp             NULL,
     dowith_task_routine_id BIGINT                NULL,
     CONSTRAINT pk_dowith_task PRIMARY KEY (id)
 );
@@ -46,8 +46,8 @@ CREATE TABLE dowith_task
 CREATE TABLE dowith_task_confirm
 (
     id             BIGINT AUTO_INCREMENT NOT NULL,
-    create_at      datetime              NULL,
-    updated_at     datetime              NULL,
+    create_at      timestamp             NULL,
+    updated_at     timestamp             NULL,
     created_by     VARCHAR(255)          NULL,
     updated_by     VARCHAR(255)          NULL,
     dowith_task_id BIGINT                NOT NULL,
@@ -58,8 +58,8 @@ CREATE TABLE dowith_task_confirm
 CREATE TABLE dowith_task_routine
 (
     id         BIGINT AUTO_INCREMENT NOT NULL,
-    create_at  datetime              NULL,
-    updated_at datetime              NULL,
+    create_at  timestamp             NULL,
+    updated_at timestamp             NULL,
     created_by VARCHAR(255)          NULL,
     updated_by VARCHAR(255)          NULL,
     dates      text                  NULL,
@@ -69,8 +69,8 @@ CREATE TABLE dowith_task_routine
 CREATE TABLE holiday
 (
     id           BIGINT AUTO_INCREMENT NOT NULL,
-    create_at    datetime              NULL,
-    updated_at   datetime              NULL,
+    create_at    timestamp             NULL,
+    updated_at   timestamp             NULL,
     created_by   VARCHAR(255)          NULL,
     updated_by   VARCHAR(255)          NULL,
     country_code VARCHAR(255)          NOT NULL,
@@ -82,8 +82,8 @@ CREATE TABLE holiday
 CREATE TABLE member
 (
     id                VARCHAR(26)  NOT NULL,
-    create_at         datetime     NULL,
-    updated_at        datetime     NULL,
+    create_at         timestamp    NULL,
+    updated_at        timestamp    NULL,
     created_by        VARCHAR(255) NULL,
     updated_by        VARCHAR(255) NULL,
     subject           VARCHAR(255) NULL,
@@ -100,8 +100,8 @@ CREATE TABLE member
 CREATE TABLE member_alarm_setting
 (
     id            BIGINT AUTO_INCREMENT NOT NULL,
-    create_at     datetime              NULL,
-    updated_at    datetime              NULL,
+    create_at     timestamp             NULL,
+    updated_at    timestamp             NULL,
     created_by    VARCHAR(255)          NULL,
     updated_by    VARCHAR(255)          NULL,
     member_id     VARCHAR(26)           NOT NULL,
@@ -115,8 +115,8 @@ CREATE TABLE member_alarm_setting
 CREATE TABLE member_badge
 (
     id         BIGINT AUTO_INCREMENT NOT NULL,
-    create_at  datetime              NULL,
-    updated_at datetime              NULL,
+    create_at  timestamp             NULL,
+    updated_at timestamp             NULL,
     created_by VARCHAR(255)          NULL,
     updated_by VARCHAR(255)          NULL,
     member_id  VARCHAR(26)           NULL,
@@ -128,8 +128,8 @@ CREATE TABLE member_badge
 CREATE TABLE member_follow
 (
     id           BIGINT AUTO_INCREMENT NOT NULL,
-    create_at    datetime              NULL,
-    updated_at   datetime              NULL,
+    create_at    timestamp             NULL,
+    updated_at   timestamp             NULL,
     created_by   VARCHAR(255)          NULL,
     updated_by   VARCHAR(255)          NULL,
     follower_id  VARCHAR(26)           NOT NULL,
@@ -140,8 +140,8 @@ CREATE TABLE member_follow
 CREATE TABLE member_social_account
 (
     id         BIGINT AUTO_INCREMENT NOT NULL,
-    create_at  datetime              NULL,
-    updated_at datetime              NULL,
+    create_at  timestamp             NULL,
+    updated_at timestamp             NULL,
     created_by VARCHAR(255)          NULL,
     updated_by VARCHAR(255)          NULL,
     member_id  VARCHAR(26)           NOT NULL,
@@ -152,22 +152,22 @@ CREATE TABLE member_social_account
 CREATE TABLE member_status_history
 (
     id                BIGINT AUTO_INCREMENT NOT NULL,
-    create_at         datetime              NULL,
-    updated_at        datetime              NULL,
+    create_at         timestamp             NULL,
+    updated_at        timestamp             NULL,
     created_by        VARCHAR(255)          NULL,
     updated_by        VARCHAR(255)          NULL,
     member_id         VARCHAR(26)           NOT NULL,
     status            VARCHAR(255)          NOT NULL,
-    status_changed_at datetime              NOT NULL,
-    status_end_at     datetime              NOT NULL,
+    status_changed_at timestamp             NOT NULL,
+    status_end_at     timestamp             NOT NULL,
     CONSTRAINT pk_member_status_history PRIMARY KEY (id)
 );
 
 CREATE TABLE member_term_agree
 (
     id             BIGINT AUTO_INCREMENT NOT NULL,
-    create_at      datetime              NULL,
-    updated_at     datetime              NULL,
+    create_at      timestamp             NULL,
+    updated_at     timestamp             NULL,
     created_by     VARCHAR(255)          NULL,
     updated_by     VARCHAR(255)          NULL,
     member_id      VARCHAR(26)           NOT NULL,
@@ -180,8 +180,8 @@ CREATE TABLE member_term_agree
 CREATE TABLE task_category
 (
     id                 BIGINT AUTO_INCREMENT NOT NULL,
-    create_at          datetime              NULL,
-    updated_at         datetime              NULL,
+    create_at          timestamp             NULL,
+    updated_at         timestamp             NULL,
     created_by         VARCHAR(255)          NULL,
     updated_by         VARCHAR(255)          NULL,
     title              VARCHAR(255)          NOT NULL,
@@ -195,8 +195,8 @@ CREATE TABLE task_category
 CREATE TABLE todo_task
 (
     id                   BIGINT AUTO_INCREMENT NOT NULL,
-    create_at            datetime              NULL,
-    updated_at           datetime              NULL,
+    create_at            timestamp             NULL,
+    updated_at           timestamp             NULL,
     created_by           VARCHAR(255)          NULL,
     updated_by           VARCHAR(255)          NULL,
     member_id            VARCHAR(26)           NOT NULL,
@@ -212,8 +212,8 @@ CREATE TABLE todo_task
 CREATE TABLE todo_task_routine
 (
     id         BIGINT AUTO_INCREMENT NOT NULL,
-    create_at  datetime              NULL,
-    updated_at datetime              NULL,
+    create_at  timestamp             NULL,
+    updated_at timestamp             NULL,
     created_by VARCHAR(255)          NULL,
     updated_by VARCHAR(255)          NULL,
     dates      text                  NULL,
@@ -225,11 +225,11 @@ CREATE TABLE task_summary
     id                                    BIGINT AUTO_INCREMENT NOT NULL,
     member_id                             VARCHAR(26)           NOT NULL,
     remained_dowith_task_count            INT                   NOT NULL DEFAULT 0,
-    remained_dowith_task_count_updated_at datetime              NULL,
+    remained_dowith_task_count_updated_at timestamp             NULL,
     last_attendance_date                  date                  NULL,
     task_complete_level                   VARCHAR(10)           NOT NULL DEFAULT 'GOOD',
-    create_at                             datetime              NULL,
-    updated_at                            datetime              NULL,
+    create_at                             timestamp             NULL,
+    updated_at                            timestamp             NULL,
     created_by                            VARCHAR(255)          NULL,
     updated_by                            VARCHAR(255)          NULL,
     CONSTRAINT pk_task_summary PRIMARY KEY (id)
