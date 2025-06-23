@@ -12,24 +12,22 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "dowith_task_feedback")
 public class DowithTaskFeedback extends BaseAuditEntity {
-
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-
+    
     @Column(name = "task_feedback_template_id", nullable = false)
     private Long taskFeedbackTemplateId;
-
+    
     @Column(name = "dowith_task_id", nullable = false)
     private Long dowithTaskId;
-
+    
     @Column(name = "sender_id", nullable = false)
     private String senderId;
-
-    @Column(name = "receiver_id", nullable = false)
-    private String receiverId;
-
+    
+    
     @Column(name = "is_checked", nullable = false)
     private Yn isChecked;
 }
