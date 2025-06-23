@@ -5,28 +5,31 @@ import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.domain.AggregateRoot;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @AggregateRoot
 @Entity
 @Table(name = "task_feedback_template")
 public class TaskFeedbackTemplate extends BaseAuditEntity {
-
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "task_feedback_emoji_id", nullable = false)
-    private TaskFeedbackEmoji taskFeedbackEmoji;
-
+    
+    
+    @Column(name = "emoji_url", nullable = false)
+    private String emojiUrl;
+    
+    @Column(name = "title", nullable = false)
+    private String title;
+    
+    @Column(name = "description", nullable = false)
+    private String description;
+    
     @Column(name = "is_active", nullable = false)
     private Yn isActive;
 }
