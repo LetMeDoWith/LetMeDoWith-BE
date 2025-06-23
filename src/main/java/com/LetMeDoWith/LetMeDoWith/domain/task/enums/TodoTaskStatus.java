@@ -9,7 +9,7 @@ import lombok.Getter;
 public enum TodoTaskStatus implements BaseEnum {
     WAIT("WAIT", "대기"),
     COMPLETE("COMPLETE", "완료");
-    
+
     public final String code;
     public final String description;
 }
