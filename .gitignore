@@ -49,8 +49,11 @@ samLocalEnvVars.json
 .aws-sam/
 *.env
 
+### Firebase confidential ###
+/src/main/resources/firebase-confidential.json
+
 /.DS_Store
 /src/main/generated/
 /lib/
 
-/src/main/resources/firebase-confidential.json
+
