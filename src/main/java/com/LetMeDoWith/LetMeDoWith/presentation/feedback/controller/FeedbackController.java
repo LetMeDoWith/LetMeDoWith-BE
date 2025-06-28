@@ -1,12 +1,17 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.feedback.controller;
 
+import com.LetMeDoWith.LetMeDoWith.application.dto.RetrieveTaskFeedbackResult;
+import com.LetMeDoWith.LetMeDoWith.application.service.RetrieveTaskFeedbackService;
 import com.LetMeDoWith.LetMeDoWith.application.service.TaskFeedbackService;
+import com.LetMeDoWith.LetMeDoWith.common.dto.ResponseDto;
 import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
 import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.CreateDowithFeedbackReqDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +23,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class FeedbackController {
     
     private final TaskFeedbackService feedbackService;
+    private final RetrieveTaskFeedbackService retrieveTaskFeedbackService;
+    
     
     @PostMapping("")
     public ResponseEntity createDowithFeedback(
@@ -29,4 +36,14 @@ public class FeedbackController {
         
         return ResponseUtil.createSuccessResponse();
     }
+    
+    @GetMapping("/{dowithTaskId}")
+    public ResponseEntity<ResponseDto<RetrieveTaskFeedbackResult>> retrieveTaskFeedbacks(
+        @PathVariable Long dowithTaskId) {
+        
+        return ResponseUtil.createSuccessResponse(
+            retrieveTaskFeedbackService.retrieveTaskFeedbacks(dowithTaskId, "KR"));
+    }
+    
+    
 }

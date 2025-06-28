@@ -1,8 +1,9 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.feedback.query;
 
+import com.LetMeDoWith.LetMeDoWith.infrastructure.feedback.query.dto.DowithTaskFeedbackQueryDto;
 import java.util.List;
 
 public interface DowithTaskFeedbackQueryRepository {
-
-    List<DowithTaskFeedbackQueryDto> findByTaskId(Long taskId);
+    
+    List<DowithTaskFeedbackQueryDto> findAllByTaskId(Long taskId);
 }

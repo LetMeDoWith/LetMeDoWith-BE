@@ -24,6 +24,7 @@ public class TaskFeedbackTemplateQueryRepositoryImpl
         return List.of();
     }
     
+    // TODO: 향후 캐싱 적용
     @Override
     public List<TaskFeedbackTemplateQueryDto> getAllTaskFeedbackTemplates(String language) {
         return queryFactory
