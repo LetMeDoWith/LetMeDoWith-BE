@@ -71,8 +71,8 @@ public class FeedbackController {
     @GetMapping("/")
     public ResponseEntity<ResponseDto<RetrieveTaskFeedbackResult>> retrieveTaskFeedbacks(
         @RequestParam(value = "taskId", required = false) Long taskId,
-        @RequestParam(value = "senderId", required = false) Long senderId,
-        @RequestParam(value = "receiverId", required = false) Long receiverId) {
+        @RequestParam(value = "senderId", required = false) String senderId,
+        @RequestParam(value = "receiverId", required = false) String receiverId) {
         
         int paramCount = 0;
         
@@ -95,12 +95,10 @@ public class FeedbackController {
                 retrieveTaskFeedbackService.retrieveTaskFeedbacksByTaskId(taskId, "KR"));
         } else if (senderId != null) {
             return ResponseUtil.createSuccessResponse(
-                retrieveTaskFeedbackService.retrieveTaskFeedbacksBySenderId(senderId.toString(),
-                                                                            "KR"));
+                retrieveTaskFeedbackService.retrieveTaskFeedbacksBySenderId(senderId, "KR"));
         } else if (receiverId != null) {
             return ResponseUtil.createSuccessResponse(
-                retrieveTaskFeedbackService.retrieveTaskFeedbacksByReceiverId(receiverId.toString(),
-                                                                              "KR"));
+                retrieveTaskFeedbackService.retrieveTaskFeedbacksByReceiverId(receiverId, "KR"));
         } else {
             throw new RestApiException(FailResponseStatus.INVALID_PARAM_ERROR);
         }
