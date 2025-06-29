@@ -1,6 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.domain.feedback.repository;
 
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.model.DowithTaskFeedback;
+import java.util.List;
 import java.util.Optional;
 
 public interface DowithTaskFeedbackRepository {
@@ -9,4 +10,6 @@ public interface DowithTaskFeedbackRepository {
     
     Optional<DowithTaskFeedback> getLatest(Long dowithTaskId,
                                            String senderId);
+    
+    List<DowithTaskFeedback> getFeedbacks(List<Long> dowithTaskFeedbackIds);
 }

@@ -67,7 +67,7 @@ public class TaskFeedbackService {
      * @param dowithTaskFeedbackIds 확인할 DowithTaskFeedback의 ID 리스트
      */
     @Transactional
-    public void checkDowithFeedback(List<Long> dowithTaskFeedbackIds) {
+    public void checkDowithFeedbacks(List<Long> dowithTaskFeedbackIds) {
         dowithTaskFeedbackRepository.getFeedbacks(dowithTaskFeedbackIds)
                                     .forEach(DowithTaskFeedback::check);
         
