@@ -34,16 +34,21 @@ public class DowithTaskFeedback extends BaseAuditEntity {
     @Column(name = "sender_id", nullable = false)
     private String senderId;
     
+    @Column(name = "receiver_id", nullable = false)
+    private String receiverId;
+    
     
     @Column(name = "is_checked", nullable = false)
     private Yn isChecked;
     
     public static DowithTaskFeedback of(String senderId,
+                                        String receiverId,
                                         Long dowithTaskId,
                                         Long taskFeedbackTemplateId) {
         
         return DowithTaskFeedback.builder()
                                  .senderId(senderId)
+                                 .receiverId(receiverId)
                                  .dowithTaskId(dowithTaskId)
                                  .taskFeedbackTemplateId(taskFeedbackTemplateId)
                                  .isChecked(Yn.FALSE)
@@ -65,5 +70,10 @@ public class DowithTaskFeedback extends BaseAuditEntity {
         
         return this.getCreatedAt() != null
             && this.getCreatedAt().plusMinutes(10).isBefore(now);
+    }
+    
+    public DowithTaskFeedback check() {
+        this.isChecked = Yn.TRUE;
+        return this;
     }
 }

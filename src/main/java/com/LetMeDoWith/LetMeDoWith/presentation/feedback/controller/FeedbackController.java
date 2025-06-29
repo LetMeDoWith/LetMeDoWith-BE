@@ -32,7 +32,7 @@ public class FeedbackController {
         String memberId = AuthUtil.getMemberId();
         
         feedbackService.createDowithFeedback(
-            req.senderId(), memberId, req.dowithTaskId(), req.taskFeedbackTemplateId());
+            memberId, req.dowithTaskId(), req.taskFeedbackTemplateId());
         
         return ResponseUtil.createSuccessResponse();
     }

@@ -41,6 +41,7 @@ CREATE TABLE dowith_task_feedback
     task_feedback_template_id BIGINT                NOT NULL,
     dowith_task_id            BIGINT                NOT NULL,
     sender_id                 VARCHAR(26)           NOT NULL,
+    receiver_id               VARCHAR(26)           NOT NULL,
     is_checked                VARCHAR(255)          NOT NULL,
     CONSTRAINT pk_dowith_task_feedback PRIMARY KEY (id)
 );
