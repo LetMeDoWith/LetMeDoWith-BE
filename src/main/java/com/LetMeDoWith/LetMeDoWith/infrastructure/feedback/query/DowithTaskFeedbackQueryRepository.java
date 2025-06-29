@@ -6,4 +6,8 @@ import java.util.List;
 public interface DowithTaskFeedbackQueryRepository {
     
     List<DowithTaskFeedbackQueryDto> findAllByTaskId(Long taskId);
+    
+    List<DowithTaskFeedbackQueryDto> findAllBySenderId(String senderId);
+    
+    List<DowithTaskFeedbackQueryDto> findAllByReceiverId(String receiverId);
 }

@@ -13,10 +13,27 @@ public class RetrieveTaskFeedbackService {
     private final DowithTaskFeedbackQueryRepository dowithTaskFeedbackQueryRepository;
     private final TaskFeedbackTemplateQueryRepository taskFeedbackTemplateQueryRepository;
     
-    public RetrieveTaskFeedbackResult retrieveTaskFeedbacks(Long taskId, String language) {
+    public RetrieveTaskFeedbackResult retrieveTaskFeedbacksByTaskId(Long taskId, String language) {
         return RetrieveTaskFeedbackResult.of(
             dowithTaskFeedbackQueryRepository.findAllByTaskId(taskId),
-            taskFeedbackTemplateQueryRepository.getTaskFeedbackTemplates(taskId, language)
+            taskFeedbackTemplateQueryRepository.getAllTaskFeedbackTemplates(language)
+        );
+    }
+    
+    public RetrieveTaskFeedbackResult retrieveTaskFeedbacksBySenderId(String senderId,
+                                                                      String language) {
+        return RetrieveTaskFeedbackResult.of(
+            dowithTaskFeedbackQueryRepository.findAllBySenderId(senderId),
+            taskFeedbackTemplateQueryRepository.getAllTaskFeedbackTemplates(language)
+        
+        );
+    }
+    
+    public RetrieveTaskFeedbackResult retrieveTaskFeedbacksByReceiverId(String receiverId,
+                                                                        String language) {
+        return RetrieveTaskFeedbackResult.of(
+            dowithTaskFeedbackQueryRepository.findAllByReceiverId(receiverId),
+            taskFeedbackTemplateQueryRepository.getAllTaskFeedbackTemplates(language)
         );
     }
     

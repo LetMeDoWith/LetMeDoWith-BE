@@ -36,4 +36,44 @@ public class DowithTaskFeedbackQueryRepositoryImpl implements DowithTaskFeedback
             .where(dowithTaskFeedback.dowithTaskId.eq(taskId))
             .fetch();
     }
+    
+    @Override
+    public List<DowithTaskFeedbackQueryDto> findAllBySenderId(String senderId) {
+        return queryFactory
+            .select(
+                Projections.constructor(
+                    DowithTaskFeedbackQueryDto.class,
+                    dowithTaskFeedback.id,
+                    dowithTaskFeedback.dowithTaskId,
+                    member.id,
+                    member.nickname,
+                    member.profileImageUrl,
+                    dowithTaskFeedback.isChecked))
+            .from(dowithTaskFeedback)
+            .leftJoin(member)
+            .fetchJoin()
+            .on(dowithTaskFeedback.senderId.eq(member.id))
+            .where(dowithTaskFeedback.senderId.eq(senderId))
+            .fetch();
+    }
+    
+    @Override
+    public List<DowithTaskFeedbackQueryDto> findAllByReceiverId(String receiverId) {
+        return queryFactory
+            .select(
+                Projections.constructor(
+                    DowithTaskFeedbackQueryDto.class,
+                    dowithTaskFeedback.id,
+                    dowithTaskFeedback.dowithTaskId,
+                    member.id,
+                    member.nickname,
+                    member.profileImageUrl,
+                    dowithTaskFeedback.isChecked))
+            .from(dowithTaskFeedback)
+            .leftJoin(member)
+            .fetchJoin()
+            .on(dowithTaskFeedback.senderId.eq(member.id))
+            .where(dowithTaskFeedback.receiverId.eq(receiverId))
+            .fetch();
+    }
 }
