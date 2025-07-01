@@ -19,59 +19,54 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DowithTaskFeedback extends BaseAuditEntity {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-    
+
     @Column(name = "task_feedback_template_id", nullable = false)
     private Long taskFeedbackTemplateId;
-    
+
     @Column(name = "dowith_task_id", nullable = false)
     private Long dowithTaskId;
-    
+
     @Column(name = "sender_id", nullable = false)
     private String senderId;
-    
+
     @Column(name = "receiver_id", nullable = false)
     private String receiverId;
-    
-    
+
     @Column(name = "is_checked", nullable = false)
     private Yn isChecked;
-    
-    public static DowithTaskFeedback of(String senderId,
-                                        String receiverId,
-                                        Long dowithTaskId,
-                                        Long taskFeedbackTemplateId) {
-        
+
+    public static DowithTaskFeedback of(
+            String senderId, String receiverId, Long dowithTaskId, Long taskFeedbackTemplateId) {
+
         return DowithTaskFeedback.builder()
-                                 .senderId(senderId)
-                                 .receiverId(receiverId)
-                                 .dowithTaskId(dowithTaskId)
-                                 .taskFeedbackTemplateId(taskFeedbackTemplateId)
-                                 .isChecked(Yn.FALSE)
-                                 .build();
+                .senderId(senderId)
+                .receiverId(receiverId)
+                .dowithTaskId(dowithTaskId)
+                .taskFeedbackTemplateId(taskFeedbackTemplateId)
+                .isChecked(Yn.FALSE)
+                .build();
     }
-    
+
     /**
-     * 잔소리를 추가로 보낼 수 있는지 확인한다.
-     * 한 유저는 10분에 한번씩 잔소리를 보낼 수 있다.
+     * 잔소리를 추가로 보낼 수 있는지 확인한다. 한 유저는 10분에 한번씩 잔소리를 보낼 수 있다.
      *
      * @param senderId 잔소리를 보내는 유저의 ID
-     * @param now      현재 시간
+     * @param now 현재 시간
      * @return 잔소리를 추가로 보낼 수 있는지 여부
      */
     public boolean isAdditionalFeedbackAvailable(String senderId, LocalDateTime now) {
         if (!this.senderId.equals(senderId)) {
             return true; // 다른 유저가 보낸 경우, 잔소리를 추가로 보낼 수 있다.
         }
-        
-        return this.getCreatedAt() != null
-            && this.getCreatedAt().plusMinutes(10).isBefore(now);
+
+        return this.getCreatedAt() != null && this.getCreatedAt().plusMinutes(10).isBefore(now);
     }
-    
+
     public DowithTaskFeedback check() {
         this.isChecked = Yn.TRUE;
         return this;

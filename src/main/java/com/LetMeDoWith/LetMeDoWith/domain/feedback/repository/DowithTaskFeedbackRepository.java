@@ -5,11 +5,10 @@ import java.util.List;
 import java.util.Optional;
 
 public interface DowithTaskFeedbackRepository {
-    
+
     DowithTaskFeedback save(DowithTaskFeedback dowithTaskFeedback);
-    
-    Optional<DowithTaskFeedback> getLatest(Long dowithTaskId,
-                                           String senderId);
-    
+
+    Optional<DowithTaskFeedback> getLatest(Long dowithTaskId, String senderId);
+
     List<DowithTaskFeedback> getFeedbacks(List<Long> dowithTaskFeedbackIds);
 }

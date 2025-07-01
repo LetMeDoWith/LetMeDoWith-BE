@@ -4,9 +4,8 @@ import com.LetMeDoWith.LetMeDoWith.infrastructure.feedback.query.dto.TaskFeedbac
 import java.util.List;
 
 public interface TaskFeedbackTemplateQueryRepository {
-    
+
     List<TaskFeedbackTemplateQueryDto> getTaskFeedbackTemplates(Long id, String language);
-    
+
     List<TaskFeedbackTemplateQueryDto> getAllTaskFeedbackTemplates(String language);
-    
 }

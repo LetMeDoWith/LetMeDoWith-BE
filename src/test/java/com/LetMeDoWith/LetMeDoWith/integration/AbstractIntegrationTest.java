@@ -42,7 +42,7 @@ public abstract class AbstractIntegrationTest {
     protected Member requestMember;
     protected TaskSummary taskSummary;
     @Autowired protected TaskSummaryJpaRepository taskSummaryJpaRepository;
-    @Autowired ObjectMapper objectMapper;
+    @Autowired protected ObjectMapper objectMapper;
     @Autowired MockMvc mockMvc;
     @Autowired MemberJpaRepository memberJpaRepository;
     @Autowired AccessTokenProvider accessTokenProvider;

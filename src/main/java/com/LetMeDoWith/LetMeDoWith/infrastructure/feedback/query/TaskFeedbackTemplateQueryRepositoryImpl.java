@@ -12,34 +12,35 @@ import org.springframework.stereotype.Repository;
 @Repository
 @RequiredArgsConstructor
 public class TaskFeedbackTemplateQueryRepositoryImpl
-    implements TaskFeedbackTemplateQueryRepository {
-    
+        implements TaskFeedbackTemplateQueryRepository {
+
     private final JPAQueryFactory queryFactory;
-    
-    private final QTaskFeedbackTemplate qTaskFeedbackTemplate = QTaskFeedbackTemplate.taskFeedbackTemplate;
-    private final QTaskFeedbackTemplateMessage qTaskFeedbackTemplateMessage = QTaskFeedbackTemplateMessage.taskFeedbackTemplateMessage;
-    
+
+    private final QTaskFeedbackTemplate qTaskFeedbackTemplate =
+            QTaskFeedbackTemplate.taskFeedbackTemplate;
+    private final QTaskFeedbackTemplateMessage qTaskFeedbackTemplateMessage =
+            QTaskFeedbackTemplateMessage.taskFeedbackTemplateMessage;
+
     @Override
     public List<TaskFeedbackTemplateQueryDto> getTaskFeedbackTemplates(Long id, String language) {
         return List.of();
     }
-    
+
     // TODO: 향후 캐싱 적용
     @Override
     public List<TaskFeedbackTemplateQueryDto> getAllTaskFeedbackTemplates(String language) {
         return queryFactory
-            .select(
-                Projections.constructor(
-                    TaskFeedbackTemplateQueryDto.class,
-                    qTaskFeedbackTemplate.id,
-                    qTaskFeedbackTemplateMessage.language,
-                    qTaskFeedbackTemplateMessage.message,
-                    qTaskFeedbackTemplate.emojiUrl
-                )
-            )
-            .from(qTaskFeedbackTemplate)
-            .leftJoin(qTaskFeedbackTemplateMessage)
-            .where(qTaskFeedbackTemplateMessage.language.eq(language))
-            .fetch();
+                .select(
+                        Projections.constructor(
+                                TaskFeedbackTemplateQueryDto.class,
+                                qTaskFeedbackTemplate.id,
+                                qTaskFeedbackTemplateMessage.language,
+                                qTaskFeedbackTemplateMessage.message,
+                                qTaskFeedbackTemplate.emojiUrl))
+                .from(qTaskFeedbackTemplate)
+                .leftJoin(qTaskFeedbackTemplateMessage)
+                .on(qTaskFeedbackTemplate.id.eq(qTaskFeedbackTemplateMessage.taskFeedbackTemplate.id))
+                .where(qTaskFeedbackTemplateMessage.language.eq(language))
+                .fetch();
     }
 }
