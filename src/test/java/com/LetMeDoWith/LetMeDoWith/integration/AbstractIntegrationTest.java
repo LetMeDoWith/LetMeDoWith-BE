@@ -1,12 +1,14 @@
 package com.LetMeDoWith.LetMeDoWith.integration;
 
 import com.LetMeDoWith.LetMeDoWith.application.auth.provider.AccessTokenProvider;
+import com.LetMeDoWith.LetMeDoWith.application.auth.provider.RefreshTokenProvider;
 import com.LetMeDoWith.LetMeDoWith.common.dto.ResponseDto;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.Gender;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
 import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.auth.model.AccessToken;
+import com.LetMeDoWith.LetMeDoWith.domain.auth.model.RefreshToken;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskSummary;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.member.persistence.jpaRepository.MemberJpaRepository;
@@ -42,10 +44,12 @@ public abstract class AbstractIntegrationTest {
     protected Member requestMember;
     protected TaskSummary taskSummary;
     @Autowired protected TaskSummaryJpaRepository taskSummaryJpaRepository;
+    protected RefreshToken requestMemberRefreshToken;
     @Autowired ObjectMapper objectMapper;
     @Autowired MockMvc mockMvc;
     @Autowired MemberJpaRepository memberJpaRepository;
     @Autowired AccessTokenProvider accessTokenProvider;
+    @Autowired RefreshTokenProvider refreshTokenProvider;
     private AccessToken requestMemberAccessToken;
 
     @BeforeEach
@@ -92,7 +96,12 @@ public abstract class AbstractIntegrationTest {
                                 .type(MemberType.USER)
                                 .build());
         taskSummary = taskSummaryJpaRepository.save(TaskSummary.of(requestMember.getId()));
-        requestMemberAccessToken = accessTokenProvider.createAccessToken(requestMember.getId());
+        requestMemberAccessToken = accessTokenProvider.generateToken(requestMember.getId());
+        requestMemberRefreshToken =
+                refreshTokenProvider.generateToken(
+                        requestMember.getId(),
+                        requestMemberAccessToken.getToken(),
+                        "iphone"); // TODO - 추후 안드로이드 유져 하나 추가
     }
 
     /** 이전 Test의 test data 삭제 - abstract method */
@@ -111,6 +120,7 @@ public abstract class AbstractIntegrationTest {
     public ResultActions request(MockHttpServletRequestBuilder requestBuilder) {
         LinkedMultiValueMap<String, String> headerMap = new LinkedMultiValueMap<>();
         headerMap.add("AUTHORIZATION", "Bearer" + requestMemberAccessToken.getToken());
+        headerMap.add("User-Agent", requestMemberRefreshToken.getUserAgent());
 
         requestBuilder
                 .headers(new HttpHeaders(headerMap))

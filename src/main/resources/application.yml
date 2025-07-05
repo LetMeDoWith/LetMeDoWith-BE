@@ -6,6 +6,8 @@ spring:
       "dev": "dev, dev-confidential"
       "prod": "prod, prod-confidential"
       "test": "test, test-confidential"
+  jackson:
+    default-property-inclusion: always
 
 server:
   port: 8080

@@ -19,12 +19,11 @@ import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskSummary;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TaskSummaryRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -45,9 +44,9 @@ public class CreateTokenService {
     @Transactional
     public CreateTokenResult createToken(Member member) {
         if (member.isNormal()) {
-            AccessToken accessToken = accessTokenProvider.createAccessToken(member.getId());
+            AccessToken accessToken = accessTokenProvider.generateToken(member.getId());
             RefreshToken refreshToken =
-                    refreshTokenProvider.createRefreshToken(
+                    refreshTokenProvider.generateToken(
                             member.getId(), accessToken.getToken(), HeaderUtil.getUserAgent());
 
             return CreateTokenResult.of(accessToken, refreshToken, member.getId());
@@ -83,7 +82,7 @@ public class CreateTokenService {
                 return createToken(member);
             } else if (member.isSocialAuthenticated()) {
                 // 기 가입된 유저가 있으면, 로그인(액세스 토큰을 발급)한다.
-                return CreateTokenResult.of(signupTokenProvider.createSignupToken(member.getId()));
+                return CreateTokenResult.of(signupTokenProvider.generateToken(member.getId()));
             } else {
                 throw new RestApiException(member.getStatus().getApiResponseStatus());
             }
@@ -96,7 +95,7 @@ public class CreateTokenService {
             TaskSummary taskSummary = TaskSummary.of(member.getId());
             taskSummaryRepository.save(taskSummary);
 
-            return CreateTokenResult.of(signupTokenProvider.createSignupToken(member.getId()));
+            return CreateTokenResult.of(signupTokenProvider.generateToken(member.getId()));
         }
     }
 
@@ -115,12 +114,12 @@ public class CreateTokenService {
         String memberId = accessTokenProvider.getMemberIdWithoutVerify(accessToken);
 
         RefreshToken savedRefreshToken = null;
-        savedRefreshToken = refreshTokenProvider.findRefreshToken(refreshToken);
+        savedRefreshToken = refreshTokenProvider.getRefreshToken(refreshToken);
         savedRefreshToken.checkTokenOwnership(memberId, accessToken, userAgent);
 
-        AccessToken newAccessToken = accessTokenProvider.createAccessToken(memberId);
+        AccessToken newAccessToken = accessTokenProvider.generateToken(memberId);
         RefreshToken newRefreshToken =
-                refreshTokenProvider.createRefreshToken(memberId, accessToken, userAgent);
+                refreshTokenProvider.generateToken(memberId, accessToken, userAgent);
 
         refreshTokenRepository.deleteRefreshToken(savedRefreshToken);
 

@@ -42,9 +42,9 @@ public class AuthenticateInterceptor implements HandlerInterceptor {
 
         String memberId;
         if (isSignupCompleteReq) {
-            memberId = signupTokenProvider.validateSignupToken(tokenToBeValidated);
+            memberId = signupTokenProvider.validateToken(tokenToBeValidated);
         } else {
-            memberId = accessTokenProvider.validateAccessToken(tokenToBeValidated);
+            memberId = accessTokenProvider.validateToken(tokenToBeValidated);
         }
 
         request.setAttribute("memberId", memberId);

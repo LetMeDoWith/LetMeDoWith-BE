@@ -4,9 +4,8 @@ import com.LetMeDoWith.LetMeDoWith.application.auth.dto.CreateRefreshTokenResult
 import com.LetMeDoWith.LetMeDoWith.domain.auth.model.AccessToken;
 import com.LetMeDoWith.LetMeDoWith.domain.auth.model.RefreshToken;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Builder;
-
 import java.time.LocalDateTime;
+import lombok.Builder;
 
 @Builder
 public record CreateRefreshTokenResDto(
