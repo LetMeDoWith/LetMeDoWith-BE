@@ -1,23 +1,20 @@
 package com.LetMeDoWith.LetMeDoWith.integration;
 
 import com.LetMeDoWith.LetMeDoWith.application.auth.provider.AccessTokenProvider;
+import com.LetMeDoWith.LetMeDoWith.application.auth.provider.RefreshTokenProvider;
 import com.LetMeDoWith.LetMeDoWith.common.dto.ResponseDto;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.Gender;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
 import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.auth.model.AccessToken;
+import com.LetMeDoWith.LetMeDoWith.domain.auth.model.RefreshToken;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskSummary;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.member.persistence.jpaRepository.MemberJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.TaskSummaryJpaRepository;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.nio.charset.StandardCharsets;
-import java.time.Clock;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
@@ -33,6 +30,12 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.util.LinkedMultiValueMap;
 
+import java.nio.charset.StandardCharsets;
+import java.time.Clock;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+
 @Slf4j
 @SpringBootTest
 @ActiveProfiles("test")
@@ -41,11 +44,19 @@ public abstract class AbstractIntegrationTest {
 
     protected Member requestMember;
     protected TaskSummary taskSummary;
-    @Autowired protected TaskSummaryJpaRepository taskSummaryJpaRepository;
-    @Autowired ObjectMapper objectMapper;
-    @Autowired MockMvc mockMvc;
-    @Autowired MemberJpaRepository memberJpaRepository;
-    @Autowired AccessTokenProvider accessTokenProvider;
+    @Autowired
+    protected TaskSummaryJpaRepository taskSummaryJpaRepository;
+    protected RefreshToken requestMemberRefreshToken;
+    @Autowired
+    ObjectMapper objectMapper;
+    @Autowired
+    MockMvc mockMvc;
+    @Autowired
+    MemberJpaRepository memberJpaRepository;
+    @Autowired
+    AccessTokenProvider accessTokenProvider;
+    @Autowired
+    RefreshTokenProvider refreshTokenProvider;
     private AccessToken requestMemberAccessToken;
 
     @BeforeEach
@@ -79,7 +90,9 @@ public abstract class AbstractIntegrationTest {
         }
     }
 
-    /** 해당 Abstract Class 상속 받은 테스트는 모든 Test 메서드 시작전에 request Member 세팅 */
+    /**
+     * 해당 Abstract Class 상속 받은 테스트는 모든 Test 메서드 시작전에 request Member 세팅
+     */
     private void createMemberTestData() {
         requestMember =
                 memberJpaRepository.save(
@@ -92,13 +105,21 @@ public abstract class AbstractIntegrationTest {
                                 .type(MemberType.USER)
                                 .build());
         taskSummary = taskSummaryJpaRepository.save(TaskSummary.of(requestMember.getId()));
-        requestMemberAccessToken = accessTokenProvider.createAccessToken(requestMember.getId());
+        requestMemberAccessToken = accessTokenProvider.generateToken(requestMember.getId());
+        requestMemberRefreshToken = refreshTokenProvider.generateToken(
+                requestMember.getId(),
+                requestMemberAccessToken.getToken(),
+                "iphone"); // TODO - 추후 안드로이드 유져 하나 추가
     }
 
-    /** 이전 Test의 test data 삭제 - abstract method */
+    /**
+     * 이전 Test의 test data 삭제 - abstract method
+     */
     protected abstract void deleteTestData();
 
-    /** Test Data 생성 - abstract method */
+    /**
+     * Test Data 생성 - abstract method
+     */
     protected abstract void createTestData();
 
     /**
@@ -111,6 +132,7 @@ public abstract class AbstractIntegrationTest {
     public ResultActions request(MockHttpServletRequestBuilder requestBuilder) {
         LinkedMultiValueMap<String, String> headerMap = new LinkedMultiValueMap<>();
         headerMap.add("AUTHORIZATION", "Bearer" + requestMemberAccessToken.getToken());
+        headerMap.add("User-Agent", requestMemberRefreshToken.getUserAgent());
 
         requestBuilder
                 .headers(new HttpHeaders(headerMap))
@@ -131,7 +153,7 @@ public abstract class AbstractIntegrationTest {
      *
      * @param responseBody API Response 원문
      * @param responseType 변환하려는 응답 타입
-     * @param <T> 변환하려는 응답 타입의 제네릭
+     * @param <T>          변환하려는 응답 타입의 제네릭
      * @return 변환된 응답 객체
      */
     public <T> T readResponse(String responseBody, Class<T> responseType) {

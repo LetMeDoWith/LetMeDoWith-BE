@@ -8,12 +8,13 @@ import com.LetMeDoWith.LetMeDoWith.domain.auth.model.SignupToken;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.security.Keys;
-import java.util.Base64;
-import javax.crypto.SecretKey;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import javax.crypto.SecretKey;
+import java.util.Base64;
 
 @Component
 @RequiredArgsConstructor
@@ -45,11 +46,11 @@ public class SignupTokenProvider {
      * @param memberId 회원가입을 계속해서 진행할 member의 dowithTaskId.
      * @return
      */
-    public SignupToken createSignupToken(String memberId) {
+    public SignupToken generateToken(String memberId) {
         return SignupToken.of(memberId, issuer, signupDurationMin, secretKey);
     }
 
-    public String validateSignupToken(final String token) {
+    public String validateToken(final String token) {
         final Jws<Claims> claims = JwtUtil.parseTokenToJws(token, secretKey);
 
         if (claims.getBody().get("sub").equals(TokenType.SIGNUP.getCode())

@@ -7,30 +7,17 @@ import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.AggregateRoot;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TodoTaskRoutineCycle;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TodoTaskStatus;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.*;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.stream.Collectors;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
-/** TodoTask 엔티티 클래스 */
+/**
+ * TodoTask 엔티티 클래스
+ */
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -70,11 +57,11 @@ public class TodoTask extends BaseAuditEntity {
     /**
      * TodoTask 생성 메서드
      *
-     * @param memberId 회원 ID
+     * @param memberId       회원 ID
      * @param taskCategoryId 작업 카테고리 ID
-     * @param title 제목
-     * @param date 날짜
-     * @param startTime 시작 시간
+     * @param title          제목
+     * @param date           날짜
+     * @param startTime      시작 시간
      * @return 생성된 TodoTask 객체
      */
     public static TodoTask of(
@@ -96,12 +83,12 @@ public class TodoTask extends BaseAuditEntity {
     /**
      * 루틴을 포함한 TodoTask 생성 메서드
      *
-     * @param memberId 회원 ID
+     * @param memberId       회원 ID
      * @param taskCategoryId 작업 카테고리 ID
-     * @param title 제목
-     * @param date 날짜
-     * @param startTime 시작 시간
-     * @param routine 루틴
+     * @param title          제목
+     * @param date           날짜
+     * @param startTime      시작 시간
+     * @param routine        루틴
      * @return 생성된 TodoTask 객체
      */
     public static TodoTask of(
@@ -128,11 +115,11 @@ public class TodoTask extends BaseAuditEntity {
     /**
      * 루틴을 포함한 TodoTask 리스트 생성 메서드
      *
-     * @param memberId 회원 ID
+     * @param memberId       회원 ID
      * @param taskCategoryId 작업 카테고리 ID
-     * @param title 제목
-     * @param startTime 시작 시간
-     * @param routineDates 루틴 날짜 세트
+     * @param title          제목
+     * @param startTime      시작 시간
+     * @param routineDates   루틴 날짜 세트
      * @return 생성된 TodoTask 리스트
      */
     public static List<TodoTask> ofWithRoutine(
@@ -252,10 +239,10 @@ public class TodoTask extends BaseAuditEntity {
     /**
      * TodoTask 내용 업데이트
      *
-     * @param title 제목
+     * @param title          제목
      * @param taskCategoryId 작업 카테고리 ID
-     * @param date 날짜
-     * @param startTime 시작 시간
+     * @param date           날짜
+     * @param startTime      시작 시간
      */
     public void updateContent(
             String title, Long taskCategoryId, LocalDate date, LocalTime startTime) {
@@ -300,13 +287,13 @@ public class TodoTask extends BaseAuditEntity {
         if (this.status != TodoTaskStatus.WAIT) {
             throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
         }
-        this.status = TodoTaskStatus.COMPLETE;
+        this.status = TodoTaskStatus.SUCCESS;
 
         return this;
     }
 
     public TodoTask uncomplete() {
-        if (this.status != TodoTaskStatus.COMPLETE) {
+        if (this.status != TodoTaskStatus.SUCCESS) {
             throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
         }
         this.status = TodoTaskStatus.WAIT;
@@ -314,7 +301,9 @@ public class TodoTask extends BaseAuditEntity {
         return this;
     }
 
-    /** 유효성 검사 */
+    /**
+     * 유효성 검사
+     */
     private void validate() {
         //        if (LocalDate.now().isEqual(this.date) && LocalTime.now().isAfter(this.startTime)) {
         //            throw new RestApiException(FailResponseStatus.INVALID_REQUEST);

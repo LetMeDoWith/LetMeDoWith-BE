@@ -1,11 +1,5 @@
 package com.LetMeDoWith.LetMeDoWith.integration.member;
 
-import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.*;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.hasSize;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.LetMeDoWith.LetMeDoWith.application.auth.provider.AccessTokenProvider;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.BadgeStatus;
@@ -21,8 +15,6 @@ import com.LetMeDoWith.LetMeDoWith.infrastructure.member.persistence.jpaReposito
 import com.LetMeDoWith.LetMeDoWith.infrastructure.member.persistence.jpaRepository.MemberJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.UpdateMainBadgeReqDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,6 +32,15 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+
+import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.hasSize;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 @Slf4j
 @SpringBootTest
 @ActiveProfiles("local")
@@ -50,12 +51,18 @@ public class BadgeIntegrationTest {
     static final String RETRIEVE_BADGES_INFO_URL = "";
     static final String UPDATE_MAIN_BADGE = "/main";
 
-    @Autowired ObjectMapper objectMapper;
-    @Autowired MockMvc mockMvc;
-    @Autowired AccessTokenProvider accessTokenProvider;
-    @Autowired MemberJpaRepository memberJpaRepository;
-    @Autowired BadgeJpaRepository badgeJpaRepository;
-    @Autowired MemberBadgeJpaRepository memberBadgeJpaRepository;
+    @Autowired
+    ObjectMapper objectMapper;
+    @Autowired
+    MockMvc mockMvc;
+    @Autowired
+    AccessTokenProvider accessTokenProvider;
+    @Autowired
+    MemberJpaRepository memberJpaRepository;
+    @Autowired
+    BadgeJpaRepository badgeJpaRepository;
+    @Autowired
+    MemberBadgeJpaRepository memberBadgeJpaRepository;
 
     Member member;
     Member lazyMember;
@@ -95,8 +102,8 @@ public class BadgeIntegrationTest {
                                 .type(MemberType.USER)
                                 .build());
 
-        memberAccessToken = accessTokenProvider.createAccessToken(member.getId());
-        lazyMemberAccessToken = accessTokenProvider.createAccessToken(lazyMember.getId());
+        memberAccessToken = accessTokenProvider.generateToken(member.getId());
+        lazyMemberAccessToken = accessTokenProvider.generateToken(lazyMember.getId());
     }
 
     @AfterEach
