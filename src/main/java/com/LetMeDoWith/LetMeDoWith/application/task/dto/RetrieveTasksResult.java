@@ -2,13 +2,14 @@ package com.LetMeDoWith.LetMeDoWith.application.task.dto;
 
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.dto.DowithTaskQueryDto;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.dto.TodoTaskQueryDto;
+import lombok.Builder;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import lombok.Builder;
 
 public record RetrieveTasksResult(List<TodoTaskDto> todoTasks, List<DowithTaskDto> dowithTasks) {
 
@@ -25,7 +26,8 @@ public record RetrieveTasksResult(List<TodoTaskDto> todoTasks, List<DowithTaskDt
                                                 todoTaskQueryDto.title(),
                                                 todoTaskQueryDto.status(),
                                                 todoTaskQueryDto.date(),
-                                                todoTaskQueryDto.startTime()))
+                                                todoTaskQueryDto.startTime(),
+                                                todoTaskQueryDto.isRoutine()))
                         .toList();
 
         List<DowithTaskDto> dowithTaskDtos =
@@ -50,6 +52,7 @@ public record RetrieveTasksResult(List<TodoTaskDto> todoTasks, List<DowithTaskDt
                                             first.date(),
                                             first.startTime(),
                                             confirmImageUrls,
+                                            first.isRoutine(),
                                             first.feedBackCount());
                                 })
                         .sorted(
@@ -67,7 +70,9 @@ public record RetrieveTasksResult(List<TodoTaskDto> todoTasks, List<DowithTaskDt
             String title,
             String status,
             LocalDate date,
-            LocalTime startTime) {}
+            LocalTime startTime,
+            boolean isRoutine) {
+    }
 
     public record DowithTaskDto(
             Long id,
@@ -78,5 +83,7 @@ public record RetrieveTasksResult(List<TodoTaskDto> todoTasks, List<DowithTaskDt
             LocalDate date,
             LocalTime startTime,
             List<String> confirmedImageUrls,
-            int feedBackCount) {}
+            boolean isRoutine,
+            int feedBackCount) {
+    }
 }

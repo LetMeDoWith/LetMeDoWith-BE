@@ -1,6 +1,8 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.dto;
 
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTaskRoutine;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -13,6 +15,7 @@ public record DowithTaskQueryDto(
         LocalDate date,
         LocalTime startTime,
         String confirmedImageUrl,
+        boolean isRoutine,
         int feedBackCount) {
 
     public DowithTaskQueryDto(
@@ -24,6 +27,7 @@ public record DowithTaskQueryDto(
             LocalDate date,
             LocalTime startTime,
             String confirmedImageUrl,
+            DowithTaskRoutine dowithTaskRoutine,
             int feedBackCount) {
         this(
                 id,
@@ -34,6 +38,7 @@ public record DowithTaskQueryDto(
                 date,
                 startTime,
                 confirmedImageUrl,
+                dowithTaskRoutine != null,
                 feedBackCount);
     }
 }

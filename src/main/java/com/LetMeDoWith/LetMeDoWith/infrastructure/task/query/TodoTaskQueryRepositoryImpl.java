@@ -2,13 +2,15 @@ package com.LetMeDoWith.LetMeDoWith.infrastructure.task.query;
 
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.QTaskCategory;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.QTodoTask;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.QTodoTaskRoutine;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.dto.TodoTaskQueryDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import java.time.LocalDate;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
@@ -17,6 +19,7 @@ public class TodoTaskQueryRepositoryImpl implements TodoTaskQueryRepository {
     private final JPAQueryFactory queryFactory;
 
     private final QTodoTask todoTask = QTodoTask.todoTask;
+    private final QTodoTaskRoutine todoTaskRoutine = QTodoTaskRoutine.todoTaskRoutine;
     private final QTaskCategory taskCategory = QTaskCategory.taskCategory;
 
     @Override
@@ -32,10 +35,13 @@ public class TodoTaskQueryRepositoryImpl implements TodoTaskQueryRepository {
                                 todoTask.title,
                                 todoTask.status,
                                 todoTask.date,
-                                todoTask.startTime))
+                                todoTask.startTime,
+                                todoTaskRoutine))
                 .from(todoTask)
                 .leftJoin(taskCategory)
                 .on(todoTask.taskCategoryId.eq(taskCategory.id))
+                .leftJoin(todoTaskRoutine)
+                .on(todoTask.routine.id.eq(todoTaskRoutine.id))
                 .where(todoTask.memberId.eq(memberId).and(todoTask.date.between(startDate, endDate)))
                 .fetch();
     }
