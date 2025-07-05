@@ -1,5 +1,9 @@
 package com.LetMeDoWith.LetMeDoWith.integration.task;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.LetMeDoWith.LetMeDoWith.common.util.DateTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
@@ -9,30 +13,22 @@ import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.TaskCategoryJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.TodoTaskJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.integration.AbstractIntegrationTest;
+import java.time.*;
+import java.util.List;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.*;
-import java.util.List;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 public class RetrieveTaskIntegrationTest extends AbstractIntegrationTest {
 
     static final String RETRIEVE_TASKS_URL = "/api/v1/tasks";
 
-    @Autowired
-    DowithTaskJpaRepository dowithTaskJpaRepository;
+    @Autowired DowithTaskJpaRepository dowithTaskJpaRepository;
 
-    @Autowired
-    TodoTaskJpaRepository todoTaskJpaRepository;
+    @Autowired TodoTaskJpaRepository todoTaskJpaRepository;
 
-    @Autowired
-    TaskCategoryJpaRepository taskCategoryJpaRepository;
+    @Autowired TaskCategoryJpaRepository taskCategoryJpaRepository;
 
     private TaskCategory taskCategory1, taskCategory2;
     private TodoTask todoTask1, todoTask2;

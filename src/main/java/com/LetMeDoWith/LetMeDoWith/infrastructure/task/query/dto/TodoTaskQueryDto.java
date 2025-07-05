@@ -2,7 +2,6 @@ package com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.dto;
 
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TodoTaskStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TodoTaskRoutine;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -24,9 +23,15 @@ public record TodoTaskQueryDto(
             TodoTaskStatus status,
             LocalDate date,
             LocalTime startTime,
-            TodoTaskRoutine todoTaskRoutine
-    ) {
-        this(id, taskCategoryId, taskCategoryName, title, status.code, date, startTime,
+            TodoTaskRoutine todoTaskRoutine) {
+        this(
+                id,
+                taskCategoryId,
+                taskCategoryName,
+                title,
+                status.code,
+                date,
+                startTime,
                 todoTaskRoutine != null);
     }
 }
