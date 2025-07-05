@@ -1,5 +1,8 @@
 package com.LetMeDoWith.LetMeDoWith.application.auth.provider;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import com.LetMeDoWith.LetMeDoWith.application.auth.util.EncryptUtil;
 import com.LetMeDoWith.LetMeDoWith.application.auth.util.JwtUtil;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiAuthException;
@@ -7,14 +10,6 @@ import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.auth.model.AccessToken;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
-import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-
 import java.math.BigInteger;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
@@ -22,9 +17,13 @@ import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.time.Instant;
 import java.util.Date;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 @Slf4j
 // @ExtendWith(MockitoExtension.class)
@@ -54,11 +53,9 @@ class AccessTokenProviderTest {
     public final String SAMPLE_EXPONENT = "AQAB";
     public Key SAMPLE_RSA_PUBKEY;
 
-    @Autowired
-    AccessTokenProvider accessTokenProvider;
+    @Autowired AccessTokenProvider accessTokenProvider;
 
-    @Autowired
-    OidcIdTokenProvider oidcIdTokenProvider;
+    @Autowired OidcIdTokenProvider oidcIdTokenProvider;
 
     @BeforeEach
     void beforeEach() throws NoSuchAlgorithmException, InvalidKeySpecException {

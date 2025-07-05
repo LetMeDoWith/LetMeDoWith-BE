@@ -11,15 +11,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.security.Keys;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+import java.util.Map;
+import javax.crypto.SecretKey;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import javax.crypto.SecretKey;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.Map;
 
 @Component
 @Slf4j
@@ -78,8 +77,7 @@ public class AccessTokenProvider {
 
         Map<String, String> map = null;
         try {
-            map = objectMapper.readValue(payload, new TypeReference<>() {
-            });
+            map = objectMapper.readValue(payload, new TypeReference<>() {});
         } catch (JsonProcessingException e) {
             throw new RestApiAuthException(FailResponseStatus.INVALID_JWT_TOKEN_FORMAT);
         }

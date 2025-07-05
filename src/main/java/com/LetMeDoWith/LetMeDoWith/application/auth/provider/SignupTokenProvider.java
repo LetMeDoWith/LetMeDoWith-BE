@@ -8,13 +8,12 @@ import com.LetMeDoWith.LetMeDoWith.domain.auth.model.SignupToken;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.security.Keys;
+import java.util.Base64;
+import javax.crypto.SecretKey;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import javax.crypto.SecretKey;
-import java.util.Base64;
 
 @Component
 @RequiredArgsConstructor
