@@ -51,3 +51,5 @@ samLocalEnvVars.json
 /.DS_Store
 /src/main/generated/
 /lib/
+
+/src/main/**/firebase-confidential.json
