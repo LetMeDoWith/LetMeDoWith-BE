@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.common.converter.task;
+package com.LetMeDoWith.LetMeDoWith.infrastructure.task.converter;
 
 import com.LetMeDoWith.LetMeDoWith.common.converter.AbstractCombinedEnumConverter;
 import com.LetMeDoWith.LetMeDoWith.common.enums.task.TaskCompleteLevel;

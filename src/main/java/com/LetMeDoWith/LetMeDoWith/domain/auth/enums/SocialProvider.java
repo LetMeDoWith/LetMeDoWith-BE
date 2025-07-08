@@ -1,12 +1,14 @@
 package com.LetMeDoWith.LetMeDoWith.domain.auth.enums;
 
-import com.LetMeDoWith.LetMeDoWith.common.converter.member.SocialProviderConverter;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.member.converter.SocialProviderConverter;
 import com.LetMeDoWith.LetMeDoWith.common.enums.BaseEnum;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.util.Arrays;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

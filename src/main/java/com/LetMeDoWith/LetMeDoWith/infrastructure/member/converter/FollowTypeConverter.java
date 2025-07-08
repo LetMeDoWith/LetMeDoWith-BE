@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.common.converter.member;
+package com.LetMeDoWith.LetMeDoWith.infrastructure.member.converter;
 
 import com.LetMeDoWith.LetMeDoWith.common.converter.AbstractCombinedEnumConverter;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.FollowType;

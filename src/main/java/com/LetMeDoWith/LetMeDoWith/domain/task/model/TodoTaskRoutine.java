@@ -1,6 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.domain.task.model;
 
-import com.LetMeDoWith.LetMeDoWith.common.converter.task.TodoTaskRooutineCycleConverter;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.task.converter.TodoTaskRooutineCycleConverter;
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TodoTaskRoutineCycle;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.converter.TodoTaskRoutineDatesConverter;
@@ -11,8 +11,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+
 import java.time.LocalDate;
 import java.util.Set;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

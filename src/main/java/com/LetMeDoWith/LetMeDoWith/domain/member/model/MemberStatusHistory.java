@@ -1,6 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.domain.member.model;
 
-import com.LetMeDoWith.LetMeDoWith.common.converter.member.MemberStatusConverter;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.member.converter.MemberStatusConverter;
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import jakarta.persistence.Column;
@@ -11,7 +11,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+
 import java.time.LocalDateTime;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

@@ -23,7 +23,8 @@ public class NotificationTokenController {
 
     @Operation(summary = "알림(FCM) 토큰 등록", description = "알림(Firebase Cloud Messaging) 토큰을 등록합니다.")
     @PostMapping("")
-    public ResponseEntity registerNotificationToken(@RequestBody RegisterNotificationTokenReqDto requestBody) {
+    public ResponseEntity registerNotificationToken(
+            @RequestBody RegisterNotificationTokenReqDto requestBody) {
         notificationTokenService.registerToken(AuthUtil.getMemberId(), requestBody.notificationToken());
         return ResponseUtil.createSuccessResponse();
     }

@@ -37,5 +37,4 @@ public class Notification extends BaseAuditEntity {
 
     @Column(name = "notification_template_code", nullable = true)
     private String notificationTemplateCode;
-
 }

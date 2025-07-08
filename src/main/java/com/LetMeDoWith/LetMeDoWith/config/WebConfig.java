@@ -1,7 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.config;
 
-import com.LetMeDoWith.LetMeDoWith.common.converter.member.FollowTypeConverter;
-import com.LetMeDoWith.LetMeDoWith.common.converter.member.GenderConverter;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.member.converter.FollowTypeConverter;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.member.converter.GenderConverter;
 import com.LetMeDoWith.LetMeDoWith.common.interceptor.AuthenticateInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;

@@ -1,6 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.domain.notification.model;
 
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
+import com.LetMeDoWith.LetMeDoWith.domain.notification.enums.NotificationTemplateCode;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,7 +21,7 @@ public class NotificationTemplate extends BaseAuditEntity {
     private Long id;
 
     @Column(name = "code", nullable = false, unique = true)
-    private String code;
+    private NotificationTemplateCode code;
 
     @Column(name = "title", nullable = false, columnDefinition = "TEXT")
     private String title;
@@ -28,15 +29,15 @@ public class NotificationTemplate extends BaseAuditEntity {
     @Column(name = "body", nullable = false, columnDefinition = "TEXT")
     private String body;
 
-    @Column(name = "deep_link", nullable = true, columnDefinition = "TEXT")
-    private String deepLink;
+    @Column(name = "app_deep_link", nullable = true, columnDefinition = "TEXT")
+    private String appDeepLink;
 
-    public static NotificationTemplate of(String code, String title, String body, String deepLink) {
+    public static NotificationTemplate of(NotificationTemplateCode code, String title, String body, String deepLink) {
         return NotificationTemplate.builder()
                 .code(code)
                 .title(title)
                 .body(body)
-                .deepLink(deepLink)
+                .appDeepLink(deepLink)
                 .build();
     }
 
@@ -62,5 +63,4 @@ public class NotificationTemplate extends BaseAuditEntity {
 
         return bodyTemplate;
     }
-
 }

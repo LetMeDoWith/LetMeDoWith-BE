@@ -1,6 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.common.enums.member;
 
-import com.LetMeDoWith.LetMeDoWith.common.converter.member.GenderConverter;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.member.converter.GenderConverter;
 import com.LetMeDoWith.LetMeDoWith.common.enums.BaseEnum;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.swagger.v3.oas.annotations.media.Schema;

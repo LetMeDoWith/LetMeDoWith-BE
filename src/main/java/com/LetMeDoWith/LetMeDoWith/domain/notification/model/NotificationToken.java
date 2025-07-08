@@ -15,21 +15,20 @@ public class NotificationToken extends BaseAuditEntity {
 
     @Column(name = "expired_yn", nullable = false)
     Yn isExpired;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
+
     @Column(name = "memberId", nullable = false)
     private String memberId;
+
     @Column(name = "token", nullable = false)
     private String token;
 
     public static NotificationToken of(String memberId, String token) {
-        return NotificationToken.builder()
-                .memberId(memberId)
-                .token(token)
-                .isExpired(Yn.FALSE)
-                .build();
+        return NotificationToken.builder().memberId(memberId).token(token).isExpired(Yn.FALSE).build();
     }
 
     public boolean isExpired() {
@@ -40,5 +39,4 @@ public class NotificationToken extends BaseAuditEntity {
         this.token = token;
         this.isExpired = Yn.FALSE;
     }
-
 }
