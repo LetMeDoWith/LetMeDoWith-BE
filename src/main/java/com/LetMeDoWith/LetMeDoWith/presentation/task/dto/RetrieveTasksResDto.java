@@ -24,7 +24,8 @@ public record RetrieveTasksResDto(List<TodoTaskDto> todoTasks, List<DowithTaskDt
                                                 todoTaskQueryDto.title(),
                                                 todoTaskQueryDto.status(),
                                                 todoTaskQueryDto.date(),
-                                                todoTaskQueryDto.startTime()))
+                                                todoTaskQueryDto.startTime(),
+                                                todoTaskQueryDto.isRoutine()))
                         .toList();
 
         List<DowithTaskDto> dowithTasks =
@@ -42,6 +43,7 @@ public record RetrieveTasksResDto(List<TodoTaskDto> todoTasks, List<DowithTaskDt
                                                 dowithTaskQueryDto.confirmedImageUrls().isEmpty()
                                                         ? null
                                                         : dowithTaskQueryDto.confirmedImageUrls(),
+                                                dowithTaskQueryDto.isRoutine(),
                                                 dowithTaskQueryDto.feedBackCount()))
                         .toList();
 
@@ -56,7 +58,8 @@ public record RetrieveTasksResDto(List<TodoTaskDto> todoTasks, List<DowithTaskDt
             @Schema(description = "제목", defaultValue = "아침 먹기") String title,
             @Schema(description = "상태", implementation = TodoTaskStatus.class) String status,
             @Schema(description = "일자", defaultValue = "2025-01-30") LocalDate date,
-            @Schema(description = "시작시간", defaultValue = "11:30:00") LocalTime startTime) {}
+            @Schema(description = "시작시간", defaultValue = "11:30:00") LocalTime startTime,
+            @Schema(description = "루틴설정여부", defaultValue = "false") Boolean isRoutine) {}
 
     @Builder
     public record DowithTaskDto(
@@ -69,5 +72,6 @@ public record RetrieveTasksResDto(List<TodoTaskDto> todoTasks, List<DowithTaskDt
             @Schema(description = "시작시간", defaultValue = "11:30:00") LocalTime startTime,
             @Schema(description = "인증 이미지 URL", defaultValue = "https://example.com/image.jpg")
                     List<String> confirmedImageUrls,
+            @Schema(description = "루틴설정여부", defaultValue = "false") Boolean isRoutine,
             @Schema(description = "피드백 개수", defaultValue = "5") int feedBackCount) {}
 }

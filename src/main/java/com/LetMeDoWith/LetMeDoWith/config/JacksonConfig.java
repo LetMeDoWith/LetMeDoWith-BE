@@ -20,7 +20,7 @@ public class JacksonConfig {
         // Timestamp로 출력하지 않고 ISO 8601 문자열로 출력
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
-        // null 필드는 JSON에서 생략
+        // null 필드는 JSON에서 생략함
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
         return mapper;

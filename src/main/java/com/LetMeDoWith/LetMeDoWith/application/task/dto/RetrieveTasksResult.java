@@ -25,7 +25,8 @@ public record RetrieveTasksResult(List<TodoTaskDto> todoTasks, List<DowithTaskDt
                                                 todoTaskQueryDto.title(),
                                                 todoTaskQueryDto.status(),
                                                 todoTaskQueryDto.date(),
-                                                todoTaskQueryDto.startTime()))
+                                                todoTaskQueryDto.startTime(),
+                                                todoTaskQueryDto.isRoutine()))
                         .toList();
 
         List<DowithTaskDto> dowithTaskDtos =
@@ -50,6 +51,7 @@ public record RetrieveTasksResult(List<TodoTaskDto> todoTasks, List<DowithTaskDt
                                             first.date(),
                                             first.startTime(),
                                             confirmImageUrls,
+                                            first.isRoutine(),
                                             first.feedBackCount());
                                 })
                         .sorted(
@@ -67,7 +69,8 @@ public record RetrieveTasksResult(List<TodoTaskDto> todoTasks, List<DowithTaskDt
             String title,
             String status,
             LocalDate date,
-            LocalTime startTime) {}
+            LocalTime startTime,
+            boolean isRoutine) {}
 
     public record DowithTaskDto(
             Long id,
@@ -78,5 +81,6 @@ public record RetrieveTasksResult(List<TodoTaskDto> todoTasks, List<DowithTaskDt
             LocalDate date,
             LocalTime startTime,
             List<String> confirmedImageUrls,
+            boolean isRoutine,
             int feedBackCount) {}
 }

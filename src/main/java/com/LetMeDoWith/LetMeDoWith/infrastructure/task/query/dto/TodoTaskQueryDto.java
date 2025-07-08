@@ -1,6 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.dto;
 
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TodoTaskStatus;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.TodoTaskRoutine;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -11,7 +12,8 @@ public record TodoTaskQueryDto(
         String title,
         String status,
         LocalDate date,
-        LocalTime startTime) {
+        LocalTime startTime,
+        boolean isRoutine) {
 
     public TodoTaskQueryDto(
             Long id,
@@ -20,7 +22,16 @@ public record TodoTaskQueryDto(
             String title,
             TodoTaskStatus status,
             LocalDate date,
-            LocalTime startTime) {
-        this(id, taskCategoryId, taskCategoryName, title, status.code, date, startTime);
+            LocalTime startTime,
+            TodoTaskRoutine todoTaskRoutine) {
+        this(
+                id,
+                taskCategoryId,
+                taskCategoryName,
+                title,
+                status.code,
+                date,
+                startTime,
+                todoTaskRoutine != null);
     }
 }

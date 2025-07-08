@@ -15,12 +15,7 @@ import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.common.util.HeaderUtil;
 import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.auth.model.AccessToken;
-import com.LetMeDoWith.LetMeDoWith.presentation.auth.dto.CreateRefreshTokenResDto;
-import com.LetMeDoWith.LetMeDoWith.presentation.auth.dto.CreateTokenRefreshReqDto;
-import com.LetMeDoWith.LetMeDoWith.presentation.auth.dto.CreateTokenReqDto;
-import com.LetMeDoWith.LetMeDoWith.presentation.auth.dto.CreateTokenResDto;
-import com.LetMeDoWith.LetMeDoWith.presentation.auth.dto.CreateTokenTempReqDto;
-import com.LetMeDoWith.LetMeDoWith.presentation.auth.dto.CreateTokenTempResDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.auth.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -113,7 +108,7 @@ public class AuthController {
 
         AccessToken accessToken = null;
         if (requestBody.id().equals(id) && requestBody.password().equals(password)) {
-            accessToken = accessTokenProvider.createAccessToken(requestBody.memberId());
+            accessToken = accessTokenProvider.generateToken(requestBody.memberId());
         } else {
             throw new RestApiException(FailResponseStatus.UNAUTHORIZED);
         }
