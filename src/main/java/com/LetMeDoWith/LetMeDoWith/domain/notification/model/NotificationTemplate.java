@@ -28,11 +28,15 @@ public class NotificationTemplate extends BaseAuditEntity {
     @Column(name = "body", nullable = false, columnDefinition = "TEXT")
     private String body;
 
-    public static NotificationTemplate of(String code, String title, String body) {
+    @Column(name = "deep_link", nullable = true, columnDefinition = "TEXT")
+    private String deepLink;
+
+    public static NotificationTemplate of(String code, String title, String body, String deepLink) {
         return NotificationTemplate.builder()
                 .code(code)
                 .title(title)
                 .body(body)
+                .deepLink(deepLink)
                 .build();
     }
 
