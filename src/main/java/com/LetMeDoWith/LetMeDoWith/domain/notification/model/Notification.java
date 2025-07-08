@@ -26,10 +26,16 @@ public class Notification extends BaseAuditEntity {
     @Column(name = "body", nullable = false, columnDefinition = "TEXT")
     private String body;
 
+    @Column(name = "deep_link", nullable = true, columnDefinition = "TEXT")
+    private String deepLink;
+
     @Column(name = "confirmed_yn", nullable = false)
     private boolean isConfirmed = false;
 
     @Column(name = "confirm_date_time", nullable = true)
     private String confirmDateTime;
+
+    @Column(name = "notification_template_code", nullable = true)
+    private String notificationTemplateCode;
 
 }

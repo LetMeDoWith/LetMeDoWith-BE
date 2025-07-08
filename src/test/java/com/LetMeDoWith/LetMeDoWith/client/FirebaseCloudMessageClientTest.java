@@ -20,7 +20,7 @@ public class FirebaseCloudMessageClientTest {
         String body = "Test Body";
 
         // When
-        firebaseCloudMessageClient.sendMessage(fcmToken, title, body);
+        firebaseCloudMessageClient.sendMessage(fcmToken, title, body, "letmedowith://test");
 
         // Then
         // Assertions can be added here to verify the behavior of sendMessage method
