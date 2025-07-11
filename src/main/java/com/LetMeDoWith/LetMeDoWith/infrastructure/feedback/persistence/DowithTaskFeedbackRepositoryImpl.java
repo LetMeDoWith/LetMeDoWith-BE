@@ -21,11 +21,17 @@ public class DowithTaskFeedbackRepositoryImpl implements DowithTaskFeedbackRepos
 
     @Override
     public Optional<DowithTaskFeedback> getLatest(Long dowithTaskId, String senderId) {
-        return repository.findTopByDowithTaskIdAndSenderIdOrderByCreatedAtDesc(dowithTaskId, senderId);
+        return repository.findTopByDowithTaskIdAndSenderIdOrderByCreatedAtDesc(dowithTaskId,
+            senderId);
     }
 
     @Override
     public List<DowithTaskFeedback> getFeedbacks(List<Long> dowithTaskFeedbackIds) {
         return repository.findAllById(dowithTaskFeedbackIds);
+    }
+
+    @Override
+    public List<DowithTaskFeedback> getFeedbacks(List<Long> dowithTaskIds, String memberId) {
+        return repository.findAllByDowithTaskIdInAndMemberId(dowithTaskIds, memberId);
     }
 }

@@ -26,37 +26,37 @@ public class TaskFeedbackService {
     /**
      * DowithTask에 대한 잔소리를 생성한다.
      *
-     * @param senderId 잔소리를 보내는 사람의 ID
-     * @param dowithTaskId 잔소리를 보낼 DowithTask의 ID
+     * @param senderId               잔소리를 보내는 사람의 ID
+     * @param dowithTaskId           잔소리를 보낼 DowithTask의 ID
      * @param taskFeedbackTemplateId 잔소리 템플릿의 ID
      */
     @Transactional
     public void createDowithFeedback(
-            String senderId, Long dowithTaskId, Long taskFeedbackTemplateId) {
+        String senderId, Long dowithTaskId, Long taskFeedbackTemplateId) {
 
         Member sender =
-                memberRepository
-                        .getNormalStatusMember(senderId)
-                        .orElseThrow(() -> new RestApiException(FailResponseStatus.MEMBER_NOT_EXIST));
+            memberRepository
+                .getNormalStatusMember(senderId)
+                .orElseThrow(() -> new RestApiException(FailResponseStatus.MEMBER_NOT_EXIST));
 
         DowithTask dowithTask =
-                dowithTaskRepository
-                        .getDowithTask(dowithTaskId)
-                        .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
+            dowithTaskRepository
+                .getDowithTask(dowithTaskId)
+                .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
 
         Optional<DowithTaskFeedback> latestFeedback =
-                dowithTaskFeedbackRepository.getLatest(dowithTaskId, senderId);
+            dowithTaskFeedbackRepository.getLatest(dowithTaskId, senderId);
 
         latestFeedback.ifPresent(
-                feedback -> {
-                    if (!feedback.isAdditionalFeedbackAvailable(sender.getId(), SystemTimeUtil.now())) {
-                        throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
-                    }
-                });
+            feedback -> {
+                if (!feedback.isAdditionalFeedbackAvailable(sender.getId(), SystemTimeUtil.now())) {
+                    throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
+                }
+            });
 
         dowithTaskFeedbackRepository.save(
-                DowithTaskFeedback.of(
-                        sender.getId(), dowithTask.getMemberId(), dowithTaskId, taskFeedbackTemplateId));
+            DowithTaskFeedback.of(
+                sender.getId(), dowithTask.getMemberId(), dowithTaskId, taskFeedbackTemplateId));
     }
 
     /**
@@ -65,9 +65,9 @@ public class TaskFeedbackService {
      * @param dowithTaskFeedbackIds 확인할 DowithTaskFeedback의 ID 리스트
      */
     @Transactional
-    public void checkDowithFeedbacks(List<Long> dowithTaskFeedbackIds) {
+    public void checkDowithFeedbacks(List<Long> dowithTaskFeedbackIds, String requestUserId) {
         dowithTaskFeedbackRepository
-                .getFeedbacks(dowithTaskFeedbackIds)
-                .forEach(DowithTaskFeedback::check);
+            .getFeedbacks(dowithTaskFeedbackIds, requestUserId)
+            .forEach(DowithTaskFeedback::check);
     }
 }

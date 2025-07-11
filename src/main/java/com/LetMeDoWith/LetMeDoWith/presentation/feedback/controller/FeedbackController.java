@@ -96,7 +96,9 @@ public class FeedbackController {
     @ApiSuccessResponse(description = "두윗모드 잔소리 확인 성공. 본 API는 확인 성공 여부만 반환합니다.")
     @PatchMapping("/{feedbackId}/check")
     public ResponseEntity checkDowithTaskFeedback(@PathVariable("feedbackId") Long feedbackId) {
-        feedbackService.checkDowithFeedbacks(List.of(feedbackId));
+        String memberId = AuthUtil.getMemberId();
+
+        feedbackService.checkDowithFeedbacks(List.of(feedbackId), memberId);
         return ResponseUtil.createSuccessResponse();
     }
 }
