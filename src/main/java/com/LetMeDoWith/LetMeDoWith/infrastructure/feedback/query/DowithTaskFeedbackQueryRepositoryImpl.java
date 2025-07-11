@@ -1,5 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.feedback.query;
 
+import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.model.QDowithTaskFeedback;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.QMember;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.feedback.query.dto.DowithTaskFeedbackQueryDto;
@@ -57,9 +58,7 @@ public class DowithTaskFeedbackQueryRepositoryImpl implements DowithTaskFeedback
                                 member.nickname,
                                 member.profileImageUrl,
                                 new CaseBuilder()
-                                        .when(
-                                                dowithTaskFeedback.isChecked.eq(
-                                                        com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn.TRUE))
+                                        .when(dowithTaskFeedback.isChecked.eq(Yn.TRUE))
                                         .then(true)
                                         .otherwise(false)))
                 .from(dowithTaskFeedback)
@@ -83,9 +82,7 @@ public class DowithTaskFeedbackQueryRepositoryImpl implements DowithTaskFeedback
                                 member.nickname,
                                 member.profileImageUrl,
                                 new CaseBuilder()
-                                        .when(
-                                                dowithTaskFeedback.isChecked.eq(
-                                                        com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn.TRUE))
+                                        .when(dowithTaskFeedback.isChecked.eq(Yn.TRUE))
                                         .then(true)
                                         .otherwise(false)))
                 .from(dowithTaskFeedback)
