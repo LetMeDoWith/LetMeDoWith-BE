@@ -2,6 +2,7 @@ package com.LetMeDoWith.LetMeDoWith.domain.feedback.model;
 
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
+import com.LetMeDoWith.LetMeDoWith.domain.AggregateRoot;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -18,6 +19,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@AggregateRoot
 public class DowithTaskFeedback extends BaseAuditEntity {
 
     @Id
@@ -41,25 +43,25 @@ public class DowithTaskFeedback extends BaseAuditEntity {
     private Yn isChecked;
 
     public static DowithTaskFeedback of(
-            String senderMemberId,
-            String receiverMemberId,
-            Long dowithTaskId,
-            Long taskFeedbackTemplateId) {
+        String senderMemberId,
+        String receiverMemberId,
+        Long dowithTaskId,
+        Long taskFeedbackTemplateId) {
 
         return DowithTaskFeedback.builder()
-                .senderMemberId(senderMemberId)
-                .receiverMemberId(receiverMemberId)
-                .dowithTaskId(dowithTaskId)
-                .taskFeedbackTemplateId(taskFeedbackTemplateId)
-                .isChecked(Yn.FALSE)
-                .build();
+            .senderMemberId(senderMemberId)
+            .receiverMemberId(receiverMemberId)
+            .dowithTaskId(dowithTaskId)
+            .taskFeedbackTemplateId(taskFeedbackTemplateId)
+            .isChecked(Yn.FALSE)
+            .build();
     }
 
     /**
      * 잔소리를 추가로 보낼 수 있는지 확인한다. 한 유저는 10분에 한번씩 잔소리를 보낼 수 있다.
      *
      * @param senderId 잔소리를 보내는 유저의 ID
-     * @param now 현재 시간
+     * @param now      현재 시간
      * @return 잔소리를 추가로 보낼 수 있는지 여부
      */
     public boolean isAdditionalFeedbackAvailable(String senderId, LocalDateTime now) {
