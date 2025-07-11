@@ -31,21 +31,24 @@ public class DowithTaskFeedback extends BaseAuditEntity {
     @Column(name = "dowith_task_id", nullable = false)
     private Long dowithTaskId;
 
-    @Column(name = "sender_id", nullable = false)
-    private String senderId;
+    @Column(name = "sender_member_id", nullable = false)
+    private String senderMemberId;
 
-    @Column(name = "receiver_id", nullable = false)
-    private String receiverId;
+    @Column(name = "receiver_member_id", nullable = false)
+    private String receiverMemberId;
 
     @Column(name = "is_checked", nullable = false)
     private Yn isChecked;
 
     public static DowithTaskFeedback of(
-            String senderId, String receiverId, Long dowithTaskId, Long taskFeedbackTemplateId) {
+            String senderMemberId,
+            String receiverMemberId,
+            Long dowithTaskId,
+            Long taskFeedbackTemplateId) {
 
         return DowithTaskFeedback.builder()
-                .senderId(senderId)
-                .receiverId(receiverId)
+                .senderMemberId(senderMemberId)
+                .receiverMemberId(receiverMemberId)
                 .dowithTaskId(dowithTaskId)
                 .taskFeedbackTemplateId(taskFeedbackTemplateId)
                 .isChecked(Yn.FALSE)
@@ -60,7 +63,7 @@ public class DowithTaskFeedback extends BaseAuditEntity {
      * @return 잔소리를 추가로 보낼 수 있는지 여부
      */
     public boolean isAdditionalFeedbackAvailable(String senderId, LocalDateTime now) {
-        if (!this.senderId.equals(senderId)) {
+        if (!this.senderMemberId.equals(senderId)) {
             return true; // 다른 유저가 보낸 경우, 잔소리를 추가로 보낼 수 있다.
         }
 
