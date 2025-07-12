@@ -31,12 +31,16 @@ public class NotificationToken extends BaseAuditEntity {
         return NotificationToken.builder().memberId(memberId).token(token).isExpired(Yn.FALSE).build();
     }
 
+    public void updateToNewToken(String token) {
+        this.token = token;
+        this.isExpired = Yn.FALSE;
+    }
+
     public boolean isExpired() {
         return this.isExpired == Yn.TRUE;
     }
 
-    public void updateToNewToken(String token) {
-        this.token = token;
-        this.isExpired = Yn.FALSE;
+    public void expireToken() {
+        this.isExpired = Yn.TRUE;
     }
 }

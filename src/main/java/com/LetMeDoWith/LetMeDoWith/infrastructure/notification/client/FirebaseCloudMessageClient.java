@@ -7,8 +7,6 @@ import com.google.firebase.messaging.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.function.Consumer;
-
 @Component
 @RequiredArgsConstructor
 public class FirebaseCloudMessageClient implements MessageServerClient {
@@ -17,7 +15,7 @@ public class FirebaseCloudMessageClient implements MessageServerClient {
 
     @Override
     public void sendMessage(String token, String title, String body, String appDeepLink,
-                            Runnable onSuccess, Consumer<Throwable> onFailure) throws FirebaseMessagingException {
+                            Runnable onSuccess, Runnable onFailureByToken) {
         Message message =
                 Message.builder()
                         .setNotification(Notification.builder().setTitle(title).setBody(body).build())
@@ -29,12 +27,9 @@ public class FirebaseCloudMessageClient implements MessageServerClient {
             System.out.println(send);
             onSuccess.run();
         } catch (FirebaseMessagingException e) {
-
-            onFailure.accept(e);
             // 예외 처리 로직 추가
             if (e.getMessagingErrorCode().equals(MessagingErrorCode.UNREGISTERED)) {
-                // TODO - 토큰이 만료된 경우 처리 로직 추가
-
+                onFailureByToken.run();
             }
             throw new RestApiException(FailResponseStatus.INTERNAL_SERVER_ERROR, e);
         }
