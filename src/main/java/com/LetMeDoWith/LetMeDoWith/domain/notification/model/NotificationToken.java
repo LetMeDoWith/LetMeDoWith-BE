@@ -37,7 +37,7 @@ public class NotificationToken extends BaseAuditEntity {
     }
 
     public boolean isExpired() {
-        return this.isExpired == Yn.TRUE;
+        return this.isExpired == Yn.FALSE;
     }
 
     public void expireToken() {

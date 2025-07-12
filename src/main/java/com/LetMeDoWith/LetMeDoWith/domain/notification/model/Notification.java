@@ -3,11 +3,9 @@ package com.LetMeDoWith.LetMeDoWith.domain.notification.model;
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
-import com.LetMeDoWith.LetMeDoWith.domain.notification.enums.NotificationTemplateCode;
 import jakarta.persistence.*;
-import lombok.*;
-
 import java.time.LocalDateTime;
+import lombok.*;
 
 @Entity
 @Getter
@@ -35,21 +33,27 @@ public class Notification extends BaseAuditEntity {
     private String deepLink;
 
     @Column(name = "confirmed_yn", nullable = false)
-    private Yn isConfirmed = Yn.FALSE;
+    private Yn isConfirmed;
 
     @Column(name = "confirm_date_time", nullable = true)
     private LocalDateTime confirmDateTime;
 
     @Column(name = "notification_template_code", nullable = true)
-    private NotificationTemplateCode notificationTemplateCode;
+    private String notificationTemplateCode;
 
-    public static Notification of(String memberId, String title, String body, String deepLink, NotificationTemplateCode notificationTemplateCode) {
+    public static Notification of(
+            String memberId,
+            String title,
+            String body,
+            String deepLink,
+            String notificationTemplateCode) {
         return Notification.builder()
                 .memberId(memberId)
                 .title(title)
                 .body(body)
                 .deepLink(deepLink)
                 .notificationTemplateCode(notificationTemplateCode)
+                .isConfirmed(Yn.FALSE)
                 .build();
     }
 

@@ -3,10 +3,9 @@ package com.LetMeDoWith.LetMeDoWith.infrastructure.notification.persistence;
 import com.LetMeDoWith.LetMeDoWith.domain.notification.model.Notification;
 import com.LetMeDoWith.LetMeDoWith.domain.notification.repository.NotificationRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.notification.persistence.jpaRepository.NotificationJpaRepository;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-
-import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
