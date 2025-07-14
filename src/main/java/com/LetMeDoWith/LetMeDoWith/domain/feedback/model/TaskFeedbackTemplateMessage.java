@@ -1,6 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.domain.feedback.model;
 
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
+import com.LetMeDoWith.LetMeDoWith.domain.task.enums.CountryCode;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -36,5 +37,5 @@ public class TaskFeedbackTemplateMessage extends BaseAuditEntity {
     private String message;
 
     @Column(name = "language", nullable = false)
-    private String language;
+    private CountryCode language;
 }

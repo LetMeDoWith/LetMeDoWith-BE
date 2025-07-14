@@ -11,6 +11,7 @@ import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
+import com.LetMeDoWith.LetMeDoWith.domain.task.enums.CountryCode;
 import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.CreateDowithFeedbackReqDto;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -80,13 +81,15 @@ public class FeedbackController {
 
         if (taskId != null) {
             return ResponseUtil.createSuccessResponse(
-                retrieveTaskFeedbackService.retrieveTaskFeedbacksByTaskId(taskId, "KR"));
+                retrieveTaskFeedbackService.retrieveTaskFeedbacksByTaskId(taskId, CountryCode.KR));
         } else if (senderId != null) {
             return ResponseUtil.createSuccessResponse(
-                retrieveTaskFeedbackService.retrieveTaskFeedbacksBySenderId(senderId, "KR"));
+                retrieveTaskFeedbackService.retrieveTaskFeedbacksBySenderId(senderId,
+                    CountryCode.KR));
         } else if (receiverId != null) {
             return ResponseUtil.createSuccessResponse(
-                retrieveTaskFeedbackService.retrieveTaskFeedbacksByReceiverId(receiverId, "KR"));
+                retrieveTaskFeedbackService.retrieveTaskFeedbacksByReceiverId(receiverId,
+                    CountryCode.KR));
         } else {
             throw new RestApiException(FailResponseStatus.INVALID_PARAM_ERROR);
         }

@@ -8,6 +8,7 @@ import com.LetMeDoWith.LetMeDoWith.application.feedback.dto.RetrieveTaskFeedback
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.model.TaskFeedbackTemplate;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.model.TaskFeedbackTemplateMessage;
+import com.LetMeDoWith.LetMeDoWith.domain.task.enums.CountryCode;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.feedback.persistence.jpaRepository.DowithTaskFeedbackJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.feedback.persistence.jpaRepository.TaskFeedbackTemplateJpaRepository;
@@ -36,7 +37,7 @@ public class FeedbackIntegrationTest extends AbstractIntegrationTest {
     private static final LocalTime TEST_START_TIME = LocalTime.of(10, 0);
     private static final String TEST_MESSAGE = "잔소리 메시지";
     private static final String TEST_EMOJI_URL = "https://example.com/emoji.png";
-    private static final String TEST_LANGUAGE = "KR";
+    private static final CountryCode TEST_LANGUAGE = CountryCode.KR;
     @Autowired
     private DowithTaskJpaRepository dowithTaskRepo;
     @Autowired
@@ -61,36 +62,37 @@ public class FeedbackIntegrationTest extends AbstractIntegrationTest {
     protected void createTestData() {
         setFixedClock(FIXED_CLOCK_TIME);
         dowithTask = dowithTaskRepo.save(
-                DowithTask.of(requestMember.getId(), null, "테스트 태스크", TEST_DATE, TEST_START_TIME));
+            DowithTask.of(requestMember.getId(), null, "테스트 태스크", TEST_DATE, TEST_START_TIME));
         template = templateRepo.save(
-                TaskFeedbackTemplate.builder()
-                        .emojiUrl(TEST_EMOJI_URL)
-                        .title("잔소리 템플릿")
-                        .description("설명")
-                        .isActive(Yn.TRUE)
-                        .build());
+            TaskFeedbackTemplate.builder()
+                .emojiUrl(TEST_EMOJI_URL)
+                .title("잔소리 템플릿")
+                .description("설명")
+                .isActive(Yn.TRUE)
+                .build());
         templateMsg = templateMsgRepo.save(
-                TaskFeedbackTemplateMessage.builder()
-                        .taskFeedbackTemplate(template)
-                        .message(TEST_MESSAGE)
-                        .language(TEST_LANGUAGE)
-                        .build());
+            TaskFeedbackTemplateMessage.builder()
+                .taskFeedbackTemplate(template)
+                .message(TEST_MESSAGE)
+                .language(TEST_LANGUAGE)
+                .build());
     }
 
     @Test
     @DisplayName("[SUCCESS] 잔소리 생성")
     void createFeedback_success() throws Exception {
-        CreateDowithFeedbackReqDto req = new CreateDowithFeedbackReqDto(dowithTask.getId(), template.getId());
+        CreateDowithFeedbackReqDto req = new CreateDowithFeedbackReqDto(dowithTask.getId(),
+            template.getId());
         ResultActions resultActions = this.request(
-                MockMvcRequestBuilders.post("/api/v1/feedbacks")
-                        .content(writeRequestBodyAsString(req)));
+            MockMvcRequestBuilders.post("/api/v1/feedbacks")
+                .content(writeRequestBodyAsString(req)));
         resultActions.andExpect(status().isOk());
         // CQRS 조회로 생성 검증
         MvcResult retrieveResult = this.request(
                 MockMvcRequestBuilders.get("/api/v1/feedbacks/")
-                        .param("taskId", String.valueOf(dowithTask.getId())))
-                .andExpect(status().isOk())
-                .andReturn();
+                    .param("taskId", String.valueOf(dowithTask.getId())))
+            .andExpect(status().isOk())
+            .andReturn();
         String content = retrieveResult.getResponse().getContentAsString();
         var result = this.readResponse(content, RetrieveTaskFeedbackResult.class);
         assertThat(result.feedbacks()).isNotEmpty();
@@ -103,16 +105,17 @@ public class FeedbackIntegrationTest extends AbstractIntegrationTest {
     @Test
     @DisplayName("[FAIL] 잔소리 생성 - 1시간 경과 후 시도")
     void createFeedback_fail_timeOver() throws Exception {
-        CreateDowithFeedbackReqDto req = new CreateDowithFeedbackReqDto(dowithTask.getId(), template.getId());
+        CreateDowithFeedbackReqDto req = new CreateDowithFeedbackReqDto(dowithTask.getId(),
+            template.getId());
         ResultActions resultActions = this.request(
-                MockMvcRequestBuilders.post("/api/v1/feedbacks")
-                        .content(writeRequestBodyAsString(req)));
+            MockMvcRequestBuilders.post("/api/v1/feedbacks")
+                .content(writeRequestBodyAsString(req)));
 
         setFixedClock(FIXED_CLOCK_TIME.plusMinutes(1));
 
         ResultActions resultActionsAfter = this.request(
-                MockMvcRequestBuilders.post("/api/v1/feedbacks")
-                        .content(writeRequestBodyAsString(req)));
+            MockMvcRequestBuilders.post("/api/v1/feedbacks")
+                .content(writeRequestBodyAsString(req)));
         resultActionsAfter.andExpect(status().isBadRequest());
     }
 
@@ -122,17 +125,18 @@ public class FeedbackIntegrationTest extends AbstractIntegrationTest {
         // 사전 생성
         this.request(
                 MockMvcRequestBuilders.post("/api/v1/feedbacks")
-                        .content(
-                                writeRequestBodyAsString(
-                                        new CreateDowithFeedbackReqDto(dowithTask.getId(), template.getId()))))
-                .andExpect(status().isOk());
+                    .content(
+                        writeRequestBodyAsString(
+                            new CreateDowithFeedbackReqDto(dowithTask.getId(), template.getId()))))
+            .andExpect(status().isOk());
         MvcResult retrieveResult = this.request(
                 MockMvcRequestBuilders.get("/api/v1/feedbacks/")
-                        .param("taskId", String.valueOf(dowithTask.getId())))
-                .andExpect(status().isOk())
-                .andReturn();
+                    .param("taskId", String.valueOf(dowithTask.getId())))
+            .andExpect(status().isOk())
+            .andReturn();
         String content = retrieveResult.getResponse().getContentAsString();
-        RetrieveTaskFeedbackResult result = this.readResponse(content, RetrieveTaskFeedbackResult.class);
+        RetrieveTaskFeedbackResult result = this.readResponse(content,
+            RetrieveTaskFeedbackResult.class);
         assertThat(result.feedbacks()).isNotEmpty();
         RetrieveTaskFeedbackDto feedback = result.feedbacks().get(0);
         assertThat(feedback.dowithTaskId()).isEqualTo(dowithTask.getId());
@@ -144,9 +148,9 @@ public class FeedbackIntegrationTest extends AbstractIntegrationTest {
     void retrieveFeedback_fail_paramCount() throws Exception {
         this.request(
                 MockMvcRequestBuilders.get("/api/v1/feedbacks/")
-                        .param("taskId", String.valueOf(dowithTask.getId()))
-                        .param("senderId", requestMember.getId()))
-                .andExpect(status().isBadRequest());
+                    .param("taskId", String.valueOf(dowithTask.getId()))
+                    .param("senderId", requestMember.getId()))
+            .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -155,33 +159,33 @@ public class FeedbackIntegrationTest extends AbstractIntegrationTest {
         // 사전 생성
         this.request(
                 MockMvcRequestBuilders.post("/api/v1/feedbacks")
-                        .content(
-                                writeRequestBodyAsString(
-                                        new CreateDowithFeedbackReqDto(dowithTask.getId(), template.getId()))))
-                .andExpect(status().isOk());
+                    .content(
+                        writeRequestBodyAsString(
+                            new CreateDowithFeedbackReqDto(dowithTask.getId(), template.getId()))))
+            .andExpect(status().isOk());
         // CQRS로 id 조회
         MvcResult retrieveResult = this.request(
                 MockMvcRequestBuilders.get("/api/v1/feedbacks/")
-                        .param("taskId", String.valueOf(dowithTask.getId())))
-                .andExpect(status().isOk())
-                .andReturn();
+                    .param("taskId", String.valueOf(dowithTask.getId())))
+            .andExpect(status().isOk())
+            .andReturn();
         String content = retrieveResult.getResponse().getContentAsString();
         RetrieveTaskFeedbackResult result = this.readResponse(content,
-                RetrieveTaskFeedbackResult.class);
+            RetrieveTaskFeedbackResult.class);
         RetrieveTaskFeedbackDto feedback = result.feedbacks().get(0);
         Long feedbackId = feedback.id();
         // 확인 API
         this.request(MockMvcRequestBuilders.patch("/api/v1/feedbacks/" + feedbackId + "/check"))
-                .andExpect(status().isOk());
+            .andExpect(status().isOk());
         // CQRS로 isChecked true 확인
         MvcResult afterCheckResult = this.request(
                 MockMvcRequestBuilders.get("/api/v1/feedbacks/")
-                        .param("taskId", String.valueOf(dowithTask.getId())))
-                .andExpect(status().isOk())
-                .andReturn();
+                    .param("taskId", String.valueOf(dowithTask.getId())))
+            .andExpect(status().isOk())
+            .andReturn();
         String afterCheckContent = afterCheckResult.getResponse().getContentAsString();
         RetrieveTaskFeedbackResult afterResult = this.readResponse(afterCheckContent,
-                RetrieveTaskFeedbackResult.class);
+            RetrieveTaskFeedbackResult.class);
         RetrieveTaskFeedbackDto afterFeedback = afterResult.feedbacks().get(0);
         assertThat(afterFeedback.isChecked()).isTrue();
     }

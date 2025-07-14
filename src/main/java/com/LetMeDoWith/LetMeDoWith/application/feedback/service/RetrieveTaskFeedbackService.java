@@ -1,6 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.application.feedback.service;
 
 import com.LetMeDoWith.LetMeDoWith.application.feedback.dto.RetrieveTaskFeedbackResult;
+import com.LetMeDoWith.LetMeDoWith.domain.task.enums.CountryCode;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.feedback.query.DowithTaskFeedbackQueryRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.feedback.query.TaskFeedbackTemplateQueryRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,23 +14,24 @@ public class RetrieveTaskFeedbackService {
     private final DowithTaskFeedbackQueryRepository dowithTaskFeedbackQueryRepository;
     private final TaskFeedbackTemplateQueryRepository taskFeedbackTemplateQueryRepository;
 
-    public RetrieveTaskFeedbackResult retrieveTaskFeedbacksByTaskId(Long taskId, String language) {
+    public RetrieveTaskFeedbackResult retrieveTaskFeedbacksByTaskId(Long taskId,
+        CountryCode language) {
         return RetrieveTaskFeedbackResult.of(
-                dowithTaskFeedbackQueryRepository.findAllByTaskId(taskId),
-                taskFeedbackTemplateQueryRepository.getAllTaskFeedbackTemplates(language));
+            dowithTaskFeedbackQueryRepository.findAllByTaskId(taskId),
+            taskFeedbackTemplateQueryRepository.getAllTaskFeedbackTemplates(language));
     }
 
     public RetrieveTaskFeedbackResult retrieveTaskFeedbacksBySenderId(
-            String senderId, String language) {
+        String senderId, CountryCode language) {
         return RetrieveTaskFeedbackResult.of(
-                dowithTaskFeedbackQueryRepository.findAllBySenderId(senderId),
-                taskFeedbackTemplateQueryRepository.getAllTaskFeedbackTemplates(language));
+            dowithTaskFeedbackQueryRepository.findAllBySenderId(senderId),
+            taskFeedbackTemplateQueryRepository.getAllTaskFeedbackTemplates(language));
     }
 
     public RetrieveTaskFeedbackResult retrieveTaskFeedbacksByReceiverId(
-            String receiverId, String language) {
+        String receiverId, CountryCode language) {
         return RetrieveTaskFeedbackResult.of(
-                dowithTaskFeedbackQueryRepository.findAllByReceiverId(receiverId),
-                taskFeedbackTemplateQueryRepository.getAllTaskFeedbackTemplates(language));
+            dowithTaskFeedbackQueryRepository.findAllByReceiverId(receiverId),
+            taskFeedbackTemplateQueryRepository.getAllTaskFeedbackTemplates(language));
     }
 }
