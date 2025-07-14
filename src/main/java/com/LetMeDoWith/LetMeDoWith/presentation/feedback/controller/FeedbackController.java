@@ -71,7 +71,7 @@ public class FeedbackController {
         @RequestParam(value = "receiverId", required = false) String receiverId) {
 
         long count = Stream.of(taskId, senderId, receiverId)
-            .filter(Objects::isNull)
+            .filter(Objects::nonNull)
             .count();
 
         if (count != 1) {

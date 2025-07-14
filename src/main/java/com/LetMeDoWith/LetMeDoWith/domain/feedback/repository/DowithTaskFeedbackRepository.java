@@ -12,5 +12,5 @@ public interface DowithTaskFeedbackRepository {
 
     List<DowithTaskFeedback> getFeedbacks(List<Long> dowithTaskFeedbackIds);
 
-    List<DowithTaskFeedback> getFeedbacks(List<Long> dowithTaskIds, String memberId);
+    List<DowithTaskFeedback> getFeedbacks(List<Long> dowithTaskIds, String receiverId);
 }

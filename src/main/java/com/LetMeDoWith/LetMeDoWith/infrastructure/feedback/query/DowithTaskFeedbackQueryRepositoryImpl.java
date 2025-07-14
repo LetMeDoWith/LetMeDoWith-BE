@@ -22,74 +22,74 @@ public class DowithTaskFeedbackQueryRepositoryImpl implements DowithTaskFeedback
     @Override
     public List<DowithTaskFeedbackQueryDto> findAllByTaskId(Long taskId) {
         return queryFactory
-                .select(
-                        Projections.constructor(
-                                DowithTaskFeedbackQueryDto.class,
-                                dowithTaskFeedback.id,
-                                dowithTaskFeedback.dowithTaskId,
-                                dowithTaskFeedback.taskFeedbackTemplateId,
-                                member.id,
-                                member.nickname,
-                                member.profileImageUrl,
-                                new CaseBuilder()
-                                        .when(
-                                                dowithTaskFeedback.isChecked.eq(
-                                                        com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn.TRUE))
-                                        .then(true)
-                                        .otherwise(false)))
-                .from(dowithTaskFeedback)
-                .leftJoin(member)
-                .fetchJoin()
-                .on(dowithTaskFeedback.senderId.eq(member.id))
-                .where(dowithTaskFeedback.dowithTaskId.eq(taskId))
-                .fetch();
+            .select(
+                Projections.constructor(
+                    DowithTaskFeedbackQueryDto.class,
+                    dowithTaskFeedback.id,
+                    dowithTaskFeedback.dowithTaskId,
+                    dowithTaskFeedback.taskFeedbackTemplateId,
+                    member.id,
+                    member.nickname,
+                    member.profileImageUrl,
+                    new CaseBuilder()
+                        .when(
+                            dowithTaskFeedback.isChecked.eq(
+                                com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn.TRUE))
+                        .then(true)
+                        .otherwise(false)))
+            .from(dowithTaskFeedback)
+            .leftJoin(member)
+            .fetchJoin()
+            .on(dowithTaskFeedback.senderMemberId.eq(member.id))
+            .where(dowithTaskFeedback.dowithTaskId.eq(taskId))
+            .fetch();
     }
 
     @Override
     public List<DowithTaskFeedbackQueryDto> findAllBySenderId(String senderId) {
         return queryFactory
-                .select(
-                        Projections.constructor(
-                                DowithTaskFeedbackQueryDto.class,
-                                dowithTaskFeedback.id,
-                                dowithTaskFeedback.dowithTaskId,
-                                dowithTaskFeedback.taskFeedbackTemplateId,
-                                member.id,
-                                member.nickname,
-                                member.profileImageUrl,
-                                new CaseBuilder()
-                                        .when(dowithTaskFeedback.isChecked.eq(Yn.TRUE))
-                                        .then(true)
-                                        .otherwise(false)))
-                .from(dowithTaskFeedback)
-                .leftJoin(member)
-                .fetchJoin()
-                .on(dowithTaskFeedback.senderId.eq(member.id))
-                .where(dowithTaskFeedback.senderId.eq(senderId))
-                .fetch();
+            .select(
+                Projections.constructor(
+                    DowithTaskFeedbackQueryDto.class,
+                    dowithTaskFeedback.id,
+                    dowithTaskFeedback.dowithTaskId,
+                    dowithTaskFeedback.taskFeedbackTemplateId,
+                    member.id,
+                    member.nickname,
+                    member.profileImageUrl,
+                    new CaseBuilder()
+                        .when(dowithTaskFeedback.isChecked.eq(Yn.TRUE))
+                        .then(true)
+                        .otherwise(false)))
+            .from(dowithTaskFeedback)
+            .leftJoin(member)
+            .fetchJoin()
+            .on(dowithTaskFeedback.senderMemberId.eq(member.id))
+            .where(dowithTaskFeedback.senderMemberId.eq(senderId))
+            .fetch();
     }
 
     @Override
     public List<DowithTaskFeedbackQueryDto> findAllByReceiverId(String receiverId) {
         return queryFactory
-                .select(
-                        Projections.constructor(
-                                DowithTaskFeedbackQueryDto.class,
-                                dowithTaskFeedback.id,
-                                dowithTaskFeedback.dowithTaskId,
-                                dowithTaskFeedback.taskFeedbackTemplateId,
-                                member.id,
-                                member.nickname,
-                                member.profileImageUrl,
-                                new CaseBuilder()
-                                        .when(dowithTaskFeedback.isChecked.eq(Yn.TRUE))
-                                        .then(true)
-                                        .otherwise(false)))
-                .from(dowithTaskFeedback)
-                .leftJoin(member)
-                .fetchJoin()
-                .on(dowithTaskFeedback.senderId.eq(member.id))
-                .where(dowithTaskFeedback.receiverId.eq(receiverId))
-                .fetch();
+            .select(
+                Projections.constructor(
+                    DowithTaskFeedbackQueryDto.class,
+                    dowithTaskFeedback.id,
+                    dowithTaskFeedback.dowithTaskId,
+                    dowithTaskFeedback.taskFeedbackTemplateId,
+                    member.id,
+                    member.nickname,
+                    member.profileImageUrl,
+                    new CaseBuilder()
+                        .when(dowithTaskFeedback.isChecked.eq(Yn.TRUE))
+                        .then(true)
+                        .otherwise(false)))
+            .from(dowithTaskFeedback)
+            .leftJoin(member)
+            .fetchJoin()
+            .on(dowithTaskFeedback.senderMemberId.eq(member.id))
+            .where(dowithTaskFeedback.receiverMemberId.eq(receiverId))
+            .fetch();
     }
 }

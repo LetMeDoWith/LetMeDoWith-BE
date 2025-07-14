@@ -7,11 +7,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface DowithTaskFeedbackJpaRepository extends JpaRepository<DowithTaskFeedback, Long> {
 
-    Optional<DowithTaskFeedback> findTopByDowithTaskIdAndSenderIdOrderByCreatedAtDesc(
-        Long dowithTaskId, String senderId);
+    Optional<DowithTaskFeedback> findTopByDowithTaskIdAndSenderMemberIdOrderByCreatedAtDesc(
+            Long dowithTaskId, String senderMemberId);
 
     List<DowithTaskFeedback> findAllByDowithTaskId(Long dowithTaskId);
 
-    List<DowithTaskFeedback> findAllByDowithTaskIdInAndMemberId(List<Long> dowithTaskIds,
-        String memberId);
+    List<DowithTaskFeedback> findAllByDowithTaskIdInAndReceiverMemberId(List<Long> dowithTaskIds,
+            String receiverMemberId);
+
+    List<DowithTaskFeedback> findAllByIdInAndReceiverMemberId(List<Long> ids, String receiverMemberId);
 }
