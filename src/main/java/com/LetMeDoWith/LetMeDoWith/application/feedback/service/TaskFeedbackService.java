@@ -32,31 +32,29 @@ public class TaskFeedbackService {
      */
     @Transactional
     public void createDowithFeedback(
-        String senderId, Long dowithTaskId, Long taskFeedbackTemplateId) {
+            String senderId, Long dowithTaskId, Long taskFeedbackTemplateId) {
 
-        Member sender =
-            memberRepository
+        Member sender = memberRepository
                 .getNormalStatusMember(senderId)
-                .orElseThrow(() -> new RestApiException(FailResponseStatus.MEMBER_NOT_EXIST));
+                .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
 
-        DowithTask dowithTask =
-            dowithTaskRepository
+        DowithTask dowithTask = dowithTaskRepository
                 .getDowithTask(dowithTaskId)
                 .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
 
-        Optional<DowithTaskFeedback> latestFeedback =
-            dowithTaskFeedbackRepository.getLatest(dowithTaskId, senderId);
+        Optional<DowithTaskFeedback> latestFeedback = dowithTaskFeedbackRepository.getLatest(dowithTaskId, senderId);
 
+        // TODO: 추가 잔소리 불가시 화면에 명확한 메세지 필요
         latestFeedback.ifPresent(
-            feedback -> {
-                if (!feedback.isAdditionalFeedbackAvailable(sender.getId(), SystemTimeUtil.now())) {
-                    throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
-                }
-            });
+                feedback -> {
+                    if (!feedback.isAdditionalFeedbackAvailable(sender.getId(), SystemTimeUtil.now())) {
+                        throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
+                    }
+                });
 
         dowithTaskFeedbackRepository.save(
-            DowithTaskFeedback.of(
-                sender.getId(), dowithTask.getMemberId(), dowithTaskId, taskFeedbackTemplateId));
+                DowithTaskFeedback.of(
+                        sender.getId(), dowithTask.getMemberId(), dowithTaskId, taskFeedbackTemplateId));
     }
 
     /**
@@ -67,7 +65,7 @@ public class TaskFeedbackService {
     @Transactional
     public void checkDowithFeedbacks(List<Long> dowithTaskFeedbackIds, String requestUserId) {
         dowithTaskFeedbackRepository
-            .getFeedbacks(dowithTaskFeedbackIds, requestUserId)
-            .forEach(DowithTaskFeedback::check);
+                .getFeedbacks(dowithTaskFeedbackIds, requestUserId)
+                .forEach(DowithTaskFeedback::check);
     }
 }
