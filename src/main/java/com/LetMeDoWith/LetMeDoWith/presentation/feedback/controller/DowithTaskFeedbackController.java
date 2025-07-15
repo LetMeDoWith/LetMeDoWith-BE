@@ -2,7 +2,7 @@ package com.LetMeDoWith.LetMeDoWith.presentation.feedback.controller;
 
 import com.LetMeDoWith.LetMeDoWith.application.feedback.dto.RetrieveTaskFeedbackResult;
 import com.LetMeDoWith.LetMeDoWith.application.feedback.service.RetrieveTaskFeedbackService;
-import com.LetMeDoWith.LetMeDoWith.application.feedback.service.TaskFeedbackService;
+import com.LetMeDoWith.LetMeDoWith.application.feedback.service.AssignDowithTaskFeedbackService;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiErrorResponse;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiErrorResponses;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiSuccessResponse;
@@ -32,48 +32,42 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/feedbacks")
 @RequiredArgsConstructor
-public class FeedbackController {
+public class DowithTaskFeedbackController {
 
-    private final TaskFeedbackService feedbackService;
+    private final AssignDowithTaskFeedbackService assignDowithTaskFeedbackService;
     private final RetrieveTaskFeedbackService retrieveTaskFeedbackService;
 
     @Operation(summary = "두윗 태스크 잔소리 생성", description = "두윗모드 잔소리를 생성합니다.")
     @ApiSuccessResponse(description = "두윗모드 잔소리 생성 성공. 본 API는 생성 성공 여부만 반환합니다.")
     @ApiErrorResponses({
-        @ApiErrorResponse(status = FailResponseStatus.MEMBER_NOT_EXIST, description = "존재하지 않는 회원입니다."),
-        @ApiErrorResponse(
-            status = FailResponseStatus.INVALID_REQUEST,
-            description = "잘못된 요청입니다. (예: 잔소리 불가능한 상태에서 생성 요청하는 경우 등)")
+            @ApiErrorResponse(status = FailResponseStatus.MEMBER_NOT_EXIST, description = "존재하지 않는 회원입니다."),
+            @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청입니다. (예: 잔소리 불가능한 상태에서 생성 요청하는 경우 등)")
     })
     @PostMapping("")
     public ResponseEntity createDowithFeedback(@Valid @RequestBody CreateDowithFeedbackReqDto req) {
         String memberId = AuthUtil.getMemberId();
 
-        feedbackService.createDowithFeedback(
-            memberId, req.dowithTaskId(), req.taskFeedbackTemplateId());
+        assignDowithTaskFeedbackService.createDowithFeedback(
+                memberId, req.dowithTaskId(), req.taskFeedbackTemplateId());
 
         return ResponseUtil.createSuccessResponse();
     }
 
-    @Operation(
-        summary = "두윗 태스크 잔소리 조회",
-        description = "두윗모드 잔소리를 조회합니다. taskId, senderId, receiverId를 Query Param으로 조회 가능합니다.")
+    @Operation(summary = "두윗 태스크 잔소리 조회", description = "두윗모드 잔소리를 조회합니다. taskId, senderId, receiverId를 Query Param으로 조회 가능합니다.")
     @ApiSuccessResponse(description = "두윗모드 잔소리 조회 성공. 조회된 잔소리 목록을 반환합니다.")
     @ApiErrorResponses({
-        @ApiErrorResponse(
-            status = FailResponseStatus.INVALID_PARAM_ERROR,
-            description = "파라미터를 정확히 1개만 요청하지 않은 경우 (예: taskId, senderId, receiverId 중 하나만 제공해야 함)"),
-        @ApiErrorResponse(status = FailResponseStatus.MEMBER_NOT_EXIST, description = "존재하지 않는 회원입니다.")
+            @ApiErrorResponse(status = FailResponseStatus.INVALID_PARAM_ERROR, description = "파라미터를 정확히 1개만 요청하지 않은 경우 (예: taskId, senderId, receiverId 중 하나만 제공해야 함)"),
+            @ApiErrorResponse(status = FailResponseStatus.MEMBER_NOT_EXIST, description = "존재하지 않는 회원입니다.")
     })
     @GetMapping("/")
     public ResponseEntity<ResponseDto<RetrieveTaskFeedbackResult>> retrieveTaskFeedbacks(
-        @RequestParam(value = "taskId", required = false) Long taskId,
-        @RequestParam(value = "senderId", required = false) String senderId,
-        @RequestParam(value = "receiverId", required = false) String receiverId) {
+            @RequestParam(value = "taskId", required = false) Long taskId,
+            @RequestParam(value = "senderId", required = false) String senderId,
+            @RequestParam(value = "receiverId", required = false) String receiverId) {
 
         long count = Stream.of(taskId, senderId, receiverId)
-            .filter(Objects::nonNull)
-            .count();
+                .filter(Objects::nonNull)
+                .count();
 
         if (count != 1) {
             throw new RestApiException(FailResponseStatus.INVALID_PARAM_ERROR);
@@ -81,15 +75,15 @@ public class FeedbackController {
 
         if (taskId != null) {
             return ResponseUtil.createSuccessResponse(
-                retrieveTaskFeedbackService.retrieveTaskFeedbacksByTaskId(taskId, CountryCode.KR));
+                    retrieveTaskFeedbackService.retrieveTaskFeedbacksByTaskId(taskId, CountryCode.KR));
         } else if (senderId != null) {
             return ResponseUtil.createSuccessResponse(
-                retrieveTaskFeedbackService.retrieveTaskFeedbacksBySenderId(senderId,
-                    CountryCode.KR));
+                    retrieveTaskFeedbackService.retrieveTaskFeedbacksBySenderId(senderId,
+                            CountryCode.KR));
         } else if (receiverId != null) {
             return ResponseUtil.createSuccessResponse(
-                retrieveTaskFeedbackService.retrieveTaskFeedbacksByReceiverId(receiverId,
-                    CountryCode.KR));
+                    retrieveTaskFeedbackService.retrieveTaskFeedbacksByReceiverId(receiverId,
+                            CountryCode.KR));
         } else {
             throw new RestApiException(FailResponseStatus.INVALID_PARAM_ERROR);
         }
@@ -101,7 +95,7 @@ public class FeedbackController {
     public ResponseEntity checkDowithTaskFeedback(@PathVariable("feedbackId") Long feedbackId) {
         String memberId = AuthUtil.getMemberId();
 
-        feedbackService.checkDowithFeedbacks(List.of(feedbackId), memberId);
+        assignDowithTaskFeedbackService.checkDowithFeedbacks(List.of(feedbackId), memberId);
         return ResponseUtil.createSuccessResponse();
     }
 }
