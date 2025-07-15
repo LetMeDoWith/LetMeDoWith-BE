@@ -1,6 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.feedback.controller;
 
 import com.LetMeDoWith.LetMeDoWith.application.feedback.dto.RetrieveTaskFeedbackResult;
+import com.LetMeDoWith.LetMeDoWith.application.feedback.dto.RetrieveTaskFeedbackTemplatesResult;
 import com.LetMeDoWith.LetMeDoWith.application.feedback.service.RetrieveTaskFeedbackService;
 import com.LetMeDoWith.LetMeDoWith.application.feedback.service.AssignDowithTaskFeedbackService;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiErrorResponse;
@@ -14,6 +15,7 @@ import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.CountryCode;
 import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.CreateDowithFeedbackReqDto;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Objects;
@@ -87,6 +89,16 @@ public class DowithTaskFeedbackController {
         } else {
             throw new RestApiException(FailResponseStatus.INVALID_PARAM_ERROR);
         }
+    }
+
+    @Operation(summary = "잔소리 템플릿 목록 조회", description = "국가 코드(CountryCode)에 따라 잔소리 템플릿 목록을 조회합니다.")
+    @ApiSuccessResponse(description = "잔소리 템플릿 목록 조회 성공. 템플릿 리스트를 반환합니다.")
+    @GetMapping("/templates")
+    public ResponseEntity<ResponseDto<RetrieveTaskFeedbackTemplatesResult>> getTemplates(
+            @RequestParam CountryCode language) {
+        RetrieveTaskFeedbackTemplatesResult result = retrieveTaskFeedbackService
+                .retrieveTaskFeedbackTemplates(language);
+        return ResponseUtil.createSuccessResponse(result);
     }
 
     @Operation(summary = "두윗 태스크 잔소리 확인", description = "두윗모드 잔소리를 확인합니다.")
