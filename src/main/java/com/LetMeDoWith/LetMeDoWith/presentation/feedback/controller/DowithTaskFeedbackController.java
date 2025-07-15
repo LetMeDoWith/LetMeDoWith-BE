@@ -14,6 +14,8 @@ import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.CountryCode;
 import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.CreateDowithFeedbackReqDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.RetrieveTaskFeedbackTemplatesResDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.RetrieveTaskFeedbacksResDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
@@ -62,7 +64,7 @@ public class DowithTaskFeedbackController {
             @ApiErrorResponse(status = FailResponseStatus.MEMBER_NOT_EXIST, description = "존재하지 않는 회원입니다.")
     })
     @GetMapping("/")
-    public ResponseEntity<ResponseDto<RetrieveTaskFeedbackResult>> retrieveTaskFeedbacks(
+    public ResponseEntity<ResponseDto<RetrieveTaskFeedbacksResDto>> retrieveTaskFeedbacks(
             @RequestParam(value = "taskId", required = false) Long taskId,
             @RequestParam(value = "senderId", required = false) String senderId,
             @RequestParam(value = "receiverId", required = false) String receiverId) {
@@ -75,30 +77,30 @@ public class DowithTaskFeedbackController {
             throw new RestApiException(FailResponseStatus.INVALID_PARAM_ERROR);
         }
 
+        RetrieveTaskFeedbacksResDto resDto;
         if (taskId != null) {
-            return ResponseUtil.createSuccessResponse(
+            resDto = RetrieveTaskFeedbacksResDto.from(
                     retrieveTaskFeedbackService.retrieveTaskFeedbacksByTaskId(taskId, CountryCode.KR));
         } else if (senderId != null) {
-            return ResponseUtil.createSuccessResponse(
-                    retrieveTaskFeedbackService.retrieveTaskFeedbacksBySenderId(senderId,
-                            CountryCode.KR));
+            resDto = RetrieveTaskFeedbacksResDto.from(
+                    retrieveTaskFeedbackService.retrieveTaskFeedbacksBySenderId(senderId, CountryCode.KR));
         } else if (receiverId != null) {
-            return ResponseUtil.createSuccessResponse(
-                    retrieveTaskFeedbackService.retrieveTaskFeedbacksByReceiverId(receiverId,
-                            CountryCode.KR));
+            resDto = RetrieveTaskFeedbacksResDto.from(
+                    retrieveTaskFeedbackService.retrieveTaskFeedbacksByReceiverId(receiverId, CountryCode.KR));
         } else {
             throw new RestApiException(FailResponseStatus.INVALID_PARAM_ERROR);
         }
+        return ResponseUtil.createSuccessResponse(resDto);
     }
 
     @Operation(summary = "잔소리 템플릿 목록 조회", description = "국가 코드(CountryCode)에 따라 잔소리 템플릿 목록을 조회합니다.")
     @ApiSuccessResponse(description = "잔소리 템플릿 목록 조회 성공. 템플릿 리스트를 반환합니다.")
     @GetMapping("/templates")
-    public ResponseEntity<ResponseDto<RetrieveTaskFeedbackTemplatesResult>> getTemplates(
-            @RequestParam CountryCode language) {
-        RetrieveTaskFeedbackTemplatesResult result = retrieveTaskFeedbackService
-                .retrieveTaskFeedbackTemplates(language);
-        return ResponseUtil.createSuccessResponse(result);
+    public ResponseEntity<ResponseDto<RetrieveTaskFeedbackTemplatesResDto>> getTemplates(
+            @Parameter(description = "국가 코드", required = true, example = "KR") @RequestParam CountryCode language) {
+        RetrieveTaskFeedbackTemplatesResDto resDto = RetrieveTaskFeedbackTemplatesResDto.from(
+                retrieveTaskFeedbackService.retrieveTaskFeedbackTemplates(language));
+        return ResponseUtil.createSuccessResponse(resDto);
     }
 
     @Operation(summary = "두윗 태스크 잔소리 확인", description = "두윗모드 잔소리를 확인합니다.")
