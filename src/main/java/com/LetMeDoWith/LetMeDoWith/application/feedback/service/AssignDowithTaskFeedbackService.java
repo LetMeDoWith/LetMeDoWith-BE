@@ -5,6 +5,7 @@ import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.model.DowithTaskFeedback;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.DowithTaskFeedbackRepository;
+import com.LetMeDoWith.LetMeDoWith.domain.feedback.service.FeedbackCreationPolicy;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
 import com.LetMeDoWith.LetMeDoWith.domain.member.repository.MemberRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
@@ -22,6 +23,7 @@ public class AssignDowithTaskFeedbackService {
         private final DowithTaskFeedbackRepository dowithTaskFeedbackRepository;
         private final MemberRepository memberRepository;
         private final DowithTaskRepository dowithTaskRepository;
+        private final FeedbackCreationPolicy feedbackCreationPolicy;
 
         /**
          * DowithTask에 대한 잔소리를 생성한다.
@@ -45,14 +47,9 @@ public class AssignDowithTaskFeedbackService {
                 Optional<DowithTaskFeedback> latestFeedback = dowithTaskFeedbackRepository.getLatest(dowithTaskId,
                                 senderId);
 
-                // TODO: 추가 잔소리 불가시 화면에 명확한 메세지 필요
-                latestFeedback.ifPresent(
-                                feedback -> {
-                                        if (!feedback.isAdditionalFeedbackAvailable(sender.getId(),
-                                                        SystemTimeUtil.now())) {
-                                                throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
-                                        }
-                                });
+                if (!feedbackCreationPolicy.canCreate(latestFeedback, SystemTimeUtil.now())) {
+                        throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
+                }
 
                 dowithTaskFeedbackRepository.save(
                                 DowithTaskFeedback.of(
