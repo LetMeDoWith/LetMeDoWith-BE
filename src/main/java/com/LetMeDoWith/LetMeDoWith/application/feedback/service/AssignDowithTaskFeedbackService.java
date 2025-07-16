@@ -47,7 +47,10 @@ public class AssignDowithTaskFeedbackService {
                 Optional<DowithTaskFeedback> latestFeedback = dowithTaskFeedbackRepository.getLatest(dowithTaskId,
                                 senderId);
 
-                if (!feedbackCreationPolicy.canCreate(latestFeedback, SystemTimeUtil.now())) {
+                if (!(feedbackCreationPolicy.isAdditionalFeedbackAvailable(latestFeedback, SystemTimeUtil.now())
+                                && dowithTask.isFeedbackAvailable())) {
+
+                        // 피드백 생성 조건을 만족하지 못하는 경우
                         throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
                 }
 

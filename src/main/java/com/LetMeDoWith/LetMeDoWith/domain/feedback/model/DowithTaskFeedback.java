@@ -43,37 +43,17 @@ public class DowithTaskFeedback extends BaseAuditEntity {
     private Yn isChecked;
 
     public static DowithTaskFeedback of(
-        String senderMemberId,
-        String receiverMemberId,
-        Long dowithTaskId,
-        Long taskFeedbackTemplateId) {
+            String senderMemberId,
+            String receiverMemberId,
+            Long dowithTaskId,
+            Long taskFeedbackTemplateId) {
 
         return DowithTaskFeedback.builder()
-            .senderMemberId(senderMemberId)
-            .receiverMemberId(receiverMemberId)
-            .dowithTaskId(dowithTaskId)
-            .taskFeedbackTemplateId(taskFeedbackTemplateId)
-            .isChecked(Yn.FALSE)
-            .build();
-    }
-
-    /**
-     * 잔소리를 추가로 보낼 수 있는지 확인한다. 한 유저는 10분에 한번씩 잔소리를 보낼 수 있다.
-     *
-     * @param senderId 잔소리를 보내는 유저의 ID
-     * @param now      현재 시간
-     * @return 잔소리를 추가로 보낼 수 있는지 여부
-     */
-    public boolean isAdditionalFeedbackAvailable(String senderId, LocalDateTime now) {
-        if (!this.senderMemberId.equals(senderId)) {
-            return true; // 다른 유저가 보낸 경우, 잔소리를 추가로 보낼 수 있다.
-        }
-
-        return this.getCreatedAt() != null && this.getCreatedAt().plusMinutes(10).isBefore(now);
-    }
-
-    public DowithTaskFeedback check() {
-        this.isChecked = Yn.TRUE;
-        return this;
+                .senderMemberId(senderMemberId)
+                .receiverMemberId(receiverMemberId)
+                .dowithTaskId(dowithTaskId)
+                .taskFeedbackTemplateId(taskFeedbackTemplateId)
+                .isChecked(Yn.FALSE)
+                .build();
     }
 }

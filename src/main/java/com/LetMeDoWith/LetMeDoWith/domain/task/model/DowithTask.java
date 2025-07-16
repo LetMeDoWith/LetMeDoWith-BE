@@ -83,17 +83,16 @@ public class DowithTask extends BaseAuditEntity {
 
     public static DowithTask of(
             String memberId, Long taskCategoryId, String title, LocalDate date, LocalTime startTime) {
-        DowithTask task =
-                DowithTask.builder()
-                        .memberId(memberId)
-                        .taskCategoryId(taskCategoryId)
-                        .title(title)
-                        .status(DowithTaskStatus.WAIT)
-                        .date(date)
-                        .startTime(startTime)
-                        .routine(null)
-                        .confirms(null)
-                        .build();
+        DowithTask task = DowithTask.builder()
+                .memberId(memberId)
+                .taskCategoryId(taskCategoryId)
+                .title(title)
+                .status(DowithTaskStatus.WAIT)
+                .date(date)
+                .startTime(startTime)
+                .routine(null)
+                .confirms(null)
+                .build();
         task.validate();
         return task;
     }
@@ -105,17 +104,16 @@ public class DowithTask extends BaseAuditEntity {
             LocalDate date,
             LocalTime startTime,
             DowithTaskRoutine routine) {
-        DowithTask task =
-                DowithTask.builder()
-                        .memberId(memberId)
-                        .taskCategoryId(taskCategoryId)
-                        .title(title)
-                        .status(DowithTaskStatus.WAIT)
-                        .date(date)
-                        .startTime(startTime)
-                        .routine(routine)
-                        .confirms(null)
-                        .build();
+        DowithTask task = DowithTask.builder()
+                .memberId(memberId)
+                .taskCategoryId(taskCategoryId)
+                .title(title)
+                .status(DowithTaskStatus.WAIT)
+                .date(date)
+                .startTime(startTime)
+                .routine(routine)
+                .confirms(null)
+                .build();
         task.validate();
         return task;
     }
@@ -136,16 +134,15 @@ public class DowithTask extends BaseAuditEntity {
                 .sorted()
                 .forEach(
                         e -> {
-                            DowithTask task =
-                                    DowithTask.builder()
-                                            .memberId(memberId)
-                                            .taskCategoryId(taskCategoryId)
-                                            .title(title)
-                                            .status(DowithTaskStatus.WAIT)
-                                            .routine(routine)
-                                            .date(e)
-                                            .startTime(startTime)
-                                            .build();
+                            DowithTask task = DowithTask.builder()
+                                    .memberId(memberId)
+                                    .taskCategoryId(taskCategoryId)
+                                    .title(title)
+                                    .status(DowithTaskStatus.WAIT)
+                                    .routine(routine)
+                                    .date(e)
+                                    .startTime(startTime)
+                                    .build();
                             if (task.getDate().isEqual(date)) {
                                 task.validate();
                             }
@@ -171,15 +168,14 @@ public class DowithTask extends BaseAuditEntity {
                 .filter(date -> !date.isEqual(this.date))
                 .collect(Collectors.toSet())
                 .forEach(
-                        date ->
-                                result.add(
-                                        DowithTask.of(
-                                                this.memberId,
-                                                this.taskCategoryId,
-                                                this.title,
-                                                date,
-                                                this.startTime,
-                                                routine)));
+                        date -> result.add(
+                                DowithTask.of(
+                                        this.memberId,
+                                        this.taskCategoryId,
+                                        this.title,
+                                        date,
+                                        this.startTime,
+                                        routine)));
         result.add(this);
 
         return result;
@@ -197,15 +193,14 @@ public class DowithTask extends BaseAuditEntity {
             this.routine.addDates(routineDates);
             List<DowithTask> result = new ArrayList<>();
             routineDates.forEach(
-                    date ->
-                            result.add(
-                                    DowithTask.of(
-                                            this.memberId,
-                                            this.taskCategoryId,
-                                            this.title,
-                                            date,
-                                            this.startTime,
-                                            this.routine)));
+                    date -> result.add(
+                            DowithTask.of(
+                                    this.memberId,
+                                    this.taskCategoryId,
+                                    this.title,
+                                    date,
+                                    this.startTime,
+                                    this.routine)));
 
             dowithTaskRepository.saveDowithTasks(result);
         }
@@ -236,8 +231,7 @@ public class DowithTask extends BaseAuditEntity {
 
         List<String> confirmImageKeys = new ArrayList<>();
         for (String imageFileName : imageFileNames) {
-            String timestamp =
-                    SystemTimeUtil.now().toString().replace("[:\\-T]", "").substring(0, 14) + "Z";
+            String timestamp = SystemTimeUtil.now().toString().replace("[:\\-T]", "").substring(0, 14) + "Z";
             String uuid = UUID.randomUUID().toString();
             confirmImageKeys.add(
                     String.format(
@@ -503,10 +497,9 @@ public class DowithTask extends BaseAuditEntity {
         if (isRoutine()) {
             Set<LocalDate> toDeleteDates = this.routine.getDatesAfter(this.date);
 
-            List<DowithTask> routineDowithTasks =
-                    dowithTaskRepository.getDowithTasks(this.routine).stream()
-                            .filter(e -> toDeleteDates.contains(e.getDate()))
-                            .toList();
+            List<DowithTask> routineDowithTasks = dowithTaskRepository.getDowithTasks(this.routine).stream()
+                    .filter(e -> toDeleteDates.contains(e.getDate()))
+                    .toList();
 
             deleteDowithTaskCount += routineDowithTasks.size();
 
@@ -551,7 +544,9 @@ public class DowithTask extends BaseAuditEntity {
         LocalDateTime taskStartDateTime = LocalDateTime.of(this.date, this.startTime);
 
         // 현재 시간이 Task 시작 시간 이후이고, Task 시작 시간으로부터 1시간 이내인 경우
-        return now.isAfter(taskStartDateTime) && now.isBefore(taskStartDateTime.plusHours(1));
+        return now.isAfter(taskStartDateTime)
+                && now.isBefore(taskStartDateTime.plusHours(1))
+                && status.equals(DowithTaskStatus.WAIT);
     }
 
     private void validate() {

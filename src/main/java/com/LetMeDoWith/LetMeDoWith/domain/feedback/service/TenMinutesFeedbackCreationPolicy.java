@@ -8,7 +8,7 @@ import java.util.Optional;
 @DomainService
 public class TenMinutesFeedbackCreationPolicy implements FeedbackCreationPolicy {
     @Override
-    public boolean canCreate(Optional<DowithTaskFeedback> latestFeedback, LocalDateTime now) {
+    public boolean isAdditionalFeedbackAvailable(Optional<DowithTaskFeedback> latestFeedback, LocalDateTime now) {
         return latestFeedback
                 .map(feedback -> feedback.getCreatedAt().plusMinutes(10).isBefore(now))
                 .orElse(true);

@@ -5,5 +5,5 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 public interface FeedbackCreationPolicy {
-    boolean canCreate(Optional<DowithTaskFeedback> latestFeedback, LocalDateTime now);
+    boolean isAdditionalFeedbackAvailable(Optional<DowithTaskFeedback> latestFeedback, LocalDateTime now);
 }
