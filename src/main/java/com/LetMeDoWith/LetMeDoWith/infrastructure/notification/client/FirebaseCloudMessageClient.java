@@ -22,7 +22,7 @@ public class FirebaseCloudMessageClient implements MessageServerClient {
             String body,
             String appDeepLink,
             Runnable onSuccess,
-            Runnable onFailureByToken) {
+            Runnable onFailureByExpiredToken) {
         Message message =
                 Message.builder()
                         .setNotification(Notification.builder().setTitle(title).setBody(body).build())
@@ -36,7 +36,7 @@ public class FirebaseCloudMessageClient implements MessageServerClient {
         } catch (FirebaseMessagingException e) {
             // 예외 처리 로직 추가
             if (e.getMessagingErrorCode().equals(MessagingErrorCode.UNREGISTERED)) {
-                onFailureByToken.run();
+                onFailureByExpiredToken.run();
             }
             throw new RestApiException(FailResponseStatus.INTERNAL_SERVER_ERROR, e);
         }

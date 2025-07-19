@@ -7,5 +7,5 @@ public interface MessageServerClient {
             String body,
             String link,
             Runnable onSuccess,
-            Runnable onFailureByToken);
+            Runnable onFailureByExpiredToken);
 }
