@@ -1,6 +1,9 @@
 package com.LetMeDoWith.LetMeDoWith.config;
 
 import com.LetMeDoWith.LetMeDoWith.common.holders.TimeZoneContextHolder;
+import java.time.ZoneId;
+import java.util.Arrays;
+import java.util.concurrent.Executor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.context.annotation.Configuration;
@@ -10,10 +13,6 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
-
-import java.time.ZoneId;
-import java.util.Arrays;
-import java.util.concurrent.Executor;
 
 @Configuration
 @EnableAsync
@@ -32,10 +31,10 @@ public class AsyncConfig implements AsyncConfigurer {
         return executor;
     }
 
-
     public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
         return (ex, method, params) -> {
-            log.error("message: {}, method:{}.{}(), parameter: {}",
+            log.error(
+                    "message: {}, method:{}.{}(), parameter: {}",
                     ex.getMessage(),
                     method.getDeclaringClass().getSimpleName(),
                     method.getName(),
@@ -44,9 +43,7 @@ public class AsyncConfig implements AsyncConfigurer {
         };
     }
 
-    /**
-     * 비동기 Thread에 Context 전파
-     */
+    /** 비동기 Thread에 Context 전파 */
     public static class ContextPropagatingDecorator implements TaskDecorator {
         @Override
         public Runnable decorate(Runnable runnable) {

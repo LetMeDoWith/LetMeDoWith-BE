@@ -1,5 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.application.notification;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.LetMeDoWith.LetMeDoWith.application.notification.service.NotificationSendService;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.Gender;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
@@ -14,18 +16,15 @@ import com.LetMeDoWith.LetMeDoWith.infrastructure.member.persistence.jpaReposito
 import com.LetMeDoWith.LetMeDoWith.infrastructure.notification.persistence.jpaRepository.NotificationJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.notification.persistence.jpaRepository.NotificationTemplateJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.notification.persistence.jpaRepository.NotificationTokenJpaRepository;
+import java.time.LocalDate;
+import java.util.Map;
+import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.time.LocalDate;
-import java.util.Map;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 public class NotificationSendServiceTest {
@@ -36,17 +35,12 @@ public class NotificationSendServiceTest {
     private final String UNREGISTERED_FCM_TOKEN =
             "fx5STrP_eh7XIRNiVvNdk_:APA91bHpJ_SvZQTs8SK-Hkl5d8vChDEb2_njBRp-uLtzWU-3_s5W9aoL6OprShJG-ZIU4oSSDD4cfvB0jKb8xUcjvLWyVvhDkiM9DhsdrxhKa0wwrDwx-YI";
 
-    @Autowired
-    NotificationSendService notificationSendService;
-    @Autowired
-    MemberJpaRepository memberJpaRepository;
+    @Autowired NotificationSendService notificationSendService;
+    @Autowired MemberJpaRepository memberJpaRepository;
 
-    @Autowired
-    NotificationJpaRepository notificationJpaRepository;
-    @Autowired
-    NotificationTemplateJpaRepository notificationTemplateJpaRepository;
-    @Autowired
-    NotificationTokenJpaRepository notificationTokenJpaRepository;
+    @Autowired NotificationJpaRepository notificationJpaRepository;
+    @Autowired NotificationTemplateJpaRepository notificationTemplateJpaRepository;
+    @Autowired NotificationTokenJpaRepository notificationTokenJpaRepository;
 
     private Member member;
 
