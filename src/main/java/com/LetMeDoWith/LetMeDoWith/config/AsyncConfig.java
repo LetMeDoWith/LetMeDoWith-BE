@@ -1,22 +1,26 @@
 package com.LetMeDoWith.LetMeDoWith.config;
 
 import com.LetMeDoWith.LetMeDoWith.common.holders.TimeZoneContextHolder;
-import java.time.ZoneId;
-import java.util.concurrent.Executor;
-import org.springframework.context.annotation.Bean;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.TaskDecorator;
+import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 
+import java.time.ZoneId;
+import java.util.Arrays;
+import java.util.concurrent.Executor;
+
 @Configuration
 @EnableAsync
-public class AsyncConfig {
+@Slf4j
+public class AsyncConfig implements AsyncConfigurer {
 
-    @Bean
-    public Executor taskExecutor() {
+    public Executor getAsyncExecutor() {
         // TODO - 서버 Spec 및 초기 트래픽 모니터링을 통해 수치 조정
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(4);
@@ -28,7 +32,21 @@ public class AsyncConfig {
         return executor;
     }
 
-    /** 비동기 Thread에 Context 전파 */
+
+    public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
+        return (ex, method, params) -> {
+            log.error("message: {}, method:{}.{}(), parameter: {}",
+                    ex.getMessage(),
+                    method.getDeclaringClass().getSimpleName(),
+                    method.getName(),
+                    Arrays.toString(params),
+                    ex);
+        };
+    }
+
+    /**
+     * 비동기 Thread에 Context 전파
+     */
     public static class ContextPropagatingDecorator implements TaskDecorator {
         @Override
         public Runnable decorate(Runnable runnable) {

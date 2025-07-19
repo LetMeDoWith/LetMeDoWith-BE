@@ -1,9 +1,16 @@
 package com.LetMeDoWith.LetMeDoWith.domain.notification.model;
 
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
+import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
+import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import jakarta.persistence.*;
-import java.util.Map;
 import lombok.*;
+
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Entity
 @Getter
@@ -40,8 +47,20 @@ public class NotificationTemplate extends BaseAuditEntity {
     }
 
     public String parseTitle(Map<String, String> params) {
-
         String titleTemplate = this.title;
+
+        Pattern pattern = Pattern.compile("\\{\\{(.*?)\\}\\}");
+        Matcher matcher = pattern.matcher(titleTemplate);
+
+        Set<String> keySet = new HashSet<>();
+        while (matcher.find()) {
+            keySet.add(matcher.group(1));
+        }
+
+        if (!params.keySet().containsAll(keySet)) {
+            throw new RestApiException(FailResponseStatus.INTERNAL_SERVER_ERROR);
+        }
+
         for (Map.Entry<String, String> entry : params.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
@@ -53,6 +72,19 @@ public class NotificationTemplate extends BaseAuditEntity {
 
     public String parseBody(Map<String, String> params) {
         String bodyTemplate = this.body;
+
+        Pattern pattern = Pattern.compile("\\{\\{(.*?)\\}\\}");
+        Matcher matcher = pattern.matcher(bodyTemplate);
+
+        Set<String> keySet = new HashSet<>();
+        while (matcher.find()) {
+            keySet.add(matcher.group(1));
+        }
+
+        if (!params.keySet().containsAll(keySet)) {
+            throw new RestApiException(FailResponseStatus.INTERNAL_SERVER_ERROR);
+        }
+
         for (Map.Entry<String, String> entry : params.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
