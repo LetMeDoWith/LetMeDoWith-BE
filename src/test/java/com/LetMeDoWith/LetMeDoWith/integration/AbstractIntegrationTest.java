@@ -43,13 +43,19 @@ public abstract class AbstractIntegrationTest {
 
     protected Member requestMember;
     protected TaskSummary taskSummary;
-    @Autowired protected TaskSummaryJpaRepository taskSummaryJpaRepository;
+    @Autowired
+    protected TaskSummaryJpaRepository taskSummaryJpaRepository;
     protected RefreshToken requestMemberRefreshToken;
-    @Autowired ObjectMapper objectMapper;
-    @Autowired MockMvc mockMvc;
-    @Autowired MemberJpaRepository memberJpaRepository;
-    @Autowired AccessTokenProvider accessTokenProvider;
-    @Autowired RefreshTokenProvider refreshTokenProvider;
+    @Autowired
+    ObjectMapper objectMapper;
+    @Autowired
+    MockMvc mockMvc;
+    @Autowired
+    MemberJpaRepository memberJpaRepository;
+    @Autowired
+    AccessTokenProvider accessTokenProvider;
+    @Autowired
+    RefreshTokenProvider refreshTokenProvider;
     private AccessToken requestMemberAccessToken;
 
     @BeforeEach
@@ -85,23 +91,21 @@ public abstract class AbstractIntegrationTest {
 
     /** 해당 Abstract Class 상속 받은 테스트는 모든 Test 메서드 시작전에 request Member 세팅 */
     private void createMemberTestData() {
-        requestMember =
-                memberJpaRepository.save(
-                        Member.builder()
-                                .status(MemberStatus.NORMAL)
-                                .nickname("test")
-                                .selfDescription("test description")
-                                .gender(Gender.MALE)
-                                .dateOfBirth(LocalDate.of(1995, 11, 4))
-                                .type(MemberType.USER)
-                                .build());
+        requestMember = memberJpaRepository.save(
+                Member.builder()
+                        .status(MemberStatus.NORMAL)
+                        .nickname("test")
+                        .selfDescription("test description")
+                        .gender(Gender.MALE)
+                        .dateOfBirth(LocalDate.of(1995, 11, 4))
+                        .type(MemberType.USER)
+                        .build());
         taskSummary = taskSummaryJpaRepository.save(TaskSummary.of(requestMember.getId()));
         requestMemberAccessToken = accessTokenProvider.generateToken(requestMember.getId());
-        requestMemberRefreshToken =
-                refreshTokenProvider.generateToken(
-                        requestMember.getId(),
-                        requestMemberAccessToken.getToken(),
-                        "iphone"); // TODO - 추후 안드로이드 유져 하나 추가
+        requestMemberRefreshToken = refreshTokenProvider.generateToken(
+                requestMember.getId(),
+                requestMemberAccessToken.getToken(),
+                "iphone"); // TODO - 추후 안드로이드 유져 하나 추가
     }
 
     /** 이전 Test의 test data 삭제 - abstract method */
@@ -111,7 +115,8 @@ public abstract class AbstractIntegrationTest {
     protected abstract void createTestData();
 
     /**
-     * MockMvc Request 해당 abstract class 상속 받은 테스트에서 MockHttpServletRequestBuilder 만 넘겨서 사용
+     * MockMvc Request 해당 abstract class 상속 받은 테스트에서 MockHttpServletRequestBuilder 만
+     * 넘겨서 사용
      *
      * @param requestBuilder
      * @return
@@ -141,13 +146,12 @@ public abstract class AbstractIntegrationTest {
      *
      * @param responseBody API Response 원문
      * @param responseType 변환하려는 응답 타입
-     * @param <T> 변환하려는 응답 타입의 제네릭
+     * @param <T>          변환하려는 응답 타입의 제네릭
      * @return 변환된 응답 객체
      */
     public <T> T readResponse(String responseBody, Class<T> responseType) {
         try {
-            JavaType type =
-                    objectMapper.getTypeFactory().constructParametricType(ResponseDto.class, responseType);
+            JavaType type = objectMapper.getTypeFactory().constructParametricType(ResponseDto.class, responseType);
 
             ResponseDto<T> responseDto = objectMapper.readValue(responseBody, type);
 

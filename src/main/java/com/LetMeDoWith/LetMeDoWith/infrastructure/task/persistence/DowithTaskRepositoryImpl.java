@@ -22,6 +22,11 @@ public class DowithTaskRepositoryImpl implements DowithTaskRepository {
     private final DowithTaskConfirmJpaRepository dowithTaskConfirmJpaRepository;
 
     @Override
+    public Optional<DowithTask> getDowithTask(Long id) {
+        return dowithTaskJpaRepository.findDowithTaskAggregate(id);
+    }
+
+    @Override
     public Optional<DowithTask> getDowithTask(Long id, String memberId) {
         return dowithTaskJpaRepository.findDowithTaskAggregate(id, memberId);
     }

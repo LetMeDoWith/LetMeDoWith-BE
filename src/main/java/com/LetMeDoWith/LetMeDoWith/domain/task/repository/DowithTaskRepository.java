@@ -9,6 +9,8 @@ import java.util.Set;
 
 public interface DowithTaskRepository {
 
+    Optional<DowithTask> getDowithTask(Long id);
+
     Optional<DowithTask> getDowithTask(Long id, String memberId);
 
     List<DowithTask> getDowithTasks(String memberId, LocalDate date);
