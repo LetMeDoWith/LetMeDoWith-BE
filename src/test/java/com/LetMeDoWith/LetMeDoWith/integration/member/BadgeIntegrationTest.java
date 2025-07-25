@@ -95,8 +95,8 @@ public class BadgeIntegrationTest {
                                 .type(MemberType.USER)
                                 .build());
 
-        memberAccessToken = accessTokenProvider.createAccessToken(member.getId());
-        lazyMemberAccessToken = accessTokenProvider.createAccessToken(lazyMember.getId());
+        memberAccessToken = accessTokenProvider.generateToken(member.getId());
+        lazyMemberAccessToken = accessTokenProvider.generateToken(lazyMember.getId());
     }
 
     @AfterEach

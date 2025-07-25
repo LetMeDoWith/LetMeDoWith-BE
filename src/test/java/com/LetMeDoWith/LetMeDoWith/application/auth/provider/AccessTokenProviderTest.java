@@ -87,11 +87,11 @@ class AccessTokenProviderTest {
     void validateAccessToken() {
 
         // given
-        AccessToken accessToken = accessTokenProvider.createAccessToken(MEMBER_ID);
+        AccessToken accessToken = accessTokenProvider.generateToken(MEMBER_ID);
         System.out.println(accessToken.getToken());
 
         // when
-        String memberId = accessTokenProvider.validateAccessToken(accessToken.getToken());
+        String memberId = accessTokenProvider.validateToken(accessToken.getToken());
 
         // then
         Assertions.assertThat(memberId).isEqualTo(MEMBER_ID);

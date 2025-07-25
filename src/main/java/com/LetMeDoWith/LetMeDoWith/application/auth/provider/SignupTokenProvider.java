@@ -45,11 +45,11 @@ public class SignupTokenProvider {
      * @param memberId 회원가입을 계속해서 진행할 member의 dowithTaskId.
      * @return
      */
-    public SignupToken createSignupToken(String memberId) {
+    public SignupToken generateToken(String memberId) {
         return SignupToken.of(memberId, issuer, signupDurationMin, secretKey);
     }
 
-    public String validateSignupToken(final String token) {
+    public String validateToken(final String token) {
         final Jws<Claims> claims = JwtUtil.parseTokenToJws(token, secretKey);
 
         if (claims.getBody().get("sub").equals(TokenType.SIGNUP.getCode())

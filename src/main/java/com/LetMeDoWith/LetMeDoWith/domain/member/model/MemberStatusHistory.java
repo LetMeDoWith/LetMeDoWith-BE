@@ -1,8 +1,8 @@
 package com.LetMeDoWith.LetMeDoWith.domain.member.model;
 
-import com.LetMeDoWith.LetMeDoWith.common.converter.member.MemberStatusConverter;
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.member.converter.MemberStatusConverter;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;

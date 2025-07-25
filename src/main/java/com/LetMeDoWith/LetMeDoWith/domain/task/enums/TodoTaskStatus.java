@@ -8,8 +8,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum TodoTaskStatus implements BaseEnum {
     WAIT("WAIT", "대기"),
-    COMPLETE("SUCCESS", "완료");
-    
+    SUCCESS("SUCCESS", "완료");
+
     public final String code;
     public final String description;
 }

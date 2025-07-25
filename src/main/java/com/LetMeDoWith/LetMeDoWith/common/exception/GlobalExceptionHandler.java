@@ -23,7 +23,7 @@ public class GlobalExceptionHandler {
         FailResponseDto responseBody =
                 FailResponseDto.builder()
                         .statusCode(ex.getStatus().getStatusCode())
-                        .message(ex.getStatus().getMessage())
+                        .message(ex.getMessage() == null ? ex.getStatus().getMessage() : ex.getMessage())
                         .build();
         return new ResponseEntity<>(responseBody, ex.getStatus().getHttpStatusCode());
     }

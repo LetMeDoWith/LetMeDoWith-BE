@@ -2,6 +2,7 @@ package com.LetMeDoWith.LetMeDoWith.infrastructure.task.query;
 
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.QDowithTask;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.QDowithTaskConfirm;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.QDowithTaskRoutine;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.QTaskCategory;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.dto.DowithTaskQueryDto;
 import com.querydsl.core.types.Projections;
@@ -19,6 +20,7 @@ public class DowithTaskQueryRespositoryImpl implements DowithTaskQueryRepository
     private final JPAQueryFactory queryFactory;
 
     private final QDowithTask dowithTask = QDowithTask.dowithTask;
+    private final QDowithTaskRoutine dowithTaskRoutine = QDowithTaskRoutine.dowithTaskRoutine;
     private final QDowithTaskConfirm dowithTaskConfirm = QDowithTaskConfirm.dowithTaskConfirm;
     private final QTaskCategory taskCategory = QTaskCategory.taskCategory;
 
@@ -37,6 +39,7 @@ public class DowithTaskQueryRespositoryImpl implements DowithTaskQueryRepository
                                 dowithTask.date,
                                 dowithTask.startTime,
                                 dowithTaskConfirm.imageUrl,
+                                dowithTaskRoutine,
                                 Expressions.constant(0) // TODO - 추후 FeedBack 개발시 추가
                                 ))
                 .from(dowithTask)
@@ -44,6 +47,8 @@ public class DowithTaskQueryRespositoryImpl implements DowithTaskQueryRepository
                 .on(dowithTask.taskCategoryId.eq(taskCategory.id))
                 .leftJoin(dowithTaskConfirm)
                 .on(dowithTaskConfirm.dowithTask.eq(dowithTask))
+                .leftJoin(dowithTaskRoutine)
+                .on(dowithTask.routine.id.eq(dowithTaskRoutine.id))
                 .where(dowithTask.memberId.eq(memberId).and(dowithTask.date.between(startDate, endDate)))
                 .fetch();
     }

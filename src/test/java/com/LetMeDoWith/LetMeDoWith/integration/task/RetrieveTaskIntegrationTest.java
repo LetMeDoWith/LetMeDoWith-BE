@@ -130,6 +130,12 @@ public class RetrieveTaskIntegrationTest extends AbstractIntegrationTest {
                 .andExpect(
                         jsonPath("$.data.todoTasks[0].startTime")
                                 .value(DateTimeUtil.toFormatString(todoTask1.getStartTime())))
+                .andExpect(
+                        jsonPath("$.data.todoTasks[0].isRoutine")
+                                .value(false)) // TODO - 추후 Dowith Routine 추가 후 검증 필요
+                .andExpect(
+                        jsonPath("$.data.todoTasks[0].startTime")
+                                .value(DateTimeUtil.toFormatString(todoTask1.getStartTime())))
                 .andExpect(jsonPath("$.data.todoTasks[1].id").value(todoTask2.getId()))
                 .andExpect(jsonPath("$.data.todoTasks[1].taskCategoryId").value(taskCategory2.getId()))
                 .andExpect(jsonPath("$.data.todoTasks[1].taskCategoryName").value(taskCategory2.getTitle()))
@@ -139,6 +145,9 @@ public class RetrieveTaskIntegrationTest extends AbstractIntegrationTest {
                 .andExpect(
                         jsonPath("$.data.todoTasks[1].startTime")
                                 .value(DateTimeUtil.toFormatString(todoTask2.getStartTime())))
+                .andExpect(
+                        jsonPath("$.data.todoTasks[1].isRoutine")
+                                .value(false)) // TODO - 추후 Dowith Routine 추가 후 검증 필요
                 .andExpect(jsonPath("$.data.dowithTasks[0].id").value(dowithTask1.getId()))
                 .andExpect(jsonPath("$.data.dowithTasks[0].taskCategoryId").value(taskCategory1.getId()))
                 .andExpect(
@@ -149,7 +158,8 @@ public class RetrieveTaskIntegrationTest extends AbstractIntegrationTest {
                 .andExpect(
                         jsonPath("$.data.dowithTasks[0].startTime")
                                 .value(DateTimeUtil.toFormatString(dowithTask1.getStartTime())))
-                .andExpect(jsonPath("$.data.dowithTasks[0].confirmedImageUrls").isEmpty())
+                .andExpect(jsonPath("$.data.dowithTasks[0].confirmedImageUrls").doesNotExist())
+                .andExpect(jsonPath("$.data.dowithTasks[0].isRoutine").value(false))
                 .andExpect(jsonPath("$.data.dowithTasks[1].id").value(dowithTask2.getId()))
                 .andExpect(jsonPath("$.data.dowithTasks[1].taskCategoryId").value(taskCategory2.getId()))
                 .andExpect(
@@ -160,7 +170,8 @@ public class RetrieveTaskIntegrationTest extends AbstractIntegrationTest {
                 .andExpect(
                         jsonPath("$.data.dowithTasks[1].startTime")
                                 .value(DateTimeUtil.toFormatString(dowithTask2.getStartTime())))
-                .andExpect(jsonPath("$.data.dowithTasks[1].confirmedImageUrls").isEmpty())
+                .andExpect(jsonPath("$.data.dowithTasks[1].confirmedImageUrls").doesNotExist())
+                .andExpect(jsonPath("$.data.dowithTasks[1].isRoutine").value(false))
                 .andExpect(jsonPath("$.data.dowithTasks[2].id").value(dowithTask3.getId()))
                 .andExpect(jsonPath("$.data.dowithTasks[2].taskCategoryId").value(taskCategory1.getId()))
                 .andExpect(
@@ -177,6 +188,7 @@ public class RetrieveTaskIntegrationTest extends AbstractIntegrationTest {
                                 .value(
                                         Matchers.is(
                                                 List.of(
-                                                        "https://example.com/image1.jpg", "https://example.com/image2.jpg"))));
+                                                        "https://example.com/image1.jpg", "https://example.com/image2.jpg"))))
+                .andExpect(jsonPath("$.data.dowithTasks[2].isRoutine").value(false));
     }
 }

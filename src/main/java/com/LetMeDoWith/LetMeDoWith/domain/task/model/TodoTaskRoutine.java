@@ -1,8 +1,8 @@
 package com.LetMeDoWith.LetMeDoWith.domain.task.model;
 
-import com.LetMeDoWith.LetMeDoWith.common.converter.task.TodoTaskRooutineCycleConverter;
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TodoTaskRoutineCycle;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.task.converter.TodoTaskRooutineCycleConverter;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.converter.TodoTaskRoutineDatesConverter;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;

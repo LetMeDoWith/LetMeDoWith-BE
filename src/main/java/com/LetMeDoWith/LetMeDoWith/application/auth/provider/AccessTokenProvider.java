@@ -54,7 +54,7 @@ public class AccessTokenProvider {
      * @param memberId
      * @return
      */
-    public AccessToken createAccessToken(String memberId) {
+    public AccessToken generateToken(String memberId) {
         return AccessToken.of(memberId, issuer, atkDurationMin, secretKey);
     }
 
@@ -91,7 +91,7 @@ public class AccessTokenProvider {
      * @param token
      * @return
      */
-    public String validateAccessToken(final String token) {
+    public String validateToken(final String token) {
         final Jws<Claims> claims = JwtUtil.parseTokenToJws(token, secretKey);
 
         if (claims.getBody().get("sub").equals(TokenType.ATK.getCode())

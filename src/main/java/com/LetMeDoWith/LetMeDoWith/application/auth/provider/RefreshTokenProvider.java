@@ -27,13 +27,13 @@ public class RefreshTokenProvider {
      * @param userAgent
      * @return
      */
-    public RefreshToken createRefreshToken(String memberId, String accessToken, String userAgent) {
+    public RefreshToken generateToken(String memberId, String accessToken, String userAgent) {
         // redis에 저장
         return refreshTokenRepository.save(
                 RefreshToken.of(memberId, accessToken, userAgent, rtkDurationDay * 24 * 60 * 60));
     }
 
-    public RefreshToken findRefreshToken(String token) {
+    public RefreshToken getRefreshToken(String token) {
         return refreshTokenRepository
                 .getRefreshToken(token)
                 .orElseThrow(() -> new RestApiException(FailResponseStatus.TOKEN_EXPIRED_BY_ADMIN));
