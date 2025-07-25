@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class AssignDowithTaskFeedbackService {
+public class CreateDowithTaskFeedbackService {
 
         private final DowithTaskFeedbackRepository dowithTaskFeedbackRepository;
         private final MemberRepository memberRepository;
@@ -60,15 +60,4 @@ public class AssignDowithTaskFeedbackService {
                                                 taskFeedbackTemplateId));
         }
 
-        /**
-         * DowithTask에 대한 잔소리를 확인한다.
-         *
-         * @param dowithTaskFeedbackIds 확인할 DowithTaskFeedback의 ID 리스트
-         */
-        @Transactional
-        public void checkDowithFeedbacks(List<Long> dowithTaskFeedbackIds, String requestUserId) {
-                dowithTaskFeedbackRepository
-                                .getFeedbacks(dowithTaskFeedbackIds, requestUserId)
-                                .forEach(DowithTaskFeedback::check);
-        }
 }

@@ -2,8 +2,9 @@ package com.LetMeDoWith.LetMeDoWith.presentation.feedback.controller;
 
 import com.LetMeDoWith.LetMeDoWith.application.feedback.dto.RetrieveTaskFeedbackResult;
 import com.LetMeDoWith.LetMeDoWith.application.feedback.dto.RetrieveTaskFeedbackTemplatesResult;
+import com.LetMeDoWith.LetMeDoWith.application.feedback.service.CreateDowithTaskFeedbackService;
+import com.LetMeDoWith.LetMeDoWith.application.feedback.service.UpdateDowithTaskFeedbackService;
 import com.LetMeDoWith.LetMeDoWith.application.feedback.service.RetrieveTaskFeedbackService;
-import com.LetMeDoWith.LetMeDoWith.application.feedback.service.AssignDowithTaskFeedbackService;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiErrorResponse;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiErrorResponses;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiSuccessResponse;
@@ -38,7 +39,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class DowithTaskFeedbackController {
 
-    private final AssignDowithTaskFeedbackService assignDowithTaskFeedbackService;
+    private final CreateDowithTaskFeedbackService createDowithTaskFeedbackService;
+    private final UpdateDowithTaskFeedbackService updateDowithTaskFeedbackService;
     private final RetrieveTaskFeedbackService retrieveTaskFeedbackService;
 
     @Operation(summary = "두윗 태스크 잔소리 생성", description = "두윗모드 잔소리를 생성합니다.")
@@ -51,7 +53,7 @@ public class DowithTaskFeedbackController {
     public ResponseEntity createDowithFeedback(@Valid @RequestBody CreateDowithFeedbackReqDto req) {
         String memberId = AuthUtil.getMemberId();
 
-        assignDowithTaskFeedbackService.createDowithFeedback(
+        createDowithTaskFeedbackService.createDowithFeedback(
                 memberId, req.dowithTaskId(), req.taskFeedbackTemplateId());
 
         return ResponseUtil.createSuccessResponse();
@@ -109,7 +111,7 @@ public class DowithTaskFeedbackController {
     public ResponseEntity checkDowithTaskFeedback(@PathVariable("feedbackId") Long feedbackId) {
         String memberId = AuthUtil.getMemberId();
 
-        assignDowithTaskFeedbackService.checkDowithFeedbacks(List.of(feedbackId), memberId);
+        updateDowithTaskFeedbackService.checkDowithFeedbacks(List.of(feedbackId), memberId);
         return ResponseUtil.createSuccessResponse();
     }
 }

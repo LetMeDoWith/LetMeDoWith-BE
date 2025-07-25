@@ -56,4 +56,11 @@ public class DowithTaskFeedback extends BaseAuditEntity {
                 .isChecked(Yn.FALSE)
                 .build();
     }
+
+    /**
+     * 피드백을 확인 상태로 변경한다.
+     */
+    public void check() {
+        this.isChecked = Yn.TRUE;
+    }
 }
