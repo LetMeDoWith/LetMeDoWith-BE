@@ -29,9 +29,9 @@ public class TaskCategoryService {
      * @return 멤버가 생성한 개인 카테고리 + 공통 카테고리
      */
     public List<TaskCategory> retrieveTaskCategories(String memberId) {
-        List<TaskCategory> userCreatedCategories =
-                taskCategoryRepository.getCategories(memberId, Yn.TRUE);
+        List<TaskCategory> userCreatedCategories = taskCategoryRepository.getCategories(memberId, Yn.TRUE);
 
-        return Stream.concat(getAllCommonCategory().stream(), userCreatedCategories.stream()).toList();
+        return Stream.concat(getAllCommonCategory().stream(), userCreatedCategories.stream())
+                .toList();
     }
 }

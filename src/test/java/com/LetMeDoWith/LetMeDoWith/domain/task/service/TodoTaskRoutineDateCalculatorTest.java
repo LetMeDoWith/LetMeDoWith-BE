@@ -21,11 +21,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class TodoTaskRoutineDateCalculatorTest {
 
-    @Mock private Map<String, TodoTaskRoutineDateCalculateStrategy> routineScheduleStrategies;
+    @Mock
+    private Map<String, TodoTaskRoutineDateCalculateStrategy> routineScheduleStrategies;
 
-    @Mock private TodoTaskRoutineDateCalculateStrategy dailyStrategy;
+    @Mock
+    private TodoTaskRoutineDateCalculateStrategy dailyStrategy;
 
-    @InjectMocks private TodoTaskRoutineDateCalculator routineDateCalculator;
+    @InjectMocks
+    private TodoTaskRoutineDateCalculator routineDateCalculator;
 
     @Test
     @DisplayName("시작일이 종료일보다 늦은 경우 예외가 발생한다.")
@@ -35,10 +38,8 @@ class TodoTaskRoutineDateCalculatorTest {
         LocalDate endDate = LocalDate.of(2024, 1, 1);
 
         // when & then
-        assertThatThrownBy(
-                        () ->
-                                routineDateCalculator.computeRoutineDates(
-                                        TodoTaskRoutineCycle.DAILY, startDate, endDate, Set.of(1)))
+        assertThatThrownBy(() -> routineDateCalculator.computeRoutineDates(
+                        TodoTaskRoutineCycle.DAILY, startDate, endDate, Set.of(1)))
                 .isInstanceOf(RestApiException.class)
                 .hasFieldOrPropertyWithValue("status", FailResponseStatus.INVALID_REQUEST);
     }
@@ -53,10 +54,8 @@ class TodoTaskRoutineDateCalculatorTest {
         when(routineScheduleStrategies.get("dailyRoutineDateScheduleStrategy")).thenReturn(null);
 
         // when & then
-        assertThatThrownBy(
-                        () ->
-                                routineDateCalculator.computeRoutineDates(
-                                        TodoTaskRoutineCycle.DAILY, startDate, endDate, Set.of(1)))
+        assertThatThrownBy(() -> routineDateCalculator.computeRoutineDates(
+                        TodoTaskRoutineCycle.DAILY, startDate, endDate, Set.of(1)))
                 .isInstanceOf(RestApiException.class)
                 .hasFieldOrPropertyWithValue("status", FailResponseStatus.INVALID_REQUEST);
     }
@@ -69,14 +68,12 @@ class TodoTaskRoutineDateCalculatorTest {
         LocalDate endDate = LocalDate.of(2024, 1, 2);
         Set<LocalDate> expectedDates = Set.of(startDate, endDate);
 
-        when(routineScheduleStrategies.get("dailyRoutineDateScheduleStrategy"))
-                .thenReturn(dailyStrategy);
+        when(routineScheduleStrategies.get("dailyRoutineDateScheduleStrategy")).thenReturn(dailyStrategy);
         when(dailyStrategy.getRoutineDates(startDate, endDate, Set.of(1))).thenReturn(expectedDates);
 
         // when
         Set<LocalDate> actualDates =
-                routineDateCalculator.computeRoutineDates(
-                        TodoTaskRoutineCycle.DAILY, startDate, endDate, Set.of(1));
+                routineDateCalculator.computeRoutineDates(TodoTaskRoutineCycle.DAILY, startDate, endDate, Set.of(1));
 
         // then
         assertThat(actualDates).isEqualTo(expectedDates);

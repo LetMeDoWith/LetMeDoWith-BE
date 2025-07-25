@@ -8,7 +8,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @OpenAPIDefinition(servers = {@Server(url = "/", description = "Default Server")})
 @SpringBootApplication
 // @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class,
-// DataSourceTransactionManagerAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
+// DataSourceTransactionManagerAutoConfiguration.class,
+// HibernateJpaAutoConfiguration.class})
 public class LetMeDoWithApplication {
 
     public static void main(String[] args) {

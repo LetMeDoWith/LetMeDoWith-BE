@@ -12,11 +12,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith({MockitoExtension.class})
 public class AccessTokenProviderTest {
 
-    @Mock RefreshTokenRedisRepository refreshTokenRedisRepository;
+    @Mock
+    RefreshTokenRedisRepository refreshTokenRedisRepository;
 
-    AccessTokenProvider accessTokenProvider =
-            new AccessTokenProvider(
-                    "sdfdasfsaffdfdslfjldsfkadjldfadfdsafdasfdsfdflkjadlkfdjkfdjlflasjfjdfaflajlkfjldksjfladjdsafkljfdjflasf");
+    AccessTokenProvider accessTokenProvider = new AccessTokenProvider(
+            "sdfdasfsaffdfdslfjldsfkadjldfadfdsafdasfdsfdflkjadlkfdjkfdjlflasjfjdfaflajlkfjldksjfladjdsafkljfdjflasf");
 
     @Test
     void getMemberIdWithoutVerifyTest() {

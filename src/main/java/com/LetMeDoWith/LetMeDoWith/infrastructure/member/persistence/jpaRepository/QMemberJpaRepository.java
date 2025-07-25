@@ -9,6 +9,5 @@ public interface QMemberJpaRepository {
 
     Optional<Member> findByProviderAndSubject(SocialProvider provider, String subject);
 
-    Optional<Member> findByProviderAndSubjectAndStatus(
-            SocialProvider provider, String subject, MemberStatus status);
+    Optional<Member> findByProviderAndSubjectAndStatus(SocialProvider provider, String subject, MemberStatus status);
 }

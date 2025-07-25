@@ -51,15 +51,13 @@ public class MemberTermAgree extends BaseAuditEntity {
      * @param advertisement
      * @return 동의여부의 주체인 멤버와 연관관계가 맺어진 약관 동의 여부 객체
      */
-    public static MemberTermAgree ofInit(
-            Member member, boolean termsOfAgree, boolean privacy, boolean advertisement) {
-        MemberTermAgree memberTermAgree =
-                MemberTermAgree.builder()
-                        .member(member)
-                        .termsOfAgree(termsOfAgree)
-                        .privacy(privacy)
-                        .advertisement(advertisement)
-                        .build();
+    public static MemberTermAgree ofInit(Member member, boolean termsOfAgree, boolean privacy, boolean advertisement) {
+        MemberTermAgree memberTermAgree = MemberTermAgree.builder()
+                .member(member)
+                .termsOfAgree(termsOfAgree)
+                .privacy(privacy)
+                .advertisement(advertisement)
+                .build();
 
         member.linkTermAgree(memberTermAgree);
 

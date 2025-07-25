@@ -29,9 +29,12 @@ public class ConfrimDowithTaskIntegrationTest extends AbstractIntegrationTest {
     private static final String CONFIRM_TASK_URL = "/api/v1/tasks/dowith/{dowithTaskId}/confirm";
     private static final String GET_CONFIRM_UPLOAD_PRESIGNED_URL =
             "/api/v1/tasks/dowith/{dowithTaskId}/confirm/image/upload-presigned-url";
-    @Autowired private DowithTaskJpaRepository dowithTaskJpaRepository;
 
-    @Autowired private TaskCategoryJpaRepository taskCategoryJpaRepository;
+    @Autowired
+    private DowithTaskJpaRepository dowithTaskJpaRepository;
+
+    @Autowired
+    private TaskCategoryJpaRepository taskCategoryJpaRepository;
 
     @Value("${cloud.aws.s3.bucketName}")
     private String bucketName;
@@ -50,22 +53,15 @@ public class ConfrimDowithTaskIntegrationTest extends AbstractIntegrationTest {
 
     @Override
     protected void createTestData() {
-        taskCategory =
-                taskCategoryJpaRepository.save(
-                        TaskCategory.of(
-                                "test",
-                                TaskCategory.TaskCategoryCreationType.COMMON,
-                                "test",
-                                this.requestMember.getId()));
+        taskCategory = taskCategoryJpaRepository.save(TaskCategory.of(
+                "test", TaskCategory.TaskCategoryCreationType.COMMON, "test", this.requestMember.getId()));
         this.setFixedClock(LocalDateTime.of(2024, 3, 1, 13, 0));
-        dowithTask =
-                dowithTaskJpaRepository.save(
-                        DowithTask.of(
-                                this.requestMember.getId(),
-                                taskCategory.getId(),
-                                "test",
-                                LocalDate.of(2024, 3, 1),
-                                LocalTime.of(14, 0)));
+        dowithTask = dowithTaskJpaRepository.save(DowithTask.of(
+                this.requestMember.getId(),
+                taskCategory.getId(),
+                "test",
+                LocalDate.of(2024, 3, 1),
+                LocalTime.of(14, 0)));
     }
 
     @Test
@@ -80,21 +76,18 @@ public class ConfrimDowithTaskIntegrationTest extends AbstractIntegrationTest {
                 new GenerateDowithTaskConfirmImageUploadPresignedUrlsReqDto(confirmImageFileNames);
 
         ResultActions resultActions =
-                this.request(
-                        MockMvcRequestBuilders.post(GET_CONFIRM_UPLOAD_PRESIGNED_URL, dowithTask.getId())
-                                .content(this.writeRequestBodyAsString(requestBody)));
+                this.request(MockMvcRequestBuilders.post(GET_CONFIRM_UPLOAD_PRESIGNED_URL, dowithTask.getId())
+                        .content(this.writeRequestBodyAsString(requestBody)));
 
         // then
         resultActions.andExpect(status().isOk());
         String presignedUrlPrefix =
                 String.format("https://%s.s3.%s.amazonaws.com/dowith_task_confirms", bucketName, region);
         for (int i = 0; i < confirmImageFileNames.size(); i++) {
+            resultActions.andExpect(jsonPath("$.data.presignedUrls[" + i + "]")
+                    .value(Matchers.containsString(confirmImageFileNames.get(i))));
             resultActions.andExpect(
-                    jsonPath("$.data.presignedUrls[" + i + "]")
-                            .value(Matchers.containsString(confirmImageFileNames.get(i))));
-            resultActions.andExpect(
-                    jsonPath("$.data.presignedUrls[" + i + "]")
-                            .value(Matchers.containsString(presignedUrlPrefix)));
+                    jsonPath("$.data.presignedUrls[" + i + "]").value(Matchers.containsString(presignedUrlPrefix)));
         }
     }
 
@@ -109,9 +102,8 @@ public class ConfrimDowithTaskIntegrationTest extends AbstractIntegrationTest {
                 new GenerateDowithTaskConfirmImageUploadPresignedUrlsReqDto(confirmImageFileNames);
 
         ResultActions resultActions =
-                this.request(
-                        MockMvcRequestBuilders.post(GET_CONFIRM_UPLOAD_PRESIGNED_URL, dowithTask.getId())
-                                .content(this.writeRequestBodyAsString(requestBody)));
+                this.request(MockMvcRequestBuilders.post(GET_CONFIRM_UPLOAD_PRESIGNED_URL, dowithTask.getId())
+                        .content(this.writeRequestBodyAsString(requestBody)));
 
         // then
         resultActions.andExpect(status().is4xxClientError());
@@ -128,9 +120,8 @@ public class ConfrimDowithTaskIntegrationTest extends AbstractIntegrationTest {
                 new GenerateDowithTaskConfirmImageUploadPresignedUrlsReqDto(confirmImageFileNames);
 
         ResultActions resultActions =
-                this.request(
-                        MockMvcRequestBuilders.post(GET_CONFIRM_UPLOAD_PRESIGNED_URL, dowithTask.getId())
-                                .content(this.writeRequestBodyAsString(requestBody)));
+                this.request(MockMvcRequestBuilders.post(GET_CONFIRM_UPLOAD_PRESIGNED_URL, dowithTask.getId())
+                        .content(this.writeRequestBodyAsString(requestBody)));
 
         // then
         resultActions.andExpect(status().is4xxClientError());
@@ -140,22 +131,18 @@ public class ConfrimDowithTaskIntegrationTest extends AbstractIntegrationTest {
     @DisplayName("[SUCCESS] Dowith Task 인증 성공")
     void confirmDowithTask1() throws Exception {
         // given
-        List<String> publicImageUrls =
-                List.of("https://example.com/photo1.jpg", "https://example.com/photo2.jpg");
+        List<String> publicImageUrls = List.of("https://example.com/photo1.jpg", "https://example.com/photo2.jpg");
         this.setFixedClock(LocalDateTime.of(2024, 3, 1, 10, 0));
 
         // when
         ConfirmDowithTaskReqDto requestBody = new ConfirmDowithTaskReqDto(publicImageUrls);
         ResultActions confirmResultActions =
-                this.request(
-                        MockMvcRequestBuilders.post(CONFIRM_TASK_URL, dowithTask.getId())
-                                .content(this.writeRequestBodyAsString(requestBody)));
-        ResultActions retrieveResultActions =
-                this.request(
-                                MockMvcRequestBuilders.get(RETRIEVE_TASKS_URL)
-                                        .param("year", "2024")
-                                        .param("month", "3"))
-                        .andExpect(status().isOk());
+                this.request(MockMvcRequestBuilders.post(CONFIRM_TASK_URL, dowithTask.getId())
+                        .content(this.writeRequestBodyAsString(requestBody)));
+        ResultActions retrieveResultActions = this.request(MockMvcRequestBuilders.get(RETRIEVE_TASKS_URL)
+                        .param("year", "2024")
+                        .param("month", "3"))
+                .andExpect(status().isOk());
 
         // then
         confirmResultActions.andExpect(status().isOk());
@@ -164,31 +151,25 @@ public class ConfrimDowithTaskIntegrationTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.data.dowithTasks[0].id").value(dowithTask.getId()))
                 .andExpect(jsonPath("$.data.dowithTasks[0].status").value(DowithTaskStatus.SUCCESS.code))
                 .andExpect(jsonPath("$.data.dowithTasks[0].confirmedImageUrls").isArray())
-                .andExpect(
-                        jsonPath("$.data.dowithTasks[0].confirmedImageUrls")
-                                .value(Matchers.is(publicImageUrls)));
+                .andExpect(jsonPath("$.data.dowithTasks[0].confirmedImageUrls").value(Matchers.is(publicImageUrls)));
     }
 
     @Test
     @DisplayName("[FAIL] 시작시간이 지난 후 인증 시도하는 경우")
     void confirmDowithTask2() throws Exception {
         // given
-        List<String> publicImageUrls =
-                List.of("https://example.com/photo1.jpg", "https://example.com/photo2.jpg");
+        List<String> publicImageUrls = List.of("https://example.com/photo1.jpg", "https://example.com/photo2.jpg");
         this.setFixedClock(LocalDateTime.of(2024, 3, 1, 14, 1));
 
         // when
         ConfirmDowithTaskReqDto requestBody = new ConfirmDowithTaskReqDto(publicImageUrls);
         ResultActions confirmResultActions =
-                this.request(
-                        MockMvcRequestBuilders.post(CONFIRM_TASK_URL, dowithTask.getId())
-                                .content(this.writeRequestBodyAsString(requestBody)));
-        ResultActions retrieveResultActions =
-                this.request(
-                                MockMvcRequestBuilders.get(RETRIEVE_TASKS_URL)
-                                        .param("year", "2024")
-                                        .param("month", "3"))
-                        .andExpect(status().isOk());
+                this.request(MockMvcRequestBuilders.post(CONFIRM_TASK_URL, dowithTask.getId())
+                        .content(this.writeRequestBodyAsString(requestBody)));
+        ResultActions retrieveResultActions = this.request(MockMvcRequestBuilders.get(RETRIEVE_TASKS_URL)
+                        .param("year", "2024")
+                        .param("month", "3"))
+                .andExpect(status().isOk());
 
         // then
         confirmResultActions.andExpect(status().is4xxClientError());

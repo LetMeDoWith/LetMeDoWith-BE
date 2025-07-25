@@ -38,8 +38,7 @@ public class DowithTaskController {
     @ApiErrorResponses({
         @ApiErrorResponse(
                 status = FailResponseStatus.INVALID_PARAM_ERROR,
-                description =
-                        "Request Body의 title이 공백이거나, 40자 초과인경우 / startDateTime이 null인 경우 / isRoutine이 null인 경우"),
+                description = "Request Body의 title이 공백이거나, 40자 초과인경우 / startDateTime이 null인 경우 / isRoutine이 null인 경우"),
         @ApiErrorResponse(
                 status = FailResponseStatus.DOWITH_TASK_CREATE_COUNT_EXCEED,
                 description = "일일 두윗모드 Task 등록 가능 개수를 초과한 경우, 루틴을 가진 Task인 경우 루틴일자들도 검사합니다.")
@@ -104,17 +103,14 @@ public class DowithTaskController {
 
         String memberId = AuthUtil.getMemberId();
 
-        updateDowithTaskService.updateRoutine(
-                memberId, dowithTaskId, new HashSet<>(requestBody.routineDates()));
+        updateDowithTaskService.updateRoutine(memberId, dowithTaskId, new HashSet<>(requestBody.routineDates()));
 
         return ResponseUtil.createSuccessResponse();
     }
 
     @Operation(summary = "두윗모드 Task 삭제", description = "두윗모드 Task를 삭제합니다.")
     @ApiSuccessResponse(description = "두윗모드 Task 삭제 성공")
-    @ApiErrorResponses({
-        @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")
-    })
+    @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")})
     @DeleteMapping("/{dowithTaskId}")
     public ResponseEntity deleteDowithTask(@PathVariable Long dowithTaskId) {
         deleteDowithTaskService.delete(AuthUtil.getMemberId(), dowithTaskId);
@@ -123,9 +119,7 @@ public class DowithTaskController {
 
     @Operation(summary = "두윗모드 Task(Routine 포함) 삭제", description = "두윗모드 Task(Routine 포함)를 삭제합니다.")
     @ApiSuccessResponse(description = "두윗모드 Task(Routine 포함) 삭제 성공")
-    @ApiErrorResponses({
-        @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")
-    })
+    @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")})
     @DeleteMapping("/{dowithTaskId}/with-routine")
     public ResponseEntity deleteDowithTaskWithRoutine(@PathVariable Long dowithTaskId) {
         deleteDowithTaskService.deleteWithRoutines(AuthUtil.getMemberId(), dowithTaskId);
@@ -136,9 +130,7 @@ public class DowithTaskController {
     @ApiSuccessResponse(
             description =
                     "요청 시의 imageFileNames 수 만큼 presigned url이 발급됩니다. method를 참고하여 presigned url 하나당 이미지 하나를 http request 하여 업로드합니다.")
-    @ApiErrorResponses({
-        @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")
-    })
+    @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")})
     @PostMapping("/{dowithTaskId}/confirm/image/upload-presigned-url")
     public ResponseEntity<ResponseDto<GenerateDowithTaskConfirmImageUploadPresignedUrlsResDto>>
             generateDowithTaskConfirmImageUploadPresignedUrls(
@@ -147,43 +139,33 @@ public class DowithTaskController {
 
         String memberId = AuthUtil.getMemberId();
 
-        List<String> presignedUrls =
-                confirmDowithTaskService.generateDowithTaskConfirmImageUploadPresignedUrls(
-                        memberId, dowithTaskId, requestBody.imageFileNames());
+        List<String> presignedUrls = confirmDowithTaskService.generateDowithTaskConfirmImageUploadPresignedUrls(
+                memberId, dowithTaskId, requestBody.imageFileNames());
 
         return ResponseUtil.createSuccessResponse(
                 new GenerateDowithTaskConfirmImageUploadPresignedUrlsResDto(presignedUrls, "POST"));
     }
 
-    @Operation(
-            summary = "두윗모드 Task 인증",
-            description = "Presigned url을 통해서 업로드한 파일의 public url을 body에 담아 요청합니다.")
+    @Operation(summary = "두윗모드 Task 인증", description = "Presigned url을 통해서 업로드한 파일의 public url을 body에 담아 요청합니다.")
     @ApiSuccessResponse(description = "두윗모드 Task 인증 성공")
-    @ApiErrorResponses({
-        @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")
-    })
+    @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")})
     @PostMapping("/{dowithTaskId}/confirm")
     public ResponseEntity<ResponseDto<Object>> confirmDowithTask(
             @PathVariable Long dowithTaskId, @RequestBody ConfirmDowithTaskReqDto requestBody) {
 
         String memberId = AuthUtil.getMemberId();
 
-        confirmDowithTaskService.confirmDowithTask(
-                memberId, dowithTaskId, requestBody.publicImageUrls());
+        confirmDowithTaskService.confirmDowithTask(memberId, dowithTaskId, requestBody.publicImageUrls());
 
         return ResponseUtil.createSuccessResponse();
     }
 
     @Operation(summary = "두윗모드 Task 잔여 개수 조회", description = "두윗모드 Task의 잔여 개수를 조회합니다.")
     @ApiSuccessResponse(description = "두윗모드 Task 잔여 개수 조회 성공")
-    @ApiErrorResponses({
-        @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")
-    })
+    @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")})
     @GetMapping("/remained")
     public ResponseEntity<ResponseDto<GetRemainedDowithTaskCountRes>> getRemainedDowithTaskCount() {
-        int remainedDowithTaskCount =
-                taskSummaryService.getRemainedDowithTaskCount(AuthUtil.getMemberId());
-        return ResponseUtil.createSuccessResponse(
-                new GetRemainedDowithTaskCountRes(remainedDowithTaskCount));
+        int remainedDowithTaskCount = taskSummaryService.getRemainedDowithTaskCount(AuthUtil.getMemberId());
+        return ResponseUtil.createSuccessResponse(new GetRemainedDowithTaskCountRes(remainedDowithTaskCount));
     }
 }

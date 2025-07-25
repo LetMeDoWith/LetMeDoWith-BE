@@ -12,8 +12,8 @@ public interface DowithTaskFeedbackJpaRepository extends JpaRepository<DowithTas
 
     List<DowithTaskFeedback> findAllByDowithTaskId(Long dowithTaskId);
 
-    List<DowithTaskFeedback> findAllByDowithTaskIdInAndReceiverMemberId(List<Long> dowithTaskIds,
-            String receiverMemberId);
+    List<DowithTaskFeedback> findAllByDowithTaskIdInAndReceiverMemberId(
+            List<Long> dowithTaskIds, String receiverMemberId);
 
     List<DowithTaskFeedback> findAllByIdInAndReceiverMemberId(List<Long> ids, String receiverMemberId);
 }

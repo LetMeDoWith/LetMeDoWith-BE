@@ -50,40 +50,40 @@ public class Badge extends BaseAuditEntity {
     @Column(name = "sort_order")
     private int sortOrder;
 
-    //  public boolean isActive(Long memberId) {
-    //    if(memberBadges != null && !memberBadges.isEmpty() &&
+    // public boolean isActive(Long memberId) {
+    // if(memberBadges != null && !memberBadges.isEmpty() &&
     // BadgeStatus.ACTIVE.equals(badgeStatus)) {
-    //      return memberBadges.get(0).getMemberId().equals(memberId);
-    //    }else {
-    //      return false;
-    //    }
-    //  }
+    // return memberBadges.get(0).getMemberId().equals(memberId);
+    // }else {
+    // return false;
+    // }
+    // }
     //
-    //  public boolean isMainBadge(Long memberId) {
-    //    if(memberBadges == null || memberBadges.isEmpty()) return false;
-    //    MemberBadge memberBadge = this.memberBadges.stream().filter(e ->
+    // public boolean isMainBadge(Long memberId) {
+    // if(memberBadges == null || memberBadges.isEmpty()) return false;
+    // MemberBadge memberBadge = this.memberBadges.stream().filter(e ->
     // e.getMemberId().equals(memberId)).findFirst().orElseThrow(() -> new
     // RestApiException(MEMBER_BADGE_NOT_EXIST));
-    //    return Yn.TRUE.equals(memberBadge.getIsMain());
-    //  }
+    // return Yn.TRUE.equals(memberBadge.getIsMain());
+    // }
     //
-    //  public void registerToMain(Long memberId) {
-    //    if(memberBadges ==null || memberBadges.isEmpty()) throw new
+    // public void registerToMain(Long memberId) {
+    // if(memberBadges ==null || memberBadges.isEmpty()) throw new
     // RestApiException(MEMBER_BADGE_NOT_EXIST);
-    //    MemberBadge memberBadge = this.memberBadges.stream().filter(e ->
+    // MemberBadge memberBadge = this.memberBadges.stream().filter(e ->
     // e.getMemberId().equals(memberId)).findFirst().orElseThrow(() -> new
     // RestApiException(MEMBER_BADGE_NOT_EXIST));
-    //    memberBadge.registerToMainBadge();
-    //  }
+    // memberBadge.registerToMainBadge();
+    // }
     //
-    //  public void cancelMain(Long memberId) {
-    //    if(memberBadges ==null || memberBadges.isEmpty()) throw new
+    // public void cancelMain(Long memberId) {
+    // if(memberBadges ==null || memberBadges.isEmpty()) throw new
     // RestApiException(MEMBER_BADGE_NOT_EXIST);
-    //    MemberBadge memberBadge = this.memberBadges.stream().filter(e ->
+    // MemberBadge memberBadge = this.memberBadges.stream().filter(e ->
     // e.getMemberId().equals(memberId)).findFirst().orElseThrow(() -> new
     // RestApiException(MEMBER_BADGE_NOT_EXIST));
-    //    memberBadge.cancelMainBadge();
-    //  }
+    // memberBadge.cancelMainBadge();
+    // }
     //
 
 }

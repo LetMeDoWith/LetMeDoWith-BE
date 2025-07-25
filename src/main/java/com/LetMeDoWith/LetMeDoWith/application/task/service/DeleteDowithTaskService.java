@@ -28,15 +28,13 @@ public class DeleteDowithTaskService {
     @Transactional
     public void delete(String memberId, Long dowithTaskId) {
 
-        DowithTask dowithTask =
-                dowithTaskRepository
-                        .getDowithTask(dowithTaskId, memberId)
-                        .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
+        DowithTask dowithTask = dowithTaskRepository
+                .getDowithTask(dowithTaskId, memberId)
+                .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
 
-        TaskSummary taskSummary =
-                taskSummaryRepository
-                        .getTaskSummary(memberId)
-                        .orElseThrow(() -> new RestApiException(FailResponseStatus.INTERNAL_SERVER_ERROR));
+        TaskSummary taskSummary = taskSummaryRepository
+                .getTaskSummary(memberId)
+                .orElseThrow(() -> new RestApiException(FailResponseStatus.INTERNAL_SERVER_ERROR));
 
         dowithTask.delete(dowithTaskRepository, dowithTaskRoutineRepository);
         taskSummary.plusRemainedDowithTaskCount(1);
@@ -51,18 +49,15 @@ public class DeleteDowithTaskService {
     @Transactional
     public void deleteWithRoutines(String memberId, Long dowithTaskId) {
 
-        DowithTask dowithTask =
-                dowithTaskRepository
-                        .getDowithTask(dowithTaskId, memberId)
-                        .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
+        DowithTask dowithTask = dowithTaskRepository
+                .getDowithTask(dowithTaskId, memberId)
+                .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
 
-        TaskSummary taskSummary =
-                taskSummaryRepository
-                        .getTaskSummary(memberId)
-                        .orElseThrow(() -> new RestApiException(FailResponseStatus.INTERNAL_SERVER_ERROR));
+        TaskSummary taskSummary = taskSummaryRepository
+                .getTaskSummary(memberId)
+                .orElseThrow(() -> new RestApiException(FailResponseStatus.INTERNAL_SERVER_ERROR));
 
-        int deletedDowithTaskCount =
-                dowithTask.deleteWithRoutine(dowithTaskRepository, dowithTaskRoutineRepository);
+        int deletedDowithTaskCount = dowithTask.deleteWithRoutine(dowithTaskRepository, dowithTaskRoutineRepository);
         taskSummary.plusRemainedDowithTaskCount(deletedDowithTaskCount);
     }
 }

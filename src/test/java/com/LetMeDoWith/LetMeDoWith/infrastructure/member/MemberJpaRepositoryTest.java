@@ -29,23 +29,25 @@ import org.springframework.context.annotation.Import;
 @Import(TestQueryDslConfig.class)
 class MemberJpaRepositoryTest {
 
-    @Autowired private TestEntityManager entityManager;
+    @Autowired
+    private TestEntityManager entityManager;
 
-    @Autowired private MemberJpaRepository memberJpaRepository;
+    @Autowired
+    private MemberJpaRepository memberJpaRepository;
 
-    @Autowired private MemberSocialAccountJpaRepository memberSocialAccountJpaRepository;
+    @Autowired
+    private MemberSocialAccountJpaRepository memberSocialAccountJpaRepository;
 
     private static Member getMember() {
-        Member testMemberObj =
-                Member.builder()
-                        .id("01HXQ2X7Z7Q6XJX4X2X7Z7Q6XA")
-                        .subject("test@email.com")
-                        .nickname("nickname")
-                        .selfDescription("self desc")
-                        .status(MemberStatus.NORMAL)
-                        .type(MemberType.USER)
-                        .profileImageUrl("image.jpeg")
-                        .build();
+        Member testMemberObj = Member.builder()
+                .id("01HXQ2X7Z7Q6XJX4X2X7Z7Q6XA")
+                .subject("test@email.com")
+                .nickname("nickname")
+                .selfDescription("self desc")
+                .status(MemberStatus.NORMAL)
+                .type(MemberType.USER)
+                .profileImageUrl("image.jpeg")
+                .build();
         return testMemberObj;
     }
 
@@ -93,15 +95,14 @@ class MemberJpaRepositoryTest {
 
         Member testMemberObj = getMember();
 
-        Member testMemberObjWithoutKey =
-                Member.builder()
-                        .subject("test@email.com")
-                        .nickname("nickname2")
-                        .selfDescription("self desc")
-                        .status(MemberStatus.NORMAL)
-                        .type(MemberType.USER)
-                        .profileImageUrl("image.jpeg")
-                        .build();
+        Member testMemberObjWithoutKey = Member.builder()
+                .subject("test@email.com")
+                .nickname("nickname2")
+                .selfDescription("self desc")
+                .status(MemberStatus.NORMAL)
+                .type(MemberType.USER)
+                .profileImageUrl("image.jpeg")
+                .build();
 
         memberJpaRepository.save(testMemberObj);
         memberJpaRepository.save(testMemberObjWithoutKey);
@@ -120,8 +121,10 @@ class MemberJpaRepositoryTest {
 
         Member member = memberJpaRepository.save(testMemberObj);
 
-        MemberSocialAccount memberSocialAccount =
-                MemberSocialAccount.builder().provider(SocialProvider.KAKAO).member(member).build();
+        MemberSocialAccount memberSocialAccount = MemberSocialAccount.builder()
+                .provider(SocialProvider.KAKAO)
+                .member(member)
+                .build();
 
         memberSocialAccountJpaRepository.save(memberSocialAccount);
 

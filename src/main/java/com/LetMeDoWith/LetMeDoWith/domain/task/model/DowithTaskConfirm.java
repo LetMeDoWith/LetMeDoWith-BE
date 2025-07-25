@@ -27,6 +27,9 @@ public class DowithTaskConfirm extends BaseAuditEntity {
     private String imageUrl;
 
     public static DowithTaskConfirm of(DowithTask dowithTask, String imageUrl) {
-        return DowithTaskConfirm.builder().dowithTask(dowithTask).imageUrl(imageUrl).build();
+        return DowithTaskConfirm.builder()
+                .dowithTask(dowithTask)
+                .imageUrl(imageUrl)
+                .build();
     }
 }

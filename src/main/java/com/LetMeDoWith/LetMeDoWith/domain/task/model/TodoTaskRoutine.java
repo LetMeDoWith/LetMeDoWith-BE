@@ -47,14 +47,13 @@ public class TodoTaskRoutine extends BaseAuditEntity {
     private boolean isExcludeHolidays;
 
     public static TodoTaskRoutine of(Set<LocalDate> dates) {
-        return TodoTaskRoutine.builder().routineDates(TodoTaskRoutineDates.from(dates)).build();
+        return TodoTaskRoutine.builder()
+                .routineDates(TodoTaskRoutineDates.from(dates))
+                .build();
     }
 
     public static TodoTaskRoutine of(
-            Set<LocalDate> dates,
-            TodoTaskRoutineCycle cycle,
-            Set<Integer> pattern,
-            boolean isExcludeHolidays) {
+            Set<LocalDate> dates, TodoTaskRoutineCycle cycle, Set<Integer> pattern, boolean isExcludeHolidays) {
         return TodoTaskRoutine.builder()
                 .routineDates(TodoTaskRoutineDates.from(dates))
                 .cycle(cycle)
@@ -64,10 +63,7 @@ public class TodoTaskRoutine extends BaseAuditEntity {
     }
 
     public TodoTaskRoutine update(
-            Set<LocalDate> dates,
-            TodoTaskRoutineCycle cycle,
-            Set<Integer> pattern,
-            boolean isExcludeHolidays) {
+            Set<LocalDate> dates, TodoTaskRoutineCycle cycle, Set<Integer> pattern, boolean isExcludeHolidays) {
         this.routineDates = TodoTaskRoutineDates.from(dates);
         this.cycle = cycle;
         this.pattern = TodoTaskRoutinePattern.from(pattern);

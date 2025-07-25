@@ -3,8 +3,7 @@ package com.LetMeDoWith.LetMeDoWith.application.member.dto;
 import lombok.Builder;
 
 @Builder
-public record MemberAlarmSettingVO(
-        boolean baseAlarmYn, boolean feedbackYn, boolean todoBotYn, boolean marketingYn) {
+public record MemberAlarmSettingVO(boolean baseAlarmYn, boolean feedbackYn, boolean todoBotYn, boolean marketingYn) {
 
     public static MemberAlarmSettingVO fromCommand(UpdateMemberAlarmSettingCommand command) {
         return MemberAlarmSettingVO.builder()

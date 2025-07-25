@@ -42,11 +42,7 @@ public class Notification extends BaseAuditEntity {
     private String notificationTemplateCode;
 
     public static Notification of(
-            String memberId,
-            String title,
-            String body,
-            String deepLink,
-            String notificationTemplateCode) {
+            String memberId, String title, String body, String deepLink, String notificationTemplateCode) {
         return Notification.builder()
                 .memberId(memberId)
                 .title(title)

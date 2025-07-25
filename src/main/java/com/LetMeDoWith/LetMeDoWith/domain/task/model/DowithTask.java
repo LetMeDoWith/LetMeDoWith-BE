@@ -130,24 +130,21 @@ public class DowithTask extends BaseAuditEntity {
         targetDateSet.add(date);
 
         DowithTaskRoutine routine = DowithTaskRoutine.from(targetDateSet);
-        targetDateSet.stream()
-                .sorted()
-                .forEach(
-                        e -> {
-                            DowithTask task = DowithTask.builder()
-                                    .memberId(memberId)
-                                    .taskCategoryId(taskCategoryId)
-                                    .title(title)
-                                    .status(DowithTaskStatus.WAIT)
-                                    .routine(routine)
-                                    .date(e)
-                                    .startTime(startTime)
-                                    .build();
-                            if (task.getDate().isEqual(date)) {
-                                task.validate();
-                            }
-                            result.add(task);
-                        });
+        targetDateSet.stream().sorted().forEach(e -> {
+            DowithTask task = DowithTask.builder()
+                    .memberId(memberId)
+                    .taskCategoryId(taskCategoryId)
+                    .title(title)
+                    .status(DowithTaskStatus.WAIT)
+                    .routine(routine)
+                    .date(e)
+                    .startTime(startTime)
+                    .build();
+            if (task.getDate().isEqual(date)) {
+                task.validate();
+            }
+            result.add(task);
+        });
 
         return result;
     }
@@ -167,15 +164,8 @@ public class DowithTask extends BaseAuditEntity {
         routineDates.stream()
                 .filter(date -> !date.isEqual(this.date))
                 .collect(Collectors.toSet())
-                .forEach(
-                        date -> result.add(
-                                DowithTask.of(
-                                        this.memberId,
-                                        this.taskCategoryId,
-                                        this.title,
-                                        date,
-                                        this.startTime,
-                                        routine)));
+                .forEach(date -> result.add(
+                        DowithTask.of(this.memberId, this.taskCategoryId, this.title, date, this.startTime, routine)));
         result.add(this);
 
         return result;
@@ -192,15 +182,8 @@ public class DowithTask extends BaseAuditEntity {
         if (isRoutine()) {
             this.routine.addDates(routineDates);
             List<DowithTask> result = new ArrayList<>();
-            routineDates.forEach(
-                    date -> result.add(
-                            DowithTask.of(
-                                    this.memberId,
-                                    this.taskCategoryId,
-                                    this.title,
-                                    date,
-                                    this.startTime,
-                                    this.routine)));
+            routineDates.forEach(date -> result.add(
+                    DowithTask.of(this.memberId, this.taskCategoryId, this.title, date, this.startTime, this.routine)));
 
             dowithTaskRepository.saveDowithTasks(result);
         }
@@ -215,7 +198,8 @@ public class DowithTask extends BaseAuditEntity {
     public List<String> generateConfirmImageKey(List<String> imageFileNames) {
 
         Pattern validExtensions = Pattern.compile("(?i)^.+\\.(jpg|jpeg|png|gif|bmp|webp)$");
-        if (imageFileNames.stream().anyMatch(name -> !validExtensions.matcher(name).matches())) {
+        if (imageFileNames.stream()
+                .anyMatch(name -> !validExtensions.matcher(name).matches())) {
             throw new RestApiException(INVALID_REQUEST);
         }
 
@@ -231,11 +215,11 @@ public class DowithTask extends BaseAuditEntity {
 
         List<String> confirmImageKeys = new ArrayList<>();
         for (String imageFileName : imageFileNames) {
-            String timestamp = SystemTimeUtil.now().toString().replace("[:\\-T]", "").substring(0, 14) + "Z";
+            String timestamp =
+                    SystemTimeUtil.now().toString().replace("[:\\-T]", "").substring(0, 14) + "Z";
             String uuid = UUID.randomUUID().toString();
             confirmImageKeys.add(
-                    String.format(
-                            "dowith_task_confirms/%02d/%s_%s.%s", shardIndex, timestamp, uuid, imageFileName));
+                    String.format("dowith_task_confirms/%02d/%s_%s.%s", shardIndex, timestamp, uuid, imageFileName));
         }
         return confirmImageKeys;
     }
@@ -329,8 +313,7 @@ public class DowithTask extends BaseAuditEntity {
         LocalDate nowDate = now.toLocalDate();
         Set<LocalDate> result = isRoutine() ? this.routine.getDatesBeforeAndEqual(nowDate) : Set.of();
 
-        if (result.contains(nowDate)
-                && now.isBefore(LocalDateTime.of(now.toLocalDate(), this.startTime))) {
+        if (result.contains(nowDate) && now.isBefore(LocalDateTime.of(now.toLocalDate(), this.startTime))) {
             result.remove(nowDate);
         }
         return result;
@@ -369,8 +352,7 @@ public class DowithTask extends BaseAuditEntity {
      * @param date
      * @param startTime
      */
-    public void updateContents(
-            String title, Long taskCategoryId, LocalDate date, LocalTime startTime) {
+    public void updateContents(String title, Long taskCategoryId, LocalDate date, LocalTime startTime) {
 
         if (!isContentsEditable()) {
             throw new RestApiException(INVALID_REQUEST);
@@ -415,13 +397,12 @@ public class DowithTask extends BaseAuditEntity {
 
             // 수정 가능한 일자를 기반으로 새 routine 생성
             DowithTaskRoutine newRoutine = DowithTaskRoutine.from(updateAvailRoutineDates);
-            dowithTasks.forEach(
-                    task -> {
-                        if (updateAvailRoutineDates.contains(task.getDate())) {
-                            task.updateContents(title, taskCategoryId, date, startTime);
-                            task.updateRoutine(newRoutine);
-                        }
-                    });
+            dowithTasks.forEach(task -> {
+                if (updateAvailRoutineDates.contains(task.getDate())) {
+                    task.updateContents(title, taskCategoryId, date, startTime);
+                    task.updateRoutine(newRoutine);
+                }
+            });
         }
     }
 
@@ -444,13 +425,12 @@ public class DowithTask extends BaseAuditEntity {
 
             // 수정 가능한 일자를 기반으로 새 routine 생성
             DowithTaskRoutine newRoutine = DowithTaskRoutine.from(updateAvailRoutineDates);
-            dowithTasks.forEach(
-                    task -> {
-                        if (updateAvailRoutineDates.contains(task.getDate())) {
-                            task.updateContents(title, taskCategoryId);
-                            task.updateRoutine(newRoutine);
-                        }
-                    });
+            dowithTasks.forEach(task -> {
+                if (updateAvailRoutineDates.contains(task.getDate())) {
+                    task.updateContents(title, taskCategoryId);
+                    task.updateRoutine(newRoutine);
+                }
+            });
         }
     }
 
@@ -461,8 +441,7 @@ public class DowithTask extends BaseAuditEntity {
      * @param dowithTaskRoutineRepository
      */
     public void delete(
-            DowithTaskRepository dowithTaskRepository,
-            DowithTaskRoutineRepository dowithTaskRoutineRepository) {
+            DowithTaskRepository dowithTaskRepository, DowithTaskRoutineRepository dowithTaskRoutineRepository) {
 
         if (!SystemTimeUtil.now().isBefore(LocalDateTime.of(this.date, this.startTime))) {
             throw new RestApiException(INVALID_REQUEST);
@@ -486,8 +465,7 @@ public class DowithTask extends BaseAuditEntity {
      * @param dowithTaskRoutineRepository
      */
     public int deleteWithRoutine(
-            DowithTaskRepository dowithTaskRepository,
-            DowithTaskRoutineRepository dowithTaskRoutineRepository) {
+            DowithTaskRepository dowithTaskRepository, DowithTaskRoutineRepository dowithTaskRoutineRepository) {
 
         if (!SystemTimeUtil.now().isBefore(LocalDateTime.of(this.date, this.startTime))) {
             throw new RestApiException(INVALID_REQUEST);
@@ -520,15 +498,13 @@ public class DowithTask extends BaseAuditEntity {
      *
      * @return 물리 삭제할 DowithTaskRoutine domain entity
      */
-    public void deleteRoutine(
-            Set<LocalDate> routineDates, DowithTaskRepository dowithTaskRepository) {
+    public void deleteRoutine(Set<LocalDate> routineDates, DowithTaskRepository dowithTaskRepository) {
 
         if (isRoutine()) {
 
-            dowithTaskRepository.delete(
-                    dowithTaskRepository.getDowithTasks(this.routine).stream()
-                            .filter(e -> routineDates.contains(e.getDate()))
-                            .toList());
+            dowithTaskRepository.delete(dowithTaskRepository.getDowithTasks(this.routine).stream()
+                    .filter(e -> routineDates.contains(e.getDate()))
+                    .toList());
 
             this.routine.deleteDates(routineDates);
         }

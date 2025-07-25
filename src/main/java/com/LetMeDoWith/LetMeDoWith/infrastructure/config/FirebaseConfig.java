@@ -15,13 +15,11 @@ public class FirebaseConfig {
 
     @Bean
     public FirebaseApp firebaseApp() throws IOException {
-        InputStream serviceAccount =
-                new ClassPathResource("firebase-confidential.json").getInputStream();
+        InputStream serviceAccount = new ClassPathResource("firebase-confidential.json").getInputStream();
 
-        FirebaseOptions options =
-                FirebaseOptions.builder()
-                        .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                        .build();
+        FirebaseOptions options = FirebaseOptions.builder()
+                .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                .build();
 
         return FirebaseApp.initializeApp(options);
     }

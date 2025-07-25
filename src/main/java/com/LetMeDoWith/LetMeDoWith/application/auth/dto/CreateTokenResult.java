@@ -11,8 +11,7 @@ import com.LetMeDoWith.LetMeDoWith.domain.auth.model.SignupToken;
  * @param rtk
  * @param signupToken
  */
-public record CreateTokenResult(
-        AuthTokenVO atk, AuthTokenVO rtk, AuthTokenVO signupToken, String memberId) {
+public record CreateTokenResult(AuthTokenVO atk, AuthTokenVO rtk, AuthTokenVO signupToken, String memberId) {
 
     /**
      * 일반 토큰 (accessToken, refreshToken) 요청 시 응답 포맷

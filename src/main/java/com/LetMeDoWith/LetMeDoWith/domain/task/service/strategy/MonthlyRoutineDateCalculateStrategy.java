@@ -19,8 +19,7 @@ public class MonthlyRoutineDateCalculateStrategy implements TodoTaskRoutineDateC
      * @return 루틴을 수행하는 일자 목록
      */
     @Override
-    public Set<LocalDate> getRoutineDates(
-            LocalDate startDate, LocalDate endDate, Set<Integer> repetitionPattern) {
+    public Set<LocalDate> getRoutineDates(LocalDate startDate, LocalDate endDate, Set<Integer> repetitionPattern) {
         // scheduleParams: 1~31, 99(마지막 날)
         Set<Integer> validDays = new TreeSet<>(repetitionPattern);
         Set<LocalDate> dates = new TreeSet<>();

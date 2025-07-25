@@ -29,10 +29,8 @@ spotless {
         // 사용하지 않는 import 제거
         removeUnusedImports()
         // 구글 자바 포맷 적용
-        googleJavaFormat()
 
-        leadingSpacesToTabs(2)
-        leadingTabsToSpaces(4)
+        palantirJavaFormat()
         // 공백 제거
         trimTrailingWhitespace()
         // 끝부분 New Line 처리
@@ -129,7 +127,7 @@ dependencies {
 
     // Firebase Admin SDK
     implementation 'com.google.firebase:firebase-admin:9.5.0'
-    
+
     // localStack for AWS
 //    implementation "com.amazonaws:aws-java-sdk-s3"
 //    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.783'

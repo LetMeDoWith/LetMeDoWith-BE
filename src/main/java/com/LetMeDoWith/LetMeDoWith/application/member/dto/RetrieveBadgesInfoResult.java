@@ -13,6 +13,9 @@ public class RetrieveBadgesInfoResult {
     private List<MemberBadgeQueryDto> badges;
 
     public static RetrieveBadgesInfoResult of(boolean isLazy, List<MemberBadgeQueryDto> badges) {
-        return RetrieveBadgesInfoResult.builder().isMemberLazy(isLazy).badges(badges).build();
+        return RetrieveBadgesInfoResult.builder()
+                .isMemberLazy(isLazy)
+                .badges(badges)
+                .build();
     }
 }

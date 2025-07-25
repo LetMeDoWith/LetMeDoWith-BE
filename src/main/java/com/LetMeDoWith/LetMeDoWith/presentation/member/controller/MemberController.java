@@ -58,15 +58,14 @@ public class MemberController {
     @PutMapping("")
     public ResponseEntity<ResponseDto<CreateTokenResDto>> completeSignup(
             @RequestBody SignupCompleteReqDto signupCompleteReqDto) {
-        CreateSignupCompletedMemberCommand command =
-                CreateSignupCompletedMemberCommand.builder()
-                        .nickname(signupCompleteReqDto.nickname())
-                        .dateOfBirth(signupCompleteReqDto.dateOfBirth())
-                        .gender(signupCompleteReqDto.gender())
-                        .isTerms(signupCompleteReqDto.agreements().termsOfAgree())
-                        .isPrivacy(signupCompleteReqDto.agreements().privacy())
-                        .isAdvertisement(signupCompleteReqDto.agreements().advertisement())
-                        .build();
+        CreateSignupCompletedMemberCommand command = CreateSignupCompletedMemberCommand.builder()
+                .nickname(signupCompleteReqDto.nickname())
+                .dateOfBirth(signupCompleteReqDto.dateOfBirth())
+                .gender(signupCompleteReqDto.gender())
+                .isTerms(signupCompleteReqDto.agreements().termsOfAgree())
+                .isPrivacy(signupCompleteReqDto.agreements().privacy())
+                .isAdvertisement(signupCompleteReqDto.agreements().advertisement())
+                .build();
 
         Member signupCompletedMember = memberService.createSignupCompletedMember(command);
         CreateTokenResult createTokenResult = createTokenService.createToken(signupCompletedMember);
@@ -85,8 +84,7 @@ public class MemberController {
     @ApiSuccessResponse(description = "사용 가능한 닉네임")
     @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.DUPLICATE_NICKNAME)})
     @PostMapping("/nickname")
-    public ResponseEntity<ResponseDto<String>> checkNickname(
-            @RequestBody CheckNicknameReqDto checkNicknameReqDto) {
+    public ResponseEntity<ResponseDto<String>> checkNickname(@RequestBody CheckNicknameReqDto checkNicknameReqDto) {
         if (memberService.isExistingNickname(checkNicknameReqDto.nickname())) {
             throw new RestApiException(FailResponseStatus.DUPLICATE_NICKNAME);
         } else {

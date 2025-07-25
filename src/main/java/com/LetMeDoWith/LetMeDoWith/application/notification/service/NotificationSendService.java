@@ -28,22 +28,16 @@ public class NotificationSendService {
     @Async
     @Transactional
     public void sendNotification(
-            String memberId,
-            String templateCode,
-            Map<String, String> titleParams,
-            Map<String, String> bodyParams) {
+            String memberId, String templateCode, Map<String, String> titleParams, Map<String, String> bodyParams) {
 
-        NotificationToken notificationToken =
-                notificationTokenRepository
-                        .getNotificationToken(memberId)
-                        .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
-        if (!notificationToken.isExpired())
-            throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
+        NotificationToken notificationToken = notificationTokenRepository
+                .getNotificationToken(memberId)
+                .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
+        if (!notificationToken.isExpired()) throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
 
-        NotificationTemplate notificationTemplate =
-                notificationTemplateRepository
-                        .getNotificationTemplate(templateCode)
-                        .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
+        NotificationTemplate notificationTemplate = notificationTemplateRepository
+                .getNotificationTemplate(templateCode)
+                .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
         String title = notificationTemplate.parseTitle(titleParams);
         String body = notificationTemplate.parseBody(bodyParams);
 
@@ -52,31 +46,23 @@ public class NotificationSendService {
                 title,
                 body,
                 notificationTemplate.getAppDeepLink(),
-                () ->
-                        this.saveNotification(
-                                memberId, title, body, notificationTemplate.getAppDeepLink(), templateCode),
+                () -> this.saveNotification(memberId, title, body, notificationTemplate.getAppDeepLink(), templateCode),
                 () -> this.expireToken(memberId));
     }
 
     @Transactional
     protected void saveNotification(
-            String memberId,
-            String title,
-            String body,
-            String deeplink,
-            String notificationTemplateCode) {
+            String memberId, String title, String body, String deeplink, String notificationTemplateCode) {
 
-        this.notificationRepository.save(
-                Notification.of(memberId, title, body, deeplink, notificationTemplateCode));
+        this.notificationRepository.save(Notification.of(memberId, title, body, deeplink, notificationTemplateCode));
     }
 
     @Transactional
     protected void expireToken(String memberId) {
 
-        NotificationToken notificationToken =
-                notificationTokenRepository
-                        .getNotificationToken(memberId)
-                        .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
+        NotificationToken notificationToken = notificationTokenRepository
+                .getNotificationToken(memberId)
+                .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
         notificationToken.expireToken();
         notificationTokenRepository.save(notificationToken);
     }

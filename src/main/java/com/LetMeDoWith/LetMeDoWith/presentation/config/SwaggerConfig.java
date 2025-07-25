@@ -35,13 +35,12 @@ public class SwaggerConfig {
 
     @Bean
     public OpenAPI openAPI() {
-        SecurityScheme securityScheme =
-                new SecurityScheme()
-                        .type(Type.HTTP)
-                        .scheme("bearer")
-                        .bearerFormat("JWT")
-                        .in(In.HEADER)
-                        .name("Authorization");
+        SecurityScheme securityScheme = new SecurityScheme()
+                .type(Type.HTTP)
+                .scheme("bearer")
+                .bearerFormat("JWT")
+                .in(In.HEADER)
+                .name("Authorization");
 
         SecurityRequirement securityRequirement = new SecurityRequirement().addList("bearerAuth");
 
@@ -66,42 +65,36 @@ public class SwaggerConfig {
                 ApiResponses responses = operation.getResponses();
 
                 // HTTP Status 별 Fail Status 그룹화
-                Map<HttpStatus, List<ApiErrorResponse>> failStatusesByHttpStatus =
-                        Arrays.stream(errorResponses.value())
-                                .collect(
-                                        Collectors.groupingBy(
-                                                errorResponse -> errorResponse.status().getHttpStatusCode()));
+                Map<HttpStatus, List<ApiErrorResponse>> failStatusesByHttpStatus = Arrays.stream(errorResponses.value())
+                        .collect(Collectors.groupingBy(
+                                errorResponse -> errorResponse.status().getHttpStatusCode()));
 
                 // HTTP Status 별 응답 예시 생성
-                failStatusesByHttpStatus.forEach(
-                        (httpStatus, errorResponseList) -> {
-                            Content content = new Content();
-                            MediaType mediaType = new MediaType();
-                            ApiResponse apiResponse = new ApiResponse();
+                failStatusesByHttpStatus.forEach((httpStatus, errorResponseList) -> {
+                    Content content = new Content();
+                    MediaType mediaType = new MediaType();
+                    ApiResponse apiResponse = new ApiResponse();
 
-                            errorResponseList.forEach(
-                                    errorResponse -> {
-                                        String description =
-                                                errorResponse.description().isEmpty()
-                                                        ? errorResponse.status().getMessage()
-                                                        : errorResponse.description();
+                    errorResponseList.forEach(errorResponse -> {
+                        String description = errorResponse.description().isEmpty()
+                                ? errorResponse.status().getMessage()
+                                : errorResponse.description();
 
-                                        if (errorResponse.status().equals(FailResponseStatus.INVALID_PARAM_ERROR)) {
-                                            mediaType.addExamples(
-                                                    errorResponse.status().getStatusCode(),
-                                                    getInvalidParamResponseExample(description));
-                                        } else {
-                                            mediaType.addExamples(
-                                                    errorResponse.status().getStatusCode(),
-                                                    getFailResponseExample(errorResponse.status(), description));
-                                        }
-                                    });
+                        if (errorResponse.status().equals(FailResponseStatus.INVALID_PARAM_ERROR)) {
+                            mediaType.addExamples(
+                                    errorResponse.status().getStatusCode(),
+                                    getInvalidParamResponseExample(description));
+                        } else {
+                            mediaType.addExamples(
+                                    errorResponse.status().getStatusCode(),
+                                    getFailResponseExample(errorResponse.status(), description));
+                        }
+                    });
 
-                            content.addMediaType(
-                                    org.springframework.http.MediaType.APPLICATION_JSON_VALUE, mediaType);
-                            apiResponse.setContent(content);
-                            responses.addApiResponse(String.valueOf(httpStatus.value()), apiResponse);
-                        });
+                    content.addMediaType(org.springframework.http.MediaType.APPLICATION_JSON_VALUE, mediaType);
+                    apiResponse.setContent(content);
+                    responses.addApiResponse(String.valueOf(httpStatus.value()), apiResponse);
+                });
             }
             return operation;
         };
@@ -114,11 +107,10 @@ public class SwaggerConfig {
      * @return Example 객체
      */
     private Example getFailResponseExample(FailResponseStatus status, String description) {
-        FailResponseDto response =
-                FailResponseDto.builder()
-                        .statusCode(status.getStatusCode())
-                        .message(status.getMessage())
-                        .build();
+        FailResponseDto response = FailResponseDto.builder()
+                .statusCode(status.getStatusCode())
+                .message(status.getMessage())
+                .build();
 
         return new Example()
                 .value(response)
@@ -127,20 +119,18 @@ public class SwaggerConfig {
     }
 
     private Example getInvalidParamResponseExample(String description) {
-        InvalidParamResponseDto response =
-                InvalidParamResponseDto.builder()
-                        .statusCode(FailResponseStatus.INVALID_PARAM_ERROR.getStatusCode())
-                        .message(FailResponseStatus.INVALID_PARAM_ERROR.getMessage())
-                        .invalidParams(Map.of("파라미터명", "invalid 사유"))
-                        .build();
+        InvalidParamResponseDto response = InvalidParamResponseDto.builder()
+                .statusCode(FailResponseStatus.INVALID_PARAM_ERROR.getStatusCode())
+                .message(FailResponseStatus.INVALID_PARAM_ERROR.getMessage())
+                .invalidParams(Map.of("파라미터명", "invalid 사유"))
+                .build();
 
         return new Example()
                 .value(response)
-                .summary(
-                        FailResponseStatus.INVALID_PARAM_ERROR.getStatusCode()
-                                + " ("
-                                + FailResponseStatus.INVALID_PARAM_ERROR.getStatusName()
-                                + ")")
+                .summary(FailResponseStatus.INVALID_PARAM_ERROR.getStatusCode()
+                        + " ("
+                        + FailResponseStatus.INVALID_PARAM_ERROR.getStatusName()
+                        + ")")
                 .description(description);
     }
 }

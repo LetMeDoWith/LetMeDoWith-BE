@@ -17,8 +17,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry
-                .addInterceptor(authenticateInterceptor)
+        registry.addInterceptor(authenticateInterceptor)
                 .addPathPatterns("/api/v1/**")
                 .excludePathPatterns(
                         "/health-check",

@@ -13,39 +13,33 @@ import lombok.Builder;
 public record RetrieveTasksResDto(List<TodoTaskDto> todoTasks, List<DowithTaskDto> dowithTasks) {
 
     public static RetrieveTasksResDto from(RetrieveTasksResult result) {
-        List<TodoTaskDto> todoTasks =
-                result.todoTasks().stream()
-                        .map(
-                                todoTaskQueryDto ->
-                                        new TodoTaskDto(
-                                                todoTaskQueryDto.id(),
-                                                todoTaskQueryDto.taskCategoryId(),
-                                                todoTaskQueryDto.taskCategoryName(),
-                                                todoTaskQueryDto.title(),
-                                                todoTaskQueryDto.status(),
-                                                todoTaskQueryDto.date(),
-                                                todoTaskQueryDto.startTime(),
-                                                todoTaskQueryDto.isRoutine()))
-                        .toList();
+        List<TodoTaskDto> todoTasks = result.todoTasks().stream()
+                .map(todoTaskQueryDto -> new TodoTaskDto(
+                        todoTaskQueryDto.id(),
+                        todoTaskQueryDto.taskCategoryId(),
+                        todoTaskQueryDto.taskCategoryName(),
+                        todoTaskQueryDto.title(),
+                        todoTaskQueryDto.status(),
+                        todoTaskQueryDto.date(),
+                        todoTaskQueryDto.startTime(),
+                        todoTaskQueryDto.isRoutine()))
+                .toList();
 
-        List<DowithTaskDto> dowithTasks =
-                result.dowithTasks().stream()
-                        .map(
-                                dowithTaskQueryDto ->
-                                        new DowithTaskDto(
-                                                dowithTaskQueryDto.id(),
-                                                dowithTaskQueryDto.taskCategoryId(),
-                                                dowithTaskQueryDto.taskCategoryName(),
-                                                dowithTaskQueryDto.title(),
-                                                dowithTaskQueryDto.status(),
-                                                dowithTaskQueryDto.date(),
-                                                dowithTaskQueryDto.startTime(),
-                                                dowithTaskQueryDto.confirmedImageUrls().isEmpty()
-                                                        ? null
-                                                        : dowithTaskQueryDto.confirmedImageUrls(),
-                                                dowithTaskQueryDto.isRoutine(),
-                                                dowithTaskQueryDto.feedBackCount()))
-                        .toList();
+        List<DowithTaskDto> dowithTasks = result.dowithTasks().stream()
+                .map(dowithTaskQueryDto -> new DowithTaskDto(
+                        dowithTaskQueryDto.id(),
+                        dowithTaskQueryDto.taskCategoryId(),
+                        dowithTaskQueryDto.taskCategoryName(),
+                        dowithTaskQueryDto.title(),
+                        dowithTaskQueryDto.status(),
+                        dowithTaskQueryDto.date(),
+                        dowithTaskQueryDto.startTime(),
+                        dowithTaskQueryDto.confirmedImageUrls().isEmpty()
+                                ? null
+                                : dowithTaskQueryDto.confirmedImageUrls(),
+                        dowithTaskQueryDto.isRoutine(),
+                        dowithTaskQueryDto.feedBackCount()))
+                .toList();
 
         return new RetrieveTasksResDto(todoTasks, dowithTasks);
     }

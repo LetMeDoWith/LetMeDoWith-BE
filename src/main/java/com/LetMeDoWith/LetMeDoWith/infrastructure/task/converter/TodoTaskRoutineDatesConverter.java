@@ -10,19 +10,15 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Converter(autoApply = true)
-public class TodoTaskRoutineDatesConverter
-        implements AttributeConverter<TodoTaskRoutineDates, String> {
+public class TodoTaskRoutineDatesConverter implements AttributeConverter<TodoTaskRoutineDates, String> {
 
     @Override
     public String convertToDatabaseColumn(TodoTaskRoutineDates todoTaskRoutineDates) {
         StringBuilder sb = new StringBuilder();
-        todoTaskRoutineDates
-                .getDates()
-                .forEach(
-                        date -> {
-                            sb.append(date.toString());
-                            sb.append("/");
-                        });
+        todoTaskRoutineDates.getDates().forEach(date -> {
+            sb.append(date.toString());
+            sb.append("/");
+        });
         sb.deleteCharAt(sb.length() - 1);
 
         return sb.toString();
@@ -31,10 +27,9 @@ public class TodoTaskRoutineDatesConverter
     @Override
     public TodoTaskRoutineDates convertToEntityAttribute(String s) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        Set<LocalDate> dates =
-                Arrays.stream(s.split("/"))
-                        .map(date -> LocalDate.parse(date, formatter))
-                        .collect(Collectors.toSet());
+        Set<LocalDate> dates = Arrays.stream(s.split("/"))
+                .map(date -> LocalDate.parse(date, formatter))
+                .collect(Collectors.toSet());
 
         return TodoTaskRoutineDates.from(dates);
     }

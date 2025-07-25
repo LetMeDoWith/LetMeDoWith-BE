@@ -19,6 +19,5 @@ public interface TaskCategoryJpaRepository extends JpaRepository<TaskCategory, L
     List<TaskCategory> findAllByCategoryHolderIdAndCreationTypeAndIsActive(
             String holderId, TaskCategoryCreationType taskCategoryCreationType, Yn isActive);
 
-    List<TaskCategory> findAllByCreationTypeAndIsActive(
-            TaskCategoryCreationType creationType, Yn isActive);
+    List<TaskCategory> findAllByCreationTypeAndIsActive(TaskCategoryCreationType creationType, Yn isActive);
 }

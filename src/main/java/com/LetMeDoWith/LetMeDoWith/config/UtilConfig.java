@@ -14,6 +14,6 @@ public class UtilConfig {
     //
     // @Bean
     // public AuthTokenProvider authTokenProvider() {
-    // 	return new AuthTokenProvider(secret, );
+    // return new AuthTokenProvider(secret, );
     // }
 }

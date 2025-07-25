@@ -9,8 +9,7 @@ import lombok.Builder;
 @Builder
 public record RegisterTodoTaskResult(List<TodoTask> todoTaskList, Set<LocalDate> routineDates) {
 
-    public static RegisterTodoTaskResult of(
-            List<TodoTask> todoTaskList, Set<LocalDate> routineDates) {
+    public static RegisterTodoTaskResult of(List<TodoTask> todoTaskList, Set<LocalDate> routineDates) {
         return RegisterTodoTaskResult.builder()
                 .todoTaskList(todoTaskList)
                 .routineDates(routineDates)

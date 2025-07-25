@@ -22,20 +22,18 @@ public class TodoTaskQueryRepositoryImpl implements TodoTaskQueryRepository {
     private final QTaskCategory taskCategory = QTaskCategory.taskCategory;
 
     @Override
-    public List<TodoTaskQueryDto> getTodoTasks(
-            String memberId, LocalDate startDate, LocalDate endDate) {
+    public List<TodoTaskQueryDto> getTodoTasks(String memberId, LocalDate startDate, LocalDate endDate) {
         return queryFactory
-                .select(
-                        Projections.constructor(
-                                TodoTaskQueryDto.class,
-                                todoTask.id,
-                                todoTask.taskCategoryId,
-                                taskCategory.title,
-                                todoTask.title,
-                                todoTask.status,
-                                todoTask.date,
-                                todoTask.startTime,
-                                todoTaskRoutine))
+                .select(Projections.constructor(
+                        TodoTaskQueryDto.class,
+                        todoTask.id,
+                        todoTask.taskCategoryId,
+                        taskCategory.title,
+                        todoTask.title,
+                        todoTask.status,
+                        todoTask.date,
+                        todoTask.startTime,
+                        todoTaskRoutine))
                 .from(todoTask)
                 .leftJoin(taskCategory)
                 .on(todoTask.taskCategoryId.eq(taskCategory.id))

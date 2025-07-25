@@ -28,10 +28,9 @@ public class MemberSettingService {
      */
     @Transactional
     public void updateAlarmSetting(UpdateMemberAlarmSettingCommand command) {
-        Member member =
-                memberRepository
-                        .getMember(AuthUtil.getMemberId(), MemberStatus.NORMAL)
-                        .orElseThrow(() -> new RestApiException(FailResponseStatus.MEMBER_NOT_EXIST));
+        Member member = memberRepository
+                .getMember(AuthUtil.getMemberId(), MemberStatus.NORMAL)
+                .orElseThrow(() -> new RestApiException(FailResponseStatus.MEMBER_NOT_EXIST));
 
         MemberAlarmSetting alarmSetting = member.getAlarmSetting();
 

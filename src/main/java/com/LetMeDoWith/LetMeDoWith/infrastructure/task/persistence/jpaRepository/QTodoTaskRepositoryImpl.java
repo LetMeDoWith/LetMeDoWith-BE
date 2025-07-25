@@ -22,24 +22,22 @@ public class QTodoTaskRepositoryImpl implements QTodoTaskRepository {
 
     @Override
     public Optional<TodoTask> findTodoTaskAggregate(Long id) {
-        return Optional.ofNullable(
-                jpaQueryFactory
-                        .selectFrom(qTodoTask)
-                        .leftJoin(qTodoTask.routine)
-                        .where(qTodoTask.id.eq(id))
-                        .fetchJoin()
-                        .fetchOne());
+        return Optional.ofNullable(jpaQueryFactory
+                .selectFrom(qTodoTask)
+                .leftJoin(qTodoTask.routine)
+                .where(qTodoTask.id.eq(id))
+                .fetchJoin()
+                .fetchOne());
     }
 
     @Override
     public Optional<TodoTask> findTodoTaskAggregate(Long id, String memberId) {
-        return Optional.ofNullable(
-                jpaQueryFactory
-                        .selectFrom(qTodoTask)
-                        .leftJoin(qTodoTask.routine)
-                        .where(qTodoTask.id.eq(id).and(qTodoTask.memberId.eq(memberId)))
-                        .fetchJoin()
-                        .fetchOne());
+        return Optional.ofNullable(jpaQueryFactory
+                .selectFrom(qTodoTask)
+                .leftJoin(qTodoTask.routine)
+                .where(qTodoTask.id.eq(id).and(qTodoTask.memberId.eq(memberId)))
+                .fetchJoin()
+                .fetchOne());
     }
 
     @Override

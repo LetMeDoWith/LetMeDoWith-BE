@@ -29,14 +29,13 @@ public class RefreshTokenTempRepositoryImpl implements RefreshTokenRepository {
             repository.delete(tempRefreshToken);
             return Optional.empty();
         }
-        return Optional.of(
-                RefreshToken.builder()
-                        .token(tempRefreshToken.getToken())
-                        .accessToken(tempRefreshToken.getAccessToken())
-                        .memberId(tempRefreshToken.getMemberId())
-                        .userAgent(tempRefreshToken.getUserAgent())
-                        .expireSec(Duration.between(now, tempRefreshToken.getExpireAt()).getSeconds())
-                        .build());
+        return Optional.of(RefreshToken.builder()
+                .token(tempRefreshToken.getToken())
+                .accessToken(tempRefreshToken.getAccessToken())
+                .memberId(tempRefreshToken.getMemberId())
+                .userAgent(tempRefreshToken.getUserAgent())
+                .expireSec(Duration.between(now, tempRefreshToken.getExpireAt()).getSeconds())
+                .build());
     }
 
     @Override

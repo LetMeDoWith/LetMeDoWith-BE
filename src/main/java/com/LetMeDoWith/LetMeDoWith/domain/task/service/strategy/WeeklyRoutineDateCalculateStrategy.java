@@ -19,8 +19,7 @@ public class WeeklyRoutineDateCalculateStrategy implements TodoTaskRoutineDateCa
      * @return 루틴을 수행하는 일자 목록
      */
     @Override
-    public Set<LocalDate> getRoutineDates(
-            LocalDate startDate, LocalDate endDate, Set<Integer> repetitionPattern) {
+    public Set<LocalDate> getRoutineDates(LocalDate startDate, LocalDate endDate, Set<Integer> repetitionPattern) {
         Set<Integer> validDays = new TreeSet<>(repetitionPattern);
 
         return startDate

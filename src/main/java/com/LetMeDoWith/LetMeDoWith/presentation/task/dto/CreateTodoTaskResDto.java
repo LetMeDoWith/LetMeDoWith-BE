@@ -11,8 +11,7 @@ import lombok.Getter;
 @Builder
 public record CreateTodoTaskResDto(List<TodoTaskVO> todoTaskList, Set<LocalDate> routineDates) {
 
-    public static CreateTodoTaskResDto of(
-            List<TodoTaskVO> todoTaskList, Set<LocalDate> routineDates) {
+    public static CreateTodoTaskResDto of(List<TodoTaskVO> todoTaskList, Set<LocalDate> routineDates) {
         return CreateTodoTaskResDto.builder()
                 .todoTaskList(todoTaskList)
                 .routineDates(routineDates)

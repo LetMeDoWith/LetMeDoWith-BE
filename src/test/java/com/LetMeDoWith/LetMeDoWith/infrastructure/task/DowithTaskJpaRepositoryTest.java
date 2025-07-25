@@ -47,8 +47,12 @@ public class DowithTaskJpaRepositoryTest {
     private static final LocalDate routineDate2_1 = date2.plusDays(2);
     private static final LocalDate routineDate2_2 = date2.plusDays(4);
     private final LocalDateTime completeDateTime = null;
-    @Autowired private TestEntityManager entityManager;
-    @Autowired private DowithTaskJpaRepository dowithTaskJpaRepository;
+
+    @Autowired
+    private TestEntityManager entityManager;
+
+    @Autowired
+    private DowithTaskJpaRepository dowithTaskJpaRepository;
 
     @BeforeEach
     void beforeEach() {
@@ -75,40 +79,31 @@ public class DowithTaskJpaRepositoryTest {
     @DisplayName("DowithTask Aggregate save 테스트 (루틴 있는 경우)")
     void test_dowithTask_routine_save() {
         // given
-        List<DowithTask> dowithTasks1 =
-                DowithTask.ofWithRoutine(
-                        memberId,
-                        taskCategoryId1,
-                        title1,
-                        date1,
-                        startTime1,
-                        Set.of(routineDate1_1, routineDate1_2, routineDate1_3));
-        List<DowithTask> dowithTasks2 =
-                DowithTask.ofWithRoutine(
-                        memberId,
-                        taskCategoryId2,
-                        title2,
-                        date2,
-                        startTime2,
-                        Set.of(routineDate2_1, routineDate2_2));
+        List<DowithTask> dowithTasks1 = DowithTask.ofWithRoutine(
+                memberId,
+                taskCategoryId1,
+                title1,
+                date1,
+                startTime1,
+                Set.of(routineDate1_1, routineDate1_2, routineDate1_3));
+        List<DowithTask> dowithTasks2 = DowithTask.ofWithRoutine(
+                memberId, taskCategoryId2, title2, date2, startTime2, Set.of(routineDate2_1, routineDate2_2));
 
         // when
         List<DowithTask> savedDowithTask1 = dowithTaskJpaRepository.saveAll(dowithTasks1);
         List<DowithTask> savedDowithTask2 = dowithTaskJpaRepository.saveAll(dowithTasks2);
 
         // then
-        savedDowithTask1.forEach(
-                task -> {
-                    assertThat(task.getId()).isNotNull();
-                    assertThat(task.getRoutine().getId()).isNotNull();
-                    assertThat(task.getRoutine().getRoutineDates()).isNotNull();
-                });
-        savedDowithTask2.forEach(
-                task -> {
-                    assertThat(task.getId()).isNotNull();
-                    assertThat(task.getRoutine().getId()).isNotNull();
-                    assertThat(task.getRoutine().getRoutineDates()).isNotNull();
-                });
+        savedDowithTask1.forEach(task -> {
+            assertThat(task.getId()).isNotNull();
+            assertThat(task.getRoutine().getId()).isNotNull();
+            assertThat(task.getRoutine().getRoutineDates()).isNotNull();
+        });
+        savedDowithTask2.forEach(task -> {
+            assertThat(task.getId()).isNotNull();
+            assertThat(task.getRoutine().getId()).isNotNull();
+            assertThat(task.getRoutine().getRoutineDates()).isNotNull();
+        });
     }
 
     @Test
@@ -121,10 +116,9 @@ public class DowithTaskJpaRepositoryTest {
         DowithTask savedTask = dowithTaskJpaRepository.save(dowithTask);
         Long id = savedTask.getId();
         entityManager.flush();
-        DowithTask target =
-                dowithTaskJpaRepository
-                        .findDowithTaskAggregate(id, memberId)
-                        .orElseThrow(() -> new NoResultException());
+        DowithTask target = dowithTaskJpaRepository
+                .findDowithTaskAggregate(id, memberId)
+                .orElseThrow(() -> new NoResultException());
 
         // then
         assertThat(target.getId()).isEqualTo(savedTask.getId());
@@ -144,39 +138,31 @@ public class DowithTaskJpaRepositoryTest {
     @DisplayName("DowithTask Aggregate 조회 (루틴 있는 경우)")
     void test_findDowithTaskAggregate2() {
         // given
-        List<DowithTask> dowithTasksWithRoutines =
-                DowithTask.ofWithRoutine(
-                        memberId,
-                        taskCategoryId2,
-                        title2,
-                        date2,
-                        startTime2,
-                        Set.of(routineDate2_1, routineDate2_2));
+        List<DowithTask> dowithTasksWithRoutines = DowithTask.ofWithRoutine(
+                memberId, taskCategoryId2, title2, date2, startTime2, Set.of(routineDate2_1, routineDate2_2));
 
         List<DowithTask> dowithTasks = dowithTaskJpaRepository.saveAll(dowithTasksWithRoutines);
         Set<LocalDate> targetDates = Set.of(date2, routineDate2_1, routineDate2_2);
         entityManager.flush();
-        dowithTasks.forEach(
-                task -> {
-                    // when
-                    DowithTask target =
-                            dowithTaskJpaRepository
-                                    .findDowithTaskAggregate(task.getId())
-                                    .orElseThrow(() -> new NoResultException());
+        dowithTasks.forEach(task -> {
+            // when
+            DowithTask target = dowithTaskJpaRepository
+                    .findDowithTaskAggregate(task.getId())
+                    .orElseThrow(() -> new NoResultException());
 
-                    // then
-                    assertThat(target.getMemberId()).isEqualTo(memberId);
-                    assertThat(target.getTaskCategoryId()).isEqualTo(taskCategoryId2);
-                    assertThat(target.getTitle()).isEqualTo(title2);
-                    assertThat(target.getStatus()).isEqualTo(DowithTaskStatus.WAIT);
-                    assertThat(target.getDate()).isIn(targetDates);
-                    assertThat(target.getStartTime()).isEqualTo(startTime2);
-                    assertThat(target.getSuccessDateTime()).isNull();
-                    assertThat(target.getCompleteDateTime()).isNull();
-                    assertThat(target.getConfirms()).isNull();
-                    assertThat(target.getRoutine()).isNotNull();
-                    assertThat(target.getRoutine().getRoutineDates().getDates()).isEqualTo(targetDates);
-                });
+            // then
+            assertThat(target.getMemberId()).isEqualTo(memberId);
+            assertThat(target.getTaskCategoryId()).isEqualTo(taskCategoryId2);
+            assertThat(target.getTitle()).isEqualTo(title2);
+            assertThat(target.getStatus()).isEqualTo(DowithTaskStatus.WAIT);
+            assertThat(target.getDate()).isIn(targetDates);
+            assertThat(target.getStartTime()).isEqualTo(startTime2);
+            assertThat(target.getSuccessDateTime()).isNull();
+            assertThat(target.getCompleteDateTime()).isNull();
+            assertThat(target.getConfirms()).isNull();
+            assertThat(target.getRoutine()).isNotNull();
+            assertThat(target.getRoutine().getRoutineDates().getDates()).isEqualTo(targetDates);
+        });
     }
 
     @Test
@@ -184,21 +170,14 @@ public class DowithTaskJpaRepositoryTest {
     void test_findDowithTaskAggregates() {
         // given
         DowithTask dowithTask = DowithTask.of(memberId, taskCategoryId1, title1, date2, startTime2);
-        List<DowithTask> dowithTasksWithRoutines =
-                DowithTask.ofWithRoutine(
-                        memberId,
-                        taskCategoryId2,
-                        title2,
-                        date2,
-                        startTime2,
-                        Set.of(routineDate2_1, routineDate2_2));
+        List<DowithTask> dowithTasksWithRoutines = DowithTask.ofWithRoutine(
+                memberId, taskCategoryId2, title2, date2, startTime2, Set.of(routineDate2_1, routineDate2_2));
 
         // when
         dowithTaskJpaRepository.save(dowithTask);
         dowithTaskJpaRepository.saveAll(dowithTasksWithRoutines);
         entityManager.flush();
-        List<DowithTask> dowithTaskAggregates =
-                dowithTaskJpaRepository.findAllDowithTaskAggregates(memberId, date2);
+        List<DowithTask> dowithTaskAggregates = dowithTaskJpaRepository.findAllDowithTaskAggregates(memberId, date2);
 
         // then
         assertThat(dowithTaskAggregates.size()).isEqualTo(2);
@@ -209,22 +188,15 @@ public class DowithTaskJpaRepositoryTest {
     void test_findDowithTaskAggregates2() {
         // given
         DowithTask dowithTask = DowithTask.of(memberId, taskCategoryId1, title1, date2, startTime2);
-        List<DowithTask> dowithTasksWithRoutines =
-                DowithTask.ofWithRoutine(
-                        memberId,
-                        taskCategoryId2,
-                        title2,
-                        date2,
-                        startTime2,
-                        Set.of(routineDate2_1, routineDate2_2));
+        List<DowithTask> dowithTasksWithRoutines = DowithTask.ofWithRoutine(
+                memberId, taskCategoryId2, title2, date2, startTime2, Set.of(routineDate2_1, routineDate2_2));
 
         // when
         dowithTaskJpaRepository.save(dowithTask);
         dowithTaskJpaRepository.saveAll(dowithTasksWithRoutines);
         entityManager.flush();
         List<DowithTask> dowithTaskAggregates =
-                dowithTaskJpaRepository.findAllDowithTaskAggregates(
-                        memberId, Set.of(date2, routineDate2_1));
+                dowithTaskJpaRepository.findAllDowithTaskAggregates(memberId, Set.of(date2, routineDate2_1));
 
         // then
         assertThat(dowithTaskAggregates.size()).isEqualTo(3);

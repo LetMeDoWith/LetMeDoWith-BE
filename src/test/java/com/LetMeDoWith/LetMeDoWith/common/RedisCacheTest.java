@@ -11,7 +11,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 public class RedisCacheTest {
 
-    @Autowired private TestRepository testRepository;
+    @Autowired
+    private TestRepository testRepository;
 
     @Test
     void objectTypeCacheSuccessTest() throws InterruptedException {

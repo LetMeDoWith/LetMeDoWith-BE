@@ -12,32 +12,29 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class RetrieveTaskFeedbackService {
 
-        private final DowithTaskFeedbackQueryRepository dowithTaskFeedbackQueryRepository;
-        private final TaskFeedbackTemplateQueryRepository taskFeedbackTemplateQueryRepository;
+    private final DowithTaskFeedbackQueryRepository dowithTaskFeedbackQueryRepository;
+    private final TaskFeedbackTemplateQueryRepository taskFeedbackTemplateQueryRepository;
 
-        public RetrieveTaskFeedbackResult retrieveTaskFeedbacksByTaskId(Long taskId,
-                        CountryCode language) {
-                return RetrieveTaskFeedbackResult.of(
-                                dowithTaskFeedbackQueryRepository.findAllByTaskId(taskId),
-                                taskFeedbackTemplateQueryRepository.getAllTaskFeedbackTemplates(language));
-        }
+    public RetrieveTaskFeedbackResult retrieveTaskFeedbacksByTaskId(Long taskId, CountryCode language) {
+        return RetrieveTaskFeedbackResult.of(
+                dowithTaskFeedbackQueryRepository.findAllByTaskId(taskId),
+                taskFeedbackTemplateQueryRepository.getAllTaskFeedbackTemplates(language));
+    }
 
-        public RetrieveTaskFeedbackResult retrieveTaskFeedbacksBySenderId(
-                        String senderId, CountryCode language) {
-                return RetrieveTaskFeedbackResult.of(
-                                dowithTaskFeedbackQueryRepository.findAllBySenderId(senderId),
-                                taskFeedbackTemplateQueryRepository.getAllTaskFeedbackTemplates(language));
-        }
+    public RetrieveTaskFeedbackResult retrieveTaskFeedbacksBySenderId(String senderId, CountryCode language) {
+        return RetrieveTaskFeedbackResult.of(
+                dowithTaskFeedbackQueryRepository.findAllBySenderId(senderId),
+                taskFeedbackTemplateQueryRepository.getAllTaskFeedbackTemplates(language));
+    }
 
-        public RetrieveTaskFeedbackResult retrieveTaskFeedbacksByReceiverId(
-                        String receiverId, CountryCode language) {
-                return RetrieveTaskFeedbackResult.of(
-                                dowithTaskFeedbackQueryRepository.findAllByReceiverId(receiverId),
-                                taskFeedbackTemplateQueryRepository.getAllTaskFeedbackTemplates(language));
-        }
+    public RetrieveTaskFeedbackResult retrieveTaskFeedbacksByReceiverId(String receiverId, CountryCode language) {
+        return RetrieveTaskFeedbackResult.of(
+                dowithTaskFeedbackQueryRepository.findAllByReceiverId(receiverId),
+                taskFeedbackTemplateQueryRepository.getAllTaskFeedbackTemplates(language));
+    }
 
-        public RetrieveTaskFeedbackTemplatesResult retrieveTaskFeedbackTemplates(CountryCode countryCode) {
-                return RetrieveTaskFeedbackTemplatesResult
-                                .of(taskFeedbackTemplateQueryRepository.getAllTaskFeedbackTemplates(countryCode));
-        }
+    public RetrieveTaskFeedbackTemplatesResult retrieveTaskFeedbackTemplates(CountryCode countryCode) {
+        return RetrieveTaskFeedbackTemplatesResult.of(
+                taskFeedbackTemplateQueryRepository.getAllTaskFeedbackTemplates(countryCode));
+    }
 }

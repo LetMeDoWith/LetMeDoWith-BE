@@ -7,6 +7,5 @@ import lombok.Builder;
 public record RetrieveFollowsResDto(List<Follow> follows) {
 
     @Builder
-    public record Follow(
-            String id, String nickname, String selfDescription, String profileImageUrl) {}
+    public record Follow(String id, String nickname, String selfDescription, String profileImageUrl) {}
 }

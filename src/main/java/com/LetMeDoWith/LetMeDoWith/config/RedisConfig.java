@@ -21,24 +21,22 @@ public class RedisConfig {
     @Bean
     public LettuceConnectionFactory redisConnectionFactory() {
 
-        LettuceClientConfiguration clientConfig =
-                LettuceClientConfiguration.builder()
-                        .commandTimeout(Duration.ofSeconds(2))
-                        .shutdownTimeout(Duration.ZERO)
-                        .build();
+        LettuceClientConfiguration clientConfig = LettuceClientConfiguration.builder()
+                .commandTimeout(Duration.ofSeconds(2))
+                .shutdownTimeout(Duration.ZERO)
+                .build();
         // Single Redis Server
         return new LettuceConnectionFactory(
-                new RedisStandaloneConfiguration(redisProperties.getHost(), redisProperties.getPort()),
-                clientConfig);
+                new RedisStandaloneConfiguration(redisProperties.getHost(), redisProperties.getPort()), clientConfig);
     }
 
     // @Bean
     // public RedisTemplate<String, Object> redisJsonTemplate() {
-    // 	RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
-    // 	redisTemplate.setConnectionFactory(redisConnectionFactory());
-    // 	redisTemplate.setKeySerializer(new StringRedisSerializer());
-    // 	redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
-    // 	return redisTemplate;
+    // RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+    // redisTemplate.setConnectionFactory(redisConnectionFactory());
+    // redisTemplate.setKeySerializer(new StringRedisSerializer());
+    // redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+    // return redisTemplate;
     // }
 
     @Bean

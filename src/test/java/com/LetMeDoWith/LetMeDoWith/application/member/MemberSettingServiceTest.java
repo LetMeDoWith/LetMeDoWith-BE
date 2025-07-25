@@ -11,85 +11,88 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class MemberSettingServiceTest {
 
-    @Mock private MemberSettingRepository memberSettingRepository;
+    @Mock
+    private MemberSettingRepository memberSettingRepository;
 
-    @Mock private MemberRepository memberRepository;
+    @Mock
+    private MemberRepository memberRepository;
 
-    @InjectMocks private MemberSettingService memberSettingService;
+    @InjectMocks
+    private MemberSettingService memberSettingService;
 
-    //    @Test
-    //    @DisplayName("[SUCCESS] 알람 수신 여부 변경")
-    //    void changeAlarmReceiveStatusTest() {
+    // @Test
+    // @DisplayName("[SUCCESS] 알람 수신 여부 변경")
+    // void changeAlarmReceiveStatusTest() {
     //
-    //        // given
-    //        Member testMemberObj =
-    //                Member.builder()
-    //                        .id(1L)
-    //                        .subject("test")
-    //                        .nickname("nickname")
-    //                        .selfDescription("self desc")
-    //                        .status(MemberStatus.NORMAL)
-    //                        .type(MemberType.USER)
-    //                        .profileImageUrl("image.jpeg")
-    //                        .build();
+    // // given
+    // Member testMemberObj =
+    // Member.builder()
+    // .id(1L)
+    // .subject("test")
+    // .nickname("nickname")
+    // .selfDescription("self desc")
+    // .status(MemberStatus.NORMAL)
+    // .type(MemberType.USER)
+    // .profileImageUrl("image.jpeg")
+    // .build();
     //
-    //        MemberAlarmSetting alarmSetting = MemberAlarmSetting.init(testMemberObj);
+    // MemberAlarmSetting alarmSetting = MemberAlarmSetting.init(testMemberObj);
     //
-    //        MockedStatic<AuthUtil> mockedAuthUtil = mockStatic(AuthUtil.class);
-    //        mockedAuthUtil.when(AuthUtil::getMemberId).thenReturn(1L);
+    // MockedStatic<AuthUtil> mockedAuthUtil = mockStatic(AuthUtil.class);
+    // mockedAuthUtil.when(AuthUtil::getMemberId).thenReturn(1L);
     //
-    //        when(memberRepository.getMember(eq(1L), eq(MemberStatus.NORMAL)))
-    //                .thenReturn(Optional.of(testMemberObj));
+    // when(memberRepository.getMember(eq(1L), eq(MemberStatus.NORMAL)))
+    // .thenReturn(Optional.of(testMemberObj));
     //
-    //        UpdateMemberAlarmSettingCommand tobeCommand =
-    //                UpdateMemberAlarmSettingCommand.builder()
-    //                        .baseAlarmYn(false)
-    //                        .todoBotYn(false)
-    //                        .feedbackYn(false)
-    //                        .marketingYn(false)
-    //                        .build();
+    // UpdateMemberAlarmSettingCommand tobeCommand =
+    // UpdateMemberAlarmSettingCommand.builder()
+    // .baseAlarmYn(false)
+    // .todoBotYn(false)
+    // .feedbackYn(false)
+    // .marketingYn(false)
+    // .build();
     //
-    //        // when
-    //        memberSettingService.updateAlarmSetting(tobeCommand);
+    // // when
+    // memberSettingService.updateAlarmSetting(tobeCommand);
     //
-    //        // then
-    //        MemberAlarmSetting tobeAlarmSetting = testMemberObj.getAlarmSetting();
+    // // then
+    // MemberAlarmSetting tobeAlarmSetting = testMemberObj.getAlarmSetting();
     //
-    //        assertFalse(tobeAlarmSetting.isBaseAlarmYn());
-    //        assertFalse(tobeAlarmSetting.isTodoBotYn());
-    //        assertFalse(tobeAlarmSetting.isFeedbackYn());
-    //        assertFalse(tobeAlarmSetting.isMarketingYn());
+    // assertFalse(tobeAlarmSetting.isBaseAlarmYn());
+    // assertFalse(tobeAlarmSetting.isTodoBotYn());
+    // assertFalse(tobeAlarmSetting.isFeedbackYn());
+    // assertFalse(tobeAlarmSetting.isMarketingYn());
     //
-    //        verify(memberSettingRepository)
-    //                .save(alarmSetting.update(MemberAlarmSettingVO.fromCommand(tobeCommand)));
+    // verify(memberSettingRepository)
+    // .save(alarmSetting.update(MemberAlarmSettingVO.fromCommand(tobeCommand)));
     //
-    //        mockedAuthUtil.close();
-    //    }
+    // mockedAuthUtil.close();
+    // }
     //
-    //    @Test
-    //    @DisplayName("[FAIL] 존재하지 않는 유저로 시도")
-    //    void changeAlarmSettingStatusWithNotExistingMember() {
-    //        // given
-    //        MockedStatic<AuthUtil> mockedAuthUtil = mockStatic(AuthUtil.class);
-    //        mockedAuthUtil.when(AuthUtil::getMemberId).thenReturn(1L);
+    // @Test
+    // @DisplayName("[FAIL] 존재하지 않는 유저로 시도")
+    // void changeAlarmSettingStatusWithNotExistingMember() {
+    // // given
+    // MockedStatic<AuthUtil> mockedAuthUtil = mockStatic(AuthUtil.class);
+    // mockedAuthUtil.when(AuthUtil::getMemberId).thenReturn(1L);
     //
-    //        when(memberRepository.getMember(eq(1L),
+    // when(memberRepository.getMember(eq(1L),
     // eq(MemberStatus.NORMAL))).thenReturn(Optional.empty());
     //
-    //        UpdateMemberAlarmSettingCommand tobeCommand =
-    //                UpdateMemberAlarmSettingCommand.builder()
-    //                        .baseAlarmYn(false)
-    //                        .todoBotYn(false)
-    //                        .feedbackYn(false)
-    //                        .marketingYn(false)
-    //                        .build();
+    // UpdateMemberAlarmSettingCommand tobeCommand =
+    // UpdateMemberAlarmSettingCommand.builder()
+    // .baseAlarmYn(false)
+    // .todoBotYn(false)
+    // .feedbackYn(false)
+    // .marketingYn(false)
+    // .build();
     //
-    //        // then
-    //        Assertions.assertThrows(
-    //                RestApiException.class,
-    //                () -> memberSettingService.updateAlarmSetting(tobeCommand),
-    //                FailResponseStatus.MEMBER_NOT_EXIST.getMessage());
+    // // then
+    // Assertions.assertThrows(
+    // RestApiException.class,
+    // () -> memberSettingService.updateAlarmSetting(tobeCommand),
+    // FailResponseStatus.MEMBER_NOT_EXIST.getMessage());
     //
-    //        mockedAuthUtil.close();
-    //    }
+    // mockedAuthUtil.close();
+    // }
 }

@@ -22,13 +22,11 @@ public class AwsS3FileClient implements FileClient {
     public String getUploadPresignedUrl(String key, Duration expires) {
         PutObjectRequest putObjectRequest =
                 PutObjectRequest.builder().bucket(bucketName).key(key).build();
-        PutObjectPresignRequest putObjectPresignRequest =
-                PutObjectPresignRequest.builder()
-                        .signatureDuration(expires)
-                        .putObjectRequest(putObjectRequest)
-                        .build();
-        PresignedPutObjectRequest presignedRequest =
-                s3Presigner.presignPutObject(putObjectPresignRequest);
+        PutObjectPresignRequest putObjectPresignRequest = PutObjectPresignRequest.builder()
+                .signatureDuration(expires)
+                .putObjectRequest(putObjectRequest)
+                .build();
+        PresignedPutObjectRequest presignedRequest = s3Presigner.presignPutObject(putObjectPresignRequest);
         return presignedRequest.url().toString();
     }
 }

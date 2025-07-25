@@ -49,12 +49,14 @@ public class Member extends BaseAuditEntity {
 
     // OpenID Connect id token의 sub 필드와 동일
     // (sub, provider) 조합으로 uniqueness 판단함.
-    @Column private String subject;
+    @Column
+    private String subject;
 
     @Column(nullable = false)
     private MemberStatus status;
 
-    @Column private String nickname;
+    @Column
+    private String nickname;
 
     @Column(name = "self_description")
     private String selfDescription;
@@ -87,10 +89,7 @@ public class Member extends BaseAuditEntity {
 
     public static List<MemberStatus> getAllMemberStatus() {
         return List.of(
-                MemberStatus.NORMAL,
-                MemberStatus.SUSPENDED,
-                MemberStatus.WITHDRAWN,
-                MemberStatus.SOCIAL_AUTHENTICATED);
+                MemberStatus.NORMAL, MemberStatus.SUSPENDED, MemberStatus.WITHDRAWN, MemberStatus.SOCIAL_AUTHENTICATED);
     }
 
     public static List<MemberStatus> getActiveMemberStatus() {
@@ -98,8 +97,7 @@ public class Member extends BaseAuditEntity {
     }
 
     public static List<MemberStatus> getInactiveMemberStatus() {
-        return List.of(
-                MemberStatus.SUSPENDED, MemberStatus.WITHDRAWN, MemberStatus.SOCIAL_AUTHENTICATED);
+        return List.of(MemberStatus.SUSPENDED, MemberStatus.WITHDRAWN, MemberStatus.SOCIAL_AUTHENTICATED);
     }
 
     public boolean isNormal() {
@@ -122,11 +120,13 @@ public class Member extends BaseAuditEntity {
                 this.nickname = personalInfo.nickname();
             }
 
-            if (personalInfo.profileImageUrl() != null && !personalInfo.profileImageUrl().isEmpty()) {
+            if (personalInfo.profileImageUrl() != null
+                    && !personalInfo.profileImageUrl().isEmpty()) {
                 this.profileImageUrl = personalInfo.profileImageUrl();
             }
 
-            if (personalInfo.selfDescription() != null && !personalInfo.selfDescription().isEmpty()) {
+            if (personalInfo.selfDescription() != null
+                    && !personalInfo.selfDescription().isEmpty()) {
                 this.selfDescription = personalInfo.selfDescription();
             }
 
@@ -158,8 +158,7 @@ public class Member extends BaseAuditEntity {
      * @param isAdvertisement 광고성 메세지 수신 동의 여부
      * @return 약관 동의 여부가 업데이트된 Member
      */
-    public Member updateTermAgree(
-            boolean isTermsOfAgree, boolean isPrivacy, boolean isAdvertisement) {
+    public Member updateTermAgree(boolean isTermsOfAgree, boolean isPrivacy, boolean isAdvertisement) {
         if (termAgree != null) {
             this.termAgree.update(isTermsOfAgree, isPrivacy, isAdvertisement);
         } else {

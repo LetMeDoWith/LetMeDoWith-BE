@@ -11,12 +11,12 @@ import lombok.Builder;
 
 @Builder
 @Schema(description = "두윗모드 Task 생성 결과")
-public record CreateDowithTaskResDto(
-        @Schema(description = "생성된 두윗모드 Task 리스트") List<DowithTaskDto> dowithTaskDtos) {
+public record CreateDowithTaskResDto(@Schema(description = "생성된 두윗모드 Task 리스트") List<DowithTaskDto> dowithTaskDtos) {
 
     public static CreateDowithTaskResDto toCreateDowithTaskResDto(List<DowithTask> savedDowithTasks) {
         ArrayList<DowithTaskDto> dowithTaskDtos = new ArrayList<DowithTaskDto>();
-        return new CreateDowithTaskResDto(savedDowithTasks.stream().map(DowithTaskDto::from).toList());
+        return new CreateDowithTaskResDto(
+                savedDowithTasks.stream().map(DowithTaskDto::from).toList());
     }
 
     @Builder

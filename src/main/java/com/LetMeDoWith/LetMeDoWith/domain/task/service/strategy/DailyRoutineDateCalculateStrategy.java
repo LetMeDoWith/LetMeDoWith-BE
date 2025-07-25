@@ -19,8 +19,7 @@ public class DailyRoutineDateCalculateStrategy implements TodoTaskRoutineDateCal
      * @return 루틴을 수행하는 일자 목록
      */
     @Override
-    public Set<LocalDate> getRoutineDates(
-            LocalDate startDate, LocalDate endDate, Set<Integer> repetitionPattern) {
+    public Set<LocalDate> getRoutineDates(LocalDate startDate, LocalDate endDate, Set<Integer> repetitionPattern) {
         return startDate.datesUntil(endDate.plusDays(1)).collect(Collectors.toCollection(TreeSet::new));
     }
 

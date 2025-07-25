@@ -29,10 +29,9 @@ public class DeleteTodoTaskService {
      */
     @Transactional
     public void deleteTodoTask(String memberId, Long todoTaskId) {
-        TodoTask todoTask =
-                todoTaskRepository
-                        .getTodoTask(todoTaskId, memberId)
-                        .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
+        TodoTask todoTask = todoTaskRepository
+                .getTodoTask(todoTaskId, memberId)
+                .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
 
         if (todoTask.isRoutine()) {
             todoTask.detachRoutine();
@@ -49,10 +48,9 @@ public class DeleteTodoTaskService {
      */
     @Transactional
     public void deleteTodoTasksWithRoutine(String memberId, Long todoTaskId) {
-        TodoTask todoTask =
-                todoTaskRepository
-                        .getTodoTask(todoTaskId, memberId)
-                        .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
+        TodoTask todoTask = todoTaskRepository
+                .getTodoTask(todoTaskId, memberId)
+                .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
 
         if (!todoTask.isRoutine()) {
             throw new RestApiException(INVALID_REQUEST);

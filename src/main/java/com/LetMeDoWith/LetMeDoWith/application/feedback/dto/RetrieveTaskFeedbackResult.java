@@ -33,12 +33,10 @@ public record RetrieveTaskFeedbackResult(List<TaskFeedbackDto> feedbacks) {
             @Schema(description = "두윗모드 Task ID", example = "12345") Long dowithTaskId,
             @Schema(description = "잔소리 보낸사람 ID", example = "(TSID)") String senderId,
             @Schema(description = "잔소리 받는사람 닉네임", example = "feedbackSender123") String senderNickname,
-            @Schema(description = "잔소리 받는사람 프로필 이미지 URL", example = "https://example.com/profile.jpg") String senderProfileImageUrl,
+            @Schema(description = "잔소리 받는사람 프로필 이미지 URL", example = "https://example.com/profile.jpg")
+                    String senderProfileImageUrl,
             @Schema(description = "잔소리 확인여부", example = "false") Boolean isChecked,
-
-            @Schema(description = "잔소리 템플릿") TaskFeedbackTemplateDto taskFeedbackTemplate) {
-
-    }
+            @Schema(description = "잔소리 템플릿") TaskFeedbackTemplateDto taskFeedbackTemplate) {}
 
     public record TaskFeedbackTemplateDto(
             @Schema(description = "잔소리 템플릿 ID", example = "1") Long id,
@@ -47,10 +45,7 @@ public record RetrieveTaskFeedbackResult(List<TaskFeedbackDto> feedbacks) {
             @Schema(description = "잔소리 템플릿 이모지 URL", example = "https://example.com/emoji.png") String emojiUrl) {
         public static TaskFeedbackTemplateDto from(TaskFeedbackTemplateQueryDto template) {
             return new TaskFeedbackTemplateDto(
-                    template.id(),
-                    template.language(),
-                    template.message(),
-                    template.emojiUrl());
+                    template.id(), template.language(), template.message(), template.emojiUrl());
         }
     }
 }

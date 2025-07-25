@@ -10,10 +10,8 @@ import java.time.LocalTime;
 
 @Schema(description = "투두모드 Task 생성 요청")
 public record CreateTodoTaskReqDto(
-    @Schema(description = "제목", defaultValue = "아침 먹기") @NotBlank @Size(max = 40) String title,
-    @Schema(description = "Task 카테고리 ID", defaultValue = "1") Long taskCategoryId,
-    @Schema(description = "시작 일자", defaultValue = "2025-01-30") @NotNull LocalDate date,
-    @Schema(description = "시작 시각", defaultValue = "11:30:00") LocalTime startTime,
-    @Schema(description = "루틴 반복 정보") @NotNull TodoTaskRoutineCondition routineCondition) {
-    
-}
+        @Schema(description = "제목", defaultValue = "아침 먹기") @NotBlank @Size(max = 40) String title,
+        @Schema(description = "Task 카테고리 ID", defaultValue = "1") Long taskCategoryId,
+        @Schema(description = "시작 일자", defaultValue = "2025-01-30") @NotNull LocalDate date,
+        @Schema(description = "시작 시각", defaultValue = "11:30:00") LocalTime startTime,
+        @Schema(description = "루틴 반복 정보") @NotNull TodoTaskRoutineCondition routineCondition) {}

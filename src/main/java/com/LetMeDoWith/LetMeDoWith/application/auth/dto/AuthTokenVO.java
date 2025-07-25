@@ -8,8 +8,7 @@ import java.time.LocalDateTime;
 
 @Schema(description = "인증 과정에서 사용되는 토큰")
 public record AuthTokenVO(
-        @Schema(description = "토큰 본문") String token,
-        @Schema(description = "토큰 만료시기") LocalDateTime expireAt) {
+        @Schema(description = "토큰 본문") String token, @Schema(description = "토큰 만료시기") LocalDateTime expireAt) {
 
     /**
      * Refresh Token을 AuthTokenVO 타입으로 변환

@@ -16,19 +16,18 @@ import lombok.Getter;
 @DomainService
 public class DowithTaskRoutineDateCalculator {
 
-    public RoutineDateResult getRoutineDatesToModify(
-            DowithTask dowithTask, Set<LocalDate> newRoutineDates) {
+    public RoutineDateResult getRoutineDatesToModify(DowithTask dowithTask, Set<LocalDate> newRoutineDates) {
 
         LocalDateTime now = SystemTimeUtil.now();
         LocalDate nowDate = now.toLocalDate();
         LocalTime nowTime = now.toLocalTime();
 
-        // input routineDates 중에서 업데이트 불가한 routine 일자(과거일자)가 DB에 저장된 routine 중 업데이트 불가한 일자와 일치하는지 확인
-        Set<LocalDate> notUpdateAvailDates =
-                newRoutineDates.stream()
-                        .filter(date -> DateTimeUtil.isBeforeOrEqual(date, nowDate))
-                        .filter(date -> !date.isEqual(nowDate) || nowTime.isBefore(dowithTask.getStartTime()))
-                        .collect(Collectors.toSet());
+        // input routineDates 중에서 업데이트 불가한 routine 일자(과거일자)가 DB에 저장된 routine 중 업데이트 불가한
+        // 일자와 일치하는지 확인
+        Set<LocalDate> notUpdateAvailDates = newRoutineDates.stream()
+                .filter(date -> DateTimeUtil.isBeforeOrEqual(date, nowDate))
+                .filter(date -> !date.isEqual(nowDate) || nowTime.isBefore(dowithTask.getStartTime()))
+                .collect(Collectors.toSet());
         if (!dowithTask.getUpdateNotAvailRoutineDates().equals(notUpdateAvailDates)) {
             return RoutineDateResult.ofInvalid();
         }
@@ -53,11 +52,14 @@ public class DowithTaskRoutineDateCalculator {
     public static class RoutineDateResult {
 
         private boolean isNewRoutineDatesValid;
-        @Getter private Set<LocalDate> toCreateRoutineDates;
-        @Getter private Set<LocalDate> toDeleteRoutineDates;
 
-        public static RoutineDateResult of(
-                Set<LocalDate> toCreateRoutineDates, Set<LocalDate> toDeleteRoutineDates) {
+        @Getter
+        private Set<LocalDate> toCreateRoutineDates;
+
+        @Getter
+        private Set<LocalDate> toDeleteRoutineDates;
+
+        public static RoutineDateResult of(Set<LocalDate> toCreateRoutineDates, Set<LocalDate> toDeleteRoutineDates) {
             return new RoutineDateResult(true, toCreateRoutineDates, toDeleteRoutineDates);
         }
 

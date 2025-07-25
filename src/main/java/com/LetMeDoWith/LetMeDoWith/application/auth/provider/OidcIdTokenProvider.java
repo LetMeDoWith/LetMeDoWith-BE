@@ -59,19 +59,16 @@ public class OidcIdTokenProvider {
 
         try {
 
-            OidcPublicKeyVO keyVO =
-                    publicKeyList.keys().stream()
-                            .filter(key -> key.kid().equals(kid))
-                            .findFirst()
-                            .orElseThrow(OidcIdTokenPublicKeyNotFoundException::new);
+            OidcPublicKeyVO keyVO = publicKeyList.keys().stream()
+                    .filter(key -> key.kid().equals(kid))
+                    .findFirst()
+                    .orElseThrow(OidcIdTokenPublicKeyNotFoundException::new);
 
             Key publicKey = EncryptUtil.getRSAPublicKey(keyVO.n(), keyVO.e());
 
             return JwtUtil.parseTokenToJws(token, publicKey);
 
-        } catch (OidcIdTokenPublicKeyNotFoundException
-                | NoSuchAlgorithmException
-                | InvalidKeySpecException e) {
+        } catch (OidcIdTokenPublicKeyNotFoundException | NoSuchAlgorithmException | InvalidKeySpecException e) {
             log.error("일치하는 OIDC ID Token 공개키가 없습니다. API 응답 Cache를 갱신합니다.");
             // TODO: add method invalidates cache for public key.
             // client.invalidateCache()
@@ -80,18 +77,15 @@ public class OidcIdTokenProvider {
             try {
                 publicKeyList = client.getPublicKeyList().block();
 
-                OidcPublicKeyVO keyVO =
-                        publicKeyList.keys().stream()
-                                .filter(key -> key.kid().equals(kid))
-                                .findFirst()
-                                .orElseThrow(OidcIdTokenPublicKeyNotFoundException::new);
+                OidcPublicKeyVO keyVO = publicKeyList.keys().stream()
+                        .filter(key -> key.kid().equals(kid))
+                        .findFirst()
+                        .orElseThrow(OidcIdTokenPublicKeyNotFoundException::new);
 
                 Key publicKey = EncryptUtil.getRSAPublicKey(keyVO.n(), keyVO.e());
 
                 return JwtUtil.parseTokenToJws(token, publicKey);
-            } catch (OidcIdTokenPublicKeyNotFoundException
-                    | NoSuchAlgorithmException
-                    | InvalidKeySpecException ex) {
+            } catch (OidcIdTokenPublicKeyNotFoundException | NoSuchAlgorithmException | InvalidKeySpecException ex) {
                 log.error("OIDC ID Token 공개키 갱신 실패. {} 공개키 서버의 문제일 수 있습니다.", provider.getCode());
                 throw new RestApiAuthException(FailResponseStatus.OIDC_ID_TOKEN_PUBKEY_NOT_FOUND);
             }

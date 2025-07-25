@@ -4,7 +4,6 @@ import com.LetMeDoWith.LetMeDoWith.application.feedback.dto.RetrieveTaskFeedback
 import com.LetMeDoWith.LetMeDoWith.application.feedback.dto.RetrieveTaskFeedbackTemplatesResult.TaskFeedbackTemplateDto;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.CountryCode;
 import io.swagger.v3.oas.annotations.media.Schema;
-
 import java.util.List;
 
 @Schema(description = "잔소리 템플릿 목록 조회 응답")
@@ -24,10 +23,7 @@ public record RetrieveTaskFeedbackTemplatesResDto(
             @Schema(description = "템플릿 이모지 URL") String emojiUrl) {
         public static RetrieveTaskFeedbackTemplateDto from(TaskFeedbackTemplateDto template) {
             return new RetrieveTaskFeedbackTemplateDto(
-                    template.id(),
-                    template.language(),
-                    template.message(),
-                    template.emojiUrl());
+                    template.id(), template.language(), template.message(), template.emojiUrl());
         }
     }
 }

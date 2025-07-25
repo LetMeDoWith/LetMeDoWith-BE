@@ -4,7 +4,6 @@ import com.LetMeDoWith.LetMeDoWith.domain.notification.model.NotificationTemplat
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface NotificationTemplateJpaRepository
-        extends JpaRepository<NotificationTemplate, Long> {
+public interface NotificationTemplateJpaRepository extends JpaRepository<NotificationTemplate, Long> {
     Optional<NotificationTemplate> findByCode(String code);
 }

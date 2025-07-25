@@ -22,17 +22,14 @@ public class RetrieveBadgesInfoResDto {
             List<MemberBadgeQueryDto> badgeVOs) {
 
         List<Badge> badgesResult = new ArrayList<>();
-        badgeVOs.forEach(
-                e ->
-                        badgesResult.add(
-                                Badge.builder()
-                                        .id(e.getBadgeId())
-                                        .isAcquired(e.getMemberBadgeId() != null)
-                                        .name(e.getName())
-                                        .imageUrl(e.getImageUrl())
-                                        .description(e.getDescription())
-                                        .acquireHint(e.getAcquireHint())
-                                        .build()));
+        badgeVOs.forEach(e -> badgesResult.add(Badge.builder()
+                .id(e.getBadgeId())
+                .isAcquired(e.getMemberBadgeId() != null)
+                .name(e.getName())
+                .imageUrl(e.getImageUrl())
+                .description(e.getDescription())
+                .acquireHint(e.getAcquireHint())
+                .build()));
 
         return RetrieveBadgesInfoResDto.builder()
                 .isLazyMember(isLazy)

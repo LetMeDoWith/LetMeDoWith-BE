@@ -24,14 +24,6 @@ public record TodoTaskQueryDto(
             LocalDate date,
             LocalTime startTime,
             TodoTaskRoutine todoTaskRoutine) {
-        this(
-                id,
-                taskCategoryId,
-                taskCategoryName,
-                title,
-                status.code,
-                date,
-                startTime,
-                todoTaskRoutine != null);
+        this(id, taskCategoryId, taskCategoryName, title, status.code, date, startTime, todoTaskRoutine != null);
     }
 }

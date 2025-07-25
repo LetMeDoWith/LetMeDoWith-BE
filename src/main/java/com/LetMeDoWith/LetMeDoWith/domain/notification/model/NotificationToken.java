@@ -28,7 +28,11 @@ public class NotificationToken extends BaseAuditEntity {
     private String token;
 
     public static NotificationToken of(String memberId, String token) {
-        return NotificationToken.builder().memberId(memberId).token(token).isExpired(Yn.FALSE).build();
+        return NotificationToken.builder()
+                .memberId(memberId)
+                .token(token)
+                .isExpired(Yn.FALSE)
+                .build();
     }
 
     public void updateToNewToken(String token) {

@@ -27,14 +27,13 @@ public class QDowithTaskRepositoryImpl implements QDowithTaskRepository {
 
     @Override
     public Optional<DowithTask> findDowithTaskAggregate(Long id) {
-        return Optional.ofNullable(
-                jpaQueryFactory
-                        .selectFrom(qDowithTask)
-                        .leftJoin(qDowithTask.confirms, qDowithTaskConfirm)
-                        .leftJoin(qDowithTask.routine, qDowithTaskRoutine)
-                        .where(qDowithTask.id.eq(id))
-                        .fetchJoin()
-                        .fetchOne());
+        return Optional.ofNullable(jpaQueryFactory
+                .selectFrom(qDowithTask)
+                .leftJoin(qDowithTask.confirms, qDowithTaskConfirm)
+                .leftJoin(qDowithTask.routine, qDowithTaskRoutine)
+                .where(qDowithTask.id.eq(id))
+                .fetchJoin()
+                .fetchOne());
     }
 
     @Override
@@ -44,10 +43,9 @@ public class QDowithTaskRepositoryImpl implements QDowithTaskRepository {
                 .selectFrom(qDowithTask)
                 .leftJoin(qDowithTask.confirms, qDowithTaskConfirm)
                 .leftJoin(qDowithTask.routine, qDowithTaskRoutine)
-                .where(
-                        Expressions.dateTemplate(java.sql.Date.class, "DATE({0})", qDowithTask.date)
-                                .eq(targetDate)
-                                .and(qDowithTask.memberId.eq(memberId)))
+                .where(Expressions.dateTemplate(java.sql.Date.class, "DATE({0})", qDowithTask.date)
+                        .eq(targetDate)
+                        .and(qDowithTask.memberId.eq(memberId)))
                 .orderBy(qDowithTask.createdAt.asc())
                 .fetchJoin()
                 .fetch();
@@ -60,10 +58,9 @@ public class QDowithTaskRepositoryImpl implements QDowithTaskRepository {
                 .selectFrom(qDowithTask)
                 .leftJoin(qDowithTask.confirms, qDowithTaskConfirm)
                 .leftJoin(qDowithTask.routine, qDowithTaskRoutine)
-                .where(
-                        Expressions.dateTemplate(java.sql.Date.class, "DATE({0})", qDowithTask.date)
-                                .in(targetDates)
-                                .and(qDowithTask.memberId.eq(memberId)))
+                .where(Expressions.dateTemplate(java.sql.Date.class, "DATE({0})", qDowithTask.date)
+                        .in(targetDates)
+                        .and(qDowithTask.memberId.eq(memberId)))
                 .orderBy(qDowithTask.createdAt.asc())
                 .fetchJoin()
                 .fetch();
@@ -71,14 +68,13 @@ public class QDowithTaskRepositoryImpl implements QDowithTaskRepository {
 
     @Override
     public Optional<DowithTask> findDowithTaskAggregate(Long id, String memberId) {
-        return Optional.ofNullable(
-                jpaQueryFactory
-                        .selectFrom(qDowithTask)
-                        .leftJoin(qDowithTask.confirms, qDowithTaskConfirm)
-                        .leftJoin(qDowithTask.routine, qDowithTaskRoutine)
-                        .where(qDowithTask.id.eq(id).and(qDowithTask.memberId.eq(memberId)))
-                        .fetchJoin()
-                        .fetchOne());
+        return Optional.ofNullable(jpaQueryFactory
+                .selectFrom(qDowithTask)
+                .leftJoin(qDowithTask.confirms, qDowithTaskConfirm)
+                .leftJoin(qDowithTask.routine, qDowithTaskRoutine)
+                .where(qDowithTask.id.eq(id).and(qDowithTask.memberId.eq(memberId)))
+                .fetchJoin()
+                .fetchOne());
     }
 
     @Override

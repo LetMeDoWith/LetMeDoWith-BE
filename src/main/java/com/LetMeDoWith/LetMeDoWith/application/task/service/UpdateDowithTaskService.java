@@ -44,39 +44,30 @@ public class UpdateDowithTaskService {
      */
     @Transactional
     public DowithTask updateContentsAndCreateRoutine(
-            String memberId,
-            Long dowithTaskid,
-            UpdateDowithTaskContentsCommand command,
-            Set<LocalDate> routineDates) {
+            String memberId, Long dowithTaskid, UpdateDowithTaskContentsCommand command, Set<LocalDate> routineDates) {
 
-        DowithTask dowithTask =
-                dowithTaskRepository
-                        .getDowithTask(dowithTaskid, memberId)
-                        .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
+        DowithTask dowithTask = dowithTaskRepository
+                .getDowithTask(dowithTaskid, memberId)
+                .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
 
-        TaskCategory taskCategory =
-                taskCategoryRepository
-                        .getActiveTaskCategory(command.taskCategoryId(), memberId)
-                        .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
+        TaskCategory taskCategory = taskCategoryRepository
+                .getActiveTaskCategory(command.taskCategoryId(), memberId)
+                .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
 
         if (dowithTask.isContentsEditable()) {
-            dowithTask.updateContents(
-                    command.title(), taskCategory.getId(), command.date(), command.startTime());
+            dowithTask.updateContents(command.title(), taskCategory.getId(), command.date(), command.startTime());
         } else {
             dowithTask.updateContents(command.title(), taskCategory.getId());
         }
 
         // 새롭게 생성할 일자 계산
-        Set<LocalDate> toCreateDates =
-                routineDates.stream()
-                        .filter(date -> !date.isEqual(dowithTask.getDate()))
-                        .collect(Collectors.toSet()); // TODO - 명확히 수정 필요 도메인 모델 메서드로 편입
+        Set<LocalDate> toCreateDates = routineDates.stream()
+                .filter(date -> !date.isEqual(dowithTask.getDate()))
+                .collect(Collectors.toSet()); // TODO - 명확히 수정 필요 도메인 모델 메서드로 편입
 
         // 새 DowithTask 생성 가능 여부 validation
         TaskSummary taskSummary =
-                taskSummaryRepository
-                        .getTaskSummary(memberId)
-                        .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
+                taskSummaryRepository.getTaskSummary(memberId).orElseThrow(() -> new RestApiException(INVALID_REQUEST));
         taskSummary.deductRemainedDowithTaskCount(toCreateDates.size());
 
         dowithTaskRepository.saveDowithTasks(dowithTask.createRoutine(routineDates));
@@ -91,18 +82,15 @@ public class UpdateDowithTaskService {
      * @param command
      */
     @Transactional
-    public DowithTask updateContentsOnly(
-            String memberId, Long dowithTaskId, UpdateDowithTaskContentsCommand command) {
+    public DowithTask updateContentsOnly(String memberId, Long dowithTaskId, UpdateDowithTaskContentsCommand command) {
 
-        DowithTask dowithTask =
-                dowithTaskRepository
-                        .getDowithTask(dowithTaskId, memberId)
-                        .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
+        DowithTask dowithTask = dowithTaskRepository
+                .getDowithTask(dowithTaskId, memberId)
+                .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
 
-        TaskCategory taskCategory =
-                taskCategoryRepository
-                        .getActiveTaskCategory(command.taskCategoryId(), memberId)
-                        .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
+        TaskCategory taskCategory = taskCategoryRepository
+                .getActiveTaskCategory(command.taskCategoryId(), memberId)
+                .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
 
         if (dowithTask.isRoutine()) {
 
@@ -115,14 +103,12 @@ public class UpdateDowithTaskService {
                         command.startTime(),
                         dowithTaskRepository);
             } else {
-                dowithTask.updateContentsWithRoutine(
-                        command.title(), taskCategory.getId(), dowithTaskRepository);
+                dowithTask.updateContentsWithRoutine(command.title(), taskCategory.getId(), dowithTaskRepository);
             }
 
         } else {
             if (dowithTask.isContentsEditable()) {
-                dowithTask.updateContents(
-                        command.title(), taskCategory.getId(), command.date(), command.startTime());
+                dowithTask.updateContents(command.title(), taskCategory.getId(), command.date(), command.startTime());
             } else {
                 dowithTask.updateContents(command.title(), taskCategory.getId());
             }
@@ -141,14 +127,11 @@ public class UpdateDowithTaskService {
     @Transactional
     public DowithTask updateRoutine(String memberId, Long dowithTaskId, Set<LocalDate> routineDates) {
 
-        final DowithTask dowithTask =
-                dowithTaskRepository
-                        .getDowithTask(dowithTaskId, memberId)
-                        .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
+        final DowithTask dowithTask = dowithTaskRepository
+                .getDowithTask(dowithTaskId, memberId)
+                .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
         final TaskSummary taskSummary =
-                taskSummaryRepository
-                        .getTaskSummary(memberId)
-                        .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
+                taskSummaryRepository.getTaskSummary(memberId).orElseThrow(() -> new RestApiException(INVALID_REQUEST));
 
         LocalDateTime now = SystemTimeUtil.now();
         LocalDate nowDate = now.toLocalDate();

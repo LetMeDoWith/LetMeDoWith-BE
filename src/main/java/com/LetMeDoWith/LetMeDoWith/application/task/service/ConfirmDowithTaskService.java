@@ -21,10 +21,9 @@ public class ConfirmDowithTaskService {
     public List<String> generateDowithTaskConfirmImageUploadPresignedUrls(
             String memberId, Long dowithTaskId, List<String> imageFileNames) {
 
-        DowithTask dowithTask =
-                dowithTaskRepository
-                        .getDowithTask(dowithTaskId, memberId)
-                        .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
+        DowithTask dowithTask = dowithTaskRepository
+                .getDowithTask(dowithTaskId, memberId)
+                .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
 
         List<String> keys = dowithTask.generateConfirmImageKey(imageFileNames);
         return keys.stream()
@@ -35,10 +34,9 @@ public class ConfirmDowithTaskService {
     @Transactional
     public void confirmDowithTask(String memberId, Long dowithTaskId, List<String> imageUrls) {
 
-        DowithTask dowithTask =
-                dowithTaskRepository
-                        .getDowithTask(dowithTaskId, memberId)
-                        .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
+        DowithTask dowithTask = dowithTaskRepository
+                .getDowithTask(dowithTaskId, memberId)
+                .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
 
         dowithTask.confirm(imageUrls);
     }

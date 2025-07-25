@@ -8,8 +8,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Converter(autoApply = true)
-public class TodoTaskRoutinePatternConverter
-        implements AttributeConverter<TodoTaskRoutinePattern, String> {
+public class TodoTaskRoutinePatternConverter implements AttributeConverter<TodoTaskRoutinePattern, String> {
 
     @Override
     public String convertToDatabaseColumn(TodoTaskRoutinePattern pattern) {

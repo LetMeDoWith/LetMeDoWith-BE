@@ -35,12 +35,20 @@ public class NotificationSendServiceTest {
     private final String UNREGISTERED_FCM_TOKEN =
             "fx5STrP_eh7XIRNiVvNdk_:APA91bHpJ_SvZQTs8SK-Hkl5d8vChDEb2_njBRp-uLtzWU-3_s5W9aoL6OprShJG-ZIU4oSSDD4cfvB0jKb8xUcjvLWyVvhDkiM9DhsdrxhKa0wwrDwx-YI";
 
-    @Autowired NotificationSendService notificationSendService;
-    @Autowired MemberJpaRepository memberJpaRepository;
+    @Autowired
+    NotificationSendService notificationSendService;
 
-    @Autowired NotificationJpaRepository notificationJpaRepository;
-    @Autowired NotificationTemplateJpaRepository notificationTemplateJpaRepository;
-    @Autowired NotificationTokenJpaRepository notificationTokenJpaRepository;
+    @Autowired
+    MemberJpaRepository memberJpaRepository;
+
+    @Autowired
+    NotificationJpaRepository notificationJpaRepository;
+
+    @Autowired
+    NotificationTemplateJpaRepository notificationTemplateJpaRepository;
+
+    @Autowired
+    NotificationTokenJpaRepository notificationTokenJpaRepository;
 
     private Member member;
 
@@ -49,21 +57,19 @@ public class NotificationSendServiceTest {
 
     @BeforeEach
     void beforeEach() {
-        this.member =
-                memberJpaRepository.save(
-                        Member.builder()
-                                .status(MemberStatus.NORMAL)
-                                .nickname("test")
-                                .selfDescription("test description")
-                                .gender(Gender.MALE)
-                                .dateOfBirth(LocalDate.of(1995, 11, 4))
-                                .type(MemberType.USER)
-                                .build());
-        this.notificationTemplate =
-                notificationTemplateJpaRepository.save(
-                        NotificationTemplate.of(
-                                "TEST_TEMPLATE", "테스트 {{testName}}",
-                                "안녕하세요 {{nickName}}님! 오늘 날씨는 {{weather}}이빈다. 테스트 입니다", "letmedowith://test"));
+        this.member = memberJpaRepository.save(Member.builder()
+                .status(MemberStatus.NORMAL)
+                .nickname("test")
+                .selfDescription("test description")
+                .gender(Gender.MALE)
+                .dateOfBirth(LocalDate.of(1995, 11, 4))
+                .type(MemberType.USER)
+                .build());
+        this.notificationTemplate = notificationTemplateJpaRepository.save(NotificationTemplate.of(
+                "TEST_TEMPLATE",
+                "테스트 {{testName}}",
+                "안녕하세요 {{nickName}}님! 오늘 날씨는 {{weather}}이빈다. 테스트 입니다",
+                "letmedowith://test"));
     }
 
     @AfterEach
@@ -79,8 +85,7 @@ public class NotificationSendServiceTest {
     void sendMessage() throws InterruptedException {
         // given
         this.notificationToken =
-                notificationTokenJpaRepository.save(
-                        NotificationToken.of(member.getId(), REGISTERED_FCM_TOKEN));
+                notificationTokenJpaRepository.save(NotificationToken.of(member.getId(), REGISTERED_FCM_TOKEN));
 
         // when
         notificationSendService.sendNotification(
@@ -89,8 +94,7 @@ public class NotificationSendServiceTest {
                 Map.of("testName", "테스트 이름"),
                 Map.of("nickName", member.getNickname(), "weather", "맑음"));
         Thread.sleep(1000); // 비동기 처리로 인해 DB에 저장되는 시간이 필요할 수 있음
-        Optional<Notification> opNotification =
-                notificationJpaRepository.findByMemberId(member.getId());
+        Optional<Notification> opNotification = notificationJpaRepository.findByMemberId(member.getId());
 
         // then
         assertThat(opNotification.isPresent()).isTrue();
@@ -106,8 +110,7 @@ public class NotificationSendServiceTest {
     void sendMessage_fail1() throws InterruptedException {
         // given
         this.notificationToken =
-                notificationTokenJpaRepository.save(
-                        NotificationToken.of(member.getId(), UNREGISTERED_FCM_TOKEN));
+                notificationTokenJpaRepository.save(NotificationToken.of(member.getId(), UNREGISTERED_FCM_TOKEN));
         // when
         try {
             notificationSendService.sendNotification(
@@ -120,10 +123,8 @@ public class NotificationSendServiceTest {
         }
 
         Thread.sleep(1000); // 비동기 처리로 인해 DB에 저장되는 시간이 필요할 수 있음
-        Optional<Notification> opNotification =
-                notificationJpaRepository.findByMemberId(member.getId());
-        Optional<NotificationToken> opNotificationToken =
-                notificationTokenJpaRepository.findByMemberId(member.getId());
+        Optional<Notification> opNotification = notificationJpaRepository.findByMemberId(member.getId());
+        Optional<NotificationToken> opNotificationToken = notificationTokenJpaRepository.findByMemberId(member.getId());
         // then
         assertThat(opNotification.isEmpty()).isTrue();
         assertThat(opNotificationToken.isPresent()).isTrue();
@@ -137,8 +138,7 @@ public class NotificationSendServiceTest {
     void sendMessage_fail2() throws InterruptedException {
         // given
         this.notificationToken =
-                notificationTokenJpaRepository.save(
-                        NotificationToken.of(member.getId(), REGISTERED_FCM_TOKEN));
+                notificationTokenJpaRepository.save(NotificationToken.of(member.getId(), REGISTERED_FCM_TOKEN));
         // when
         try {
             notificationSendService.sendNotification(
@@ -157,8 +157,7 @@ public class NotificationSendServiceTest {
     void sendMessage_fail3() throws InterruptedException {
         // given
         this.notificationToken =
-                notificationTokenJpaRepository.save(
-                        NotificationToken.of(member.getId(), REGISTERED_FCM_TOKEN));
+                notificationTokenJpaRepository.save(NotificationToken.of(member.getId(), REGISTERED_FCM_TOKEN));
         // when
         try {
             notificationSendService.sendNotification(

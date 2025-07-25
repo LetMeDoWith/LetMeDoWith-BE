@@ -22,16 +22,14 @@ public class DowithTaskRoutineDates {
     private Set<LocalDate> dates;
 
     public static DowithTaskRoutineDates from(Set<LocalDate> dates) {
-        return new DowithTaskRoutineDates(
-                dates.stream().sorted().collect(Collectors.toCollection(LinkedHashSet::new)));
+        return new DowithTaskRoutineDates(dates.stream().sorted().collect(Collectors.toCollection(LinkedHashSet::new)));
     }
 
     public void validate() {
-        dates.forEach(
-                date -> {
-                    if (date.isBefore(SystemTimeUtil.nowDate())) {
-                        throw new RestApiException(FailResponseStatus.DOWITH_TASK_NOT_AVAIL_DATE);
-                    }
-                });
+        dates.forEach(date -> {
+            if (date.isBefore(SystemTimeUtil.nowDate())) {
+                throw new RestApiException(FailResponseStatus.DOWITH_TASK_NOT_AVAIL_DATE);
+            }
+        });
     }
 }

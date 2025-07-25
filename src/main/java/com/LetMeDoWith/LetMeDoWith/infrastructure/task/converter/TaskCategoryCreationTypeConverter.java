@@ -7,8 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Converter(autoApply = true)
 @Component
-public class TaskCategoryCreationTypeConverter
-        extends AbstractCombinedEnumConverter<TaskCategoryCreationType> {
+public class TaskCategoryCreationTypeConverter extends AbstractCombinedEnumConverter<TaskCategoryCreationType> {
 
     public TaskCategoryCreationTypeConverter() {
         super(TaskCategoryCreationType.class);

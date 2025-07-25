@@ -41,9 +41,9 @@ public class TestRepository {
                 .uri(testUrl)
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
-                .onStatus(
-                        HttpStatusCode::isError,
-                        clientResponse -> clientResponse.bodyToMono(String.class).map(body -> new Exception()))
+                .onStatus(HttpStatusCode::isError, clientResponse -> clientResponse
+                        .bodyToMono(String.class)
+                        .map(body -> new Exception()))
                 .bodyToMono(TestResponseDto.class);
     }
 

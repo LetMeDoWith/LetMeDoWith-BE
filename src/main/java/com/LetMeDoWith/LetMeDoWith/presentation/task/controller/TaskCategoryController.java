@@ -22,7 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/tasks/category")
 public class TaskCategoryController {
 
-    @Autowired private TaskCategoryService taskCategoryService;
+    @Autowired
+    private TaskCategoryService taskCategoryService;
 
     @Operation(summary = "태스크 카테고리 조회", description = "모든 태스크 카테고리를 조회합니다. (공통 + 유저 생성)")
     @ApiSuccessResponse(description = "카테고리 조회 성공")
@@ -31,10 +32,9 @@ public class TaskCategoryController {
 
         String memberId = AuthUtil.getMemberId();
 
-        List<RetrieveTaskCategoriesResDto> res =
-                taskCategoryService.retrieveTaskCategories(memberId).stream()
-                        .map(RetrieveTaskCategoriesResDto::from)
-                        .toList();
+        List<RetrieveTaskCategoriesResDto> res = taskCategoryService.retrieveTaskCategories(memberId).stream()
+                .map(RetrieveTaskCategoriesResDto::from)
+                .toList();
 
         return ResponseUtil.createSuccessResponse(res);
     }

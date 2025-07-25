@@ -50,12 +50,23 @@ public class BadgeIntegrationTest {
     static final String RETRIEVE_BADGES_INFO_URL = "";
     static final String UPDATE_MAIN_BADGE = "/main";
 
-    @Autowired ObjectMapper objectMapper;
-    @Autowired MockMvc mockMvc;
-    @Autowired AccessTokenProvider accessTokenProvider;
-    @Autowired MemberJpaRepository memberJpaRepository;
-    @Autowired BadgeJpaRepository badgeJpaRepository;
-    @Autowired MemberBadgeJpaRepository memberBadgeJpaRepository;
+    @Autowired
+    ObjectMapper objectMapper;
+
+    @Autowired
+    MockMvc mockMvc;
+
+    @Autowired
+    AccessTokenProvider accessTokenProvider;
+
+    @Autowired
+    MemberJpaRepository memberJpaRepository;
+
+    @Autowired
+    BadgeJpaRepository badgeJpaRepository;
+
+    @Autowired
+    MemberBadgeJpaRepository memberBadgeJpaRepository;
 
     Member member;
     Member lazyMember;
@@ -73,27 +84,23 @@ public class BadgeIntegrationTest {
     @BeforeEach
     void beforeEach() {
 
-        member =
-                memberJpaRepository.save(
-                        Member.builder()
-                                .status(MemberStatus.NORMAL)
-                                .nickname("test")
-                                .selfDescription("test description")
-                                .gender(Gender.MALE)
-                                .dateOfBirth(LocalDate.of(1995, 11, 4))
-                                .type(MemberType.USER)
-                                .build());
+        member = memberJpaRepository.save(Member.builder()
+                .status(MemberStatus.NORMAL)
+                .nickname("test")
+                .selfDescription("test description")
+                .gender(Gender.MALE)
+                .dateOfBirth(LocalDate.of(1995, 11, 4))
+                .type(MemberType.USER)
+                .build());
 
-        lazyMember =
-                memberJpaRepository.save(
-                        Member.builder()
-                                .status(MemberStatus.NORMAL)
-                                .nickname("test2")
-                                .selfDescription("test description2")
-                                .gender(Gender.FEMALE)
-                                .dateOfBirth(LocalDate.of(1995, 11, 4))
-                                .type(MemberType.USER)
-                                .build());
+        lazyMember = memberJpaRepository.save(Member.builder()
+                .status(MemberStatus.NORMAL)
+                .nickname("test2")
+                .selfDescription("test description2")
+                .gender(Gender.FEMALE)
+                .dateOfBirth(LocalDate.of(1995, 11, 4))
+                .type(MemberType.USER)
+                .build());
 
         memberAccessToken = accessTokenProvider.generateToken(member.getId());
         lazyMemberAccessToken = accessTokenProvider.generateToken(lazyMember.getId());
@@ -112,30 +119,26 @@ public class BadgeIntegrationTest {
         MultiValueMap<String, String> headerMap = new LinkedMultiValueMap<>();
         headerMap.add("AUTHORIZATION", "Bearer" + accessToken.getToken());
 
-        return mockMvc
-                .perform(
-                        MockMvcRequestBuilders.get(BASE_URL + RETRIEVE_BADGES_INFO_URL)
-                                .headers(new HttpHeaders(headerMap))
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .accept(MediaType.APPLICATION_JSON)
-                                .characterEncoding(StandardCharsets.UTF_8))
+        return mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + RETRIEVE_BADGES_INFO_URL)
+                        .headers(new HttpHeaders(headerMap))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .characterEncoding(StandardCharsets.UTF_8))
                 .andDo(System.out::println);
     }
 
-    private ResultActions requestUpdateMainBadge(
-            AccessToken accessToken, UpdateMainBadgeReqDto requestBody) throws Exception {
+    private ResultActions requestUpdateMainBadge(AccessToken accessToken, UpdateMainBadgeReqDto requestBody)
+            throws Exception {
 
         MultiValueMap<String, String> headerMap = new LinkedMultiValueMap<>();
         headerMap.add("AUTHORIZATION", "Bearer" + accessToken.getToken());
 
-        return mockMvc
-                .perform(
-                        MockMvcRequestBuilders.put(BASE_URL + UPDATE_MAIN_BADGE)
-                                .headers(new HttpHeaders(headerMap))
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .accept(MediaType.APPLICATION_JSON)
-                                .characterEncoding(StandardCharsets.UTF_8)
-                                .content(objectMapper.writeValueAsString(requestBody)))
+        return mockMvc.perform(MockMvcRequestBuilders.put(BASE_URL + UPDATE_MAIN_BADGE)
+                        .headers(new HttpHeaders(headerMap))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .content(objectMapper.writeValueAsString(requestBody)))
                 .andDo(System.out::println);
     }
 
@@ -169,66 +172,60 @@ public class BadgeIntegrationTest {
         String badge4ImageUrl = "뱃지4 이미지 url";
         int badge4SortOrder = 4;
 
-        badge1 =
-                badgeJpaRepository.save(
-                        Badge.builder()
-                                .badgeStatus(badge1Status)
-                                .name(badge1Name)
-                                .description(badge1Description)
-                                .acquireHint(badge1ActiveHint)
-                                .imageUrl(badge1ImageUrl)
-                                .sortOrder(badge1SortOrder)
-                                .build());
+        badge1 = badgeJpaRepository.save(Badge.builder()
+                .badgeStatus(badge1Status)
+                .name(badge1Name)
+                .description(badge1Description)
+                .acquireHint(badge1ActiveHint)
+                .imageUrl(badge1ImageUrl)
+                .sortOrder(badge1SortOrder)
+                .build());
 
-        badge2 =
-                badgeJpaRepository.save(
-                        Badge.builder()
-                                .badgeStatus(badge2Status)
-                                .name(badge2Name)
-                                .description(badge2Description)
-                                .acquireHint(badge2ActiveHint)
-                                .imageUrl(badge2ImageUrl)
-                                .sortOrder(badge2SortOrder)
-                                .build());
+        badge2 = badgeJpaRepository.save(Badge.builder()
+                .badgeStatus(badge2Status)
+                .name(badge2Name)
+                .description(badge2Description)
+                .acquireHint(badge2ActiveHint)
+                .imageUrl(badge2ImageUrl)
+                .sortOrder(badge2SortOrder)
+                .build());
 
-        badge3 =
-                badgeJpaRepository.save(
-                        Badge.builder()
-                                .badgeStatus(badge3Status)
-                                .name(badge3Name)
-                                .description(badge3Description)
-                                .acquireHint(badge3ActiveHint)
-                                .imageUrl(badge3ImageUrl)
-                                .sortOrder(badge3SortOrder)
-                                .build());
+        badge3 = badgeJpaRepository.save(Badge.builder()
+                .badgeStatus(badge3Status)
+                .name(badge3Name)
+                .description(badge3Description)
+                .acquireHint(badge3ActiveHint)
+                .imageUrl(badge3ImageUrl)
+                .sortOrder(badge3SortOrder)
+                .build());
 
-        badge4 =
-                badgeJpaRepository.save(
-                        Badge.builder()
-                                .badgeStatus(badge4Status)
-                                .name(badge4Name)
-                                .description(badge4Description)
-                                .acquireHint(badge4ActiveHint)
-                                .imageUrl(badge4ImageUrl)
-                                .sortOrder(badge4SortOrder)
-                                .build());
+        badge4 = badgeJpaRepository.save(Badge.builder()
+                .badgeStatus(badge4Status)
+                .name(badge4Name)
+                .description(badge4Description)
+                .acquireHint(badge4ActiveHint)
+                .imageUrl(badge4ImageUrl)
+                .sortOrder(badge4SortOrder)
+                .build());
 
         // badge1이 대표 뱃지
-        memberBadge1 =
-                memberBadgeJpaRepository.save(
-                        MemberBadge.builder().memberId(member.getId()).badge(badge1).isMain(Yn.TRUE).build());
+        memberBadge1 = memberBadgeJpaRepository.save(MemberBadge.builder()
+                .memberId(member.getId())
+                .badge(badge1)
+                .isMain(Yn.TRUE)
+                .build());
 
-        memberBadge2 =
-                memberBadgeJpaRepository.save(
-                        MemberBadge.builder().memberId(member.getId()).badge(badge2).isMain(Yn.FALSE).build());
+        memberBadge2 = memberBadgeJpaRepository.save(MemberBadge.builder()
+                .memberId(member.getId())
+                .badge(badge2)
+                .isMain(Yn.FALSE)
+                .build());
 
-        memberBadge3 =
-                memberBadgeJpaRepository.save(
-                        MemberBadge.builder()
-                                .memberId(lazyMember.getId())
-                                .badge(badge3)
-                                .isMain(Yn.FALSE)
-                                .build());
+        memberBadge3 = memberBadgeJpaRepository.save(MemberBadge.builder()
+                .memberId(lazyMember.getId())
+                .badge(badge3)
+                .isMain(Yn.FALSE)
+                .build());
 
         badgeJpaRepository.flush();
         memberJpaRepository.flush();
@@ -291,9 +288,12 @@ public class BadgeIntegrationTest {
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.data.isLazyMember").value(true))
                 .andExpect(jsonPath("$.data.mainBadge").doesNotExist())
-                //        .andExpect(jsonPath("$.data.mainBadge.dowithTaskId").value(badge1.getId()))
-                //        .andExpect(jsonPath("$.data.mainBadge.name").value(badge1.getName()))
-                //        .andExpect(jsonPath("$.data.mainBadge.imageUrl").value(badge1.getImageUrl()))
+                //
+                // .andExpect(jsonPath("$.data.mainBadge.dowithTaskId").value(badge1.getId()))
+                //
+                // .andExpect(jsonPath("$.data.mainBadge.name").value(badge1.getName()))
+                //
+                // .andExpect(jsonPath("$.data.mainBadge.imageUrl").value(badge1.getImageUrl()))
                 //
                 // .andExpect(jsonPath("$.data.mainBadge.description").value(badge1.getDescription()))
                 .andExpect(jsonPath("$.data.badges").isArray())
@@ -329,14 +329,12 @@ public class BadgeIntegrationTest {
 
         // when
         ResultActions resultActions = requestUpdateMainBadge(memberAccessToken, requestBody);
-        MemberBadge oldMemberBadge =
-                memberBadgeJpaRepository
-                        .findByMemberIdAndBadge(member.getId(), badge1)
-                        .orElseThrow(() -> new IllegalArgumentException("not found"));
-        MemberBadge newMemberBadge =
-                memberBadgeJpaRepository
-                        .findByMemberIdAndBadge(member.getId(), badge2)
-                        .orElseThrow(() -> new IllegalArgumentException("not found"));
+        MemberBadge oldMemberBadge = memberBadgeJpaRepository
+                .findByMemberIdAndBadge(member.getId(), badge1)
+                .orElseThrow(() -> new IllegalArgumentException("not found"));
+        MemberBadge newMemberBadge = memberBadgeJpaRepository
+                .findByMemberIdAndBadge(member.getId(), badge2)
+                .orElseThrow(() -> new IllegalArgumentException("not found"));
 
         // then
         resultActions.andExpect(status().is2xxSuccessful());

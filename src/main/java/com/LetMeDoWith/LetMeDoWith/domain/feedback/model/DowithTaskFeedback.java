@@ -9,7 +9,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -43,10 +42,7 @@ public class DowithTaskFeedback extends BaseAuditEntity {
     private Yn isChecked;
 
     public static DowithTaskFeedback of(
-            String senderMemberId,
-            String receiverMemberId,
-            Long dowithTaskId,
-            Long taskFeedbackTemplateId) {
+            String senderMemberId, String receiverMemberId, Long dowithTaskId, Long taskFeedbackTemplateId) {
 
         return DowithTaskFeedback.builder()
                 .senderMemberId(senderMemberId)
@@ -57,9 +53,7 @@ public class DowithTaskFeedback extends BaseAuditEntity {
                 .build();
     }
 
-    /**
-     * 피드백을 확인 상태로 변경한다.
-     */
+    /** 피드백을 확인 상태로 변경한다. */
     public void check() {
         this.isChecked = Yn.TRUE;
     }

@@ -40,15 +40,13 @@ public class BadgeService {
      */
     public RetrieveBadgesInfoResult retrieveBadgesInfo(String memberId) {
 
-        Member member =
-                memberRepository
-                        .getNormalStatusMember(memberId)
-                        .orElseThrow(() -> new RestApiException(MEMBER_NOT_EXIST_BADGE));
+        Member member = memberRepository
+                .getNormalStatusMember(memberId)
+                .orElseThrow(() -> new RestApiException(MEMBER_NOT_EXIST_BADGE));
 
-        TaskSummary taskSummary =
-                taskSummaryRepository
-                        .getTaskSummary(memberId)
-                        .orElseThrow(() -> new RestApiException(INTERNAL_SERVER_ERROR));
+        TaskSummary taskSummary = taskSummaryRepository
+                .getTaskSummary(memberId)
+                .orElseThrow(() -> new RestApiException(INTERNAL_SERVER_ERROR));
 
         List<MemberBadgeQueryDto> badges = badgeQueryRepository.getBadges(memberId);
 
@@ -64,34 +62,30 @@ public class BadgeService {
     @Transactional
     public void updateMainBadge(String memberId, Long badgeId) {
 
-        Member member =
-                memberRepository
-                        .getMember(memberId, MemberStatus.NORMAL)
-                        .orElseThrow(() -> new RestApiException(MEMBER_NOT_EXIST_BADGE));
+        Member member = memberRepository
+                .getMember(memberId, MemberStatus.NORMAL)
+                .orElseThrow(() -> new RestApiException(MEMBER_NOT_EXIST_BADGE));
 
-        TaskSummary taskSummary =
-                taskSummaryRepository
-                        .getTaskSummary(memberId)
-                        .orElseThrow(() -> new RestApiException(INTERNAL_SERVER_ERROR));
+        TaskSummary taskSummary = taskSummaryRepository
+                .getTaskSummary(memberId)
+                .orElseThrow(() -> new RestApiException(INTERNAL_SERVER_ERROR));
 
         if (taskSummary.isLazyBadgeAcquireLevel()) {
             throw new RestApiException(LAZY_NOT_AVAIL_UPDATE_MAIN_BADGE);
         }
 
-        Badge newMainBadge =
-                badgeRepository
-                        .getBadge(badgeId, BadgeStatus.ACTIVE)
-                        .orElseThrow(() -> new RestApiException(BADGE_NOT_EXIST));
+        Badge newMainBadge = badgeRepository
+                .getBadge(badgeId, BadgeStatus.ACTIVE)
+                .orElseThrow(() -> new RestApiException(BADGE_NOT_EXIST));
 
         // 기존 Main Badge cancel
         Optional<MemberBadge> mainMemberBadge = badgeRepository.getMainMemberBadge(memberId);
         mainMemberBadge.ifPresent(MemberBadge::cancelMainBadge);
 
         // 새로운 Main Badge 등록
-        MemberBadge memberBadge =
-                badgeRepository
-                        .getMemberBadge(memberId, newMainBadge)
-                        .orElseThrow(() -> new RestApiException(MEMBER_BADGE_NOT_EXIST));
+        MemberBadge memberBadge = badgeRepository
+                .getMemberBadge(memberId, newMainBadge)
+                .orElseThrow(() -> new RestApiException(MEMBER_BADGE_NOT_EXIST));
         memberBadge.registerToMainBadge();
     }
 }

@@ -23,12 +23,12 @@ public class FirebaseCloudMessageClient implements MessageServerClient {
             String appDeepLink,
             Runnable onSuccess,
             Runnable onFailureByExpiredToken) {
-        Message message =
-                Message.builder()
-                        .setNotification(Notification.builder().setTitle(title).setBody(body).build())
-                        .putData("deepLink", appDeepLink)
-                        .setToken(token)
-                        .build();
+        Message message = Message.builder()
+                .setNotification(
+                        Notification.builder().setTitle(title).setBody(body).build())
+                .putData("deepLink", appDeepLink)
+                .setToken(token)
+                .build();
         try {
             String send = firebaseMessaging.send(message);
             log.info("Firebase Cloud Messaging sent successfully: {}", send);

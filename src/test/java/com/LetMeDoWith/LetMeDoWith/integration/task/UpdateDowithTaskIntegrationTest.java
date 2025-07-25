@@ -30,8 +30,11 @@ public class UpdateDowithTaskIntegrationTest extends AbstractIntegrationTest {
     static final String UPDATE_DOWITH_TASK_URL = "/api/v1/tasks/dowith";
     static final String UPDATE_DOWITH_TASK_ROUTINE_URL = UPDATE_DOWITH_TASK_URL + "/%d/routine";
 
-    @Autowired DowithTaskJpaRepository dowithTaskJpaRepository;
-    @Autowired TaskCategoryJpaRepository taskCategoryJpaRepository;
+    @Autowired
+    DowithTaskJpaRepository dowithTaskJpaRepository;
+
+    @Autowired
+    TaskCategoryJpaRepository taskCategoryJpaRepository;
 
     private TaskCategory taskCategory;
     private TaskCategory taskCategory2;
@@ -44,21 +47,11 @@ public class UpdateDowithTaskIntegrationTest extends AbstractIntegrationTest {
 
     @Override
     protected void createTestData() {
-        taskCategory =
-                taskCategoryJpaRepository.save(
-                        TaskCategory.of(
-                                "test category 1",
-                                TaskCategory.TaskCategoryCreationType.COMMON,
-                                "test",
-                                this.requestMember.getId()));
+        taskCategory = taskCategoryJpaRepository.save(TaskCategory.of(
+                "test category 1", TaskCategory.TaskCategoryCreationType.COMMON, "test", this.requestMember.getId()));
 
-        taskCategory2 =
-                taskCategoryJpaRepository.save(
-                        TaskCategory.of(
-                                "test category 2",
-                                TaskCategory.TaskCategoryCreationType.COMMON,
-                                "test",
-                                this.requestMember.getId()));
+        taskCategory2 = taskCategoryJpaRepository.save(TaskCategory.of(
+                "test category 2", TaskCategory.TaskCategoryCreationType.COMMON, "test", this.requestMember.getId()));
         this.taskSummary.plusRemainedDowithTaskCount(5);
         this.taskSummaryJpaRepository.saveAndFlush(taskSummary);
     }
@@ -68,45 +61,39 @@ public class UpdateDowithTaskIntegrationTest extends AbstractIntegrationTest {
     void updateDowithTaskWithRoutine1() throws Exception {
         // given
         setFixedClock(LocalDateTime.of(2024, 3, 1, 0, 0));
-        DowithTask dowithTask =
-                dowithTaskJpaRepository.save(
-                        DowithTask.of(
-                                this.requestMember.getId(),
-                                taskCategory.getId(),
-                                "설거지 하기",
-                                LocalDate.of(2024, 3, 2),
-                                LocalTime.of(13, 0)));
+        DowithTask dowithTask = dowithTaskJpaRepository.save(DowithTask.of(
+                this.requestMember.getId(),
+                taskCategory.getId(),
+                "설거지 하기",
+                LocalDate.of(2024, 3, 2),
+                LocalTime.of(13, 0)));
 
         // when
         List<LocalDate> routineDates =
                 List.of(LocalDate.of(2024, 3, 3), LocalDate.of(2024, 3, 10), LocalDate.of(2024, 3, 11));
-        UpdateDowithTaskReqDto requestBody =
-                UpdateDowithTaskReqDto.builder()
-                        .title("청소하기")
-                        .taskCategoryId(taskCategory2.getId())
-                        .startDateTime(LocalDateTime.of(2024, 3, 3, 14, 0))
-                        .routineDates(routineDates)
-                        .build();
+        UpdateDowithTaskReqDto requestBody = UpdateDowithTaskReqDto.builder()
+                .title("청소하기")
+                .taskCategoryId(taskCategory2.getId())
+                .startDateTime(LocalDateTime.of(2024, 3, 3, 14, 0))
+                .routineDates(routineDates)
+                .build();
         ResultActions resultActions =
-                this.request(
-                        MockMvcRequestBuilders.put(UPDATE_DOWITH_TASK_URL + "/" + dowithTask.getId())
-                                .content(this.writeRequestBodyAsString(requestBody)));
+                this.request(MockMvcRequestBuilders.put(UPDATE_DOWITH_TASK_URL + "/" + dowithTask.getId())
+                        .content(this.writeRequestBodyAsString(requestBody)));
 
         // then
         resultActions.andExpect(status().isOk());
-        DowithTask savedTask =
-                dowithTaskJpaRepository
-                        .findById(dowithTask.getId())
-                        .orElseThrow(() -> new IllegalArgumentException("해당 Task가 존재하지 않습니다."));
+        DowithTask savedTask = dowithTaskJpaRepository
+                .findById(dowithTask.getId())
+                .orElseThrow(() -> new IllegalArgumentException("해당 Task가 존재하지 않습니다."));
         List<DowithTask> dowithTasks =
                 dowithTaskJpaRepository.findAllDowithTaskAggregates(savedTask.getRoutine()).stream()
                         .sorted((t1, t2) -> t1.getDate().compareTo(t2.getDate()))
                         .toList();
-        assertThat(
-                        this.taskSummaryJpaRepository
-                                .findById(this.taskSummary.getId())
-                                .get()
-                                .getRemainedDowithTaskCount())
+        assertThat(this.taskSummaryJpaRepository
+                        .findById(this.taskSummary.getId())
+                        .get()
+                        .getRemainedDowithTaskCount())
                 .isEqualTo(3);
         for (int i = 0; i < dowithTasks.size(); i++) {
             DowithTask task = dowithTasks.get(i);
@@ -124,55 +111,45 @@ public class UpdateDowithTaskIntegrationTest extends AbstractIntegrationTest {
     void updateDowithTaskWithRoutine2() throws Exception {
         // given
         setFixedClock(LocalDateTime.of(2024, 3, 1, 0, 0));
-        DowithTask dowithTask =
-                dowithTaskJpaRepository.save(
-                        DowithTask.of(
-                                requestMember.getId(),
-                                taskCategory.getId(),
-                                "설거지 하기",
-                                LocalDate.of(2024, 3, 2),
-                                LocalTime.of(13, 0)));
-        //        // 루틴일에 Task 하나 생성
-        //        dowithTaskJpaRepository.save(
-        //                DowithTask.of(
-        //                        requestMember.getId(),
-        //                        taskCategory.getId(),
-        //                        "설거지 하기2",
-        //                        LocalDate.of(2024, 3, 10),
-        //                        LocalTime.of(13, 0)));
+        DowithTask dowithTask = dowithTaskJpaRepository.save(DowithTask.of(
+                requestMember.getId(), taskCategory.getId(), "설거지 하기", LocalDate.of(2024, 3, 2), LocalTime.of(13, 0)));
+        // // 루틴일에 Task 하나 생성
+        // dowithTaskJpaRepository.save(
+        // DowithTask.of(
+        // requestMember.getId(),
+        // taskCategory.getId(),
+        // "설거지 하기2",
+        // LocalDate.of(2024, 3, 10),
+        // LocalTime.of(13, 0)));
 
         // when
-        List<LocalDate> routineDates =
-                List.of(
-                        LocalDate.of(2024, 3, 3),
-                        LocalDate.of(2024, 3, 10),
-                        LocalDate.of(2024, 3, 11),
-                        LocalDate.of(2024, 3, 12),
-                        LocalDate.of(2024, 3, 13),
-                        LocalDate.of(2024, 3, 14),
-                        LocalDate.of(2024, 3, 15));
-        UpdateDowithTaskReqDto requestBody =
-                UpdateDowithTaskReqDto.builder()
-                        .title("청소하기")
-                        .taskCategoryId(taskCategory2.getId())
-                        .startDateTime(LocalDateTime.of(2024, 3, 3, 14, 0))
-                        .routineDates(routineDates)
-                        .build();
+        List<LocalDate> routineDates = List.of(
+                LocalDate.of(2024, 3, 3),
+                LocalDate.of(2024, 3, 10),
+                LocalDate.of(2024, 3, 11),
+                LocalDate.of(2024, 3, 12),
+                LocalDate.of(2024, 3, 13),
+                LocalDate.of(2024, 3, 14),
+                LocalDate.of(2024, 3, 15));
+        UpdateDowithTaskReqDto requestBody = UpdateDowithTaskReqDto.builder()
+                .title("청소하기")
+                .taskCategoryId(taskCategory2.getId())
+                .startDateTime(LocalDateTime.of(2024, 3, 3, 14, 0))
+                .routineDates(routineDates)
+                .build();
         ResultActions resultActions =
-                this.request(
-                        MockMvcRequestBuilders.put(UPDATE_DOWITH_TASK_URL + "/" + dowithTask.getId())
-                                .content(this.writeRequestBodyAsString(requestBody)));
+                this.request(MockMvcRequestBuilders.put(UPDATE_DOWITH_TASK_URL + "/" + dowithTask.getId())
+                        .content(this.writeRequestBodyAsString(requestBody)));
 
         // then
         resultActions
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$.statusCode").value(DOWITH_TASK_CREATE_COUNT_EXCEED.getStatusCode()))
                 .andDo(System.out::println);
-        assertThat(
-                        this.taskSummaryJpaRepository
-                                .findById(this.taskSummary.getId())
-                                .get()
-                                .getRemainedDowithTaskCount())
+        assertThat(this.taskSummaryJpaRepository
+                        .findById(this.taskSummary.getId())
+                        .get()
+                        .getRemainedDowithTaskCount())
                 .isEqualTo(5);
     }
 
@@ -181,45 +158,39 @@ public class UpdateDowithTaskIntegrationTest extends AbstractIntegrationTest {
     void updateDowithTaskWithRoutine3() throws Exception {
         // given
         setFixedClock(LocalDateTime.of(2024, 3, 1, 0, 0));
-        DowithTask dowithTask =
-                dowithTaskJpaRepository.save(
-                        DowithTask.of(
-                                this.requestMember.getId(),
-                                taskCategory.getId(),
-                                "설거지 하기",
-                                LocalDate.of(2024, 3, 2),
-                                LocalTime.of(13, 0)));
+        DowithTask dowithTask = dowithTaskJpaRepository.save(DowithTask.of(
+                this.requestMember.getId(),
+                taskCategory.getId(),
+                "설거지 하기",
+                LocalDate.of(2024, 3, 2),
+                LocalTime.of(13, 0)));
 
         // when
-        UpdateDowithTaskReqDto requestBody =
-                UpdateDowithTaskReqDto.builder()
-                        .title("청소하기")
-                        .taskCategoryId(taskCategory2.getId())
-                        .startDateTime(LocalDateTime.of(2024, 3, 3, 14, 0))
-                        .routineDates(null)
-                        .build();
+        UpdateDowithTaskReqDto requestBody = UpdateDowithTaskReqDto.builder()
+                .title("청소하기")
+                .taskCategoryId(taskCategory2.getId())
+                .startDateTime(LocalDateTime.of(2024, 3, 3, 14, 0))
+                .routineDates(null)
+                .build();
         ResultActions resultActions =
-                request(
-                        MockMvcRequestBuilders.put(UPDATE_DOWITH_TASK_URL + "/" + dowithTask.getId())
-                                .content(this.writeRequestBodyAsString(requestBody)));
+                request(MockMvcRequestBuilders.put(UPDATE_DOWITH_TASK_URL + "/" + dowithTask.getId())
+                        .content(this.writeRequestBodyAsString(requestBody)));
 
         // then
         resultActions.andExpect(status().isOk());
-        DowithTask savedTask =
-                dowithTaskJpaRepository
-                        .findById(dowithTask.getId())
-                        .orElseThrow(() -> new IllegalArgumentException("해당 Task가 존재하지 않습니다."));
+        DowithTask savedTask = dowithTaskJpaRepository
+                .findById(dowithTask.getId())
+                .orElseThrow(() -> new IllegalArgumentException("해당 Task가 존재하지 않습니다."));
 
         assertThat(savedTask.getTitle()).isEqualTo("청소하기");
         assertThat(savedTask.getTaskCategoryId()).isEqualTo(taskCategory2.getId());
         assertThat(savedTask.getDate()).isEqualTo(LocalDate.of(2024, 3, 3));
         assertThat(savedTask.getStartTime()).isEqualTo(LocalTime.of(14, 0));
         assertThat(savedTask.isRoutine()).isFalse();
-        assertThat(
-                        this.taskSummaryJpaRepository
-                                .findById(this.taskSummary.getId())
-                                .get()
-                                .getRemainedDowithTaskCount())
+        assertThat(this.taskSummaryJpaRepository
+                        .findById(this.taskSummary.getId())
+                        .get()
+                        .getRemainedDowithTaskCount())
                 .isEqualTo(5);
     }
 
@@ -228,52 +199,50 @@ public class UpdateDowithTaskIntegrationTest extends AbstractIntegrationTest {
     void updateDowithTaskWithRoutine4() throws Exception {
         // given
         setFixedClock(LocalDateTime.of(2024, 3, 1, 0, 0));
-        DowithTask dowithTask =
-                dowithTaskJpaRepository
-                        .saveAll(
-                                DowithTask.ofWithRoutine(
-                                        requestMember.getId(),
-                                        taskCategory.getId(),
-                                        "설거지 하기",
-                                        LocalDate.of(2024, 3, 2),
-                                        LocalTime.of(13, 0),
-                                        Set.of(
-                                                LocalDate.of(2024, 3, 2),
-                                                LocalDate.of(2024, 3, 3),
-                                                LocalDate.of(2024, 3, 16),
-                                                LocalDate.of(2024, 3, 17))))
-                        .stream()
-                        .filter(task -> task.getDate().equals(LocalDate.of(2024, 3, 2)))
-                        .findFirst()
-                        .get();
+        DowithTask dowithTask = dowithTaskJpaRepository
+                .saveAll(DowithTask.ofWithRoutine(
+                        requestMember.getId(),
+                        taskCategory.getId(),
+                        "설거지 하기",
+                        LocalDate.of(2024, 3, 2),
+                        LocalTime.of(13, 0),
+                        Set.of(
+                                LocalDate.of(2024, 3, 2),
+                                LocalDate.of(2024, 3, 3),
+                                LocalDate.of(2024, 3, 16),
+                                LocalDate.of(2024, 3, 17))))
+                .stream()
+                .filter(task -> task.getDate().equals(LocalDate.of(2024, 3, 2)))
+                .findFirst()
+                .get();
 
         // when
         setFixedClock(LocalDateTime.of(2024, 3, 15, 0, 0));
-        List<LocalDate> newRoutineDates =
-                List.of(
-                        LocalDate.of(2024, 3, 2),
-                        LocalDate.of(2024, 3, 3),
-                        LocalDate.of(2024, 3, 16),
-                        LocalDate.of(2024, 3, 20));
-        UpdateDowithTaskRoutineReqDto requestBody =
-                UpdateDowithTaskRoutineReqDto.builder().routineDates(newRoutineDates).build();
-        ResultActions resultActions =
-                this.request(
-                        MockMvcRequestBuilders.put(
-                                        String.format(UPDATE_DOWITH_TASK_ROUTINE_URL, dowithTask.getId()))
-                                .content(this.writeRequestBodyAsString(requestBody)));
+        List<LocalDate> newRoutineDates = List.of(
+                LocalDate.of(2024, 3, 2),
+                LocalDate.of(2024, 3, 3),
+                LocalDate.of(2024, 3, 16),
+                LocalDate.of(2024, 3, 20));
+        UpdateDowithTaskRoutineReqDto requestBody = UpdateDowithTaskRoutineReqDto.builder()
+                .routineDates(newRoutineDates)
+                .build();
+        ResultActions resultActions = this.request(
+                MockMvcRequestBuilders.put(String.format(UPDATE_DOWITH_TASK_ROUTINE_URL, dowithTask.getId()))
+                        .content(this.writeRequestBodyAsString(requestBody)));
 
         // then
         resultActions.andExpect(status().isOk());
-        assertThat(dowithTaskJpaRepository.findByDate(LocalDate.of(2024, 3, 17))).isEmpty();
+        assertThat(dowithTaskJpaRepository.findByDate(LocalDate.of(2024, 3, 17)))
+                .isEmpty();
 
-        List<DowithTask> dowithTasks =
-                dowithTaskJpaRepository
-                        .findAllDowithTaskAggregates(
-                                dowithTaskJpaRepository.findById(dowithTask.getId()).get().getRoutine())
-                        .stream()
-                        .sorted((t1, t2) -> t1.getDate().compareTo(t2.getDate()))
-                        .toList();
+        List<DowithTask> dowithTasks = dowithTaskJpaRepository
+                .findAllDowithTaskAggregates(dowithTaskJpaRepository
+                        .findById(dowithTask.getId())
+                        .get()
+                        .getRoutine())
+                .stream()
+                .sorted((t1, t2) -> t1.getDate().compareTo(t2.getDate()))
+                .toList();
         for (int i = 0; i < dowithTasks.size(); i++) {
             DowithTask task = dowithTasks.get(i);
             assertThat(task.getTitle()).isEqualTo("설거지 하기");
@@ -283,11 +252,10 @@ public class UpdateDowithTaskIntegrationTest extends AbstractIntegrationTest {
             assertThat(task.isRoutine()).isTrue();
             assertThat(task.getRoutineDates()).isEqualTo(new HashSet<>(newRoutineDates));
         }
-        assertThat(
-                        this.taskSummaryJpaRepository
-                                .findById(this.taskSummary.getId())
-                                .get()
-                                .getRemainedDowithTaskCount())
+        assertThat(this.taskSummaryJpaRepository
+                        .findById(this.taskSummary.getId())
+                        .get()
+                        .getRemainedDowithTaskCount())
                 .isEqualTo(5);
     }
 
@@ -297,51 +265,46 @@ public class UpdateDowithTaskIntegrationTest extends AbstractIntegrationTest {
     void updateDowithTaskWithRoutine5() throws Exception {
         // given
         setFixedClock(LocalDateTime.of(2024, 3, 1, 0, 0));
-        DowithTask dowithTask =
-                dowithTaskJpaRepository
-                        .saveAll(
-                                DowithTask.ofWithRoutine(
-                                        this.requestMember.getId(),
-                                        taskCategory.getId(),
-                                        "설거지 하기",
-                                        LocalDate.of(2024, 3, 2),
-                                        LocalTime.of(13, 0),
-                                        Set.of(
-                                                LocalDate.of(2024, 3, 2),
-                                                LocalDate.of(2024, 3, 3),
-                                                LocalDate.of(2024, 3, 16),
-                                                LocalDate.of(2024, 3, 17))))
-                        .stream()
-                        .filter(task -> task.getDate().equals(LocalDate.of(2024, 3, 2)))
-                        .findFirst()
-                        .get();
+        DowithTask dowithTask = dowithTaskJpaRepository
+                .saveAll(DowithTask.ofWithRoutine(
+                        this.requestMember.getId(),
+                        taskCategory.getId(),
+                        "설거지 하기",
+                        LocalDate.of(2024, 3, 2),
+                        LocalTime.of(13, 0),
+                        Set.of(
+                                LocalDate.of(2024, 3, 2),
+                                LocalDate.of(2024, 3, 3),
+                                LocalDate.of(2024, 3, 16),
+                                LocalDate.of(2024, 3, 17))))
+                .stream()
+                .filter(task -> task.getDate().equals(LocalDate.of(2024, 3, 2)))
+                .findFirst()
+                .get();
 
         // when
         setFixedClock(LocalDateTime.of(2024, 3, 15, 0, 0));
-        List<LocalDate> newRoutineDates =
-                List.of(
-                        LocalDate.of(2024, 3, 2),
-                        LocalDate.of(2024, 3, 4), // 일치하지 않는 과거 일자
-                        LocalDate.of(2024, 3, 16),
-                        LocalDate.of(2024, 3, 20));
-        UpdateDowithTaskRoutineReqDto requestBody =
-                UpdateDowithTaskRoutineReqDto.builder().routineDates(newRoutineDates).build();
-        ResultActions resultActions =
-                this.request(
-                        MockMvcRequestBuilders.put(
-                                        String.format(UPDATE_DOWITH_TASK_ROUTINE_URL, dowithTask.getId()))
-                                .content(this.writeRequestBodyAsString(requestBody)));
+        List<LocalDate> newRoutineDates = List.of(
+                LocalDate.of(2024, 3, 2),
+                LocalDate.of(2024, 3, 4), // 일치하지 않는 과거 일자
+                LocalDate.of(2024, 3, 16),
+                LocalDate.of(2024, 3, 20));
+        UpdateDowithTaskRoutineReqDto requestBody = UpdateDowithTaskRoutineReqDto.builder()
+                .routineDates(newRoutineDates)
+                .build();
+        ResultActions resultActions = this.request(
+                MockMvcRequestBuilders.put(String.format(UPDATE_DOWITH_TASK_ROUTINE_URL, dowithTask.getId()))
+                        .content(this.writeRequestBodyAsString(requestBody)));
 
         // then
         resultActions
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$.statusCode").value(INVALID_REQUEST.getStatusCode()))
                 .andDo(System.out::println);
-        assertThat(
-                        this.taskSummaryJpaRepository
-                                .findById(this.taskSummary.getId())
-                                .get()
-                                .getRemainedDowithTaskCount())
+        assertThat(this.taskSummaryJpaRepository
+                        .findById(this.taskSummary.getId())
+                        .get()
+                        .getRemainedDowithTaskCount())
                 .isEqualTo(5);
     }
 
@@ -350,57 +313,52 @@ public class UpdateDowithTaskIntegrationTest extends AbstractIntegrationTest {
     void updateDowithTaskWithRoutine6() throws Exception {
         // given
         setFixedClock(LocalDateTime.of(2024, 3, 1, 0, 0));
-        DowithTask dowithTask =
-                dowithTaskJpaRepository
-                        .saveAll(
-                                DowithTask.ofWithRoutine(
-                                        this.requestMember.getId(),
-                                        taskCategory.getId(),
-                                        "설거지 하기",
-                                        LocalDate.of(2024, 3, 2),
-                                        LocalTime.of(13, 0),
-                                        Set.of(
-                                                LocalDate.of(2024, 3, 2),
-                                                LocalDate.of(2024, 3, 3),
-                                                LocalDate.of(2024, 3, 16),
-                                                LocalDate.of(2024, 3, 17))))
-                        .stream()
-                        .filter(task -> task.getDate().equals(LocalDate.of(2024, 3, 2)))
-                        .findFirst()
-                        .get();
+        DowithTask dowithTask = dowithTaskJpaRepository
+                .saveAll(DowithTask.ofWithRoutine(
+                        this.requestMember.getId(),
+                        taskCategory.getId(),
+                        "설거지 하기",
+                        LocalDate.of(2024, 3, 2),
+                        LocalTime.of(13, 0),
+                        Set.of(
+                                LocalDate.of(2024, 3, 2),
+                                LocalDate.of(2024, 3, 3),
+                                LocalDate.of(2024, 3, 16),
+                                LocalDate.of(2024, 3, 17))))
+                .stream()
+                .filter(task -> task.getDate().equals(LocalDate.of(2024, 3, 2)))
+                .findFirst()
+                .get();
 
         // when
         setFixedClock(LocalDateTime.of(2024, 3, 15, 0, 0));
-        List<LocalDate> newRoutineDates =
-                List.of(
-                        LocalDate.of(2024, 3, 2),
-                        LocalDate.of(2024, 3, 3),
-                        LocalDate.of(2024, 3, 16),
-                        LocalDate.of(2024, 3, 20), // 17일 대체
-                        LocalDate.of(2024, 3, 21), // 새로 추가
-                        LocalDate.of(2024, 3, 22), // 새로 추가
-                        LocalDate.of(2024, 3, 23), // 새로 추가
-                        LocalDate.of(2024, 3, 24), // 새로 추가
-                        LocalDate.of(2024, 3, 25), // 새로 추가
-                        LocalDate.of(2024, 3, 26)); // 새로 추가
-        UpdateDowithTaskRoutineReqDto requestBody =
-                UpdateDowithTaskRoutineReqDto.builder().routineDates(newRoutineDates).build();
-        ResultActions resultActions =
-                this.request(
-                        MockMvcRequestBuilders.put(
-                                        String.format(UPDATE_DOWITH_TASK_ROUTINE_URL, dowithTask.getId()))
-                                .content(this.writeRequestBodyAsString(requestBody)));
+        List<LocalDate> newRoutineDates = List.of(
+                LocalDate.of(2024, 3, 2),
+                LocalDate.of(2024, 3, 3),
+                LocalDate.of(2024, 3, 16),
+                LocalDate.of(2024, 3, 20), // 17일 대체
+                LocalDate.of(2024, 3, 21), // 새로 추가
+                LocalDate.of(2024, 3, 22), // 새로 추가
+                LocalDate.of(2024, 3, 23), // 새로 추가
+                LocalDate.of(2024, 3, 24), // 새로 추가
+                LocalDate.of(2024, 3, 25), // 새로 추가
+                LocalDate.of(2024, 3, 26)); // 새로 추가
+        UpdateDowithTaskRoutineReqDto requestBody = UpdateDowithTaskRoutineReqDto.builder()
+                .routineDates(newRoutineDates)
+                .build();
+        ResultActions resultActions = this.request(
+                MockMvcRequestBuilders.put(String.format(UPDATE_DOWITH_TASK_ROUTINE_URL, dowithTask.getId()))
+                        .content(this.writeRequestBodyAsString(requestBody)));
 
         // then
         resultActions
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$.statusCode").value(DOWITH_TASK_CREATE_COUNT_EXCEED.getStatusCode()))
                 .andDo(System.out::println);
-        assertThat(
-                        this.taskSummaryJpaRepository
-                                .findById(this.taskSummary.getId())
-                                .get()
-                                .getRemainedDowithTaskCount())
+        assertThat(this.taskSummaryJpaRepository
+                        .findById(this.taskSummary.getId())
+                        .get()
+                        .getRemainedDowithTaskCount())
                 .isEqualTo(5);
     }
 }

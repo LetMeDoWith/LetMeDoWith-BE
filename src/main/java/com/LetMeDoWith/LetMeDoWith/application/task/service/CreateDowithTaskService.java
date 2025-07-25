@@ -43,19 +43,13 @@ public class CreateDowithTaskService {
                     .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
         }
 
-        TaskSummary taskSummary =
-                taskSummaryRepository
-                        .getTaskSummary(memberId)
-                        .orElseThrow(() -> new RestApiException(INTERNAL_SERVER_ERROR));
+        TaskSummary taskSummary = taskSummaryRepository
+                .getTaskSummary(memberId)
+                .orElseThrow(() -> new RestApiException(INTERNAL_SERVER_ERROR));
         taskSummary.deductRemainedDowithTaskCount(targetDateSet.size());
 
         DowithTask dowithTask =
-                DowithTask.of(
-                        memberId,
-                        command.taskCategoryId(),
-                        command.title(),
-                        command.date(),
-                        command.startTime());
+                DowithTask.of(memberId, command.taskCategoryId(), command.title(), command.date(), command.startTime());
 
         return dowithTaskRepository.saveDowithTask(dowithTask);
     }
@@ -68,8 +62,7 @@ public class CreateDowithTaskService {
      * @return
      */
     @Transactional
-    public List<DowithTask> createDowithTaskWithRoutine(
-            String memberId, CreateDowithTaskWithRoutineCommand command) {
+    public List<DowithTask> createDowithTaskWithRoutine(String memberId, CreateDowithTaskWithRoutineCommand command) {
 
         if (command.taskCategoryId() != null) {
             taskCategoryRepository
@@ -79,20 +72,18 @@ public class CreateDowithTaskService {
 
         Set<LocalDate> targetDateSet = command.getTargetDateSet();
 
-        TaskSummary taskSummary =
-                taskSummaryRepository
-                        .getTaskSummary(memberId)
-                        .orElseThrow(() -> new RestApiException(INTERNAL_SERVER_ERROR));
+        TaskSummary taskSummary = taskSummaryRepository
+                .getTaskSummary(memberId)
+                .orElseThrow(() -> new RestApiException(INTERNAL_SERVER_ERROR));
         taskSummary.deductRemainedDowithTaskCount(targetDateSet.size());
 
-        List<DowithTask> dowithTask =
-                DowithTask.ofWithRoutine(
-                        memberId,
-                        command.taskCategoryId(),
-                        command.title(),
-                        command.date(),
-                        command.startTime(),
-                        command.routineDates());
+        List<DowithTask> dowithTask = DowithTask.ofWithRoutine(
+                memberId,
+                command.taskCategoryId(),
+                command.title(),
+                command.date(),
+                command.startTime(),
+                command.routineDates());
 
         return dowithTaskRepository.saveDowithTasks(dowithTask);
     }

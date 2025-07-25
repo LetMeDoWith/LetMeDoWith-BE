@@ -71,9 +71,7 @@ public class AuthController {
             summary = "토큰 발급",
             description =
                     "소셜 로그인 idToken을 통해 AccessToken과 RefreshToken을 발급 받습니다. Provider : KAKAO - 카카오 / GOOGLE - 구글 / APPLE - 애플 / DEV_KAKAO - 카카오 (개발서버 전용)")
-    @ApiSuccessResponse(
-            description =
-                    "토큰발급 성공. 이미 존재하는 회원일 때는 singupToken 필드가, 회원가입이 필요한 경우 atk, rtk 필드가 null로 설정됩니다.")
+    @ApiSuccessResponse(description = "토큰발급 성공. 이미 존재하는 회원일 때는 singupToken 필드가, 회원가입이 필요한 경우 atk, rtk 필드가 null로 설정됩니다.")
     @ApiErrorResponses({
         @ApiErrorResponse(
                 status = FailResponseStatus.OIDC_ID_TOKEN_PUBKEY_NOT_FOUND,

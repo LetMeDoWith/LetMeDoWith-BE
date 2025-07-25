@@ -27,8 +27,7 @@ public class RetrieveTaskService {
 
         // TODO - 추후 Cache 적용
 
-        List<TodoTaskQueryDto> todoTaskQueryDtos =
-                todoTaskQueryRepository.getTodoTasks(memberId, startDate, endDate);
+        List<TodoTaskQueryDto> todoTaskQueryDtos = todoTaskQueryRepository.getTodoTasks(memberId, startDate, endDate);
         List<DowithTaskQueryDto> dowithTaskQueryDtos =
                 dowithTaskQueryRepository.getDowithTasks(memberId, startDate, endDate);
 

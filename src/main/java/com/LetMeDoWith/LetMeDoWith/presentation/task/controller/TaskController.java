@@ -40,8 +40,7 @@ public class TaskController {
 
         String memberId = AuthUtil.getMemberId();
 
-        RetrieveTasksResult result =
-                retrieveTaskService.retrieveMonthTasks(memberId, Year.of(year), Month.of(month));
+        RetrieveTasksResult result = retrieveTaskService.retrieveMonthTasks(memberId, Year.of(year), Month.of(month));
 
         return ResponseUtil.createSuccessResponse(RetrieveTasksResDto.from(result));
     }

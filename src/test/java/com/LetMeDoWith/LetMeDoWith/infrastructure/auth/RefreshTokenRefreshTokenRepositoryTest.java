@@ -17,20 +17,21 @@ public class RefreshTokenRefreshTokenRepositoryTest {
     private final String accessToken = "accessTokenTestTest";
     private final String memberId = "01HXQ2X7Z7Q6XJX4X2X7Z7Q6XA";
     private final String userAgent = "I-PHONE";
-    @Autowired private RefreshTokenRedisRepository repository;
+
+    @Autowired
+    private RefreshTokenRedisRepository repository;
 
     @DisplayName("[SUCCESS] refreshToken Redis 저장 성공")
     @Test
     void refreshTokenCreateSuccessTest() {
         // given
-        RefreshToken refreshToken =
-                RefreshToken.builder()
-                        .token(this.refreshToken)
-                        .accessToken(this.accessToken)
-                        .memberId(memberId)
-                        .userAgent(this.userAgent)
-                        .expireSec(30L)
-                        .build();
+        RefreshToken refreshToken = RefreshToken.builder()
+                .token(this.refreshToken)
+                .accessToken(this.accessToken)
+                .memberId(memberId)
+                .userAgent(this.userAgent)
+                .expireSec(30L)
+                .build();
 
         // when
         RefreshToken save = repository.save(refreshToken);

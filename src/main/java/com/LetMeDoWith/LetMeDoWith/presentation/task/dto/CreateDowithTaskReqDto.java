@@ -16,11 +16,9 @@ import java.util.Set;
 public record CreateDowithTaskReqDto(
         @Schema(description = "제목", defaultValue = "아침 먹기") @NotBlank @Size(max = 40) String title,
         @Schema(description = "Task 카테고리 ID", defaultValue = "1") Long taskCategoryId,
-        @Schema(description = "시작 일시", defaultValue = "2025-01-30T11:30:00") @NotNull
-                LocalDateTime startDateTime,
+        @Schema(description = "시작 일시", defaultValue = "2025-01-30T11:30:00") @NotNull LocalDateTime startDateTime,
         @Schema(description = "루틴 등록 여부", defaultValue = "true") @NotNull Boolean isRoutine,
-        @Schema(description = "루틴일", defaultValue = "[\"2025-02-01\", \"2025-02-02\"]")
-                List<LocalDate> routineDates) {
+        @Schema(description = "루틴일", defaultValue = "[\"2025-02-01\", \"2025-02-02\"]") List<LocalDate> routineDates) {
 
     public CreateDowithTaskCommand toCreateDowithTaskCommand() {
         return CreateDowithTaskCommand.builder()

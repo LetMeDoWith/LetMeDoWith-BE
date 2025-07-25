@@ -12,8 +12,7 @@ import org.springframework.boot.jackson.JsonComponent;
 public class LocalTimeSerializer extends JsonSerializer<LocalTime> {
 
     @Override
-    public void serialize(
-            LocalTime localTime, JsonGenerator jsonGenerator, SerializerProvider serializerProvider)
+    public void serialize(LocalTime localTime, JsonGenerator jsonGenerator, SerializerProvider serializerProvider)
             throws IOException {
         jsonGenerator.writeString(DateTimeUtil.toFormatString(localTime));
     }

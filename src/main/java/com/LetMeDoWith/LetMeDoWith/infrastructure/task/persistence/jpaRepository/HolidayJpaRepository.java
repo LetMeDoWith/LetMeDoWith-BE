@@ -12,6 +12,5 @@ public interface HolidayJpaRepository extends JpaRepository<Holiday, Long> {
 
     boolean existsByDate(LocalDate date);
 
-    Set<Holiday> findAllByCountryCodeAndDateBetween(
-            CountryCode countryCode, LocalDate startDate, LocalDate endDate);
+    Set<Holiday> findAllByCountryCodeAndDateBetween(CountryCode countryCode, LocalDate startDate, LocalDate endDate);
 }

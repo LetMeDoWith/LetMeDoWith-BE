@@ -15,10 +15,9 @@ public class NotificationTokenService {
     @Transactional
     public void registerToken(String memberId, String token) {
 
-        NotificationToken notificationToken =
-                notificationTokenRepository
-                        .getNotificationToken(memberId)
-                        .orElseGet(() -> NotificationToken.of(memberId, token));
+        NotificationToken notificationToken = notificationTokenRepository
+                .getNotificationToken(memberId)
+                .orElseGet(() -> NotificationToken.of(memberId, token));
 
         notificationToken.updateToNewToken(token);
         notificationTokenRepository.save(notificationToken);

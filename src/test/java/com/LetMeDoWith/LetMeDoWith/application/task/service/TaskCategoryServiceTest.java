@@ -21,45 +21,49 @@ class TaskCategoryServiceTest {
 
     // 테스트에 사용할 멤버 ID
     private static final String TEST_MEMBER_ID = "01HXQ2X7Z7Q6XJX4X2X7Z7Q6XA";
-    @Mock private TaskCategoryRepository taskCategoryRepository;
-    @InjectMocks private TaskCategoryService taskCategoryService;
+
+    @Mock
+    private TaskCategoryRepository taskCategoryRepository;
+
+    @InjectMocks
+    private TaskCategoryService taskCategoryService;
+
     private List<TaskCategory> mockUserCategories;
     private List<TaskCategoryVO> mockUserCategoryVOs;
 
     @BeforeEach
     void setUp() {
         // 유저가 생성한 TaskCategory 엔티티 3개를 임의로 만든다.
-        mockUserCategories =
-                List.of(
-                        new TaskCategory(
-                                100L,
-                                "User 카테고리1",
-                                Yn.TRUE,
-                                TaskCategory.TaskCategoryCreationType.USER_CUSTOM,
-                                "🔧",
-                                TEST_MEMBER_ID),
-                        new TaskCategory(
-                                101L,
-                                "User 카테고리2",
-                                Yn.TRUE,
-                                TaskCategory.TaskCategoryCreationType.USER_CUSTOM,
-                                "📅",
-                                TEST_MEMBER_ID),
-                        new TaskCategory(
-                                102L,
-                                "User 카테고리3",
-                                Yn.TRUE,
-                                TaskCategory.TaskCategoryCreationType.USER_CUSTOM,
-                                "📚",
-                                TEST_MEMBER_ID));
+        mockUserCategories = List.of(
+                new TaskCategory(
+                        100L,
+                        "User 카테고리1",
+                        Yn.TRUE,
+                        TaskCategory.TaskCategoryCreationType.USER_CUSTOM,
+                        "🔧",
+                        TEST_MEMBER_ID),
+                new TaskCategory(
+                        101L,
+                        "User 카테고리2",
+                        Yn.TRUE,
+                        TaskCategory.TaskCategoryCreationType.USER_CUSTOM,
+                        "📅",
+                        TEST_MEMBER_ID),
+                new TaskCategory(
+                        102L,
+                        "User 카테고리3",
+                        Yn.TRUE,
+                        TaskCategory.TaskCategoryCreationType.USER_CUSTOM,
+                        "📚",
+                        TEST_MEMBER_ID));
     }
 
     @Test
     @DisplayName("[SUCCESS] 모든 카테고리 조회")
     void testGetAllCategory() {
-        // Given: taskCategoryRepository가 memberId로 TaskCategory 엔티티를 반환할 때, 유저의 카테고리를 모킹한다.
-        when(taskCategoryRepository.getCategories(TEST_MEMBER_ID, Yn.TRUE))
-                .thenReturn(mockUserCategories);
+        // Given: taskCategoryRepository가 memberId로 TaskCategory 엔티티를 반환할 때, 유저의 카테고리를
+        // 모킹한다.
+        when(taskCategoryRepository.getCategories(TEST_MEMBER_ID, Yn.TRUE)).thenReturn(mockUserCategories);
 
         // When: 모든 카테고리를 조회하는 메서드 호출
         List<TaskCategory> result = taskCategoryService.retrieveTaskCategories(TEST_MEMBER_ID);

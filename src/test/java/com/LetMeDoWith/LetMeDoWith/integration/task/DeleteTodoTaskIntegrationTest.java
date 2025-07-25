@@ -43,9 +43,14 @@ public class DeleteTodoTaskIntegrationTest extends AbstractIntegrationTest {
     private static final String YEAR_PARAM = "2024";
     private static final String MONTH_PARAM = "6";
 
-    @Autowired private TodoTaskJpaRepository todoTaskRepository;
-    @Autowired private TaskCategoryJpaRepository taskCategoryRepository;
-    @Autowired private TodoTaskRoutineDateCalculator todoTaskRoutineDateCalculator;
+    @Autowired
+    private TodoTaskJpaRepository todoTaskRepository;
+
+    @Autowired
+    private TaskCategoryJpaRepository taskCategoryRepository;
+
+    @Autowired
+    private TodoTaskRoutineDateCalculator todoTaskRoutineDateCalculator;
 
     private TaskCategory taskCategory;
 
@@ -57,13 +62,8 @@ public class DeleteTodoTaskIntegrationTest extends AbstractIntegrationTest {
 
     @Override
     protected void createTestData() {
-        taskCategory =
-                taskCategoryRepository.save(
-                        TaskCategory.of(
-                                "test category",
-                                TaskCategory.TaskCategoryCreationType.COMMON,
-                                "test",
-                                this.requestMember.getId()));
+        taskCategory = taskCategoryRepository.save(TaskCategory.of(
+                "test category", TaskCategory.TaskCategoryCreationType.COMMON, "test", this.requestMember.getId()));
     }
 
     @Test
@@ -72,30 +72,21 @@ public class DeleteTodoTaskIntegrationTest extends AbstractIntegrationTest {
         // given
         setFixedClock(FIXED_CLOCK_TIME);
 
-        TodoTask todoTask =
-                todoTaskRepository.save(
-                        TodoTask.of(
-                                this.requestMember.getId(),
-                                taskCategory.getId(),
-                                TEST_TITLE,
-                                TEST_DATE,
-                                TEST_START_TIME));
+        TodoTask todoTask = todoTaskRepository.save(
+                TodoTask.of(this.requestMember.getId(), taskCategory.getId(), TEST_TITLE, TEST_DATE, TEST_START_TIME));
 
         // when
-        ResultActions resultActions =
-                this.request(MockMvcRequestBuilders.delete(URL + "/" + todoTask.getId()));
+        ResultActions resultActions = this.request(MockMvcRequestBuilders.delete(URL + "/" + todoTask.getId()));
 
         // then
         resultActions.andExpect(status().isOk());
 
         // 조회 API를 통해 삭제 검증 - CQRS 패턴
-        MvcResult retrieveResult =
-                this.request(
-                                MockMvcRequestBuilders.get(RETRIEVE_TASKS_URL)
-                                        .param("year", YEAR_PARAM)
-                                        .param("month", MONTH_PARAM))
-                        .andExpect(status().isOk())
-                        .andReturn();
+        MvcResult retrieveResult = this.request(MockMvcRequestBuilders.get(RETRIEVE_TASKS_URL)
+                        .param("year", YEAR_PARAM)
+                        .param("month", MONTH_PARAM))
+                .andExpect(status().isOk())
+                .andReturn();
 
         MockHttpServletResponse response = retrieveResult.getResponse();
         response.setCharacterEncoding("UTF-8");
@@ -114,47 +105,41 @@ public class DeleteTodoTaskIntegrationTest extends AbstractIntegrationTest {
         // given
         setFixedClock(FIXED_CLOCK_TIME);
 
-        Set<LocalDate> routineDates =
-                todoTaskRoutineDateCalculator.computeRoutineDates(
-                        TodoTaskRoutineCycle.DAILY, TEST_DATE, ROUTINE_END_DATE, null);
+        Set<LocalDate> routineDates = todoTaskRoutineDateCalculator.computeRoutineDates(
+                TodoTaskRoutineCycle.DAILY, TEST_DATE, ROUTINE_END_DATE, null);
 
-        List<TodoTask> todoTasks =
-                TodoTask.ofWithRoutine(
-                        this.requestMember.getId(),
-                        taskCategory.getId(),
-                        TEST_TITLE,
-                        TEST_START_TIME,
-                        routineDates,
-                        TodoTaskRoutineCycle.DAILY,
-                        null,
-                        false);
+        List<TodoTask> todoTasks = TodoTask.ofWithRoutine(
+                this.requestMember.getId(),
+                taskCategory.getId(),
+                TEST_TITLE,
+                TEST_START_TIME,
+                routineDates,
+                TodoTaskRoutineCycle.DAILY,
+                null,
+                false);
 
         List<TodoTask> savedTodoTasks = todoTaskRepository.saveAll(todoTasks);
 
         // 중간에 있는 태스크를 선택해서 삭제
-        TodoTask taskToDelete =
-                savedTodoTasks.stream()
-                        .filter(task -> task.getDate().isEqual(SAMPLE_DATE))
-                        .findFirst()
-                        .orElseThrow();
+        TodoTask taskToDelete = savedTodoTasks.stream()
+                .filter(task -> task.getDate().isEqual(SAMPLE_DATE))
+                .findFirst()
+                .orElseThrow();
 
         int originalTaskCount = savedTodoTasks.size();
 
         // when
-        ResultActions resultActions =
-                this.request(MockMvcRequestBuilders.delete(URL + "/" + taskToDelete.getId()));
+        ResultActions resultActions = this.request(MockMvcRequestBuilders.delete(URL + "/" + taskToDelete.getId()));
 
         // then
         resultActions.andExpect(status().isOk());
 
         // 조회 API를 통해 삭제 검증 - CQRS 패턴
-        MvcResult retrieveResult =
-                this.request(
-                                MockMvcRequestBuilders.get(RETRIEVE_TASKS_URL)
-                                        .param("year", YEAR_PARAM)
-                                        .param("month", MONTH_PARAM))
-                        .andExpect(status().isOk())
-                        .andReturn();
+        MvcResult retrieveResult = this.request(MockMvcRequestBuilders.get(RETRIEVE_TASKS_URL)
+                        .param("year", YEAR_PARAM)
+                        .param("month", MONTH_PARAM))
+                .andExpect(status().isOk())
+                .andReturn();
 
         MockHttpServletResponse response = retrieveResult.getResponse();
         response.setCharacterEncoding("UTF-8");
@@ -167,8 +152,9 @@ public class DeleteTodoTaskIntegrationTest extends AbstractIntegrationTest {
         assertThat(deletedTaskExists).isFalse();
 
         // 나머지 루틴 태스크들은 여전히 존재해야 함 (개별 삭제이므로)
-        long remainingTaskCount =
-                tasks.todoTasks().stream().filter(task -> task.title().equals(TEST_TITLE)).count();
+        long remainingTaskCount = tasks.todoTasks().stream()
+                .filter(task -> task.title().equals(TEST_TITLE))
+                .count();
         assertThat(remainingTaskCount).isEqualTo(originalTaskCount - 1);
     }
 
@@ -178,46 +164,40 @@ public class DeleteTodoTaskIntegrationTest extends AbstractIntegrationTest {
         // given
         setFixedClock(FIXED_CLOCK_TIME);
 
-        Set<LocalDate> routineDates =
-                todoTaskRoutineDateCalculator.computeRoutineDates(
-                        TodoTaskRoutineCycle.DAILY, TEST_DATE, ROUTINE_END_DATE, null);
+        Set<LocalDate> routineDates = todoTaskRoutineDateCalculator.computeRoutineDates(
+                TodoTaskRoutineCycle.DAILY, TEST_DATE, ROUTINE_END_DATE, null);
 
-        List<TodoTask> todoTasks =
-                TodoTask.ofWithRoutine(
-                        this.requestMember.getId(),
-                        taskCategory.getId(),
-                        TEST_TITLE,
-                        TEST_START_TIME,
-                        routineDates,
-                        TodoTaskRoutineCycle.DAILY,
-                        null,
-                        false);
+        List<TodoTask> todoTasks = TodoTask.ofWithRoutine(
+                this.requestMember.getId(),
+                taskCategory.getId(),
+                TEST_TITLE,
+                TEST_START_TIME,
+                routineDates,
+                TodoTaskRoutineCycle.DAILY,
+                null,
+                false);
 
         List<TodoTask> savedTodoTasks = todoTaskRepository.saveAll(todoTasks);
 
         // 중간에 있는 태스크를 선택 (기준 태스크)
-        TodoTask pivotTask =
-                savedTodoTasks.stream()
-                        .filter(task -> task.getDate().isEqual(SAMPLE_DATE))
-                        .findFirst()
-                        .orElseThrow();
+        TodoTask pivotTask = savedTodoTasks.stream()
+                .filter(task -> task.getDate().isEqual(SAMPLE_DATE))
+                .findFirst()
+                .orElseThrow();
 
         // when - with-routine 엔드포인트 사용
         ResultActions resultActions =
-                this.request(
-                        MockMvcRequestBuilders.delete(URL + "/" + pivotTask.getId() + "/with-routine"));
+                this.request(MockMvcRequestBuilders.delete(URL + "/" + pivotTask.getId() + "/with-routine"));
 
         // then
         resultActions.andExpect(status().isOk());
 
         // 조회 API를 통해 삭제 검증 - CQRS 패턴
-        MvcResult retrieveResult =
-                this.request(
-                                MockMvcRequestBuilders.get(RETRIEVE_TASKS_URL)
-                                        .param("year", YEAR_PARAM)
-                                        .param("month", MONTH_PARAM))
-                        .andExpect(status().isOk())
-                        .andReturn();
+        MvcResult retrieveResult = this.request(MockMvcRequestBuilders.get(RETRIEVE_TASKS_URL)
+                        .param("year", YEAR_PARAM)
+                        .param("month", MONTH_PARAM))
+                .andExpect(status().isOk())
+                .andReturn();
 
         MockHttpServletResponse response = retrieveResult.getResponse();
         response.setCharacterEncoding("UTF-8");
@@ -226,24 +206,21 @@ public class DeleteTodoTaskIntegrationTest extends AbstractIntegrationTest {
 
         // pivot 태스크 이후의 모든 루틴 태스크들이 삭제되어야 함
         // (TodoTaskRoutineSplitter 로직에 따라 pivot 이후는 삭제, 이전은 루틴에서 분리)
-        long remainingRoutineTaskCount =
-                tasks.todoTasks().stream()
-                        .filter(task -> task.title().equals(TEST_TITLE))
-                        .filter(task -> !task.date().isBefore(pivotTask.getDate())) // pivot 이후
-                        .count();
+        long remainingRoutineTaskCount = tasks.todoTasks().stream()
+                .filter(task -> task.title().equals(TEST_TITLE))
+                .filter(task -> !task.date().isBefore(pivotTask.getDate())) // pivot 이후
+                .count();
         assertThat(remainingRoutineTaskCount).isEqualTo(0);
 
         // pivot 이전의 태스크들은 루틴에서 분리되어 개별 태스크로 남아있어야 함
-        long detachedTaskCount =
-                tasks.todoTasks().stream()
-                        .filter(task -> task.title().equals(TEST_TITLE))
-                        .filter(task -> task.date().isBefore(pivotTask.getDate())) // pivot 이전
-                        .count();
+        long detachedTaskCount = tasks.todoTasks().stream()
+                .filter(task -> task.title().equals(TEST_TITLE))
+                .filter(task -> task.date().isBefore(pivotTask.getDate())) // pivot 이전
+                .count();
 
-        long expectedDetachedCount =
-                savedTodoTasks.stream()
-                        .filter(task -> task.getDate().isBefore(pivotTask.getDate()))
-                        .count();
+        long expectedDetachedCount = savedTodoTasks.stream()
+                .filter(task -> task.getDate().isBefore(pivotTask.getDate()))
+                .count();
         assertThat(detachedTaskCount).isEqualTo(expectedDetachedCount);
     }
 }

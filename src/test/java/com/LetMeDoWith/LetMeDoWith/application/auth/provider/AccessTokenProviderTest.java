@@ -31,8 +31,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 class AccessTokenProviderTest {
 
     /*
-     * Sample OIDC ID Tokens for test.
-     * You cannot utilize this token for any purpose on this system.
+     * Sample OIDC ID Tokens for test. You cannot utilize this token for any purpose
+     * on this system.
      */
 
     public final String MEMBER_ID = "1L";
@@ -53,9 +53,11 @@ class AccessTokenProviderTest {
     public final String SAMPLE_EXPONENT = "AQAB";
     public Key SAMPLE_RSA_PUBKEY;
 
-    @Autowired AccessTokenProvider accessTokenProvider;
+    @Autowired
+    AccessTokenProvider accessTokenProvider;
 
-    @Autowired OidcIdTokenProvider oidcIdTokenProvider;
+    @Autowired
+    OidcIdTokenProvider oidcIdTokenProvider;
 
     @BeforeEach
     void beforeEach() throws NoSuchAlgorithmException, InvalidKeySpecException {
@@ -65,9 +67,7 @@ class AccessTokenProviderTest {
     @Test
     @DisplayName("[SUCCESS] Token signature 추출 테스트")
     void extractSignatureFromNormalTokenTest() {
-        String kid =
-                oidcIdTokenProvider.getKidFromUnsignedTokenHeader(
-                        SAMPLE_TOKEN_NORMAL, SAMPLE_AUD, SAMPLE_ISS);
+        String kid = oidcIdTokenProvider.getKidFromUnsignedTokenHeader(SAMPLE_TOKEN_NORMAL, SAMPLE_AUD, SAMPLE_ISS);
 
         assertEquals(kid, SAMPLE_KID);
     }
@@ -78,8 +78,7 @@ class AccessTokenProviderTest {
         Jws<Claims> oidcToken = JwtUtil.parseTokenToJws(SAMPLE_TOKEN_NORMAL, SAMPLE_RSA_PUBKEY);
 
         assertEquals(oidcToken.getBody().getIssuer(), SAMPLE_ISS);
-        assertEquals(
-                oidcToken.getBody().getExpiration(), Date.from(Instant.ofEpochSecond(SAMPLE_EXPIRE)));
+        assertEquals(oidcToken.getBody().getExpiration(), Date.from(Instant.ofEpochSecond(SAMPLE_EXPIRE)));
     }
 
     @Test
@@ -102,9 +101,7 @@ class AccessTokenProviderTest {
     void extractSignatureFromExpiredTokenTest() {
         assertThrows(
                 RestApiAuthException.class,
-                () ->
-                        oidcIdTokenProvider.getKidFromUnsignedTokenHeader(
-                                SAMPLE_TOKEN_EXPIRED, SAMPLE_AUD, SAMPLE_ISS),
+                () -> oidcIdTokenProvider.getKidFromUnsignedTokenHeader(SAMPLE_TOKEN_EXPIRED, SAMPLE_AUD, SAMPLE_ISS),
                 FailResponseStatus.INVALID_TOKEN.getMessage());
     }
 
@@ -113,9 +110,8 @@ class AccessTokenProviderTest {
     void extractSignatureFromIllegalSignatureTokenTest() {
         assertThrows(
                 RestApiAuthException.class,
-                () ->
-                        oidcIdTokenProvider.getKidFromUnsignedTokenHeader(
-                                SAMPLE_TOKEN_ILLEGAL_SIGNATURE, SAMPLE_AUD, SAMPLE_ISS),
+                () -> oidcIdTokenProvider.getKidFromUnsignedTokenHeader(
+                        SAMPLE_TOKEN_ILLEGAL_SIGNATURE, SAMPLE_AUD, SAMPLE_ISS),
                 FailResponseStatus.INVALID_TOKEN.getMessage());
     }
 
@@ -124,9 +120,7 @@ class AccessTokenProviderTest {
     void extractSignatureFromMalformedTokenTest() {
         assertThrows(
                 RestApiAuthException.class,
-                () ->
-                        oidcIdTokenProvider.getKidFromUnsignedTokenHeader(
-                                SAMPLE_TOKEN_MALFORMED, SAMPLE_AUD, SAMPLE_ISS),
+                () -> oidcIdTokenProvider.getKidFromUnsignedTokenHeader(SAMPLE_TOKEN_MALFORMED, SAMPLE_AUD, SAMPLE_ISS),
                 FailResponseStatus.INVALID_TOKEN.getMessage());
     }
 
@@ -162,35 +156,32 @@ class AccessTokenProviderTest {
     void verifyTokenWithInvalidKeyTest() {
         assertThrows(
                 RestApiAuthException.class,
-                () ->
-                        JwtUtil.parseTokenToJws(
-                                SAMPLE_TOKEN_NORMAL,
-                                new RSAPublicKey() {
-                                    @Override
-                                    public BigInteger getPublicExponent() {
-                                        return null;
-                                    }
+                () -> JwtUtil.parseTokenToJws(SAMPLE_TOKEN_NORMAL, new RSAPublicKey() {
+                    @Override
+                    public BigInteger getPublicExponent() {
+                        return null;
+                    }
 
-                                    @Override
-                                    public String getAlgorithm() {
-                                        return null;
-                                    }
+                    @Override
+                    public String getAlgorithm() {
+                        return null;
+                    }
 
-                                    @Override
-                                    public String getFormat() {
-                                        return null;
-                                    }
+                    @Override
+                    public String getFormat() {
+                        return null;
+                    }
 
-                                    @Override
-                                    public byte[] getEncoded() {
-                                        return new byte[0];
-                                    }
+                    @Override
+                    public byte[] getEncoded() {
+                        return new byte[0];
+                    }
 
-                                    @Override
-                                    public BigInteger getModulus() {
-                                        return null;
-                                    }
-                                }),
+                    @Override
+                    public BigInteger getModulus() {
+                        return null;
+                    }
+                }),
                 FailResponseStatus.INVALID_TOKEN.getMessage());
     }
 }

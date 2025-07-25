@@ -23,19 +23,18 @@ public class BadgeQueryRepositoryImpl implements BadgeQueryRepository {
     public List<MemberBadgeQueryDto> getBadges(String memberId) {
 
         return jpaQueryFactory
-                .select(
-                        Projections.bean(
-                                MemberBadgeQueryDto.class,
-                                qMemberBadge.id.as("memberBadgeId"),
-                                qMemberBadge.memberId,
-                                qMemberBadge.isMain,
-                                qBadge.id.as("badgeId"),
-                                qBadge.badgeStatus,
-                                qBadge.name,
-                                qBadge.description,
-                                qBadge.acquireHint,
-                                qBadge.imageUrl,
-                                qBadge.sortOrder))
+                .select(Projections.bean(
+                        MemberBadgeQueryDto.class,
+                        qMemberBadge.id.as("memberBadgeId"),
+                        qMemberBadge.memberId,
+                        qMemberBadge.isMain,
+                        qBadge.id.as("badgeId"),
+                        qBadge.badgeStatus,
+                        qBadge.name,
+                        qBadge.description,
+                        qBadge.acquireHint,
+                        qBadge.imageUrl,
+                        qBadge.sortOrder))
                 .from(qBadge)
                 .leftJoin(qBadge.memberBadges, qMemberBadge)
                 .on(qMemberBadge.memberId.eq(memberId))

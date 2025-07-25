@@ -21,8 +21,7 @@ public class DowithTaskFeedbackRepositoryImpl implements DowithTaskFeedbackRepos
 
     @Override
     public Optional<DowithTaskFeedback> getLatest(Long dowithTaskId, String senderId) {
-        return repository.findTopByDowithTaskIdAndSenderMemberIdOrderByCreatedAtDesc(dowithTaskId,
-                senderId);
+        return repository.findTopByDowithTaskIdAndSenderMemberIdOrderByCreatedAtDesc(dowithTaskId, senderId);
     }
 
     @Override

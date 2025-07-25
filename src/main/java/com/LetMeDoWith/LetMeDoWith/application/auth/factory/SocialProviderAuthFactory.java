@@ -14,7 +14,6 @@ public class SocialProviderAuthFactory {
 
     public AuthClient getClient(SocialProvider socialProvider) {
 
-        return (AuthClient)
-                applicationContext.getBean(socialProvider.getCode().toLowerCase() + "AuthClient");
+        return (AuthClient) applicationContext.getBean(socialProvider.getCode().toLowerCase() + "AuthClient");
     }
 }

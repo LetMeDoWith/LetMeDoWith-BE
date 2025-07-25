@@ -3,5 +3,4 @@ package com.LetMeDoWith.LetMeDoWith.infrastructure.feedback.persistence.jpaRepos
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.model.TaskFeedbackTemplate;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface TaskFeedbackTemplateJpaRepository
-        extends JpaRepository<TaskFeedbackTemplate, Long> {}
+public interface TaskFeedbackTemplateJpaRepository extends JpaRepository<TaskFeedbackTemplate, Long> {}

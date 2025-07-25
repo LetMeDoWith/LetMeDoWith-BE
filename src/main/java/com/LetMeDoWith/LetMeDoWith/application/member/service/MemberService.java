@@ -47,10 +47,9 @@ public class MemberService {
     @Transactional
     public Member createSignupCompletedMember(CreateSignupCompletedMemberCommand command) {
 
-        Member member =
-                memberRepository
-                        .getMember(AuthUtil.getMemberId(), MemberStatus.SOCIAL_AUTHENTICATED)
-                        .orElseThrow(() -> new RestApiException(FailResponseStatus.MEMBER_NOT_EXIST));
+        Member member = memberRepository
+                .getMember(AuthUtil.getMemberId(), MemberStatus.SOCIAL_AUTHENTICATED)
+                .orElseThrow(() -> new RestApiException(FailResponseStatus.MEMBER_NOT_EXIST));
 
         if (isExistingNickname(command.nickname())) {
             throw new RestApiException(FailResponseStatus.DUPLICATE_NICKNAME);
@@ -58,12 +57,11 @@ public class MemberService {
 
         member.updateTermAgree(command.isTerms(), command.isPrivacy(), command.isAdvertisement());
 
-        member.updatePersonalInfoWithCompletingSignUp(
-                MemberPersonalInfoVO.builder()
-                        .nickname(command.nickname())
-                        .dateOfBirth(command.dateOfBirth())
-                        .gender(command.gender())
-                        .build());
+        member.updatePersonalInfoWithCompletingSignUp(MemberPersonalInfoVO.builder()
+                .nickname(command.nickname())
+                .dateOfBirth(command.dateOfBirth())
+                .gender(command.gender())
+                .build());
 
         memberSettingRepository.save(MemberAlarmSetting.init(member));
 
@@ -79,13 +77,11 @@ public class MemberService {
      * @throws RestApiException 필수 동의 항목이 false이거나, 회원이 존재하지 않을 경우
      */
     @Transactional
-    public void createMemberTermAgree(
-            boolean isTermsAgree, boolean isPrivacyAgree, boolean isAdvertisementAgree) {
+    public void createMemberTermAgree(boolean isTermsAgree, boolean isPrivacyAgree, boolean isAdvertisementAgree) {
 
-        Member member =
-                memberRepository
-                        .getMember(AuthUtil.getMemberId(), MemberStatus.SOCIAL_AUTHENTICATED)
-                        .orElseThrow(() -> new RestApiException(FailResponseStatus.MEMBER_NOT_EXIST));
+        Member member = memberRepository
+                .getMember(AuthUtil.getMemberId(), MemberStatus.SOCIAL_AUTHENTICATED)
+                .orElseThrow(() -> new RestApiException(FailResponseStatus.MEMBER_NOT_EXIST));
 
         member.updateTermAgree(isTermsAgree, isPrivacyAgree, isAdvertisementAgree);
 
@@ -104,7 +100,9 @@ public class MemberService {
             throw new RestApiException(FailResponseStatus.MANDATORY_PARAM_ERROR_NAME);
         }
 
-        return !memberRepository.getMembers(nickname, Member.getAllMemberStatus()).isEmpty();
+        return !memberRepository
+                .getMembers(nickname, Member.getAllMemberStatus())
+                .isEmpty();
     }
 
     /**
@@ -114,10 +112,9 @@ public class MemberService {
      * @return 탈퇴요청 성공 여부
      */
     public void withdrawMember(String memberId) {
-        Member member =
-                memberRepository
-                        .getMember(memberId, MemberStatus.NORMAL)
-                        .orElseThrow(() -> new RestApiException(FailResponseStatus.MEMBER_NOT_EXIST));
+        Member member = memberRepository
+                .getMember(memberId, MemberStatus.NORMAL)
+                .orElseThrow(() -> new RestApiException(FailResponseStatus.MEMBER_NOT_EXIST));
 
         memberRepository.delete(member);
         memberSettingRepository.delete(member.getAlarmSetting());

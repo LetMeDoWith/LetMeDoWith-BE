@@ -10,18 +10,19 @@ public class NotificationService {
 
     private final NotificationRepository notificationRepository;
     // TODO - 알림 기획 확인 후 구체화
-    //    @Transactional
-    //    pub
+    // @Transactional
+    // pub
 
-    //    @Transactional
-    //    public void confirmNotification(Long notificationId, String memberId) {
+    // @Transactional
+    // public void confirmNotification(Long notificationId, String memberId) {
     //
-    //        Notification notification = notificationRepository.getNotification(notificationId,
+    // Notification notification =
+    // notificationRepository.getNotification(notificationId,
     // memberId)
-    //                .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
+    // .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
     //
-    //        notification.confirm();
+    // notification.confirm();
     //
-    //    }
+    // }
 
 }

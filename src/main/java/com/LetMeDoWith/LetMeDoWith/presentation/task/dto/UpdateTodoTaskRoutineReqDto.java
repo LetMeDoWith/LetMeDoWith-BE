@@ -11,9 +11,7 @@ public record UpdateTodoTaskRoutineReqDto(
         @Schema(description = "루틴 종료 일자", example = "2025-01-30") LocalDate endDate,
         @Schema(description = "루틴 반복 주기 (DAILY: 매일, WEEKLY: 매주, MONTHLY: 매월)", example = "WEEKLY")
                 TodoTaskRoutineCycle cycle,
-        @Schema(
-                        description = "루틴 패턴 (DAILY: 사용 안함, WEEKLY: 1-7 요일, MONTHLY: 1-31 일자, 99: 마지막일)",
-                        example = "[1, 3, 5]")
+        @Schema(description = "루틴 패턴 (DAILY: 사용 안함, WEEKLY: 1-7 요일, MONTHLY: 1-31 일자, 99: 마지막일)", example = "[1, 3, 5]")
                 Set<Integer> pattern,
         @Schema(description = "공휴일 제외 여부", example = "true") Boolean isExcludeHolidays) {
 

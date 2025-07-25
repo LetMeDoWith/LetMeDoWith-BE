@@ -27,25 +27,27 @@ import org.springframework.context.annotation.Import;
 @Import({JpaAuditingConfiguration.class, TestQueryDslConfig.class})
 class MemberSocialAccountJpaRepositoryTest {
 
-    @Autowired TestEntityManager entityManager;
+    @Autowired
+    TestEntityManager entityManager;
 
-    @Autowired MemberJpaRepository memberJpaRepository;
+    @Autowired
+    MemberJpaRepository memberJpaRepository;
 
-    @Autowired MemberSocialAccountJpaRepository memberSocialAccountJpaRepository;
+    @Autowired
+    MemberSocialAccountJpaRepository memberSocialAccountJpaRepository;
 
     @BeforeEach
     void beforeEach() {
         entityManager.clear();
 
-        Member testMemberObj =
-                Member.builder()
-                        .subject("test@email.com")
-                        .nickname("nickname")
-                        .selfDescription("self desc")
-                        .status(MemberStatus.NORMAL)
-                        .type(MemberType.USER)
-                        .profileImageUrl("image.jpeg")
-                        .build();
+        Member testMemberObj = Member.builder()
+                .subject("test@email.com")
+                .nickname("nickname")
+                .selfDescription("self desc")
+                .status(MemberStatus.NORMAL)
+                .type(MemberType.USER)
+                .profileImageUrl("image.jpeg")
+                .build();
 
         memberJpaRepository.save(testMemberObj);
     }
@@ -56,11 +58,15 @@ class MemberSocialAccountJpaRepositoryTest {
         Optional<Member> memberOptional = memberJpaRepository.findBySubject("test@email.com");
         Member member = memberOptional.get();
 
-        MemberSocialAccount memberSocialAccountKaKao =
-                MemberSocialAccount.builder().member(member).provider(SocialProvider.KAKAO).build();
+        MemberSocialAccount memberSocialAccountKaKao = MemberSocialAccount.builder()
+                .member(member)
+                .provider(SocialProvider.KAKAO)
+                .build();
 
-        MemberSocialAccount memberSocialAccountGoogle =
-                MemberSocialAccount.builder().member(member).provider(SocialProvider.GOOGLE).build();
+        MemberSocialAccount memberSocialAccountGoogle = MemberSocialAccount.builder()
+                .member(member)
+                .provider(SocialProvider.GOOGLE)
+                .build();
 
         memberSocialAccountJpaRepository.save(memberSocialAccountKaKao);
         memberSocialAccountJpaRepository.save(memberSocialAccountGoogle);

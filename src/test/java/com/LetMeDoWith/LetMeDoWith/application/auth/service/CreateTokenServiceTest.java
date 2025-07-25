@@ -14,15 +14,20 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith({MockitoExtension.class})
 public class CreateTokenServiceTest {
 
-    @Mock AccessTokenProvider accessTokenProvider;
+    @Mock
+    AccessTokenProvider accessTokenProvider;
 
-    @Mock OidcIdTokenProvider oidcIdTokenProvider;
+    @Mock
+    OidcIdTokenProvider oidcIdTokenProvider;
 
-    @Mock MemberService memberService;
+    @Mock
+    MemberService memberService;
 
-    @Mock RefreshTokenRepository refreshTokenRepository;
+    @Mock
+    RefreshTokenRepository refreshTokenRepository;
 
-    @InjectMocks CreateTokenService createTokenService;
+    @InjectMocks
+    CreateTokenService createTokenService;
 
     @Test
     @DisplayName("[SUCCESS] 토큰 재발급")

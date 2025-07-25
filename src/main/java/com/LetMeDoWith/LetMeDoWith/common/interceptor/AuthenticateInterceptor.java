@@ -34,11 +34,9 @@ public class AuthenticateInterceptor implements HandlerInterceptor {
         }
 
         // 회원가입 완료 API 요청은 SIGNUP token으로 인증한다.
-        boolean isSignupCompleteReq =
-                uri.equals(SIGNUP_COMPLETE_API_URI) && method.equals(SIGNUP_COMPLETE_API_METHOD);
+        boolean isSignupCompleteReq = uri.equals(SIGNUP_COMPLETE_API_URI) && method.equals(SIGNUP_COMPLETE_API_METHOD);
 
-        String tokenToBeValidated =
-                isSignupCompleteReq ? AuthUtil.getSignupToken() : AuthUtil.getAccessToken();
+        String tokenToBeValidated = isSignupCompleteReq ? AuthUtil.getSignupToken() : AuthUtil.getAccessToken();
 
         String memberId;
         if (isSignupCompleteReq) {

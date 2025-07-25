@@ -8,6 +8,5 @@ import lombok.Builder;
 
 @Builder
 public record UpdateDowithTaskRoutineReqDto(
-        @Schema(description = "두윗모드 Task 루틴 일자 리스트", defaultValue = "[\"2025-04-01\", \"2025-04-02\"]")
-                @NotNull
+        @Schema(description = "두윗모드 Task 루틴 일자 리스트", defaultValue = "[\"2025-04-01\", \"2025-04-02\"]") @NotNull
                 List<LocalDate> routineDates) {}

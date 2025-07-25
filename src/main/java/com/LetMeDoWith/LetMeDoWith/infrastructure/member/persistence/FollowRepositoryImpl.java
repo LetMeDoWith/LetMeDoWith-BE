@@ -19,31 +19,27 @@ public class FollowRepositoryImpl implements FollowRepository {
     @Override
     public MemberFollow save(Member followerMember, Member followingMember) {
 
-        return memberFollowJpaRepository.save(
-                MemberFollow.builder()
-                        .followerMember(followerMember)
-                        .followingMember(followingMember)
-                        .build());
+        return memberFollowJpaRepository.save(MemberFollow.builder()
+                .followerMember(followerMember)
+                .followingMember(followingMember)
+                .build());
     }
 
     @Override
     public List<MemberFollow> getFollowers(Member followingMember, Pageable pageable) {
 
-        return memberFollowJpaRepository.findAllFollowersByFollowingMemberFetchJoinMember(
-                followingMember, pageable);
+        return memberFollowJpaRepository.findAllFollowersByFollowingMemberFetchJoinMember(followingMember, pageable);
     }
 
     @Override
     public List<MemberFollow> getFollowings(Member followerMember, Pageable pageable) {
 
-        return memberFollowJpaRepository.findAllFollowingsByFollowerMemberFetchJoinMember(
-                followerMember, pageable);
+        return memberFollowJpaRepository.findAllFollowingsByFollowerMemberFetchJoinMember(followerMember, pageable);
     }
 
     @Override
     public Optional<MemberFollow> getFollowing(String memberId, String followingMemberId) {
-        return memberFollowJpaRepository.findByFollowerMemberIdAndFollowingMemberId(
-                memberId, followingMemberId);
+        return memberFollowJpaRepository.findByFollowerMemberIdAndFollowingMemberId(memberId, followingMemberId);
     }
 
     @Override

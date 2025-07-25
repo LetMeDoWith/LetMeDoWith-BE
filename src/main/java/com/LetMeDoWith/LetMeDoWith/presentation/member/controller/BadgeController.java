@@ -32,15 +32,13 @@ public class BadgeController {
         String memberId = AuthUtil.getMemberId();
         RetrieveBadgesInfoResult result = badgeService.retrieveBadgesInfo(memberId);
 
-        MemberBadgeQueryDto mainBadge =
-                result.getBadges().stream()
-                        .filter(e -> Yn.TRUE.equals(e.getIsMain()))
-                        .findFirst()
-                        .orElse(null);
+        MemberBadgeQueryDto mainBadge = result.getBadges().stream()
+                .filter(e -> Yn.TRUE.equals(e.getIsMain()))
+                .findFirst()
+                .orElse(null);
 
         return ResponseUtil.createSuccessResponse(
-                RetrieveBadgesInfoResDto.of(
-                        memberId, result.isMemberLazy(), mainBadge, result.getBadges()));
+                RetrieveBadgesInfoResDto.of(memberId, result.isMemberLazy(), mainBadge, result.getBadges()));
     }
 
     @Operation(summary = "대표 뱃지 등록", description = "특정 뱃지를 유져의 대표 뱃지로 등록합니다.")

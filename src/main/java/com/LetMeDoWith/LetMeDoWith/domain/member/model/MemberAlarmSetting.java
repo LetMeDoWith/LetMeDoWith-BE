@@ -48,14 +48,13 @@ public class MemberAlarmSetting extends BaseAuditEntity {
 
     public static MemberAlarmSetting init(Member member) {
 
-        MemberAlarmSetting alarmSetting =
-                MemberAlarmSetting.builder()
-                        .member(member)
-                        .baseAlarmYn(true)
-                        .todoBotYn(true)
-                        .feedbackYn(true)
-                        .marketingYn(true)
-                        .build();
+        MemberAlarmSetting alarmSetting = MemberAlarmSetting.builder()
+                .member(member)
+                .baseAlarmYn(true)
+                .todoBotYn(true)
+                .feedbackYn(true)
+                .marketingYn(true)
+                .build();
 
         member.linkAlarmSetting(alarmSetting);
 

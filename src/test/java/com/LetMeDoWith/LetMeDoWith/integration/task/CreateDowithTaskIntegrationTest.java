@@ -24,7 +24,8 @@ public class CreateDowithTaskIntegrationTest extends AbstractIntegrationTest {
 
     static final String CREATE_DOWITH_TASK_URL = "/api/v1/tasks/dowith";
 
-    @Autowired DowithTaskJpaRepository dowithTaskJpaRepository;
+    @Autowired
+    DowithTaskJpaRepository dowithTaskJpaRepository;
 
     @Override
     protected void deleteTestData() {
@@ -46,27 +47,28 @@ public class CreateDowithTaskIntegrationTest extends AbstractIntegrationTest {
                 new CreateDowithTaskReqDto("테스트", null, startDateTime, Boolean.FALSE, null);
 
         // when
-        ResultActions resultActions =
-                this.request(
-                        MockMvcRequestBuilders.post(CREATE_DOWITH_TASK_URL)
-                                .content(this.writeRequestBodyAsString(requestBody)));
+        ResultActions resultActions = this.request(MockMvcRequestBuilders.post(CREATE_DOWITH_TASK_URL)
+                .content(this.writeRequestBodyAsString(requestBody)));
 
         // then
         resultActions
                 .andExpect(status().is2xxSuccessful())
-                //                     .andExpect(jsonPath("$.data.dowithTaskDtos[0].id").exists())
-                //                     .andExpect(
+                // .andExpect(jsonPath("$.data.dowithTaskDtos[0].id").exists())
+                // .andExpect(
                 //
                 // jsonPath("$.data.dowithTaskDtos[0].taskCategoryId").value(requestBody.taskCategoryId()))
                 //
                 // .andExpect(jsonPath("$.data.dowithTaskDtos[0].title").value(requestBody.title()))
-                //                     .andExpect(
+                // .andExpect(
                 //
                 // jsonPath("$.data.dowithTaskDtos[0].status").value(DowithTaskStatus.WAIT.getCode()))
-                //                     .andExpect(jsonPath("$.data.dowithTaskDtos[0].date").value(
-                //                         DateTimeUtil.toFormatString(startDateTime.toLocalDate())))
-                //                     .andExpect(jsonPath("$.data.dowithTaskDtos[0].startTime").value(
-                //                         DateTimeUtil.toFormatString(startDateTime.toLocalTime())))
+                // .andExpect(jsonPath("$.data.dowithTaskDtos[0].date").value(
+                //
+                // DateTimeUtil.toFormatString(startDateTime.toLocalDate())))
+                //
+                // .andExpect(jsonPath("$.data.dowithTaskDtos[0].startTime").value(
+                //
+                // DateTimeUtil.toFormatString(startDateTime.toLocalTime())))
                 //
                 // .andExpect(jsonPath("$.data.dowithTaskDtos[0].isRoutine").value(Boolean.FALSE))
                 .andDo(System.out::println);
@@ -79,63 +81,60 @@ public class CreateDowithTaskIntegrationTest extends AbstractIntegrationTest {
         LocalDateTime startDateTime = SystemTimeUtil.now().plusDays(1);
         LocalDate routineDate1 = startDateTime.plusMonths(3).toLocalDate();
         LocalDate routineDate2 = startDateTime.plusDays(2).toLocalDate();
-        List<LocalDate> targetDates =
-                Arrays.asList(startDateTime.toLocalDate(), routineDate1, routineDate2);
+        List<LocalDate> targetDates = Arrays.asList(startDateTime.toLocalDate(), routineDate1, routineDate2);
         Collections.sort(targetDates);
 
         // when
-        CreateDowithTaskReqDto requestBody =
-                new CreateDowithTaskReqDto(
-                        "테스트",
-                        null,
-                        startDateTime,
-                        Boolean.TRUE,
-                        List.of(startDateTime.toLocalDate(), routineDate1, routineDate2));
-        ResultActions resultActions =
-                this.request(
-                        MockMvcRequestBuilders.post(CREATE_DOWITH_TASK_URL)
-                                .content(this.writeRequestBodyAsString(requestBody)));
+        CreateDowithTaskReqDto requestBody = new CreateDowithTaskReqDto(
+                "테스트",
+                null,
+                startDateTime,
+                Boolean.TRUE,
+                List.of(startDateTime.toLocalDate(), routineDate1, routineDate2));
+        ResultActions resultActions = this.request(MockMvcRequestBuilders.post(CREATE_DOWITH_TASK_URL)
+                .content(this.writeRequestBodyAsString(requestBody)));
 
         // then
-        assertThat(
-                        this.taskSummaryJpaRepository
-                                .findById(this.taskSummary.getId())
-                                .get()
-                                .getRemainedDowithTaskCount())
+        assertThat(this.taskSummaryJpaRepository
+                        .findById(this.taskSummary.getId())
+                        .get()
+                        .getRemainedDowithTaskCount())
                 .isEqualTo(2);
         for (int i = 0; i < targetDates.size(); i++) {
             resultActions
                     .andExpect(status().is2xxSuccessful())
-                    //                         .andExpect(jsonPath("$.data.dowithTaskDtos[" + i +
+                    // .andExpect(jsonPath("$.data.dowithTaskDtos[" + i +
                     // "].id").exists())
-                    //                         .andExpect(jsonPath(
-                    //                             "$.data.dowithTaskDtos[" + i + "].taskCategoryId").value(
-                    //                             requestBody.taskCategoryId()))
-                    //                         .andExpect(jsonPath("$.data.dowithTaskDtos[" + i +
+                    // .andExpect(jsonPath(
+                    // "$.data.dowithTaskDtos[" + i +
+                    // "].taskCategoryId").value(
+                    // requestBody.taskCategoryId()))
+                    // .andExpect(jsonPath("$.data.dowithTaskDtos[" + i +
                     // "].title").value(
-                    //                             requestBody.title()))
-                    //                         .andExpect(jsonPath("$.data.dowithTaskDtos[" + i +
+                    // requestBody.title()))
+                    // .andExpect(jsonPath("$.data.dowithTaskDtos[" + i +
                     // "].status").value(
-                    //                             DowithTaskStatus.WAIT.getCode()))
-                    //                         .andExpect(jsonPath("$.data.dowithTaskDtos[" + i +
+                    // DowithTaskStatus.WAIT.getCode()))
+                    // .andExpect(jsonPath("$.data.dowithTaskDtos[" + i +
                     // "].date").value(
-                    //                             DateTimeUtil.toFormatString(targetDates.get(i))))
-                    //                         .andExpect(jsonPath("$.data.dowithTaskDtos[" + i +
+                    // DateTimeUtil.toFormatString(targetDates.get(i))))
+                    // .andExpect(jsonPath("$.data.dowithTaskDtos[" + i +
                     // "].startTime").value(
-                    //                             DateTimeUtil.toFormatString(startDateTime.toLocalTime())))
-                    //                         .andExpect(jsonPath("$.data.dowithTaskDtos[" + i +
+                    //
+                    // DateTimeUtil.toFormatString(startDateTime.toLocalTime())))
+                    // .andExpect(jsonPath("$.data.dowithTaskDtos[" + i +
                     // "].isRoutine").value(
-                    //                             Boolean.TRUE))
-                    //                         .andExpect(jsonPath("$.data.dowithTaskDtos[" + i +
+                    // Boolean.TRUE))
+                    // .andExpect(jsonPath("$.data.dowithTaskDtos[" + i +
                     // "].routineDates").value(
-                    //                             new IsEqual<>(
+                    // new IsEqual<>(
                     //
                     // List.of(DateTimeUtil.toFormatString(targetDates.get(0)),
                     //
                     // DateTimeUtil.toFormatString(targetDates.get(1)),
                     //
                     // DateTimeUtil.toFormatString(targetDates.get(2)))),
-                    //                             List.class))
+                    // List.class))
                     .andDo(System.out::println);
         }
     }
@@ -149,17 +148,14 @@ public class CreateDowithTaskIntegrationTest extends AbstractIntegrationTest {
         // when
         CreateDowithTaskReqDto requestBody =
                 new CreateDowithTaskReqDto("테스트", 100L, startDateTime, Boolean.FALSE, null);
-        ResultActions resultActions =
-                this.request(
-                        MockMvcRequestBuilders.post(CREATE_DOWITH_TASK_URL)
-                                .content(this.writeRequestBodyAsString(requestBody)));
+        ResultActions resultActions = this.request(MockMvcRequestBuilders.post(CREATE_DOWITH_TASK_URL)
+                .content(this.writeRequestBodyAsString(requestBody)));
 
         // then
-        assertThat(
-                        this.taskSummaryJpaRepository
-                                .findById(this.taskSummary.getId())
-                                .get()
-                                .getRemainedDowithTaskCount())
+        assertThat(this.taskSummaryJpaRepository
+                        .findById(this.taskSummary.getId())
+                        .get()
+                        .getRemainedDowithTaskCount())
                 .isEqualTo(5);
         resultActions
                 .andExpect(status().is4xxClientError())
@@ -177,30 +173,21 @@ public class CreateDowithTaskIntegrationTest extends AbstractIntegrationTest {
         LocalDate routineDate3 = startDateTime.plusMonths(4).toLocalDate();
         LocalDate routineDate4 = startDateTime.plusDays(5).toLocalDate();
         LocalDate routineDate5 = startDateTime.plusDays(6).toLocalDate();
-        List<LocalDate> targetDates =
-                Arrays.asList(
-                        startDateTime.toLocalDate(),
-                        routineDate1,
-                        routineDate2,
-                        routineDate3,
-                        routineDate4,
-                        routineDate5);
+        List<LocalDate> targetDates = Arrays.asList(
+                startDateTime.toLocalDate(), routineDate1, routineDate2, routineDate3, routineDate4, routineDate5);
         Collections.sort(targetDates);
 
         // when
         CreateDowithTaskReqDto requestBody =
                 new CreateDowithTaskReqDto("테스트", null, startDateTime, Boolean.TRUE, targetDates);
-        ResultActions resultActions =
-                this.request(
-                        MockMvcRequestBuilders.post(CREATE_DOWITH_TASK_URL)
-                                .content(this.writeRequestBodyAsString(requestBody)));
+        ResultActions resultActions = this.request(MockMvcRequestBuilders.post(CREATE_DOWITH_TASK_URL)
+                .content(this.writeRequestBodyAsString(requestBody)));
 
         // then
-        assertThat(
-                        this.taskSummaryJpaRepository
-                                .findById(this.taskSummary.getId())
-                                .get()
-                                .getRemainedDowithTaskCount())
+        assertThat(this.taskSummaryJpaRepository
+                        .findById(this.taskSummary.getId())
+                        .get()
+                        .getRemainedDowithTaskCount())
                 .isEqualTo(5);
         resultActions
                 .andExpect(status().is4xxClientError())
@@ -215,29 +202,24 @@ public class CreateDowithTaskIntegrationTest extends AbstractIntegrationTest {
         LocalDateTime startDateTime = SystemTimeUtil.now().plusDays(1);
         LocalDate routineDate1 = startDateTime.minusMonths(1).toLocalDate();
         LocalDate routineDate2 = startDateTime.plusDays(2).toLocalDate();
-        List<LocalDate> targetDates =
-                Arrays.asList(startDateTime.toLocalDate(), routineDate1, routineDate2);
+        List<LocalDate> targetDates = Arrays.asList(startDateTime.toLocalDate(), routineDate1, routineDate2);
         Collections.sort(targetDates);
 
         // when
-        CreateDowithTaskReqDto requestBody =
-                new CreateDowithTaskReqDto(
-                        "테스트",
-                        null,
-                        startDateTime,
-                        Boolean.TRUE,
-                        List.of(startDateTime.toLocalDate(), routineDate1, routineDate2));
-        ResultActions resultActions =
-                this.request(
-                        MockMvcRequestBuilders.post(CREATE_DOWITH_TASK_URL)
-                                .content(this.writeRequestBodyAsString(requestBody)));
+        CreateDowithTaskReqDto requestBody = new CreateDowithTaskReqDto(
+                "테스트",
+                null,
+                startDateTime,
+                Boolean.TRUE,
+                List.of(startDateTime.toLocalDate(), routineDate1, routineDate2));
+        ResultActions resultActions = this.request(MockMvcRequestBuilders.post(CREATE_DOWITH_TASK_URL)
+                .content(this.writeRequestBodyAsString(requestBody)));
 
         // then
-        assertThat(
-                        this.taskSummaryJpaRepository
-                                .findById(this.taskSummary.getId())
-                                .get()
-                                .getRemainedDowithTaskCount())
+        assertThat(this.taskSummaryJpaRepository
+                        .findById(this.taskSummary.getId())
+                        .get()
+                        .getRemainedDowithTaskCount())
                 .isEqualTo(5);
         resultActions
                 .andExpect(status().is4xxClientError())
@@ -252,29 +234,24 @@ public class CreateDowithTaskIntegrationTest extends AbstractIntegrationTest {
         LocalDateTime startDateTime = LocalDateTime.now().minusMinutes(10);
         LocalDate routineDate1 = startDateTime.plusMonths(1).toLocalDate();
         LocalDate routineDate2 = startDateTime.plusDays(2).toLocalDate();
-        List<LocalDate> targetDates =
-                Arrays.asList(startDateTime.toLocalDate(), routineDate1, routineDate2);
+        List<LocalDate> targetDates = Arrays.asList(startDateTime.toLocalDate(), routineDate1, routineDate2);
         Collections.sort(targetDates);
 
         // when
-        CreateDowithTaskReqDto requestBody =
-                new CreateDowithTaskReqDto(
-                        "테스트",
-                        null,
-                        startDateTime,
-                        Boolean.TRUE,
-                        List.of(startDateTime.toLocalDate(), routineDate1, routineDate2));
-        ResultActions resultActions =
-                this.request(
-                        MockMvcRequestBuilders.post(CREATE_DOWITH_TASK_URL)
-                                .content(this.writeRequestBodyAsString(requestBody)));
+        CreateDowithTaskReqDto requestBody = new CreateDowithTaskReqDto(
+                "테스트",
+                null,
+                startDateTime,
+                Boolean.TRUE,
+                List.of(startDateTime.toLocalDate(), routineDate1, routineDate2));
+        ResultActions resultActions = this.request(MockMvcRequestBuilders.post(CREATE_DOWITH_TASK_URL)
+                .content(this.writeRequestBodyAsString(requestBody)));
 
         // then
-        assertThat(
-                        this.taskSummaryJpaRepository
-                                .findById(this.taskSummary.getId())
-                                .get()
-                                .getRemainedDowithTaskCount())
+        assertThat(this.taskSummaryJpaRepository
+                        .findById(this.taskSummary.getId())
+                        .get()
+                        .getRemainedDowithTaskCount())
                 .isEqualTo(5);
         resultActions
                 .andExpect(status().is4xxClientError())

@@ -13,11 +13,14 @@ import org.springframework.context.ApplicationContext;
 @SpringBootTest
 public class BeanTest {
 
-    @Autowired private ApplicationContext applicationContext;
+    @Autowired
+    private ApplicationContext applicationContext;
 
-    @Autowired private BeanFactory beanFactory;
+    @Autowired
+    private BeanFactory beanFactory;
 
-    @Autowired private SocialProviderAuthFactory socialProviderAuthFactory;
+    @Autowired
+    private SocialProviderAuthFactory socialProviderAuthFactory;
 
     @Test
     @DisplayName("application context bean Test")
@@ -25,8 +28,7 @@ public class BeanTest {
 
         // when
         CreateTokenService createTokenService1 = applicationContext.getBean(CreateTokenService.class);
-        CreateTokenService createTokenService2 =
-                (CreateTokenService) applicationContext.getBean("createTokenService");
+        CreateTokenService createTokenService2 = (CreateTokenService) applicationContext.getBean("createTokenService");
 
         // then
         Assertions.assertThat(createTokenService1).isInstanceOf(CreateTokenService.class);
@@ -39,8 +41,7 @@ public class BeanTest {
 
         // when
         CreateTokenService createTokenService1 = beanFactory.getBean(CreateTokenService.class);
-        CreateTokenService createTokenService2 =
-                (CreateTokenService) beanFactory.getBean("createTokenService");
+        CreateTokenService createTokenService2 = (CreateTokenService) beanFactory.getBean("createTokenService");
 
         // then
         Assertions.assertThat(createTokenService1).isInstanceOf(CreateTokenService.class);

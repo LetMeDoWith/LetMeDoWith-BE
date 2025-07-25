@@ -28,10 +28,7 @@ public class TodoTaskRoutineDateCalculator {
      * @return 루틴 수행 일자 목록
      */
     public Set<LocalDate> computeRoutineDates(
-            TodoTaskRoutineCycle cycle,
-            LocalDate startDate,
-            LocalDate endDate,
-            Set<Integer> repetitionPattern) {
+            TodoTaskRoutineCycle cycle, LocalDate startDate, LocalDate endDate, Set<Integer> repetitionPattern) {
         if (startDate.isAfter(endDate)) {
             throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
         }
@@ -57,8 +54,7 @@ public class TodoTaskRoutineDateCalculator {
             Set<Integer> repetitionPattern,
             Set<LocalDate> holidays) {
 
-        Set<LocalDate> computedRoutineDates =
-                computeRoutineDates(cycle, startDate, endDate, repetitionPattern);
+        Set<LocalDate> computedRoutineDates = computeRoutineDates(cycle, startDate, endDate, repetitionPattern);
 
         computedRoutineDates.removeAll(holidays);
         return computedRoutineDates;

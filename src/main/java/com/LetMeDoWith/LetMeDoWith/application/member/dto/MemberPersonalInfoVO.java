@@ -6,8 +6,4 @@ import lombok.Builder;
 
 @Builder
 public record MemberPersonalInfoVO(
-        String nickname,
-        String selfDescription,
-        Gender gender,
-        LocalDate dateOfBirth,
-        String profileImageUrl) {}
+        String nickname, String selfDescription, Gender gender, LocalDate dateOfBirth, String profileImageUrl) {}

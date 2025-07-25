@@ -23,8 +23,7 @@ public class TimeZoneFilter extends OncePerRequestFilter {
     private final ObjectMapper objectMapper;
 
     @Override
-    protected void doFilterInternal(
-            HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
         try {
@@ -51,11 +50,10 @@ public class TimeZoneFilter extends OncePerRequestFilter {
     private void sendBadRequestResponse(HttpServletResponse response) throws IOException {
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         response.setContentType("application/json;charset=UTF-8");
-        FailResponseDto responseBody =
-                FailResponseDto.builder()
-                        .statusCode(FailResponseStatus.INVALID_REQUEST.getStatusCode())
-                        .message("X-Time-Zone value is invalid.")
-                        .build();
+        FailResponseDto responseBody = FailResponseDto.builder()
+                .statusCode(FailResponseStatus.INVALID_REQUEST.getStatusCode())
+                .message("X-Time-Zone value is invalid.")
+                .build();
         response.getWriter().write(objectMapper.writeValueAsString(responseBody));
     }
 }

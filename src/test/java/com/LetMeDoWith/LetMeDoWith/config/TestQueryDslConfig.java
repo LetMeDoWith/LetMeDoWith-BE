@@ -10,7 +10,8 @@ import org.springframework.context.annotation.Bean;
 @TestConfiguration
 public class TestQueryDslConfig {
 
-    @PersistenceContext private EntityManager entityManager;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Bean
     public JPAQueryFactory jpaQueryFactory() {

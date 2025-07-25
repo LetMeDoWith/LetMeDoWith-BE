@@ -19,17 +19,18 @@ import org.springframework.data.redis.core.TimeToLive;
 @RequiredArgsConstructor
 public class RefreshToken {
 
-    @Id private String token;
+    @Id
+    private String token;
 
     private String accessToken;
 
     private String memberId;
     private String userAgent;
 
-    @TimeToLive private Long expireSec;
+    @TimeToLive
+    private Long expireSec;
 
-    public static RefreshToken of(
-            String memberId, String accessToken, String userAgent, Long expireSec) {
+    public static RefreshToken of(String memberId, String accessToken, String userAgent, Long expireSec) {
         String refreshToken = UUID.randomUUID().toString();
         return RefreshToken.builder()
                 .token(refreshToken)

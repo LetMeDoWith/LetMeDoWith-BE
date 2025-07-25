@@ -27,8 +27,7 @@ class ResponseUtilTest {
     @Test
     @DisplayName("성공응답 테스트 - with data")
     void test_success_res_with_data() {
-        ResponseEntity<ResponseDto<Object>> successResponse =
-                ResponseUtil.createSuccessResponse("data");
+        ResponseEntity<ResponseDto<Object>> successResponse = ResponseUtil.createSuccessResponse("data");
 
         assertEquals(successResponse.getStatusCode(), HttpStatus.OK);
         assertEquals(successResponse.getBody().statusCode(), "S100");
@@ -43,8 +42,7 @@ class ResponseUtilTest {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("attr", "val");
 
-        ResponseEntity<ResponseDto<Object>> successResponse =
-                ResponseUtil.createSuccessResponse("data", httpHeaders);
+        ResponseEntity<ResponseDto<Object>> successResponse = ResponseUtil.createSuccessResponse("data", httpHeaders);
 
         assertEquals(successResponse.getStatusCode(), HttpStatus.OK);
         assertEquals(successResponse.getBody().statusCode(), "S100");

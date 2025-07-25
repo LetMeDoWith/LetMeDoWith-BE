@@ -26,47 +26,45 @@ import org.springframework.context.annotation.Import;
 public class TaskCategoryJpaRepositoryTest {
 
     private static final String MEMBER_ID = "01HXQ2X7Z7Q6XJX4X2X7Z7Q6XA";
-    @Autowired TestEntityManager entityManager;
-    @Autowired private TaskCategoryJpaRepository taskCategoryJpaRepository;
+
+    @Autowired
+    TestEntityManager entityManager;
+
+    @Autowired
+    private TaskCategoryJpaRepository taskCategoryJpaRepository;
+
     private TaskCategory singleUserCategory;
     private List<TaskCategory> multipleUserCategories;
 
     @BeforeEach
     void setUp() {
         // 단일 TaskCategory 엔티티: 단일 엔티티 저장 및 조회 테스트에 사용
-        singleUserCategory =
+        singleUserCategory = new TaskCategory(
+                null, "User 단일 카테고리", Yn.TRUE, TaskCategory.TaskCategoryCreationType.USER_CUSTOM, "🔧", MEMBER_ID);
+
+        // 다중 TaskCategory 엔티티: 여러 엔티티 저장 및 조회 테스트에 사용
+        multipleUserCategories = List.of(
                 new TaskCategory(
                         null,
-                        "User 단일 카테고리",
+                        "User 카테고리1",
                         Yn.TRUE,
                         TaskCategory.TaskCategoryCreationType.USER_CUSTOM,
                         "🔧",
-                        MEMBER_ID);
-
-        // 다중 TaskCategory 엔티티: 여러 엔티티 저장 및 조회 테스트에 사용
-        multipleUserCategories =
-                List.of(
-                        new TaskCategory(
-                                null,
-                                "User 카테고리1",
-                                Yn.TRUE,
-                                TaskCategory.TaskCategoryCreationType.USER_CUSTOM,
-                                "🔧",
-                                MEMBER_ID),
-                        new TaskCategory(
-                                null,
-                                "User 카테고리2",
-                                Yn.TRUE,
-                                TaskCategory.TaskCategoryCreationType.USER_CUSTOM,
-                                "📅",
-                                MEMBER_ID),
-                        new TaskCategory(
-                                null,
-                                "User 카테고리3",
-                                Yn.TRUE,
-                                TaskCategory.TaskCategoryCreationType.USER_CUSTOM,
-                                "📚",
-                                MEMBER_ID));
+                        MEMBER_ID),
+                new TaskCategory(
+                        null,
+                        "User 카테고리2",
+                        Yn.TRUE,
+                        TaskCategory.TaskCategoryCreationType.USER_CUSTOM,
+                        "📅",
+                        MEMBER_ID),
+                new TaskCategory(
+                        null,
+                        "User 카테고리3",
+                        Yn.TRUE,
+                        TaskCategory.TaskCategoryCreationType.USER_CUSTOM,
+                        "📚",
+                        MEMBER_ID));
     }
 
     @Test
@@ -126,14 +124,12 @@ public class TaskCategoryJpaRepositoryTest {
         taskCategoryJpaRepository.saveAll(multipleUserCategories);
 
         // When: 특정 홀더 ID로 유저 커스텀 카테고리를 조회하는 메서드 호출
-        List<TaskCategory> result =
-                taskCategoryJpaRepository.findAllByCategoryHolderIdAndCreationTypeAndIsActive(
-                        MEMBER_ID, TaskCategory.TaskCategoryCreationType.USER_CUSTOM, Yn.TRUE);
+        List<TaskCategory> result = taskCategoryJpaRepository.findAllByCategoryHolderIdAndCreationTypeAndIsActive(
+                MEMBER_ID, TaskCategory.TaskCategoryCreationType.USER_CUSTOM, Yn.TRUE);
 
         // Then: 결과가 기대값과 동일한지 확인
         assertThat(result).hasSize(3);
-        assertThat(result.get(0).getCreationType())
-                .isEqualTo(TaskCategory.TaskCategoryCreationType.USER_CUSTOM);
+        assertThat(result.get(0).getCreationType()).isEqualTo(TaskCategory.TaskCategoryCreationType.USER_CUSTOM);
     }
 
     @Test
@@ -141,28 +137,18 @@ public class TaskCategoryJpaRepositoryTest {
     void testGetCategoriesByCreationTypeSuccess() {
         // Given: 2개의 공통 카테고리와 1개의 유저 커스텀 카테고리 저장
         taskCategoryJpaRepository.save(
-                new TaskCategory(
-                        null, "공통 카테고리1", Yn.TRUE, TaskCategory.TaskCategoryCreationType.COMMON, "📘", null));
+                new TaskCategory(null, "공통 카테고리1", Yn.TRUE, TaskCategory.TaskCategoryCreationType.COMMON, "📘", null));
         taskCategoryJpaRepository.save(
-                new TaskCategory(
-                        null, "공통 카테고리2", Yn.TRUE, TaskCategory.TaskCategoryCreationType.COMMON, "📚", null));
-        taskCategoryJpaRepository.save(
-                new TaskCategory(
-                        null,
-                        "User 카테고리1",
-                        Yn.TRUE,
-                        TaskCategory.TaskCategoryCreationType.USER_CUSTOM,
-                        "📅",
-                        MEMBER_ID));
+                new TaskCategory(null, "공통 카테고리2", Yn.TRUE, TaskCategory.TaskCategoryCreationType.COMMON, "📚", null));
+        taskCategoryJpaRepository.save(new TaskCategory(
+                null, "User 카테고리1", Yn.TRUE, TaskCategory.TaskCategoryCreationType.USER_CUSTOM, "📅", MEMBER_ID));
 
         // When: creationType이 공통(COMMON)인 카테고리를 조회하는 메서드 호출
-        List<TaskCategory> result =
-                taskCategoryJpaRepository.findAllByCreationTypeAndIsActive(
-                        TaskCategory.TaskCategoryCreationType.COMMON, Yn.TRUE);
+        List<TaskCategory> result = taskCategoryJpaRepository.findAllByCreationTypeAndIsActive(
+                TaskCategory.TaskCategoryCreationType.COMMON, Yn.TRUE);
 
         // Then: 결과가 기대값과 동일한지 확인
         assertThat(result).hasSize(2 + 8); // 공통 카테고리가 2 + 8(기 저장된 카테고리) 개인지 확인
-        assertThat(result.get(0).getCreationType())
-                .isEqualTo(TaskCategory.TaskCategoryCreationType.COMMON);
+        assertThat(result.get(0).getCreationType()).isEqualTo(TaskCategory.TaskCategoryCreationType.COMMON);
     }
 }

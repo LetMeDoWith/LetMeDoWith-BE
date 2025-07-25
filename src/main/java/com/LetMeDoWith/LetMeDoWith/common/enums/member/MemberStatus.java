@@ -13,9 +13,7 @@ public enum MemberStatus implements BaseEnum {
     WITHDRAWN("WITHDRAWN", "탈퇴", FailResponseStatus.LOGIN_ATTEMPTED_WITHDRAWN),
     // 소셜 인증 이후 회원가입 완료 이전의 상태.
     SOCIAL_AUTHENTICATED(
-            "SOCIAL_AUTHENTICATED",
-            "소셜 인증됨",
-            FailResponseStatus.LOGIN_ATTEMPTED_REGISTRATION_NOT_COMPLTETE);
+            "SOCIAL_AUTHENTICATED", "소셜 인증됨", FailResponseStatus.LOGIN_ATTEMPTED_REGISTRATION_NOT_COMPLTETE);
 
     private final String code;
     private final String description;
