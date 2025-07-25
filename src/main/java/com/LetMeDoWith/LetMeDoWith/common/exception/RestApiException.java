@@ -9,6 +9,12 @@ public class RestApiException extends RuntimeException {
     private final FailResponseStatus status;
 
     public RestApiException(FailResponseStatus status) {
+        super(status.getMessage());
+        this.status = status;
+    }
+
+    public RestApiException(FailResponseStatus status, String customErrorMessage) {
+        super(customErrorMessage);
         this.status = status;
     }
 

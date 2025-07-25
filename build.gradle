@@ -127,6 +127,9 @@ dependencies {
     implementation platform("software.amazon.awssdk:bom:${awsSdkVersion}")
     implementation "software.amazon.awssdk:s3"
 
+    // Firebase Admin SDK
+    implementation 'com.google.firebase:firebase-admin:9.5.0'
+    
     // localStack for AWS
 //    implementation "com.amazonaws:aws-java-sdk-s3"
 //    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.783'
