@@ -23,10 +23,10 @@ public class GoogleAuthClient implements AuthClient {
     @Cacheable(key = "'AuthPublicKey-Google'")
     public Mono<OidcPublicKeyResDto> getPublicKeyList() {
         return webClient
-            .get()
-            .uri("https://www.googleapis.com/oauth2/v3/certs")
-            .accept(MediaType.APPLICATION_JSON)
-            .retrieve()
-            .bodyToMono(OidcPublicKeyResDto.class);
+                .get()
+                .uri("https://www.googleapis.com/oauth2/v3/certs")
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(OidcPublicKeyResDto.class);
     }
 }

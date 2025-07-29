@@ -84,47 +84,42 @@ public class CreateTokenIntegrationTest extends AbstractIntegrationTest {
     @Override
     protected void createTestData() {
         // 정상 회원 생성
-        existingNormalMember = testMemberJpaRepository.save(
-                Member.builder()
-                        .subject(EXISTING_NORMAL_USER_SUBJECT)
-                        .status(MemberStatus.NORMAL)
-                        .nickname("existingNormalUser")
-                        .type(MemberType.USER)
-                        .build());
-        memberSocialAccountJpaRepository.save(
-                MemberSocialAccount.of(existingNormalMember, SocialProvider.KAKAO));
+        existingNormalMember = testMemberJpaRepository.save(Member.builder()
+                .subject(EXISTING_NORMAL_USER_SUBJECT)
+                .status(MemberStatus.NORMAL)
+                .nickname("existingNormalUser")
+                .type(MemberType.USER)
+                .build());
+        memberSocialAccountJpaRepository.save(MemberSocialAccount.of(existingNormalMember, SocialProvider.KAKAO));
 
         // 소셜 인증 완료 상태 회원 생성
-        existingSocialAuthMember = testMemberJpaRepository.save(
-                Member.builder()
-                        .subject(EXISTING_SOCIAL_AUTH_USER_SUBJECT)
-                        .status(MemberStatus.SOCIAL_AUTHENTICATED)
-                        .type(MemberType.USER)
-                        .build());
-        memberSocialAccountJpaRepository.save(
-                MemberSocialAccount.of(existingSocialAuthMember, SocialProvider.KAKAO));
+        existingSocialAuthMember = testMemberJpaRepository.save(Member.builder()
+                .subject(EXISTING_SOCIAL_AUTH_USER_SUBJECT)
+                .status(MemberStatus.SOCIAL_AUTHENTICATED)
+                .type(MemberType.USER)
+                .build());
+        memberSocialAccountJpaRepository.save(MemberSocialAccount.of(existingSocialAuthMember, SocialProvider.KAKAO));
 
         // 정지된 회원 생성
-        suspendedMember = testMemberJpaRepository.save(
-                Member.builder()
-                        .subject(SUSPENDED_USER_SUBJECT)
-                        .status(MemberStatus.SUSPENDED)
-                        .type(MemberType.USER)
-                        .build());
-        memberSocialAccountJpaRepository.save(
-                MemberSocialAccount.of(suspendedMember, SocialProvider.KAKAO));
+        suspendedMember = testMemberJpaRepository.save(Member.builder()
+                .subject(SUSPENDED_USER_SUBJECT)
+                .status(MemberStatus.SUSPENDED)
+                .type(MemberType.USER)
+                .build());
+        memberSocialAccountJpaRepository.save(MemberSocialAccount.of(suspendedMember, SocialProvider.KAKAO));
     }
 
     private void setupMockBehaviors() {
         // KakaoAuthClient Mock 설정
-        OidcPublicKeyResDto mockPublicKeyResponse = new OidcPublicKeyResDto(List.of(
-                new OidcPublicKeyVO(
-                        "9e2413e3825ac2bab17fe4d4bad9128c",
-                        "RSA",
-                        "RS256",
-                        "sig",
-                        "AQAB",
-                        "zhMyuF42t7vy2VjnXj2pI2kssakfgaNJqtBqKkh_IBidqKTIM2mEejJ-b0HUwgQ0YzyZGA1OixLxvWuRTrY3j9RXPg0wj7J7e7TkPqZ83sMQ7lUqfzHfR4mMJQ9Si33CFSm8pBkJt38QS9ciLb-uf2cg9N-GSo1e6YAiywlc-w5UOW9Ur_2N5OeHQAWJM1V7LxSbJEakGJG_ivrghrLfh9h-VaYcvfyCJnbkcHGtpubH7LSo5a80_-S9hkvoHuhow27w9mxLm0K4IR1N8BmJbIBc19pMm8i-BQouHL0tbOr0-843GpoidCsXsk-jL9Egqmp9W3qA_WDU6Ra_SFJzFmbC6lqWveUYcKIh7h-qjpkwWrU_88kO5WuX0QiyV4VDj_uRhbtkMxzKWC-QVFGOhG5h2FJnC1lL1lQaIPa5KfxcxpptThLho1NKkgQoblItidMb3rxHdxMrWHVMkvgPhbN2Z5Yb3zo0Yxa9Svbh0n73iTB2GNrdM8q8EC12abHZ")));
+        OidcPublicKeyResDto mockPublicKeyResponse = new OidcPublicKeyResDto(
+                List.of(
+                        new OidcPublicKeyVO(
+                                "9e2413e3825ac2bab17fe4d4bad9128c",
+                                "RSA",
+                                "RS256",
+                                "sig",
+                                "AQAB",
+                                "zhMyuF42t7vy2VjnXj2pI2kssakfgaNJqtBqKkh_IBidqKTIM2mEejJ-b0HUwgQ0YzyZGA1OixLxvWuRTrY3j9RXPg0wj7J7e7TkPqZ83sMQ7lUqfzHfR4mMJQ9Si33CFSm8pBkJt38QS9ciLb-uf2cg9N-GSo1e6YAiywlc-w5UOW9Ur_2N5OeHQAWJM1V7LxSbJEakGJG_ivrghrLfh9h-VaYcvfyCJnbkcHGtpubH7LSo5a80_-S9hkvoHuhow27w9mxLm0K4IR1N8BmJbIBc19pMm8i-BQouHL0tbOr0-843GpoidCsXsk-jL9Egqmp9W3qA_WDU6Ra_SFJzFmbC6lqWveUYcKIh7h-qjpkwWrU_88kO5WuX0QiyV4VDj_uRhbtkMxzKWC-QVFGOhG5h2FJnC1lL1lQaIPa5KfxcxpptThLho1NKkgQoblItidMb3rxHdxMrWHVMkvgPhbN2Z5Yb3zo0Yxa9Svbh0n73iTB2GNrdM8q8EC12abHZ")));
         when(kakaoAuthClient.getPublicKeyList()).thenReturn(Mono.just(mockPublicKeyResponse));
 
         // OidcIdTokenProvider Mock 설정 - 각 subject별로 다른 Claims 반환
@@ -166,9 +161,7 @@ public class CreateTokenIntegrationTest extends AbstractIntegrationTest {
     @DisplayName("[SUCCESS] 최초 소셜 로그인 - 회원가입 필요")
     void createToken_firstTimeLogin_returnsSignupToken() throws Exception {
         // given
-        CreateTokenReqDto requestBody = new CreateTokenReqDto(
-                SocialProvider.KAKAO,
-                "new_user_token");
+        CreateTokenReqDto requestBody = new CreateTokenReqDto(SocialProvider.KAKAO, "new_user_token");
 
         // when
         ResultActions resultActions = performCreateTokenRequest(requestBody);
@@ -202,9 +195,7 @@ public class CreateTokenIntegrationTest extends AbstractIntegrationTest {
     @DisplayName("[SUCCESS] 소셜 인증 완료, 회원가입 미완료 - 회원가입 토큰 반환")
     void createToken_socialAuthenticatedMember_returnsSignupToken() throws Exception {
         // given
-        CreateTokenReqDto requestBody = new CreateTokenReqDto(
-                SocialProvider.KAKAO,
-                "existing_social_auth_token");
+        CreateTokenReqDto requestBody = new CreateTokenReqDto(SocialProvider.KAKAO, "existing_social_auth_token");
 
         // when
         ResultActions resultActions = performCreateTokenRequest(requestBody);
@@ -223,9 +214,7 @@ public class CreateTokenIntegrationTest extends AbstractIntegrationTest {
     @DisplayName("[SUCCESS] 정상 회원 로그인 - 액세스/리프레시 토큰 반환")
     void createToken_normalMember_returnsTokens() throws Exception {
         // given
-        CreateTokenReqDto requestBody = new CreateTokenReqDto(
-                SocialProvider.KAKAO,
-                "existing_normal_token");
+        CreateTokenReqDto requestBody = new CreateTokenReqDto(SocialProvider.KAKAO, "existing_normal_token");
 
         // when
         ResultActions resultActions = performCreateTokenRequest(requestBody);
@@ -244,9 +233,7 @@ public class CreateTokenIntegrationTest extends AbstractIntegrationTest {
     @DisplayName("[FAIL] 정지된 회원 로그인 시도 - 예외 발생")
     void createToken_suspendedMember_throwsException() throws Exception {
         // given
-        CreateTokenReqDto requestBody = new CreateTokenReqDto(
-                SocialProvider.KAKAO,
-                "suspended_token");
+        CreateTokenReqDto requestBody = new CreateTokenReqDto(SocialProvider.KAKAO, "suspended_token");
 
         // when
         ResultActions resultActions = performCreateTokenRequest(requestBody);
@@ -266,9 +253,7 @@ public class CreateTokenIntegrationTest extends AbstractIntegrationTest {
                 .thenThrow(new com.LetMeDoWith.LetMeDoWith.common.exception.RestApiAuthException(
                         FailResponseStatus.INVALID_TOKEN));
 
-        CreateTokenReqDto requestBody = new CreateTokenReqDto(
-                SocialProvider.KAKAO,
-                "invalid_token");
+        CreateTokenReqDto requestBody = new CreateTokenReqDto(SocialProvider.KAKAO, "invalid_token");
 
         // when
         ResultActions resultActions = performCreateTokenRequest(requestBody);
@@ -280,8 +265,8 @@ public class CreateTokenIntegrationTest extends AbstractIntegrationTest {
     }
 
     private ResultActions performCreateTokenRequest(CreateTokenReqDto requestBody) throws Exception {
-        return testMockMvc.perform(
-                MockMvcRequestBuilders.post(BASE_URL + CREATE_TOKEN_URL)
+        return testMockMvc
+                .perform(MockMvcRequestBuilders.post(BASE_URL + CREATE_TOKEN_URL)
                         .contentType("application/json")
                         .content(writeRequestBodyAsString(requestBody)))
                 .andDo(System.out::println);
