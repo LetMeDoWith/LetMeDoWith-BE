@@ -3,7 +3,7 @@ package com.LetMeDoWith.LetMeDoWith.integration.task;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TodoTaskRoutineCycle;
+import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TaskRoutineCycle;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskCategory;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TodoTask;
 import com.LetMeDoWith.LetMeDoWith.domain.task.service.TodoTaskRoutineDateCalculator;
@@ -15,12 +15,14 @@ import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.RetrieveTasksResDto.Tod
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.UpdateTodoTaskReqDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.UpdateTodoTaskRoutineReqDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.UpdateTodoTaskWithRoutineReqDto;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Set;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -150,7 +152,7 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
                 updateStartDateTime,
                 updatedCategoryId,
                 UpdateTodoTaskRoutineReqDto.of(
-                        ORIGINAL_DATE, ROUTINE_END_DATE, TodoTaskRoutineCycle.DAILY, null, false));
+                        ORIGINAL_DATE, ROUTINE_END_DATE, TaskRoutineCycle.DAILY, null, false));
 
         long gap = ChronoUnit.DAYS.between(ORIGINAL_DATE, ROUTINE_END_DATE);
 
@@ -184,7 +186,7 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
         setFixedClock(FIXED_CLOCK_TIME);
 
         Set<LocalDate> routineDates = todoTaskRoutineDateCalculator.computeRoutineDates(
-                TodoTaskRoutineCycle.DAILY, ORIGINAL_DATE, ROUTINE_END_DATE, null);
+                TaskRoutineCycle.DAILY, ORIGINAL_DATE, ROUTINE_END_DATE, null);
 
         List<TodoTask> todoTasks = TodoTask.ofWithRoutine(
                 this.requestMember.getId(),
@@ -192,7 +194,7 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
                 ORIGINAL_TITLE,
                 ORIGINAL_START_TIME,
                 routineDates,
-                TodoTaskRoutineCycle.DAILY,
+                TaskRoutineCycle.DAILY,
                 null,
                 false);
 
@@ -244,10 +246,10 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
                 });
 
         assertThat(retrievedTodoTasks.stream()
-                        .filter(task -> !task.id().equals(taskToModified.getId()))
-                        .allMatch(task -> task.title().equals(ORIGINAL_TITLE)
-                                && task.startTime().equals(ORIGINAL_START_TIME)
-                                && task.taskCategoryId().equals(taskCategory.getId())))
+                .filter(task -> !task.id().equals(taskToModified.getId()))
+                .allMatch(task -> task.title().equals(ORIGINAL_TITLE)
+                        && task.startTime().equals(ORIGINAL_START_TIME)
+                        && task.taskCategoryId().equals(taskCategory.getId())))
                 .isTrue();
     }
 
@@ -258,7 +260,7 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
         setFixedClock(FIXED_CLOCK_TIME);
 
         Set<LocalDate> routineDates = todoTaskRoutineDateCalculator.computeRoutineDates(
-                TodoTaskRoutineCycle.DAILY, ORIGINAL_DATE, ROUTINE_END_DATE, null);
+                TaskRoutineCycle.DAILY, ORIGINAL_DATE, ROUTINE_END_DATE, null);
 
         List<TodoTask> todoTasks = TodoTask.ofWithRoutine(
                 this.requestMember.getId(),
@@ -266,7 +268,7 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
                 ORIGINAL_TITLE,
                 ORIGINAL_START_TIME,
                 routineDates,
-                TodoTaskRoutineCycle.DAILY,
+                TaskRoutineCycle.DAILY,
                 null,
                 false);
 
@@ -336,7 +338,7 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
         setFixedClock(FIXED_CLOCK_TIME);
 
         Set<LocalDate> routineDates = todoTaskRoutineDateCalculator.computeRoutineDates(
-                TodoTaskRoutineCycle.DAILY, ORIGINAL_DATE, ROUTINE_END_DATE, null);
+                TaskRoutineCycle.DAILY, ORIGINAL_DATE, ROUTINE_END_DATE, null);
 
         List<TodoTask> todoTasks = TodoTask.ofWithRoutine(
                 this.requestMember.getId(),
@@ -344,7 +346,7 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
                 ORIGINAL_TITLE,
                 ORIGINAL_START_TIME,
                 routineDates,
-                TodoTaskRoutineCycle.DAILY,
+                TaskRoutineCycle.DAILY,
                 null,
                 false);
 
@@ -363,10 +365,10 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
         UpdateTodoTaskRoutineReqDto req = UpdateTodoTaskRoutineReqDto.of(
                 LocalDate.of(2024, 6, 3),
                 ROUTINE_END_DATE,
-                TodoTaskRoutineCycle.MONTHLY,
+                TaskRoutineCycle.MONTHLY,
                 updatedPattern, // 10, 20, 30일로 변경
                 false // 공휴일 제외 여부는 false로 유지
-                );
+        );
 
         ResultActions resultActions = this.request(MockMvcRequestBuilders.put(URL + "/" + sample.getId() + "/routine")
                 .content(this.writeRequestBodyAsString(req)));
@@ -396,9 +398,9 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
                 });
 
         assertThat(retrievedTodoTasks.stream()
-                        .filter(task -> task.date().isEqual(sample.getDate())
-                                || task.date().isAfter(sample.getDate()))
-                        .count())
+                .filter(task -> task.date().isEqual(sample.getDate())
+                        || task.date().isAfter(sample.getDate()))
+                .count())
                 .isEqualTo(3 + 1);
     }
 

@@ -1,20 +1,21 @@
 package com.LetMeDoWith.LetMeDoWith.domain.task.service.strategy;
 
 import com.LetMeDoWith.LetMeDoWith.common.annotation.DomainService;
-import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TodoTaskRoutineCycle;
+import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TaskRoutineCycle;
+
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.Set;
 import java.util.TreeSet;
 
 @DomainService
-public class MonthlyRoutineDateCalculateStrategy implements TodoTaskRoutineDateCalculateStrategy {
+public class MonthlyRoutineDateCalculateStrategy implements TaskRoutineDateCalculateStrategy {
 
     /**
      * 매월 반복하는 투두 루틴의 루틴 수행일자 목록을 얻는다.
      *
-     * @param startDate 루틴 시작일자
-     * @param endDate 루틴 종료일자
+     * @param startDate         루틴 시작일자
+     * @param endDate           루틴 종료일자
      * @param repetitionPattern 루틴 반복 패턴 (1 ~ 31, 99(마지막 날))
      * @return 루틴을 수행하는 일자 목록
      */
@@ -50,7 +51,7 @@ public class MonthlyRoutineDateCalculateStrategy implements TodoTaskRoutineDateC
     }
 
     @Override
-    public TodoTaskRoutineCycle getRoutineCycle() {
-        return TodoTaskRoutineCycle.MONTHLY;
+    public TaskRoutineCycle getRoutineCycle() {
+        return TaskRoutineCycle.MONTHLY;
     }
 }

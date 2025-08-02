@@ -5,16 +5,20 @@ import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.AggregateRoot;
-import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TodoTaskRoutineCycle;
+import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TaskRoutineCycle;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TodoTaskStatus;
 import jakarta.persistence.*;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
+
 import lombok.*;
 
-/** TodoTask 엔티티 클래스 */
+/**
+ * TodoTask 엔티티 클래스
+ */
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -54,11 +58,11 @@ public class TodoTask extends BaseAuditEntity {
     /**
      * TodoTask 생성 메서드
      *
-     * @param memberId 회원 ID
+     * @param memberId       회원 ID
      * @param taskCategoryId 작업 카테고리 ID
-     * @param title 제목
-     * @param date 날짜
-     * @param startTime 시작 시간
+     * @param title          제목
+     * @param date           날짜
+     * @param startTime      시작 시간
      * @return 생성된 TodoTask 객체
      */
     public static TodoTask of(String memberId, Long taskCategoryId, String title, LocalDate date, LocalTime startTime) {
@@ -78,12 +82,12 @@ public class TodoTask extends BaseAuditEntity {
     /**
      * 루틴을 포함한 TodoTask 생성 메서드
      *
-     * @param memberId 회원 ID
+     * @param memberId       회원 ID
      * @param taskCategoryId 작업 카테고리 ID
-     * @param title 제목
-     * @param date 날짜
-     * @param startTime 시작 시간
-     * @param routine 루틴
+     * @param title          제목
+     * @param date           날짜
+     * @param startTime      시작 시간
+     * @param routine        루틴
      * @return 생성된 TodoTask 객체
      */
     public static TodoTask of(
@@ -109,11 +113,11 @@ public class TodoTask extends BaseAuditEntity {
     /**
      * 루틴을 포함한 TodoTask 리스트 생성 메서드
      *
-     * @param memberId 회원 ID
+     * @param memberId       회원 ID
      * @param taskCategoryId 작업 카테고리 ID
-     * @param title 제목
-     * @param startTime 시작 시간
-     * @param routineDates 루틴 날짜 세트
+     * @param title          제목
+     * @param startTime      시작 시간
+     * @param routineDates   루틴 날짜 세트
      * @return 생성된 TodoTask 리스트
      */
     public static List<TodoTask> ofWithRoutine(
@@ -122,7 +126,7 @@ public class TodoTask extends BaseAuditEntity {
             String title,
             LocalTime startTime,
             Set<LocalDate> routineDates,
-            TodoTaskRoutineCycle cycle,
+            TaskRoutineCycle cycle,
             Set<Integer> pattern,
             boolean isExcludeHolidays) {
 
@@ -154,7 +158,7 @@ public class TodoTask extends BaseAuditEntity {
      * @return 생성된 TodoTask 리스트
      */
     public List<TodoTask> createRoutine(
-            Set<LocalDate> routineDates, TodoTaskRoutineCycle cycle, Set<Integer> pattern, boolean isExcludeHolidays) {
+            Set<LocalDate> routineDates, TaskRoutineCycle cycle, Set<Integer> pattern, boolean isExcludeHolidays) {
         TodoTaskRoutine routine = TodoTaskRoutine.of(routineDates, cycle, pattern, isExcludeHolidays);
         this.updateRoutine(routine);
 
@@ -217,10 +221,10 @@ public class TodoTask extends BaseAuditEntity {
     /**
      * TodoTask 내용 업데이트
      *
-     * @param title 제목
+     * @param title          제목
      * @param taskCategoryId 작업 카테고리 ID
-     * @param date 날짜
-     * @param startTime 시작 시간
+     * @param date           날짜
+     * @param startTime      시작 시간
      */
     public void updateContent(String title, Long taskCategoryId, LocalDate date, LocalTime startTime) {
 
@@ -278,7 +282,9 @@ public class TodoTask extends BaseAuditEntity {
         return this;
     }
 
-    /** 유효성 검사 */
+    /**
+     * 유효성 검사
+     */
     private void validate() {
         // if (LocalDate.now().isEqual(this.date) &&
         // LocalTime.now().isAfter(this.startTime))

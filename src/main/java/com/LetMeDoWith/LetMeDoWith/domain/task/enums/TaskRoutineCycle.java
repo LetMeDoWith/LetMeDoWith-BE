@@ -4,7 +4,7 @@ import com.LetMeDoWith.LetMeDoWith.common.enums.BaseEnum;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public enum TodoTaskRoutineCycle implements BaseEnum {
+public enum TaskRoutineCycle implements BaseEnum {
     DAILY("DAILY", "매일 반복"),
     WEEKLY("WEEKLY", "매주 반복"),
     MONTHLY("MONTHLY", "매월 반복");

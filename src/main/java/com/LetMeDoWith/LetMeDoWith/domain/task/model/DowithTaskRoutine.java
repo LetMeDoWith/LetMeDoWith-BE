@@ -1,7 +1,9 @@
 package com.LetMeDoWith.LetMeDoWith.domain.task.model;
 
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
+import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TaskRoutineCycle;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.converter.DowithTaskRoutineDatesConverter;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.task.converter.TaskRoutineCycleConverter;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
@@ -30,9 +32,21 @@ public class DowithTaskRoutine extends BaseAuditEntity {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "dates", columnDefinition = "TEXT")
-    @Convert(converter = DowithTaskRoutineDatesConverter.class)
-    private DowithTaskRoutineDates routineDates;
+//    @Column(name = "dates", columnDefinition = "TEXT")
+//    @Convert(converter = DowithTaskRoutineDatesConverter.class)
+//    private DowithTaskRoutineDates routineDates;
+
+    @Column(name = "cycle", nullable = false, length = 20)
+    @Convert(converter = TaskRoutineCycleConverter.class)
+    private TaskRoutineCycle cycle;
+
+    @Column(name = "pattern")
+    private TaskRoutinePattern pattern;
+
+    @Column(name = "is_exclude_holidays")
+    private boolean isExcludeHolidays;
+
+    public static DowithTaskRoutine of(Set<LocalDate> dates)
 
     public static DowithTaskRoutine from(Set<LocalDate> dates) {
 

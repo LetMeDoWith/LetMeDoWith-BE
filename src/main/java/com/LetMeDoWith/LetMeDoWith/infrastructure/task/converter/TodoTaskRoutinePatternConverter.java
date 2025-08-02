@@ -1,17 +1,18 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.task.converter;
 
-import com.LetMeDoWith.LetMeDoWith.domain.task.model.TodoTaskRoutinePattern;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskRoutinePattern;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
+
 import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Converter(autoApply = true)
-public class TodoTaskRoutinePatternConverter implements AttributeConverter<TodoTaskRoutinePattern, String> {
+public class TodoTaskRoutinePatternConverter implements AttributeConverter<TaskRoutinePattern, String> {
 
     @Override
-    public String convertToDatabaseColumn(TodoTaskRoutinePattern pattern) {
+    public String convertToDatabaseColumn(TaskRoutinePattern pattern) {
         return pattern.getPattern().stream()
                 .map(String::valueOf)
                 .reduce((a, b) -> a + "," + b)
@@ -19,11 +20,11 @@ public class TodoTaskRoutinePatternConverter implements AttributeConverter<TodoT
     }
 
     @Override
-    public TodoTaskRoutinePattern convertToEntityAttribute(String dbData) {
+    public TaskRoutinePattern convertToEntityAttribute(String dbData) {
         if (dbData.isBlank()) {
-            return TodoTaskRoutinePattern.from(Set.of());
+            return TaskRoutinePattern.from(Set.of());
         } else {
-            return TodoTaskRoutinePattern.from(
+            return TaskRoutinePattern.from(
                     Arrays.stream(dbData.split(",")).map(Integer::valueOf).collect(Collectors.toSet()));
         }
     }
