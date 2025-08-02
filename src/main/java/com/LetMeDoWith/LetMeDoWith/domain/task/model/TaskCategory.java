@@ -24,6 +24,9 @@ import lombok.NoArgsConstructor;
 @Table(name = "task_category")
 public class TaskCategory extends BaseAuditEntity {
 
+    public static final String SYSTEM_CATEGORY_HOLDER_ID = "SYSTEM";
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -43,7 +46,9 @@ public class TaskCategory extends BaseAuditEntity {
     private String emoji;
 
     @Column(name = "category_holder_id", length = 26)
-    private String categoryHolderId;
+    @Builder.Default
+    private String categoryHolderId = SYSTEM_CATEGORY_HOLDER_ID;
+
 
     public static TaskCategory of(
             String title, TaskCategoryCreationType creationType, String emoji, String categoryHolderId) {

@@ -30,7 +30,7 @@ public class TaskCategoryRepositoryImpl implements TaskCategoryRepository {
     @Override
     public Optional<TaskCategory> getActiveTaskCategory(Long id, String holderId) {
         return taskCategoryJpaRepository.findByIdAndCategoryHolderIdInAndIsActive(
-                id, Arrays.asList(holderId, null), Yn.TRUE);
+                id, Arrays.asList(holderId, TaskCategory.SYSTEM_CATEGORY_HOLDER_ID), Yn.TRUE);
     }
 
     @Override
