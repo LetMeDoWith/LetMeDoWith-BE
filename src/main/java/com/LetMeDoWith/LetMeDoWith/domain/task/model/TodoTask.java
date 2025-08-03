@@ -79,17 +79,16 @@ public class TodoTask extends BaseAuditEntity {
      * @param startTime      시작 시간
      * @return 생성된 TodoTask 객체
      */
-    public static TodoTask of(String memberId, Long taskCategoryId, String title, LocalDate date,
-        LocalTime startTime) {
+    public static TodoTask of(String memberId, Long taskCategoryId, String title, LocalDate date, LocalTime startTime) {
         TodoTask newTodoTask = TodoTask.builder()
-            .memberId(memberId)
-            .taskCategoryId(taskCategoryId)
-            .title(title)
-            .status(TodoTaskStatus.WAIT)
-            .date(date)
-            .startTime(startTime)
-            .routine(null)
-            .build();
+                .memberId(memberId)
+                .taskCategoryId(taskCategoryId)
+                .title(title)
+                .status(TodoTaskStatus.WAIT)
+                .date(date)
+                .startTime(startTime)
+                .routine(null)
+                .build();
         newTodoTask.validate();
         return newTodoTask;
     }
@@ -106,21 +105,21 @@ public class TodoTask extends BaseAuditEntity {
      * @return 생성된 TodoTask 객체
      */
     public static TodoTask of(
-        String memberId,
-        Long taskCategoryId,
-        String title,
-        LocalDate date,
-        LocalTime startTime,
-        TodoTaskRoutine routine) {
+            String memberId,
+            Long taskCategoryId,
+            String title,
+            LocalDate date,
+            LocalTime startTime,
+            TodoTaskRoutine routine) {
         TodoTask newTodoTask = TodoTask.builder()
-            .memberId(memberId)
-            .taskCategoryId(taskCategoryId)
-            .title(title)
-            .status(TodoTaskStatus.WAIT)
-            .date(date)
-            .startTime(startTime)
-            .routine(routine)
-            .build();
+                .memberId(memberId)
+                .taskCategoryId(taskCategoryId)
+                .title(title)
+                .status(TodoTaskStatus.WAIT)
+                .date(date)
+                .startTime(startTime)
+                .routine(routine)
+                .build();
         newTodoTask.validate();
         return newTodoTask;
     }
@@ -136,30 +135,29 @@ public class TodoTask extends BaseAuditEntity {
      * @return 생성된 TodoTask 리스트
      */
     public static List<TodoTask> ofWithRoutine(
-        String memberId,
-        Long taskCategoryId,
-        String title,
-        LocalTime startTime,
-        Set<LocalDate> routineDates,
-        TodoTaskRoutineCycle cycle,
-        Set<Integer> pattern,
-        boolean isExcludeHolidays) {
+            String memberId,
+            Long taskCategoryId,
+            String title,
+            LocalTime startTime,
+            Set<LocalDate> routineDates,
+            TodoTaskRoutineCycle cycle,
+            Set<Integer> pattern,
+            boolean isExcludeHolidays) {
 
         List<TodoTask> result = new ArrayList<>();
         Set<LocalDate> targetDateSet = new TreeSet<>(routineDates);
 
-        TodoTaskRoutine routine = TodoTaskRoutine.of(targetDateSet, cycle, pattern,
-            isExcludeHolidays);
+        TodoTaskRoutine routine = TodoTaskRoutine.of(targetDateSet, cycle, pattern, isExcludeHolidays);
         targetDateSet.stream().sorted().toList().forEach(e -> {
             TodoTask newTodoTask = TodoTask.builder()
-                .memberId(memberId)
-                .taskCategoryId(taskCategoryId)
-                .title(title)
-                .status(TodoTaskStatus.WAIT)
-                .routine(routine)
-                .date(e)
-                .startTime(startTime)
-                .build();
+                    .memberId(memberId)
+                    .taskCategoryId(taskCategoryId)
+                    .title(title)
+                    .status(TodoTaskStatus.WAIT)
+                    .routine(routine)
+                    .date(e)
+                    .startTime(startTime)
+                    .build();
             newTodoTask.validate();
             result.add(newTodoTask);
         });
@@ -174,20 +172,17 @@ public class TodoTask extends BaseAuditEntity {
      * @return 생성된 TodoTask 리스트
      */
     public List<TodoTask> createRoutine(
-        Set<LocalDate> routineDates, TodoTaskRoutineCycle cycle, Set<Integer> pattern,
-        boolean isExcludeHolidays) {
-        TodoTaskRoutine routine = TodoTaskRoutine.of(routineDates, cycle, pattern,
-            isExcludeHolidays);
+            Set<LocalDate> routineDates, TodoTaskRoutineCycle cycle, Set<Integer> pattern, boolean isExcludeHolidays) {
+        TodoTaskRoutine routine = TodoTaskRoutine.of(routineDates, cycle, pattern, isExcludeHolidays);
         this.updateRoutine(routine);
 
         List<TodoTask> result = new ArrayList<>();
         result.add(this);
         routineDates.stream()
-            .filter(date -> !date.isEqual(this.date))
-            .collect(Collectors.toSet())
-            .forEach(date -> result.add(
-                TodoTask.of(this.memberId, this.taskCategoryId, this.title, date, this.startTime,
-                    routine)));
+                .filter(date -> !date.isEqual(this.date))
+                .collect(Collectors.toSet())
+                .forEach(date -> result.add(
+                        TodoTask.of(this.memberId, this.taskCategoryId, this.title, date, this.startTime, routine)));
 
         return result;
     }
@@ -245,8 +240,7 @@ public class TodoTask extends BaseAuditEntity {
      * @param date           날짜
      * @param startTime      시작 시간
      */
-    public void updateContent(String title, Long taskCategoryId, LocalDate date,
-        LocalTime startTime) {
+    public void updateContent(String title, Long taskCategoryId, LocalDate date, LocalTime startTime) {
 
         if (!isContentsEditable()) {
             throw new RestApiException(FailResponseStatus.INVALID_REQUEST);

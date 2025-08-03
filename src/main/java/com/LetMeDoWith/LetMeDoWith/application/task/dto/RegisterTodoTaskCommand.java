@@ -25,12 +25,15 @@ public record RegisterTodoTaskCommand(
                 .title(title)
                 .date(date)
                 .startTime(startTime)
-                .routineCondition(routineCondition == null ? null : TodoTaskRoutineCondition.of(
-                        routineCondition.startDate(),
-                        routineCondition.endDate(),
-                        routineCondition.cycle(),
-                        routineCondition.pattern(),
-                        routineCondition.isExcludeHolidays()))
+                .routineCondition(
+                        routineCondition == null
+                                ? null
+                                : TodoTaskRoutineCondition.of(
+                                        routineCondition.startDate(),
+                                        routineCondition.endDate(),
+                                        routineCondition.cycle(),
+                                        routineCondition.pattern(),
+                                        routineCondition.isExcludeHolidays()))
                 .build();
     }
 }

@@ -199,3 +199,7 @@ test {
 tasks.test {
 
 }
+
+compileJava {
+    dependsOn spotlessApply
+}

@@ -26,7 +26,6 @@ public class TaskCategory extends BaseAuditEntity {
 
     public static final String SYSTEM_CATEGORY_HOLDER_ID = "SYSTEM";
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -48,7 +47,6 @@ public class TaskCategory extends BaseAuditEntity {
     @Column(name = "category_holder_id", length = 26)
     @Builder.Default
     private String categoryHolderId = SYSTEM_CATEGORY_HOLDER_ID;
-
 
     public static TaskCategory of(
             String title, TaskCategoryCreationType creationType, String emoji, String categoryHolderId) {

@@ -22,9 +22,8 @@ public class AuthenticateInterceptor implements HandlerInterceptor {
     private final String SIGNUP_COMPLETE_API_METHOD = "PUT";
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
-        Object handler)
-        throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+            throws Exception {
 
         String uri = request.getRequestURI();
         String method = request.getMethod();
@@ -39,11 +38,9 @@ public class AuthenticateInterceptor implements HandlerInterceptor {
         }
 
         // 회원가입 완료 API 요청은 SIGNUP token으로 인증한다.
-        boolean isSignupCompleteReq =
-            uri.equals(SIGNUP_COMPLETE_API_URI) && method.equals(SIGNUP_COMPLETE_API_METHOD);
+        boolean isSignupCompleteReq = uri.equals(SIGNUP_COMPLETE_API_URI) && method.equals(SIGNUP_COMPLETE_API_METHOD);
 
-        String tokenToBeValidated =
-            isSignupCompleteReq ? AuthUtil.getSignupToken() : AuthUtil.getAccessToken();
+        String tokenToBeValidated = isSignupCompleteReq ? AuthUtil.getSignupToken() : AuthUtil.getAccessToken();
 
         String memberId;
         if (isSignupCompleteReq) {

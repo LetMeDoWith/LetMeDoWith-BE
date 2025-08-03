@@ -14,7 +14,6 @@ public interface TaskCategoryJpaRepository extends JpaRepository<TaskCategory, L
     Optional<TaskCategory> findByIdAndCategoryHolderIdInAndIsActive(
             Long id, List<String> categoryHolderId, Yn isActive);
 
-
     List<TaskCategory> findAllByIsActive(Yn isActive);
 
     List<TaskCategory> findAllByCategoryHolderIdAndCreationTypeAndIsActive(
