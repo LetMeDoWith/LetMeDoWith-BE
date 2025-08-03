@@ -17,6 +17,7 @@ import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
 import com.LetMeDoWith.LetMeDoWith.presentation.auth.dto.CreateTokenResDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.CheckNicknameReqDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.SignupCompleteReqDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.UpdateMemberTermAgreeReqDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -109,6 +110,20 @@ public class MemberController {
 
         memberService.withdrawMember(memberId);
 
+        return ResponseUtil.createSuccessResponse(SuccessResponseStatus.OK);
+    }
+
+    @Operation(summary = "약관 동의 정보 업데이트", description = "회원의 약관 동의 정보를 업데이트합니다.")
+    @ApiSuccessResponse(description = "약관 동의 정보 업데이트 완료")
+    @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.MEMBER_NOT_EXIST)})
+    @PutMapping("/{memberId}/agreements")
+    public <T> ResponseEntity<ResponseDto<T>> updateMemberTermAgree(
+            @PathVariable String memberId, @RequestBody UpdateMemberTermAgreeReqDto updateMemberTermAgreeReqDto) {
+        memberService.updateMemberTermAgree(
+                memberId,
+                updateMemberTermAgreeReqDto.isTermsAgree(),
+                updateMemberTermAgreeReqDto.isPrivacyAgree(),
+                updateMemberTermAgreeReqDto.isAdvertisementAgree());
         return ResponseUtil.createSuccessResponse(SuccessResponseStatus.OK);
     }
 }
