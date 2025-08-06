@@ -17,6 +17,7 @@ import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
 import com.LetMeDoWith.LetMeDoWith.presentation.auth.dto.CreateTokenResDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.CheckNicknameReqDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.SignupCompleteReqDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.UpdateMemberInfoReqDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.UpdateMemberTermAgreeReqDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -113,6 +114,13 @@ public class MemberController {
         return ResponseUtil.createSuccessResponse(SuccessResponseStatus.OK);
     }
 
+    /**
+     * 회원의 약관 동의 정보를 업데이트한다.
+     *
+     * @param memberId 약관 동의 정보를 업데이트할 회원의 ID
+     * @param updateMemberTermAgreeReqDto 약관 동의 정보
+     * @return 약관 동의 정보 업데이트 완료
+     */
     @Operation(summary = "약관 동의 정보 업데이트", description = "회원의 약관 동의 정보를 업데이트합니다.")
     @ApiSuccessResponse(description = "약관 동의 정보 업데이트 완료")
     @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.MEMBER_NOT_EXIST)})
@@ -124,6 +132,27 @@ public class MemberController {
                 updateMemberTermAgreeReqDto.isTermsAgree(),
                 updateMemberTermAgreeReqDto.isPrivacyAgree(),
                 updateMemberTermAgreeReqDto.isAdvertisementAgree());
+        return ResponseUtil.createSuccessResponse(SuccessResponseStatus.OK);
+    }
+
+    /**
+     * 회원의 정보를 업데이트한다.
+     *
+     * @param memberId 정보를 업데이트할 회원의 ID
+     * @param updateMemberInfoReqDto 정보 업데이트 요청
+     * @return 정보 업데이트 완료
+     */
+    @Operation(summary = "회원 정보 업데이트", description = "회원의 정보를 업데이트합니다.")
+    @ApiSuccessResponse(description = "회원 정보 업데이트 완료")
+    @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.MEMBER_NOT_EXIST)})
+    @PutMapping("/{memberId}")
+    public <T> ResponseEntity<ResponseDto<T>> updateMemberInfo(
+            @PathVariable String memberId, @RequestBody UpdateMemberInfoReqDto updateMemberInfoReqDto) {
+        memberService.updateMemberInfo(
+                memberId,
+                updateMemberInfoReqDto.nickname(),
+                updateMemberInfoReqDto.selfDescription(),
+                updateMemberInfoReqDto.profileImageUrl());
         return ResponseUtil.createSuccessResponse(SuccessResponseStatus.OK);
     }
 }

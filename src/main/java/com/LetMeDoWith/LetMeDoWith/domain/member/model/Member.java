@@ -168,6 +168,22 @@ public class Member extends BaseAuditEntity {
         return this;
     }
 
+    /**
+     * Member의 정보를 수정한다
+     *
+     * @param nickname 닉네임
+     * @param selfDescription 자기소개
+     * @param profileImageUrl 프로필 이미지 URL
+     * @return 수정된 Member 객체
+     */
+    public Member updateMemberInfo(String nickname, String selfDescription, String profileImageUrl) {
+        this.nickname = nickname;
+        this.selfDescription = selfDescription;
+        this.profileImageUrl = profileImageUrl;
+
+        return this;
+    }
+
     public Member withdraw() {
         this.status = MemberStatus.WITHDRAWN;
 

@@ -141,4 +141,17 @@ public class MemberService {
 
         memberRepository.save(member);
     }
+
+    public void updateMemberInfo(String memberId, String nickname, String selfDescription, String profileImageUrl) {
+        Member member = memberRepository
+                .getMember(memberId, MemberStatus.NORMAL)
+                .orElseThrow(() -> new RestApiException(FailResponseStatus.MEMBER_NOT_EXIST));
+
+        member.updateMemberInfo(
+                nickname != null ? nickname : member.getNickname(),
+                selfDescription != null ? selfDescription : member.getSelfDescription(),
+                profileImageUrl != null ? profileImageUrl : member.getProfileImageUrl());
+
+        memberRepository.save(member);
+    }
 }
