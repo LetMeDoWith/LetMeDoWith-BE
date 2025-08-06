@@ -186,6 +186,8 @@ public class Member extends BaseAuditEntity {
 
     public Member withdraw() {
         this.status = MemberStatus.WITHDRAWN;
+        // subject 중복 방지를 위해 탈퇴 표시 뒤에 붙임
+        this.subject = this.subject + "_WITHDRAWN";
 
         return this;
     }

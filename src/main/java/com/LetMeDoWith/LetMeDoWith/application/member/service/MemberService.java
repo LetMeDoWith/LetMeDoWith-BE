@@ -111,23 +111,21 @@ public class MemberService {
      * @param memberId 탈퇴하려는 멤버의 id
      * @return 탈퇴요청 성공 여부
      */
+    @Transactional
     public void withdrawMember(String memberId) {
         Member member = memberRepository
                 .getMember(memberId, MemberStatus.NORMAL)
                 .orElseThrow(() -> new RestApiException(FailResponseStatus.MEMBER_NOT_EXIST));
 
-        memberRepository.delete(member);
-        memberSettingRepository.delete(member.getAlarmSetting());
-
-        // TODO: member와 연관된 모든 도메인 (뱃지, 팔로우, 피드백, 태스크) 의 데이터도 삭제해야 함
+        member.withdraw();
     }
 
     /**
      * 회원의 약관 동의 정보를 업데이트한다.
      *
-     * @param memberId 약관 동의 정보를 업데이트하려는 멤버의 id
-     * @param isTermsAgree 약관 동의 여부
-     * @param isPrivacyAgree 개인정보 활용 동의 여부
+     * @param memberId             약관 동의 정보를 업데이트하려는 멤버의 id
+     * @param isTermsAgree         약관 동의 여부
+     * @param isPrivacyAgree       개인정보 활용 동의 여부
      * @param isAdvertisementAgree 광고성 메세지 수신 동의 여부
      */
     @Transactional
@@ -142,6 +140,7 @@ public class MemberService {
         memberRepository.save(member);
     }
 
+    @Transactional
     public void updateMemberInfo(String memberId, String nickname, String selfDescription, String profileImageUrl) {
         Member member = memberRepository
                 .getMember(memberId, MemberStatus.NORMAL)
