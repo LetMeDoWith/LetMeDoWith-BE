@@ -26,6 +26,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -124,7 +125,7 @@ public class MemberController {
     @Operation(summary = "약관 동의 정보 업데이트", description = "회원의 약관 동의 정보를 업데이트합니다.")
     @ApiSuccessResponse(description = "약관 동의 정보 업데이트 완료")
     @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.MEMBER_NOT_EXIST)})
-    @PutMapping("/{memberId}/agreements")
+    @PatchMapping("/{memberId}/agreements")
     public <T> ResponseEntity<ResponseDto<T>> updateMemberTermAgree(
             @PathVariable String memberId, @RequestBody UpdateMemberTermAgreeReqDto updateMemberTermAgreeReqDto) {
         memberService.updateMemberTermAgree(
@@ -145,7 +146,7 @@ public class MemberController {
     @Operation(summary = "회원 정보 업데이트", description = "회원의 정보를 업데이트합니다.")
     @ApiSuccessResponse(description = "회원 정보 업데이트 완료")
     @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.MEMBER_NOT_EXIST)})
-    @PutMapping("/{memberId}")
+    @PatchMapping("/{memberId}")
     public <T> ResponseEntity<ResponseDto<T>> updateMemberInfo(
             @PathVariable String memberId, @RequestBody UpdateMemberInfoReqDto updateMemberInfoReqDto) {
         memberService.updateMemberInfo(
