@@ -1,22 +1,26 @@
 package com.LetMeDoWith.LetMeDoWith.application.task.service;
 
-import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.INTERNAL_SERVER_ERROR;
-import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.INVALID_REQUEST;
-
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.CreateDowithTaskCommand;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.CreateDowithTaskWithRoutineCommand;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
+import com.LetMeDoWith.LetMeDoWith.domain.task.enums.CountryCode;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
-import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskSummary;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.Holiday;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskRepository;
+import com.LetMeDoWith.LetMeDoWith.domain.task.repository.HolidayRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TaskCategoryRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TaskSummaryRepository;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Set;
+import com.LetMeDoWith.LetMeDoWith.domain.task.service.TaskRoutineDateCalculator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.INVALID_REQUEST;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +29,10 @@ public class CreateDowithTaskService {
     private final DowithTaskRepository dowithTaskRepository;
     private final TaskCategoryRepository taskCategoryRepository;
     private final TaskSummaryRepository taskSummaryRepository;
+
+    private final HolidayRepository holidayRepository;
+
+    private final TaskRoutineDateCalculator taskRoutineDateCalculator;
 
     /**
      * 두윗모드 Task 생성
@@ -35,18 +43,17 @@ public class CreateDowithTaskService {
     @Transactional
     public DowithTask createDowithTask(String memberId, CreateDowithTaskCommand command) {
 
-        Set<LocalDate> targetDateSet = command.getTargetDateSet();
-
         if (command.taskCategoryId() != null) {
             taskCategoryRepository
                     .getActiveTaskCategory(command.taskCategoryId(), memberId)
                     .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
         }
 
-        TaskSummary taskSummary = taskSummaryRepository
-                .getTaskSummary(memberId)
-                .orElseThrow(() -> new RestApiException(INTERNAL_SERVER_ERROR));
-        taskSummary.deductRemainedDowithTaskCount(targetDateSet.size());
+        // 두윗모드 Task 사용 개수 제한 정책 무효로 주석 처리
+//        TaskSummary taskSummary = taskSummaryRepository
+//                .getTaskSummary(memberId)
+//                .orElseThrow(() -> new RestApiException(INTERNAL_SERVER_ERROR));
+//        taskSummary.deductRemainedDowithTaskCount(targetDateSet.size());
 
         DowithTask dowithTask =
                 DowithTask.of(memberId, command.taskCategoryId(), command.title(), command.date(), command.startTime());
@@ -64,27 +71,44 @@ public class CreateDowithTaskService {
     @Transactional
     public List<DowithTask> createDowithTaskWithRoutine(String memberId, CreateDowithTaskWithRoutineCommand command) {
 
+        List<DowithTask> dowithTasks = new ArrayList<>();
         if (command.taskCategoryId() != null) {
             taskCategoryRepository
                     .getActiveTaskCategory(command.taskCategoryId(), memberId)
                     .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
         }
 
-        Set<LocalDate> targetDateSet = command.getTargetDateSet();
+        // 두윗모드 Task 사용 개수 제한 정책 무효로 주석 처리
+//        TaskSummary taskSummary = taskSummaryRepository
+//                .getTaskSummary(memberId)
+//                .orElseThrow(() -> new RestApiException(INTERNAL_SERVER_ERROR));
+//        taskSummary.deductRemainedDowithTaskCount(targetDateSet.size());
 
-        TaskSummary taskSummary = taskSummaryRepository
-                .getTaskSummary(memberId)
-                .orElseThrow(() -> new RestApiException(INTERNAL_SERVER_ERROR));
-        taskSummary.deductRemainedDowithTaskCount(targetDateSet.size());
-
-        List<DowithTask> dowithTask = DowithTask.ofWithRoutine(
+        DowithTask dowithTask = DowithTask.of(
                 memberId,
                 command.taskCategoryId(),
                 command.title(),
                 command.date(),
                 command.startTime(),
-                command.routineDates());
+                command.routineCondition().startDate(),
+                command.routineCondition().endDate(),
+                command.routineCondition().cycle(),
+                command.routineCondition().pattern(),
+                command.routineCondition().isExcludeHolidays());
+        dowithTasks.add(dowithTask);
 
-        return dowithTaskRepository.saveDowithTasks(dowithTask);
+        // 루틴 반복 조건에 따른 루틴 일자 계산
+        Set<Holiday> holidaySet = Set.of();
+        if (command.routineCondition().isExcludeHolidays()) {
+            holidaySet = holidayRepository.getHolidays(CountryCode.KR,
+                    command.routineCondition().startDate(),
+                    command.routineCondition().endDate());
+        }
+        Set<LocalDate> routineDates = this.taskRoutineDateCalculator.calculateRoutineDates(dowithTask, holidaySet);
+
+        // 루틴에 따른 DowithTask 생성
+        dowithTasks.addAll(DowithTask.of(dowithTask, routineDates));
+
+        return dowithTaskRepository.saveDowithTasks(dowithTasks);
     }
 }

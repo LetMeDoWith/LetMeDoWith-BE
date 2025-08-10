@@ -7,20 +7,20 @@ import java.time.LocalDate;
 import java.util.Set;
 
 @Builder
-public record TodoTaskRoutineCondition(
+public record TaskRoutineCondition(
         LocalDate startDate,
         LocalDate endDate,
         TaskRoutineCycle cycle,
         Set<Integer> pattern,
         Boolean isExcludeHolidays) {
 
-    public static TodoTaskRoutineCondition of(
+    public static TaskRoutineCondition of(
             LocalDate startDate,
             LocalDate endDate,
             TaskRoutineCycle cycle,
             Set<Integer> pattern,
             Boolean isExcludeHolidays) {
-        return TodoTaskRoutineCondition.builder()
+        return TaskRoutineCondition.builder()
                 .startDate(startDate)
                 .endDate(endDate)
                 .cycle(cycle)

@@ -11,7 +11,6 @@ import com.LetMeDoWith.LetMeDoWith.domain.task.service.strategy.TaskRoutineDateC
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -26,7 +25,7 @@ public class TaskRoutineDateCalculator {
     private static final String ROUTINE_SCHEDULE_STRATEGY_KEY_SUFFIX = "RoutineDateCalculateStrategy";
     private final Map<String, TaskRoutineDateCalculateStrategy> routineScheduleStrategies;
 
-    public Set<LocalDate> calculateRoutineDates(DowithTask dowithTask, List<Holiday> holidays) {
+    public Set<LocalDate> calculateRoutineDates(DowithTask dowithTask, Set<Holiday> holidays) {
         if (!dowithTask.isRoutine()) throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
         DowithTaskRoutine routine = dowithTask.getRoutine();
         TaskRoutineDateCalculateStrategy strategy = this.getStrategy(routine.getCycle());

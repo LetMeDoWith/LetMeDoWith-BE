@@ -2,9 +2,10 @@ package com.LetMeDoWith.LetMeDoWith.application.task.dto;
 
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.CreateTodoTaskReqDto;
 import jakarta.annotation.Nullable;
+import lombok.Builder;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
-import lombok.Builder;
 
 @Builder
 public record RegisterTodoTaskCommand(
@@ -12,7 +13,7 @@ public record RegisterTodoTaskCommand(
         String title,
         LocalDate date,
         LocalTime startTime,
-        TodoTaskRoutineCondition routineCondition) {
+        TaskRoutineCondition routineCondition) {
 
     public static RegisterTodoTaskCommand of(
             @Nullable Long taskCategoryId,
@@ -28,12 +29,12 @@ public record RegisterTodoTaskCommand(
                 .routineCondition(
                         routineCondition == null
                                 ? null
-                                : TodoTaskRoutineCondition.of(
-                                        routineCondition.startDate(),
-                                        routineCondition.endDate(),
-                                        routineCondition.cycle(),
-                                        routineCondition.pattern(),
-                                        routineCondition.isExcludeHolidays()))
+                                : TaskRoutineCondition.of(
+                                routineCondition.startDate(),
+                                routineCondition.endDate(),
+                                routineCondition.cycle(),
+                                routineCondition.pattern(),
+                                routineCondition.isExcludeHolidays()))
                 .build();
     }
 }

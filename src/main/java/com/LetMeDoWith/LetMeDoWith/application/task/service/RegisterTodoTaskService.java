@@ -2,7 +2,7 @@ package com.LetMeDoWith.LetMeDoWith.application.task.service;
 
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.RegisterTodoTaskCommand;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.RegisterTodoTaskResult;
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.TodoTaskRoutineCondition;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.TaskRoutineCondition;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
@@ -62,7 +62,7 @@ public class RegisterTodoTaskService {
                     .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
         }
 
-        TodoTaskRoutineCondition routineCondition = command.routineCondition();
+        TaskRoutineCondition routineCondition = command.routineCondition();
 
         // 루틴 반복 주기에 따른 루틴 수행일자 계산
         Set<LocalDate> routineDates = routineDateCalculator.computeRoutineDates(

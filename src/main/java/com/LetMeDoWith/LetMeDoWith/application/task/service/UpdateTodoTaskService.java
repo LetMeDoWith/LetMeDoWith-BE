@@ -1,6 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.application.task.service;
 
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.TodoTaskRoutineCondition;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.TaskRoutineCondition;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateTodoTaskCommand;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateTodoTaskRoutineCommand;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateTodoTaskWithRoutineCommand;
@@ -66,7 +66,7 @@ public class UpdateTodoTaskService {
 
         // 루틴이 아닌 태스크를 루틴으로 변경하는 경우
         if (command.routineCondition().isPresent()) {
-            TodoTaskRoutineCondition routineCondition =
+            TaskRoutineCondition routineCondition =
                     command.routineCondition().get();
 
             Set<LocalDate> holidays = routineCondition.isExcludeHolidays()

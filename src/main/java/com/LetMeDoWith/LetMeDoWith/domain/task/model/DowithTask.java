@@ -102,7 +102,7 @@ public class DowithTask extends BaseAuditEntity {
         return task;
     }
 
-    public static List<DowithTask> ofWithRoutine(
+    public static List<DowithTask> of(
             String memberId,
             Long taskCategoryId,
             String title,
@@ -133,7 +133,7 @@ public class DowithTask extends BaseAuditEntity {
         return result;
     }
 
-    public static List<DowithTask> ofWithRoutine(
+    public static DowithTask of(
             String memberId,
             Long taskCategoryId,
             String title,
@@ -146,7 +146,37 @@ public class DowithTask extends BaseAuditEntity {
             boolean isExcludeHolidays) {
         DowithTaskRoutine dowithTaskRoutine = DowithTaskRoutine.of(routineRangeStartDate, routineRangeEndDate,
                 routineCycle, routinePattern, isExcludeHolidays);
-        Set<LocalDate> routineDates = dowithTaskRoutine.getRoutineDates().getDates();
+        return DowithTask.builder()
+                .memberId(memberId)
+                .taskCategoryId(taskCategoryId)
+                .title(title)
+                .status(DowithTaskStatus.WAIT)
+                .date(date)
+                .startTime(startTime)
+                .routine(dowithTaskRoutine)
+                .confirms(null)
+                .build();
+    }
+
+    public static List<DowithTask> of(
+            DowithTask dowithTask,
+            Set<LocalDate> routineDates
+    ) {
+        List<DowithTask> result = new ArrayList<>();
+        routineDates.remove(dowithTask.getDate());
+        routineDates.forEach(date -> result.add(
+                DowithTask.builder()
+                        .memberId(dowithTask.getMemberId())
+                        .taskCategoryId(dowithTask.getTaskCategoryId())
+                        .title(dowithTask.getTitle())
+                        .status(DowithTaskStatus.WAIT)
+                        .date(date)
+                        .startTime(dowithTask.getStartTime())
+                        .routine(dowithTask.getRoutine())
+                        .confirms(null)
+                        .build()
+        ));
+        return result;
     }
 
     /**

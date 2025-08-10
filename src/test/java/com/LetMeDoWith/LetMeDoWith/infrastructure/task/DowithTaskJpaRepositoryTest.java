@@ -1,17 +1,10 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.task;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-
 import com.LetMeDoWith.LetMeDoWith.config.TestQueryDslConfig;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.DowithTaskJpaRepository;
 import jakarta.persistence.NoResultException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.List;
-import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -22,6 +15,14 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
+import java.util.Set;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
@@ -79,14 +80,14 @@ public class DowithTaskJpaRepositoryTest {
     @DisplayName("DowithTask Aggregate save 테스트 (루틴 있는 경우)")
     void test_dowithTask_routine_save() {
         // given
-        List<DowithTask> dowithTasks1 = DowithTask.ofWithRoutine(
+        List<DowithTask> dowithTasks1 = DowithTask.of(
                 memberId,
                 taskCategoryId1,
                 title1,
                 date1,
                 startTime1,
                 Set.of(routineDate1_1, routineDate1_2, routineDate1_3));
-        List<DowithTask> dowithTasks2 = DowithTask.ofWithRoutine(
+        List<DowithTask> dowithTasks2 = DowithTask.of(
                 memberId, taskCategoryId2, title2, date2, startTime2, Set.of(routineDate2_1, routineDate2_2));
 
         // when
@@ -138,7 +139,7 @@ public class DowithTaskJpaRepositoryTest {
     @DisplayName("DowithTask Aggregate 조회 (루틴 있는 경우)")
     void test_findDowithTaskAggregate2() {
         // given
-        List<DowithTask> dowithTasksWithRoutines = DowithTask.ofWithRoutine(
+        List<DowithTask> dowithTasksWithRoutines = DowithTask.of(
                 memberId, taskCategoryId2, title2, date2, startTime2, Set.of(routineDate2_1, routineDate2_2));
 
         List<DowithTask> dowithTasks = dowithTaskJpaRepository.saveAll(dowithTasksWithRoutines);
@@ -170,7 +171,7 @@ public class DowithTaskJpaRepositoryTest {
     void test_findDowithTaskAggregates() {
         // given
         DowithTask dowithTask = DowithTask.of(memberId, taskCategoryId1, title1, date2, startTime2);
-        List<DowithTask> dowithTasksWithRoutines = DowithTask.ofWithRoutine(
+        List<DowithTask> dowithTasksWithRoutines = DowithTask.of(
                 memberId, taskCategoryId2, title2, date2, startTime2, Set.of(routineDate2_1, routineDate2_2));
 
         // when
@@ -188,7 +189,7 @@ public class DowithTaskJpaRepositoryTest {
     void test_findDowithTaskAggregates2() {
         // given
         DowithTask dowithTask = DowithTask.of(memberId, taskCategoryId1, title1, date2, startTime2);
-        List<DowithTask> dowithTasksWithRoutines = DowithTask.ofWithRoutine(
+        List<DowithTask> dowithTasksWithRoutines = DowithTask.of(
                 memberId, taskCategoryId2, title2, date2, startTime2, Set.of(routineDate2_1, routineDate2_2));
 
         // when

@@ -1,11 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.task.controller;
 
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.RegisterTodoTaskCommand;
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.RegisterTodoTaskResult;
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.TodoTaskRoutineCondition;
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateTodoTaskCommand;
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateTodoTaskRoutineCommand;
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateTodoTaskWithRoutineCommand;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.*;
 import com.LetMeDoWith.LetMeDoWith.application.task.service.DeleteTodoTaskService;
 import com.LetMeDoWith.LetMeDoWith.application.task.service.RegisterTodoTaskService;
 import com.LetMeDoWith.LetMeDoWith.application.task.service.UpdateTodoTaskService;
@@ -26,14 +21,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Todo Task", description = "투두모드 태스크")
 @RestController
@@ -51,7 +39,7 @@ public class TodoTaskController {
                     "투두모드 태스크를 등록합니다. 루틴이 설정된 Task인 경우 isRoutine을 true로 세팅하고 rountineDates에 Task의 date 포함한 루틴 일자를 리스트로 넣어줍니다.")
     @ApiSuccessResponse(description = "투두모드 Task 생성 성공. 본 API는 생성 성공 여부만 반환합니다. 이후 데이터는 조회 API에서 확인할 수 있습니다.")
     @ApiErrorResponses({
-        @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청입니다."),
+            @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청입니다."),
     })
     @PostMapping("")
     public ResponseEntity registerTodoTask(@Valid @RequestBody CreateTodoTaskReqDto request) {
@@ -79,17 +67,17 @@ public class TodoTaskController {
     @Operation(summary = "투두모드 태스크 수정", description = "투두모드 태스크를 1개 수정합니다. 컨텐츠를 수정하거나, 루틴이 아닌 경우 루틴으로 변환할 수 있습니다.")
     @ApiSuccessResponse(description = "투두모드 Task 수정 성공. 본 API는 생성 성공 여부만 반환합니다. 이후 데이터는 조회 API에서 확인할 수 있습니다.")
     @ApiErrorResponses({
-        @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청입니다."),
+            @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청입니다."),
     })
     @PutMapping("/{todoTaskId}")
     public ResponseEntity updateSingleTodoTask(
             @PathVariable Long todoTaskId, @RequestBody UpdateTodoTaskReqDto request) {
         String memberId = AuthUtil.getMemberId();
 
-        TodoTaskRoutineCondition routineCondition = null;
+        TaskRoutineCondition routineCondition = null;
 
         if (request.routineCondition() != null) {
-            routineCondition = TodoTaskRoutineCondition.of(
+            routineCondition = TaskRoutineCondition.of(
                     request.routineCondition().startDate(),
                     request.routineCondition().endDate(),
                     request.routineCondition().cycle(),
@@ -112,7 +100,7 @@ public class TodoTaskController {
     @Operation(summary = "투두모드 태스크(루틴포함) 수정", description = "투두모드 루틴의 모든 태스크를 수정합니다.")
     @ApiSuccessResponse(description = "투두모드 태스크 수정 성공. 본 API는 생성 성공 여부만 반환합니다. 이후 데이터는 조회 API에서 확인할 수 있습니다.")
     @ApiErrorResponses({
-        @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청입니다."),
+            @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청입니다."),
     })
     @PutMapping("/{todoTaskId}/with-routine")
     public ResponseEntity updateTodoTaskWithRoutine(
@@ -130,7 +118,7 @@ public class TodoTaskController {
     @Operation(summary = "투두모드 태스크 루틴 수정", description = "투두모드 루틴을 수정합니다. 루틴 조건을 수정합니다.")
     @ApiSuccessResponse(description = "투두모드 루틴 수정 성공. 본 API는 생성 성공 여부만 반환합니다. 이후 데이터는 조회 API에서 확인할 수 있습니다.")
     @ApiErrorResponses({
-        @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청입니다."),
+            @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청입니다."),
     })
     @PutMapping("/{todoTaskId}/routine")
     public ResponseEntity updateTodoTaskRoutine(
@@ -152,7 +140,7 @@ public class TodoTaskController {
     @Operation(summary = "투두모드 태스크 완료", description = "투두모드 태스크를 완료합니다.")
     @ApiSuccessResponse(description = "투두모드 태스크 완료 성공. 본 API는 완료된 태스크의 ID를 반환합니다.")
     @ApiErrorResponses({
-        @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청입니다."),
+            @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청입니다."),
     })
     @PatchMapping("/{todoTaskId}/complete")
     public ResponseEntity<ResponseDto<Long>> completeTodoTask(@PathVariable Long todoTaskId) {
@@ -164,7 +152,7 @@ public class TodoTaskController {
     @Operation(summary = "투두모드 태스크 완료 취소", description = "완료된 투두모드 태스크를 대기 상태로 변경합니다.")
     @ApiSuccessResponse(description = "투두모드 태스크 완료 취소 성공. 본 API는 대기상태로 전환된 태스크의 ID를 반환합니다.")
     @ApiErrorResponses({
-        @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청입니다."),
+            @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청입니다."),
     })
     @PatchMapping("/{todoTaskId}/wait")
     public ResponseEntity<ResponseDto<Long>> waitTodoTask(@PathVariable Long todoTaskId) {
@@ -177,7 +165,7 @@ public class TodoTaskController {
     @Operation(summary = "투두모드 태스크 삭제", description = "투두모드 태스크를 삭제합니다.")
     @ApiSuccessResponse(description = "투두모드 태스크 삭제 성공.")
     @ApiErrorResponses({
-        @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청입니다."),
+            @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청입니다."),
     })
     public ResponseEntity deleteTodoTask(@PathVariable Long todoTaskId) {
         String memberId = AuthUtil.getMemberId();
@@ -190,7 +178,7 @@ public class TodoTaskController {
     @Operation(summary = "투두모드 태스크(루틴포함) 삭제", description = "투두모드 루틴을 포함한 태스크를 삭제합니다. 루틴이 설정된 태스크의 경우 루틴과 함께 삭제됩니다.")
     @ApiSuccessResponse(description = "투두모드 태스크(루틴포함) 삭제 성공.")
     @ApiErrorResponses({
-        @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청입니다."),
+            @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청입니다."),
     })
     public ResponseEntity deleteTodoTaskWithRoutine(@PathVariable Long todoTaskId) {
         String memberId = AuthUtil.getMemberId();

@@ -12,6 +12,15 @@ public enum TaskRoutineCycle implements BaseEnum {
     private final String code;
     private final String description;
 
+    public static TaskRoutineCycle fromCode(String code) {
+        for (TaskRoutineCycle cycle : TaskRoutineCycle.values()) {
+            if (cycle.getCode().equals(code)) {
+                return cycle;
+            }
+        }
+        return null;
+    }
+
     @Override
     public String getCode() {
         return code;
