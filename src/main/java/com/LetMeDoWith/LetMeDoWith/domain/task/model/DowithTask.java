@@ -1,40 +1,24 @@
 package com.LetMeDoWith.LetMeDoWith.domain.task.model;
 
-import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.INVALID_REQUEST;
-
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.AggregateRoot;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
+import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TaskRoutineCycle;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskRoutineRepository;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.*;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.UUID;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+
+import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.INVALID_REQUEST;
 
 @Entity
 @Getter
@@ -147,6 +131,22 @@ public class DowithTask extends BaseAuditEntity {
         });
 
         return result;
+    }
+
+    public static List<DowithTask> ofWithRoutine(
+            String memberId,
+            Long taskCategoryId,
+            String title,
+            LocalDate date,
+            LocalTime startTime,
+            LocalDate routineRangeStartDate,
+            LocalDate routineRangeEndDate,
+            TaskRoutineCycle routineCycle,
+            Set<Integer> routinePattern,
+            boolean isExcludeHolidays) {
+        DowithTaskRoutine dowithTaskRoutine = DowithTaskRoutine.of(routineRangeStartDate, routineRangeEndDate,
+                routineCycle, routinePattern, isExcludeHolidays);
+        Set<LocalDate> routineDates = dowithTaskRoutine.getRoutineDates().getDates();
     }
 
     /**
@@ -280,7 +280,7 @@ public class DowithTask extends BaseAuditEntity {
      */
     public Set<LocalDate> getRoutineDates() {
         if (isRoutine()) {
-            return this.routine.getRoutineDates().getDates();
+            return this.routine.getRoutineDates().getDates(); // TODO - 계산하여 다시 산출 필요
         } else {
             return Set.of();
         }

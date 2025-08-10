@@ -5,30 +5,15 @@ import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.AggregateRoot;
-import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TodoTaskRoutineCycle;
+import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TaskRoutineCycle;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TodoTaskStatus;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.*;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.stream.Collectors;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 /**
  * TodoTask 엔티티 클래스
@@ -140,7 +125,7 @@ public class TodoTask extends BaseAuditEntity {
             String title,
             LocalTime startTime,
             Set<LocalDate> routineDates,
-            TodoTaskRoutineCycle cycle,
+            TaskRoutineCycle cycle,
             Set<Integer> pattern,
             boolean isExcludeHolidays) {
 
@@ -172,7 +157,7 @@ public class TodoTask extends BaseAuditEntity {
      * @return 생성된 TodoTask 리스트
      */
     public List<TodoTask> createRoutine(
-            Set<LocalDate> routineDates, TodoTaskRoutineCycle cycle, Set<Integer> pattern, boolean isExcludeHolidays) {
+            Set<LocalDate> routineDates, TaskRoutineCycle cycle, Set<Integer> pattern, boolean isExcludeHolidays) {
         TodoTaskRoutine routine = TodoTaskRoutine.of(routineDates, cycle, pattern, isExcludeHolidays);
         this.updateRoutine(routine);
 
