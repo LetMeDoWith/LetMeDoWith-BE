@@ -1,33 +1,34 @@
 package com.LetMeDoWith.LetMeDoWith.application.task.service;
 
-import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.INVALID_REQUEST;
-
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateDowithTaskContentsCommand;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.TaskRoutineCondition;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateDowithTaskContentsAndCreateRoutineCommand;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateDowithTaskContentsOnlyCommand;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateDowithTaskRoutineCommand;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
-import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
+import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
+import com.LetMeDoWith.LetMeDoWith.common.util.DateTimeUtil;
+import com.LetMeDoWith.LetMeDoWith.domain.task.enums.CountryCode;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.Holiday;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskCategory;
-import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskSummary;
-import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskRepository;
-import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskRoutineRepository;
-import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TaskCategoryRepository;
-import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TaskSummaryRepository;
-import com.LetMeDoWith.LetMeDoWith.domain.task.service.DowithTaskRoutineDateCalculator;
-import com.LetMeDoWith.LetMeDoWith.domain.task.service.DowithTaskRoutineDateCalculator.RoutineDateResult;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.Set;
-import java.util.stream.Collectors;
+import com.LetMeDoWith.LetMeDoWith.domain.task.repository.*;
+import com.LetMeDoWith.LetMeDoWith.domain.task.service.TaskRoutineDateCalculator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.INVALID_REQUEST;
 
 @Service
 @RequiredArgsConstructor
 public class UpdateDowithTaskService {
 
-    private final DowithTaskRoutineDateCalculator routineDateCalculator;
+    private final TaskRoutineDateCalculator taskRoutineDateCalculator;
 
     private final DowithTaskRepository dowithTaskRepository;
     private final DowithTaskRoutineRepository dowithTaskRoutineRepository;
@@ -35,19 +36,19 @@ public class UpdateDowithTaskService {
 
     private final TaskCategoryRepository taskCategoryRepository;
 
+    private final HolidayRepository holidayRepository;
+
     /**
      * 두윗모드Task 내용 수정 및 루틴 생성
      *
-     * @param memberId
      * @param command
-     * @param routineDates
      */
     @Transactional
-    public DowithTask updateContentsAndCreateRoutine(
-            String memberId, Long dowithTaskid, UpdateDowithTaskContentsCommand command, Set<LocalDate> routineDates) {
+    public void updateDowithTaskContentsAndCreateRoutine(UpdateDowithTaskContentsAndCreateRoutineCommand command) {
 
+        String memberId = AuthUtil.getMemberId();
         DowithTask dowithTask = dowithTaskRepository
-                .getDowithTask(dowithTaskid, memberId)
+                .getDowithTask(command.dowithTaskId(), memberId)
                 .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
 
         TaskCategory taskCategory = taskCategoryRepository
@@ -60,19 +61,28 @@ public class UpdateDowithTaskService {
             dowithTask.updateContents(command.title(), taskCategory.getId());
         }
 
-        // 새롭게 생성할 일자 계산
-        Set<LocalDate> toCreateDates = routineDates.stream()
-                .filter(date -> !date.isEqual(dowithTask.getDate()))
-                .collect(Collectors.toSet()); // TODO - 명확히 수정 필요 도메인 모델 메서드로 편입
+        Set<Holiday> holidaySet = new HashSet<>();
+        if (command.taskRoutineCondition().isExcludeHolidays()) {
+            holidaySet = holidayRepository.getHolidays(
+                    CountryCode.KR,
+                    command.taskRoutineCondition().startDate(),
+                    command.taskRoutineCondition().endDate()
+            );
+        }
 
-        // 새 DowithTask 생성 가능 여부 validation
-        TaskSummary taskSummary =
-                taskSummaryRepository.getTaskSummary(memberId).orElseThrow(() -> new RestApiException(INVALID_REQUEST));
-        taskSummary.deductRemainedDowithTaskCount(toCreateDates.size());
+        TaskRoutineCondition taskRoutineCondition = command.taskRoutineCondition();
+        dowithTask.createRoutine(
+                taskRoutineCondition.startDate(),
+                taskRoutineCondition.endDate(),
+                taskRoutineCondition.cycle(),
+                taskRoutineCondition.pattern(),
+                taskRoutineCondition.isExcludeHolidays()
+        );
+        Set<LocalDate> routineDates = taskRoutineDateCalculator.calculateRoutineDates(dowithTask, holidaySet);
 
-        dowithTaskRepository.saveDowithTasks(dowithTask.createRoutine(routineDates));
+        dowithTaskRepository.saveDowithTask(dowithTask);
+        dowithTaskRepository.saveDowithTasks(DowithTask.of(dowithTask, routineDates));
 
-        return dowithTask;
     }
 
     /**
@@ -82,10 +92,11 @@ public class UpdateDowithTaskService {
      * @param command
      */
     @Transactional
-    public DowithTask updateContentsOnly(String memberId, Long dowithTaskId, UpdateDowithTaskContentsCommand command) {
+    public DowithTask updateDowithTaskContentsOnly(UpdateDowithTaskContentsOnlyCommand command) {
 
+        String memberId = AuthUtil.getMemberId();
         DowithTask dowithTask = dowithTaskRepository
-                .getDowithTask(dowithTaskId, memberId)
+                .getDowithTask(command.dowithTaskId(), memberId)
                 .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
 
         TaskCategory taskCategory = taskCategoryRepository
@@ -117,50 +128,70 @@ public class UpdateDowithTaskService {
         return dowithTask;
     }
 
+
     /**
      * 두윗모드Task 루틴 수정
      *
-     * @param memberId
-     * @param dowithTaskId
-     * @param routineDates
+     * @param command
+     * @return
      */
     @Transactional
-    public DowithTask updateRoutine(String memberId, Long dowithTaskId, Set<LocalDate> routineDates) {
+    public DowithTask updateRoutine(UpdateDowithTaskRoutineCommand command) {
 
+        String memberId = AuthUtil.getMemberId();
         final DowithTask dowithTask = dowithTaskRepository
-                .getDowithTask(dowithTaskId, memberId)
+                .getDowithTask(command.dowithTaskId(), memberId)
                 .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
-        final TaskSummary taskSummary =
-                taskSummaryRepository.getTaskSummary(memberId).orElseThrow(() -> new RestApiException(INVALID_REQUEST));
 
-        LocalDateTime now = SystemTimeUtil.now();
-        LocalDate nowDate = now.toLocalDate();
-        LocalTime nowTime = now.toLocalTime();
+        // 루틴 사용 개수 제한 정책 무효화로 주석 처리
+//        final TaskSummary taskSummary =
+//                taskSummaryRepository.getTaskSummary(memberId).orElseThrow(() -> new RestApiException(INVALID_REQUEST));
 
         if (!dowithTask.isRoutine()) {
             throw new RestApiException(INVALID_REQUEST);
         }
+        List<DowithTask> dowithTasks = dowithTaskRepository.getDowithTasks(dowithTask.getRoutine());
+
+        Set<Holiday> holidaySet = new HashSet<>();
+        if (dowithTask.isRoutineExcludeHolidays()) {
+            holidaySet = holidayRepository.getHolidays(CountryCode.KR,
+                    DateTimeUtil.earlier(dowithTask.getRoutine().getRangeStartDate(), command.taskRoutineCondition().startDate()),
+                    DateTimeUtil.earlier(dowithTask.getRoutine().getRangeEndDate(), command.taskRoutineCondition().endDate()));
+        }
+
+        // routine 수정
+        dowithTask.updateRoutine(
+                command.taskRoutineCondition().startDate(),
+                command.taskRoutineCondition().endDate(),
+                command.taskRoutineCondition().cycle(),
+                command.taskRoutineCondition().pattern(),
+                command.taskRoutineCondition().isExcludeHolidays()
+        );
 
         // 수정 대상 루틴 날짜 계산
         // - 기존 루틴 일자에는 없고 새로운 루틴 일자에는 있어서 생성이 필요한 일자
         // - 기존 루틴 일자에는 있고 새로운 루틴 일자에는 없어서 삭제가 필요한 일자
-        RoutineDateResult RoutineDatesToModifyResult =
-                routineDateCalculator.getRoutineDatesToModify(dowithTask, routineDates);
-
-        if (!RoutineDatesToModifyResult.isValid()) {
-            throw new RestApiException(INVALID_REQUEST);
-        }
+        TaskRoutineDateCalculator.RoutineDateToModify routineDateToModify =
+                taskRoutineDateCalculator.calculateRoutineDatesToModify(
+                        dowithTask,
+                        new TaskRoutineDateCalculator.RoutineCondition(
+                                command.taskRoutineCondition().startDate(),
+                                command.taskRoutineCondition().endDate(),
+                                command.taskRoutineCondition().cycle(),
+                                command.taskRoutineCondition().pattern(),
+                                command.taskRoutineCondition().isExcludeHolidays()
+                        ),
+                        holidaySet);
 
         // 새 루틴 등록으로, 삭제할 루틴 일자 + 연관 DowithTask 삭제
-        Set<LocalDate> toDeleteRoutineDates = RoutineDatesToModifyResult.getToDeleteRoutineDates();
-        dowithTask.deleteRoutine(toDeleteRoutineDates, dowithTaskRepository);
-        taskSummary.plusRemainedDowithTaskCount(toDeleteRoutineDates.size());
+        dowithTaskRepository.delete(dowithTasks.stream()
+                .filter(e -> routineDateToModify.toDeleteDates().contains(e.getDate()))
+                .toList());
 
         // 새 루틴 등록으로, 새 루틴 생성 + 연관 DowithTask 생성
-        Set<LocalDate> toCreateRoutineDates = RoutineDatesToModifyResult.getToCreateRoutineDates();
-        taskSummary.deductRemainedDowithTaskCount(toCreateRoutineDates.size());
-
-        dowithTask.addRoutine(toCreateRoutineDates, dowithTaskRepository);
+        dowithTaskRepository.saveDowithTasks(
+                DowithTask.of(dowithTask, routineDateToModify.toCreateDates())
+        );
 
         return dowithTask;
     }

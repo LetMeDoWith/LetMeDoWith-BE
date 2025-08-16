@@ -3,16 +3,21 @@ package com.LetMeDoWith.LetMeDoWith.domain.task.service;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.DomainService;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TaskRoutineCycle;
-import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
-import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTaskRoutine;
-import com.LetMeDoWith.LetMeDoWith.domain.task.model.Holiday;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.*;
 import com.LetMeDoWith.LetMeDoWith.domain.task.service.strategy.TaskRoutineDateCalculateStrategy;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -25,16 +30,90 @@ public class TaskRoutineDateCalculator {
     private static final String ROUTINE_SCHEDULE_STRATEGY_KEY_SUFFIX = "RoutineDateCalculateStrategy";
     private final Map<String, TaskRoutineDateCalculateStrategy> routineScheduleStrategies;
 
-    public Set<LocalDate> calculateRoutineDates(DowithTask dowithTask, Set<Holiday> holidays) {
+    /**
+     * DowithTask의 루틴 일자를 계산
+     *
+     * @param dowithTask
+     * @param holidaySet
+     * @return
+     */
+    public Set<LocalDate> calculateRoutineDates(DowithTask dowithTask, Set<Holiday> holidaySet) {
         if (!dowithTask.isRoutine()) throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
         DowithTaskRoutine routine = dowithTask.getRoutine();
-        TaskRoutineDateCalculateStrategy strategy = this.getStrategy(routine.getCycle());
-        Set<LocalDate> dates = strategy.getRoutineDates(
+        return this.calculateRoutineDates(routine.getCycle(),
                 routine.getRangeStartDate(),
                 routine.getRangeEndDate(),
-                routine.getPattern().getPattern());
-        if (routine.isExcludeHolidays()) {
-            Set<LocalDate> holidayDates = holidays.stream().map(Holiday::getDate).collect(Collectors.toSet());
+                routine.getPattern().getPattern(),
+                routine.isExcludeHolidays(),
+                holidaySet.stream().map(Holiday::getDate).collect(Collectors.toSet()));
+
+    }
+
+    /**
+     * TodoTask의 루틴 일자를 계산
+     *
+     * @param todoTask
+     * @param holidaySet
+     * @return
+     */
+    public Set<LocalDate> calculateRoutineDates(TodoTask todoTask, Set<Holiday> holidaySet) {
+        if (!todoTask.isRoutine()) throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
+        TodoTaskRoutine routine = todoTask.getRoutine();
+        // TODO - todoTask refact시에 아래 private method 사용
+        return null;
+    }
+
+    /**
+     * 새 루틴 조건 대비 수정 대상 루틴 일자 계산
+     *
+     * @param dowithTask
+     * @param newRoutineCondition
+     * @param holidaySet
+     * @return
+     */
+    public RoutineDateToModify calculateRoutineDatesToModify(DowithTask dowithTask, RoutineCondition newRoutineCondition, Set<Holiday> holidaySet) {
+        LocalDateTime now = SystemTimeUtil.now();
+        LocalDate nowDate = now.toLocalDate();
+        LocalTime nowTime = now.toLocalTime();
+
+        Predicate<LocalDate> isModifiableDates = date ->
+                !date.isBefore(nowDate)
+                        || (date.isEqual(nowDate) && nowTime.isBefore(dowithTask.getStartTime()));
+
+        Set<LocalDate> existingRoutineDates = this.calculateRoutineDates(dowithTask, holidaySet)
+                .stream()
+                .filter(isModifiableDates)
+                .collect(Collectors.toSet());
+        Set<LocalDate> newRoutineDates = this.calculateRoutineDates(
+                newRoutineCondition.cycle(),
+                newRoutineCondition.rangeStartDate(),
+                newRoutineCondition.rangeEndDate(),
+                newRoutineCondition.repetitionPattern(),
+                newRoutineCondition.isExcludeHolidays(),
+                holidaySet.stream().map(Holiday::getDate)
+                        .filter(isModifiableDates)
+                        .collect(Collectors.toSet())
+        );
+
+        Set<LocalDate> toDeleteRoutineDates = new HashSet<>(existingRoutineDates);
+        toDeleteRoutineDates.removeAll(newRoutineDates);
+
+        Set<LocalDate> toCreateRoutineDates = new HashSet<>(newRoutineDates);
+        toCreateRoutineDates.removeAll(existingRoutineDates);
+
+        return new RoutineDateToModify(toCreateRoutineDates, toDeleteRoutineDates)
+
+    }
+
+    private Set<LocalDate> calculateRoutineDates(
+            TaskRoutineCycle cycle, LocalDate startDate, LocalDate endDate, Set<Integer> repetitionPattern, boolean isExcludeHolidays, Set<LocalDate> holidayDates) {
+        if (startDate.isAfter(endDate)) {
+            throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
+        }
+
+        TaskRoutineDateCalculateStrategy strategy = getStrategy(cycle);
+        Set<LocalDate> dates = strategy.getRoutineDates(startDate, endDate, repetitionPattern);
+        if (isExcludeHolidays) {
             dates.removeAll(holidayDates);
         }
         return dates;
@@ -92,4 +171,19 @@ public class TaskRoutineDateCalculator {
 
         return strategy;
     }
+
+    public record RoutineCondition(
+            LocalDate rangeStartDate,
+            LocalDate rangeEndDate,
+            TaskRoutineCycle cycle,
+            Set<Integer> repetitionPattern,
+            boolean isExcludeHolidays
+    ) {
+    }
+
+    public record RoutineDateToModify(
+            Set<LocalDate> toCreateDates,
+            Set<LocalDate> toDeleteDates
+    ) {}
+
 }

@@ -1,10 +1,11 @@
 package com.LetMeDoWith.LetMeDoWith.common.util;
 
+import lombok.experimental.UtilityClass;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class DateTimeUtil {
@@ -39,5 +40,13 @@ public class DateTimeUtil {
 
     public static boolean isBefore(LocalTime targetTime, LocalTime standardTime) {
         return targetTime.isBefore(standardTime);
+    }
+
+    public static LocalDate earlier(LocalDate date1, LocalDate date2) {
+        return date1.isBefore(date2) ? date1 : date2;
+    }
+
+    public static LocalDate later(LocalDate date1, LocalDate date2) {
+        return date1.isAfter(date2) ? date1 : date2;
     }
 }

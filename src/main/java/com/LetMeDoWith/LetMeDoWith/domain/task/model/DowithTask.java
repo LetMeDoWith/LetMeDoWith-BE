@@ -14,9 +14,11 @@ import lombok.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.INVALID_REQUEST;
 
@@ -87,58 +89,6 @@ public class DowithTask extends BaseAuditEntity {
             String title,
             LocalDate date,
             LocalTime startTime,
-            DowithTaskRoutine routine) {
-        DowithTask task = DowithTask.builder()
-                .memberId(memberId)
-                .taskCategoryId(taskCategoryId)
-                .title(title)
-                .status(DowithTaskStatus.WAIT)
-                .date(date)
-                .startTime(startTime)
-                .routine(routine)
-                .confirms(null)
-                .build();
-        task.validate();
-        return task;
-    }
-
-    public static List<DowithTask> of(
-            String memberId,
-            Long taskCategoryId,
-            String title,
-            LocalDate date,
-            LocalTime startTime,
-            Set<LocalDate> routineDateSet) {
-        List<DowithTask> result = new ArrayList<>();
-        Set<LocalDate> targetDateSet = new TreeSet<>(routineDateSet);
-        targetDateSet.add(date);
-
-        DowithTaskRoutine routine = DowithTaskRoutine.from(targetDateSet);
-        targetDateSet.stream().sorted().forEach(e -> {
-            DowithTask task = DowithTask.builder()
-                    .memberId(memberId)
-                    .taskCategoryId(taskCategoryId)
-                    .title(title)
-                    .status(DowithTaskStatus.WAIT)
-                    .routine(routine)
-                    .date(e)
-                    .startTime(startTime)
-                    .build();
-            if (task.getDate().isEqual(date)) {
-                task.validate();
-            }
-            result.add(task);
-        });
-
-        return result;
-    }
-
-    public static DowithTask of(
-            String memberId,
-            Long taskCategoryId,
-            String title,
-            LocalDate date,
-            LocalTime startTime,
             LocalDate routineRangeStartDate,
             LocalDate routineRangeEndDate,
             TaskRoutineCycle routineCycle,
@@ -179,45 +129,10 @@ public class DowithTask extends BaseAuditEntity {
         return result;
     }
 
-    /**
-     * 두윗모드Task 루틴 생성
-     *
-     * @param routineDates 루틴대상일자
-     * @return 루틴 생성된 DowithTask domain entity 리스트
-     */
-    public List<DowithTask> createRoutine(Set<LocalDate> routineDates) {
-
-        routineDates.add(this.date);
-        this.routine = DowithTaskRoutine.from(routineDates);
-
-        List<DowithTask> result = new ArrayList<>();
-        routineDates.stream()
-                .filter(date -> !date.isEqual(this.date))
-                .collect(Collectors.toSet())
-                .forEach(date -> result.add(
-                        DowithTask.of(this.memberId, this.taskCategoryId, this.title, date, this.startTime, routine)));
-        result.add(this);
-
-        return result;
+    public boolean isDeleteAvail() {
+        return SystemTimeUtil.now().isBefore(LocalDateTime.of(this.date, this.startTime));
     }
 
-    /**
-     * 루틴 추가
-     *
-     * @param routineDates
-     * @param dowithTaskRepository
-     */
-    public void addRoutine(Set<LocalDate> routineDates, DowithTaskRepository dowithTaskRepository) {
-
-        if (isRoutine()) {
-            this.routine.addDates(routineDates);
-            List<DowithTask> result = new ArrayList<>();
-            routineDates.forEach(date -> result.add(
-                    DowithTask.of(this.memberId, this.taskCategoryId, this.title, date, this.startTime, this.routine)));
-
-            dowithTaskRepository.saveDowithTasks(result);
-        }
-    }
 
     /**
      * 두윗모드Task 인증 이미지 키 생성
@@ -291,6 +206,15 @@ public class DowithTask extends BaseAuditEntity {
     }
 
     /**
+     * 두윗모드Task 루틴이 휴일 제외 여부
+     *
+     * @return
+     */
+    public boolean isRoutineExcludeHolidays() {
+        return isRoutine() && this.routine.isExcludeHolidays();
+    }
+
+    /**
      * 두윗모드Task 내용 수정 가능 여부
      *
      * @return
@@ -356,6 +280,21 @@ public class DowithTask extends BaseAuditEntity {
      */
     public void updateRoutine(DowithTaskRoutine routine) {
         this.routine = routine;
+    }
+
+    public void updateRoutine(LocalDate rangeStartDate, LocalDate rangeEndDate, TaskRoutineCycle taskRoutineCycle, Set<Integer> taskRoutinePattern, boolean isExcludeHolidays) {
+        this.routine.updateRoutineCondition(
+                rangeStartDate,
+                rangeEndDate,
+                taskRoutineCycle,
+                taskRoutinePattern,
+                isExcludeHolidays
+        );
+    }
+
+    public void createRoutine(LocalDate rangeStartDate, LocalDate rangeEndDate, TaskRoutineCycle taskRoutineCycle, Set<Integer> taskRoutinePattern, boolean isExcludeHolidays) {
+        DowithTaskRoutine dowithTaskRoutine = DowithTaskRoutine.of(rangeStartDate, rangeEndDate, taskRoutineCycle, taskRoutinePattern, isExcludeHolidays);
+        this.routine = dowithTaskRoutine;
     }
 
     /**
@@ -464,29 +403,6 @@ public class DowithTask extends BaseAuditEntity {
         }
     }
 
-    /**
-     * 두윗모드Task 삭제
-     *
-     * @param dowithTaskRepository
-     * @param dowithTaskRoutineRepository
-     */
-    public void delete(
-            DowithTaskRepository dowithTaskRepository, DowithTaskRoutineRepository dowithTaskRoutineRepository) {
-
-        if (!SystemTimeUtil.now().isBefore(LocalDateTime.of(this.date, this.startTime))) {
-            throw new RestApiException(INVALID_REQUEST);
-        }
-
-        if (isRoutine()) {
-            this.routine.deleteDate(this.date);
-
-            if (this.routine.getDates().isEmpty()) {
-                dowithTaskRoutineRepository.delete(this.routine);
-            }
-        }
-
-        dowithTaskRepository.delete(this);
-    }
 
     /**
      * 두윗모드Task 루틴 삭제 (루틴 포함)

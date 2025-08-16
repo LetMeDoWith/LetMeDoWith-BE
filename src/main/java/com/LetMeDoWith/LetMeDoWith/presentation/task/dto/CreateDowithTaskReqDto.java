@@ -16,7 +16,7 @@ public record CreateDowithTaskReqDto(
         @Schema(description = "시작 일자", defaultValue = "2025-01-30") @NotNull LocalDate date,
         @Schema(description = "시작 시각", defaultValue = "11:30:00") LocalTime startTime) {
 
-    public CreateDowithTaskCommand toCreateDowithTaskCommand() {
+    public CreateDowithTaskCommand toCommand() {
         return CreateDowithTaskCommand.builder()
                 .title(this.title)
                 .taskCategoryId(this.taskCategoryId)

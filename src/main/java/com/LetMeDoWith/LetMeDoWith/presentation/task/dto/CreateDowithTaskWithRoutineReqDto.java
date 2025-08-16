@@ -20,7 +20,7 @@ public record CreateDowithTaskWithRoutineReqDto(
         @Schema(description = "시작 시각", defaultValue = "11:30:00") LocalTime startTime,
         @Schema(description = "루틴 반복 조건") CreateDowithTaskRoutineCondition routineCondition) {
 
-    public CreateDowithTaskWithRoutineCommand toCreateDowithTaskWithRoutineCommand() {
+    public CreateDowithTaskWithRoutineCommand toCommand() {
         return CreateDowithTaskWithRoutineCommand.builder()
                 .taskCategoryId(this.taskCategoryId)
                 .title(this.title)
@@ -44,5 +44,6 @@ public record CreateDowithTaskWithRoutineReqDto(
             @Schema(description = "루틴 반복 휴일 제외 여부", defaultValue = "false") @NotNull Boolean isExcludeHolidays
     ) {
     }
+
 
 }

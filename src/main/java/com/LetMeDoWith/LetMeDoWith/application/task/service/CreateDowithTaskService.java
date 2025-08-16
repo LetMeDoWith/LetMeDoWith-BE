@@ -3,6 +3,7 @@ package com.LetMeDoWith.LetMeDoWith.application.task.service;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.CreateDowithTaskCommand;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.CreateDowithTaskWithRoutineCommand;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
+import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.CountryCode;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.Holiday;
@@ -41,8 +42,9 @@ public class CreateDowithTaskService {
      * @param command
      */
     @Transactional
-    public DowithTask createDowithTask(String memberId, CreateDowithTaskCommand command) {
+    public DowithTask createDowithTask(CreateDowithTaskCommand command) {
 
+        String memberId = AuthUtil.getMemberId();
         if (command.taskCategoryId() != null) {
             taskCategoryRepository
                     .getActiveTaskCategory(command.taskCategoryId(), memberId)
@@ -69,8 +71,9 @@ public class CreateDowithTaskService {
      * @return
      */
     @Transactional
-    public List<DowithTask> createDowithTaskWithRoutine(String memberId, CreateDowithTaskWithRoutineCommand command) {
+    public List<DowithTask> createDowithTaskWithRoutine(CreateDowithTaskWithRoutineCommand command) {
 
+        String memberId = AuthUtil.getMemberId();
         List<DowithTask> dowithTasks = new ArrayList<>();
         if (command.taskCategoryId() != null) {
             taskCategoryRepository
@@ -107,8 +110,6 @@ public class CreateDowithTaskService {
         Set<LocalDate> routineDates = this.taskRoutineDateCalculator.calculateRoutineDates(dowithTask, holidaySet);
 
         // 루틴에 따른 DowithTask 생성
-        dowithTasks.addAll(DowithTask.of(dowithTask, routineDates));
-
-        return dowithTaskRepository.saveDowithTasks(dowithTasks);
+        return dowithTaskRepository.saveDowithTasks(DowithTask.of(dowithTask, routineDates));
     }
 }

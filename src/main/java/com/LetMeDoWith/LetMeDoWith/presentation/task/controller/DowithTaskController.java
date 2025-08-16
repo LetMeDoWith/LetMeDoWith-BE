@@ -16,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashSet;
 import java.util.List;
 
 @Tag(name = "Dowith Task", description = "두윗모드 테스크")
@@ -40,6 +39,7 @@ public class DowithTaskController {
             @ApiErrorResponse(
                     status = FailResponseStatus.INVALID_PARAM_ERROR,
                     description = "Request Body의 title이 공백이거나, 40자 초과인경우 / startDateTime이 null인 경우 / isRoutine이 null인 경우"),
+            @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")
 //        @ApiErrorResponse(
 //                status = FailResponseStatus.DOWITH_TASK_CREATE_COUNT_EXCEED,
 //                description = "일일 두윗모드 Task 등록 가능 개수를 초과한 경우, 루틴을 가진 Task인 경우 루틴일자들도 검사합니다.")
@@ -49,7 +49,7 @@ public class DowithTaskController {
 
         String memberId = AuthUtil.getMemberId();
 
-        createDowithTaskService.createDowithTask(memberId, requestBody.toCreateDowithTaskCommand());
+        createDowithTaskService.createDowithTask(requestBody.toCommand());
 
         return ResponseUtil.createSuccessResponse();
     }
@@ -63,6 +63,7 @@ public class DowithTaskController {
             @ApiErrorResponse(
                     status = FailResponseStatus.INVALID_PARAM_ERROR,
                     description = "Request Body의 title이 공백이거나, 40자 초과인경우 / startDateTime이 null인 경우 / isRoutine이 null인 경우"),
+            @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")
 //            @ApiErrorResponse(
 //                    status = FailResponseStatus.DOWITH_TASK_CREATE_COUNT_EXCEED,
 //                    description = "일일 두윗모드 Task 등록 가능 개수를 초과한 경우, 루틴을 가진 Task인 경우 루틴일자들도 검사합니다.")
@@ -70,9 +71,7 @@ public class DowithTaskController {
     @PostMapping("/with-routine")
     public ResponseEntity createDowithTaskWithRoutine(@Valid @RequestBody CreateDowithTaskWithRoutineReqDto requestBody) {
 
-        String memberId = AuthUtil.getMemberId();
-
-        createDowithTaskService.createDowithTaskWithRoutine(memberId, requestBody.toCreateDowithTaskWithRoutineCommand());
+        createDowithTaskService.createDowithTaskWithRoutine(requestBody.toCommand());
 
         return ResponseUtil.createSuccessResponse();
     }
@@ -83,7 +82,7 @@ public class DowithTaskController {
             @ApiErrorResponse(
                     status = FailResponseStatus.INVALID_PARAM_ERROR,
                     description =
-                            "Request Body의 dowithTaskId null인 경우 / title이 공백이거나, 40자 초과인경우 / isRoutineCreate null인 경우 / isConvertToTodoTask null인 경우"),
+                            "title이 공백이거나, 40자 초과인경우 / date가 null인 경우"),
             @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우"),
 //        @ApiErrorResponse(
 //                status = FailResponseStatus.DOWITH_TASK_CREATE_COUNT_EXCEED,
@@ -93,13 +92,10 @@ public class DowithTaskController {
     public ResponseEntity updateDowithTask(
             @PathVariable Long dowithTaskId, @RequestBody UpdateDowithTaskReqDto requestBody) {
 
-        String memberId = AuthUtil.getMemberId();
-
-        if (requestBody.getRoutineDates() == null) {
-            updateDowithTaskService.updateContentsOnly(memberId, dowithTaskId, requestBody.toCommand());
+        if (requestBody.routineCondition() == null) {
+            updateDowithTaskService.updateDowithTaskContentsOnly(requestBody.toUpdateContentsOnlyCommand(dowithTaskId));
         } else {
-            updateDowithTaskService.updateContentsAndCreateRoutine(
-                    memberId, dowithTaskId, requestBody.toCommand(), requestBody.getRoutineDates());
+            updateDowithTaskService.updateDowithTaskContentsAndCreateRoutine(requestBody.toUpdateContentsAndCreateRoutineCommand(dowithTaskId));
         }
 
         return ResponseUtil.createSuccessResponse();
@@ -120,9 +116,7 @@ public class DowithTaskController {
     public ResponseEntity updateDowithTaskRoutine(
             @PathVariable Long dowithTaskId, @RequestBody UpdateDowithTaskRoutineReqDto requestBody) {
 
-        String memberId = AuthUtil.getMemberId();
-
-        updateDowithTaskService.updateRoutine(memberId, dowithTaskId, new HashSet<>(requestBody.routineDates()));
+        updateDowithTaskService.updateRoutine(requestBody.toCommand(dowithTaskId));
 
         return ResponseUtil.createSuccessResponse();
     }
@@ -132,7 +126,9 @@ public class DowithTaskController {
     @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")})
     @DeleteMapping("/{dowithTaskId}")
     public ResponseEntity deleteDowithTask(@PathVariable Long dowithTaskId) {
+
         deleteDowithTaskService.delete(AuthUtil.getMemberId(), dowithTaskId);
+
         return ResponseUtil.createSuccessResponse();
     }
 
@@ -141,7 +137,9 @@ public class DowithTaskController {
     @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")})
     @DeleteMapping("/{dowithTaskId}/with-routine")
     public ResponseEntity deleteDowithTaskWithRoutine(@PathVariable Long dowithTaskId) {
+
         deleteDowithTaskService.deleteWithRoutines(AuthUtil.getMemberId(), dowithTaskId);
+
         return ResponseUtil.createSuccessResponse();
     }
 

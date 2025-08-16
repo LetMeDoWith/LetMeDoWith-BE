@@ -1,42 +1,62 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.task.dto;
 
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateDowithTaskContentsCommand;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.TaskRoutineCondition;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateDowithTaskContentsAndCreateRoutineCommand;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateDowithTaskContentsOnlyCommand;
+import com.LetMeDoWith.LetMeDoWith.common.util.EnumUtil;
+import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TaskRoutineCycle;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import lombok.Builder;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.Set;
 
 @Builder
 public record UpdateDowithTaskReqDto(
         @Schema(description = "제목", defaultValue = "저녁 먹기") @NotBlank @Size(max = 40) String title,
         @Schema(description = "Task 카테고리 ID", defaultValue = "2") Long taskCategoryId,
-        @Schema(description = "시작일시", defaultValue = "2025-03-30T11:30:00") LocalDateTime startDateTime,
-        @Schema(
-                        description = "루틴일 (루틴 생성하지 않으면 null)",
-                        defaultValue = "[\"2025-04-01\", \"2025-04-02\"]",
-                        nullable = true)
-                List<LocalDate> routineDates) {
+        @Schema(description = "시작 일자", defaultValue = "2025-01-30") @NotNull LocalDate date,
+        @Schema(description = "시작 시각", defaultValue = "11:30:00") LocalTime startTime,
+        @Schema(description = "루틴 반복 조건") UpdateDowithTaskRoutineCondition routineCondition) {
 
-    public UpdateDowithTaskContentsCommand toCommand() {
-        return UpdateDowithTaskContentsCommand.builder()
+    public UpdateDowithTaskContentsAndCreateRoutineCommand toUpdateContentsAndCreateRoutineCommand(Long dowithTaskId) {
+        return UpdateDowithTaskContentsAndCreateRoutineCommand.builder()
+                .dowithTaskId(dowithTaskId)
                 .title(this.title)
                 .taskCategoryId(this.taskCategoryId)
-                .date(this.startDateTime().toLocalDate())
-                .startTime(this.startDateTime().toLocalTime())
+                .date(this.date())
+                .startTime(this.startTime())
+                .taskRoutineCondition(TaskRoutineCondition.of(
+                        this.routineCondition.startDate,
+                        this.routineCondition.endDate,
+                        EnumUtil.getEnum(TaskRoutineCycle.class, this.routineCondition.cycle),
+                        this.routineCondition.pattern,
+                        this.routineCondition.isExcludeHolidays
+                ))
                 .build();
     }
 
-    public Set<LocalDate> getRoutineDates() {
-        if (routineDates == null) {
-            return null;
-        }
-        Set<LocalDate> routineDates = new HashSet<>(this.routineDates);
-        routineDates.add(startDateTime.toLocalDate());
-        return routineDates;
+    public UpdateDowithTaskContentsOnlyCommand toUpdateContentsOnlyCommand(Long dowithTaskId) {
+        return UpdateDowithTaskContentsOnlyCommand.builder()
+                .dowithTaskId(dowithTaskId)
+                .title(this.title)
+                .taskCategoryId(this.taskCategoryId)
+                .date(this.date)
+                .startTime(this.startTime)
+                .build();
     }
+
+    public record UpdateDowithTaskRoutineCondition(
+            @Schema(description = "시작 일자", defaultValue = "2025-01-30") @NotNull LocalDate startDate,
+            @Schema(description = "종료 일자", defaultValue = "2025-01-30") @NotNull LocalDate endDate,
+            @Schema(description = "루틴 반복 주기", defaultValue = "DAILY") @NotNull String cycle,
+            @Schema(description = "루틴 반복 패턴", defaultValue = "[1, 2, 3]") @NotNull Set<Integer> pattern,
+            @Schema(description = "루틴 반복 휴일 제외 여부", defaultValue = "false") @NotNull Boolean isExcludeHolidays
+    ) {
+    }
+
 }
