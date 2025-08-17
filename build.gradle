@@ -5,7 +5,6 @@ plugins {
     id "org.flywaydb.flyway" version "10.9.0"
     id "com.bmuschko.docker-remote-api" version "9.4.0"
     id "com.diffplug.spotless" version "7.0.3"
-//    id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
 }
 
 group = 'com.LetMeDoWith'
@@ -127,6 +126,10 @@ dependencies {
 
     // Firebase Admin SDK
     implementation 'com.google.firebase:firebase-admin:9.5.0'
+
+    // for logging
+    implementation("com.github.gavlyukovskiy:datasource-proxy-spring-boot-starter:1.9.0")
+
 
     // localStack for AWS
 //    implementation "com.amazonaws:aws-java-sdk-s3"

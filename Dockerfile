@@ -19,6 +19,7 @@ ENV JAVA_TOOL_OPTIONS="\
 
 # 로그 디렉토리 생성
 RUN mkdir -p /var/log/app
+RUN mkdir -p ./logs/app ./logs/access-log ./logs/query ./logs/app/error
 
 # 포트 오픈
 EXPOSE 8080

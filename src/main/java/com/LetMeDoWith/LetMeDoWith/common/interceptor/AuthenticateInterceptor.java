@@ -28,10 +28,6 @@ public class AuthenticateInterceptor implements HandlerInterceptor {
         String uri = request.getRequestURI();
         String method = request.getMethod();
 
-        log.info("=== request uri: {} {}", request.getMethod(), request.getRequestURI());
-        log.info("--- header ---");
-
-        log.info("auth: {}", request.getHeader("Authorization"));
         // Do not block preflight
         if (request.getMethod().equals("OPTIONS")) {
             return true;
@@ -50,6 +46,7 @@ public class AuthenticateInterceptor implements HandlerInterceptor {
         }
 
         request.setAttribute("memberId", memberId);
+        log.info("MEMBER ID: {}", memberId);
 
         return true;
     }
