@@ -1,6 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.domain.task.model;
 
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
+import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
@@ -26,8 +27,8 @@ public class DowithTaskRoutine extends BaseAuditEntity {
     private Long id;
 
     //    @Column(name = "dates", columnDefinition = "TEXT")
-//    @Convert(converter = DowithTaskRoutineDatesConverter.class)
-//    private DowithTaskRoutineDates routineDates;
+    //    @Convert(converter = DowithTaskRoutineDatesConverter.class)
+    //    private DowithTaskRoutineDates routineDates;
     @Column(name = "range_start_date", nullable = false)
     private LocalDate rangeStartDate;
 
@@ -41,12 +42,18 @@ public class DowithTaskRoutine extends BaseAuditEntity {
     @Column(name = "pattern")
     private TaskRoutinePattern pattern;
 
-    @Column(name = "is_exclude_holidays")
-    private boolean isExcludeHolidays;
+    @Column(name = "exclude_holidays_yn")
+    private Yn isExcludeHolidays;
 
-    public static DowithTaskRoutine of(LocalDate rangeStartDate, LocalDate rangeEndDate,
-                                       TaskRoutineCycle cycle, Set<Integer> pattern, boolean isExcludeHolidays) {
-        if (rangeStartDate.isBefore(SystemTimeUtil.nowDate()) || rangeEndDate.isBefore(SystemTimeUtil.nowDate()) || rangeEndDate.isBefore(rangeStartDate)) {
+    public static DowithTaskRoutine of(
+            LocalDate rangeStartDate,
+            LocalDate rangeEndDate,
+            TaskRoutineCycle cycle,
+            Set<Integer> pattern,
+            boolean isExcludeHolidays) {
+        if (rangeStartDate.isBefore(SystemTimeUtil.nowDate())
+                || rangeEndDate.isBefore(SystemTimeUtil.nowDate())
+                || rangeEndDate.isBefore(rangeStartDate)) {
             throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
         }
         return DowithTaskRoutine.builder()
@@ -54,15 +61,21 @@ public class DowithTaskRoutine extends BaseAuditEntity {
                 .rangeEndDate(rangeEndDate)
                 .cycle(cycle)
                 .pattern(TaskRoutinePattern.from(pattern))
-                .isExcludeHolidays(isExcludeHolidays)
+                .isExcludeHolidays(isExcludeHolidays ? Yn.TRUE : Yn.FALSE)
                 .build();
     }
 
-    public void updateRoutineCondition(LocalDate rangeStartDate, LocalDate rangeEndDate, TaskRoutineCycle cycle, Set<Integer> pattern, boolean isExcludeHolidays) {
+    public void updateRoutineCondition(
+            LocalDate rangeStartDate,
+            LocalDate rangeEndDate,
+            TaskRoutineCycle cycle,
+            Set<Integer> pattern,
+            boolean isExcludeHolidays) {
         this.rangeStartDate = rangeStartDate;
         this.rangeEndDate = rangeEndDate;
         this.cycle = cycle;
         this.pattern = TaskRoutinePattern.from(pattern);
-        this.isExcludeHolidays = isExcludeHolidays;
+        this.isExcludeHolidays = isExcludeHolidays ? Yn.TRUE : Yn.FALSE;
     }
+
 }

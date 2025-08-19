@@ -12,11 +12,10 @@ import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Tag(name = "Dowith Task", description = "두윗모드 테스크")
 @RestController
@@ -30,19 +29,16 @@ public class DowithTaskController {
     private final ConfirmDowithTaskService confirmDowithTaskService;
     private final TaskSummaryService taskSummaryService;
 
-    @Operation(
-            summary = "두윗모드 Task 생성",
-            description =
-                    "두윗모드 테스크를 생성합니다.")
+    @Operation(summary = "두윗모드 Task 생성", description = "두윗모드 테스크를 생성합니다.")
     @ApiSuccessResponse(description = "두윗모드 Task 생성 성공.")
     @ApiErrorResponses({
-            @ApiErrorResponse(
-                    status = FailResponseStatus.INVALID_PARAM_ERROR,
-                    description = "Request Body의 title이 공백이거나, 40자 초과인경우 / startDateTime이 null인 경우 / isRoutine이 null인 경우"),
-            @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")
-//        @ApiErrorResponse(
-//                status = FailResponseStatus.DOWITH_TASK_CREATE_COUNT_EXCEED,
-//                description = "일일 두윗모드 Task 등록 가능 개수를 초과한 경우, 루틴을 가진 Task인 경우 루틴일자들도 검사합니다.")
+        @ApiErrorResponse(
+                status = FailResponseStatus.INVALID_PARAM_ERROR,
+                description = "Request Body의 title이 공백이거나, 40자 초과인경우 / startDateTime이 null인 경우 / isRoutine이 null인 경우"),
+        @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")
+        //        @ApiErrorResponse(
+        //                status = FailResponseStatus.DOWITH_TASK_CREATE_COUNT_EXCEED,
+        //                description = "일일 두윗모드 Task 등록 가능 개수를 초과한 경우, 루틴을 가진 Task인 경우 루틴일자들도 검사합니다.")
     })
     @PostMapping("")
     public ResponseEntity createDowithTask(@Valid @RequestBody CreateDowithTaskReqDto requestBody) {
@@ -54,22 +50,20 @@ public class DowithTaskController {
         return ResponseUtil.createSuccessResponse();
     }
 
-    @Operation(
-            summary = "두윗모드 Task (루틴) 생성",
-            description =
-                    "두윗모드 테스크를 생성합니다. RoutineCondition에 루틴 조건을 넣어줍니다.")
+    @Operation(summary = "두윗모드 Task (루틴) 생성", description = "두윗모드 테스크를 생성합니다. RoutineCondition에 루틴 조건을 넣어줍니다.")
     @ApiSuccessResponse(description = "두윗모드 Task (루틴) 생성 성공.")
     @ApiErrorResponses({
-            @ApiErrorResponse(
-                    status = FailResponseStatus.INVALID_PARAM_ERROR,
-                    description = "Request Body의 title이 공백이거나, 40자 초과인경우 / startDateTime이 null인 경우 / isRoutine이 null인 경우"),
-            @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")
-//            @ApiErrorResponse(
-//                    status = FailResponseStatus.DOWITH_TASK_CREATE_COUNT_EXCEED,
-//                    description = "일일 두윗모드 Task 등록 가능 개수를 초과한 경우, 루틴을 가진 Task인 경우 루틴일자들도 검사합니다.")
+        @ApiErrorResponse(
+                status = FailResponseStatus.INVALID_PARAM_ERROR,
+                description = "Request Body의 title이 공백이거나, 40자 초과인경우 / startDateTime이 null인 경우 / isRoutine이 null인 경우"),
+        @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")
+        //            @ApiErrorResponse(
+        //                    status = FailResponseStatus.DOWITH_TASK_CREATE_COUNT_EXCEED,
+        //                    description = "일일 두윗모드 Task 등록 가능 개수를 초과한 경우, 루틴을 가진 Task인 경우 루틴일자들도 검사합니다.")
     })
     @PostMapping("/with-routine")
-    public ResponseEntity createDowithTaskWithRoutine(@Valid @RequestBody CreateDowithTaskWithRoutineReqDto requestBody) {
+    public ResponseEntity createDowithTaskWithRoutine(
+            @Valid @RequestBody CreateDowithTaskWithRoutineReqDto requestBody) {
 
         createDowithTaskService.createDowithTaskWithRoutine(requestBody.toCommand());
 
@@ -79,14 +73,13 @@ public class DowithTaskController {
     @Operation(summary = "두윗모드 Task 수정", description = "두윗모드 Task를 수정합니다.")
     @ApiSuccessResponse(description = "두윗모드 Task 수정 성공")
     @ApiErrorResponses({
-            @ApiErrorResponse(
-                    status = FailResponseStatus.INVALID_PARAM_ERROR,
-                    description =
-                            "title이 공백이거나, 40자 초과인경우 / date가 null인 경우"),
-            @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우"),
-//        @ApiErrorResponse(
-//                status = FailResponseStatus.DOWITH_TASK_CREATE_COUNT_EXCEED,
-//                description = "일일 두윗모드 Task 등록 가능 개수를 초과한 경우")
+        @ApiErrorResponse(
+                status = FailResponseStatus.INVALID_PARAM_ERROR,
+                description = "title이 공백이거나, 40자 초과인경우 / date가 null인 경우"),
+        @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우"),
+        //        @ApiErrorResponse(
+        //                status = FailResponseStatus.DOWITH_TASK_CREATE_COUNT_EXCEED,
+        //                description = "일일 두윗모드 Task 등록 가능 개수를 초과한 경우")
     })
     @PutMapping("/{dowithTaskId}")
     public ResponseEntity updateDowithTask(
@@ -95,7 +88,8 @@ public class DowithTaskController {
         if (requestBody.routineCondition() == null) {
             updateDowithTaskService.updateDowithTaskContentsOnly(requestBody.toUpdateContentsOnlyCommand(dowithTaskId));
         } else {
-            updateDowithTaskService.updateDowithTaskContentsAndCreateRoutine(requestBody.toUpdateContentsAndCreateRoutineCommand(dowithTaskId));
+            updateDowithTaskService.updateDowithTaskContentsAndCreateRoutine(
+                    requestBody.toUpdateContentsAndCreateRoutineCommand(dowithTaskId));
         }
 
         return ResponseUtil.createSuccessResponse();
@@ -104,13 +98,13 @@ public class DowithTaskController {
     @Operation(summary = "두윗모드 Task 루틴 수정", description = "두윗모드 Task의 루틴을 수정합니다.")
     @ApiSuccessResponse(description = "두윗모드 Task 루틴 수정 성공")
     @ApiErrorResponses({
-            @ApiErrorResponse(
-                    status = FailResponseStatus.INVALID_PARAM_ERROR,
-                    description = "Request Body의 dowithTaskId null인 경우 / routineDates null인 경우"),
-            @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우"),
-//            @ApiErrorResponse(
-//                    status = FailResponseStatus.DOWITH_TASK_CREATE_COUNT_EXCEED,
-//                    description = "일일 두윗모드 Task 등록 가능 개수를 초과한 경우")
+        @ApiErrorResponse(
+                status = FailResponseStatus.INVALID_PARAM_ERROR,
+                description = "Request Body의 dowithTaskId null인 경우 / routineDates null인 경우"),
+        @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우"),
+        //            @ApiErrorResponse(
+        //                    status = FailResponseStatus.DOWITH_TASK_CREATE_COUNT_EXCEED,
+        //                    description = "일일 두윗모드 Task 등록 가능 개수를 초과한 경우")
     })
     @PutMapping("/{dowithTaskId}/routine")
     public ResponseEntity updateDowithTaskRoutine(
@@ -150,9 +144,9 @@ public class DowithTaskController {
     @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")})
     @PostMapping("/{dowithTaskId}/confirm/image/upload-presigned-url")
     public ResponseEntity<ResponseDto<GenerateDowithTaskConfirmImageUploadPresignedUrlsResDto>>
-    generateDowithTaskConfirmImageUploadPresignedUrls(
-            @PathVariable Long dowithTaskId,
-            @RequestBody GenerateDowithTaskConfirmImageUploadPresignedUrlsReqDto requestBody) {
+            generateDowithTaskConfirmImageUploadPresignedUrls(
+                    @PathVariable Long dowithTaskId,
+                    @RequestBody GenerateDowithTaskConfirmImageUploadPresignedUrlsReqDto requestBody) {
 
         String memberId = AuthUtil.getMemberId();
 

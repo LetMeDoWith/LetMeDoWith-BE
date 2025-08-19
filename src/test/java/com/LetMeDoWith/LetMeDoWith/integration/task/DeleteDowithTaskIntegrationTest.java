@@ -1,27 +1,26 @@
 package com.LetMeDoWith.LetMeDoWith.integration.task;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskCategory;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.DowithTaskJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.TaskCategoryJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.integration.AbstractIntegrationTest;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 public class DeleteDowithTaskIntegrationTest extends AbstractIntegrationTest {
 
@@ -77,9 +76,9 @@ public class DeleteDowithTaskIntegrationTest extends AbstractIntegrationTest {
         deleteResultActions.andExpect(status().isOk());
         assertThat(dowithTaskJpaRepository.findById(dowithTask.getId())).isEmpty();
         assertThat(taskSummaryJpaRepository
-                .findById(this.taskSummary.getId())
-                .get()
-                .getRemainedDowithTaskCount())
+                        .findById(this.taskSummary.getId())
+                        .get()
+                        .getRemainedDowithTaskCount())
                 .isEqualTo(6);
         retrieveResultActions
                 .andExpect(status().isOk())
@@ -111,9 +110,9 @@ public class DeleteDowithTaskIntegrationTest extends AbstractIntegrationTest {
         resultActions.andExpect(status().is4xxClientError());
         assertThat(dowithTaskJpaRepository.findById(dowithTask.getId())).isPresent();
         assertThat(taskSummaryJpaRepository
-                .findById(this.taskSummary.getId())
-                .get()
-                .getRemainedDowithTaskCount())
+                        .findById(this.taskSummary.getId())
+                        .get()
+                        .getRemainedDowithTaskCount())
                 .isEqualTo(5);
         retrieveResultActions
                 .andExpect(status().isOk())
@@ -167,18 +166,18 @@ public class DeleteDowithTaskIntegrationTest extends AbstractIntegrationTest {
         // then
         resultActions.andExpect(status().isOk());
         assertThat(taskSummaryJpaRepository
-                .findById(this.taskSummary.getId())
-                .get()
-                .getRemainedDowithTaskCount())
+                        .findById(this.taskSummary.getId())
+                        .get()
+                        .getRemainedDowithTaskCount())
                 .isEqualTo(8);
         toSurviveTasks.forEach(task ->
                 assertThat(dowithTaskJpaRepository.findById(task.getId())).isPresent());
         toSurviveTasks.forEach(task -> assertThat(dowithTaskJpaRepository
-                .findById(task.getId())
-                .get()
-                .getRoutine()
-                .getRoutineDates()
-                .getDates())
+                        .findById(task.getId())
+                        .get()
+                        .getRoutine()
+                        .getRoutineDates()
+                        .getDates())
                 .isEqualTo(Set.of(LocalDate.of(2024, 3, 5), LocalDate.of(2024, 3, 7), LocalDate.of(2024, 3, 15))));
 
         toDeleteTasks.forEach(task ->

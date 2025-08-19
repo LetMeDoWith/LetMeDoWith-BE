@@ -1,23 +1,22 @@
 package com.LetMeDoWith.LetMeDoWith.domain.task.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.when;
+
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TaskRoutineCycle;
 import com.LetMeDoWith.LetMeDoWith.domain.task.service.strategy.TaskRoutineDateCalculateStrategy;
+import java.time.LocalDate;
+import java.util.Map;
+import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.time.LocalDate;
-import java.util.Map;
-import java.util.Set;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class TaskRoutineDateCalculatorTest {
@@ -40,7 +39,7 @@ class TaskRoutineDateCalculatorTest {
 
         // when & then
         assertThatThrownBy(() -> routineDateCalculator.computeRoutineDates(
-                TaskRoutineCycle.DAILY, startDate, endDate, Set.of(1)))
+                        TaskRoutineCycle.DAILY, startDate, endDate, Set.of(1)))
                 .isInstanceOf(RestApiException.class)
                 .hasFieldOrPropertyWithValue("status", FailResponseStatus.INVALID_REQUEST);
     }
@@ -56,7 +55,7 @@ class TaskRoutineDateCalculatorTest {
 
         // when & then
         assertThatThrownBy(() -> routineDateCalculator.computeRoutineDates(
-                TaskRoutineCycle.DAILY, startDate, endDate, Set.of(1)))
+                        TaskRoutineCycle.DAILY, startDate, endDate, Set.of(1)))
                 .isInstanceOf(RestApiException.class)
                 .hasFieldOrPropertyWithValue("status", FailResponseStatus.INVALID_REQUEST);
     }

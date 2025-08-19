@@ -57,12 +57,17 @@ CREATE TABLE dowith_task_confirm
 
 CREATE TABLE dowith_task_routine
 (
-    id         BIGINT AUTO_INCREMENT NOT NULL,
-    create_at  timestamp             NULL,
-    updated_at timestamp             NULL,
-    created_by VARCHAR(255)          NULL,
-    updated_by VARCHAR(255)          NULL,
-    dates      text                  NULL,
+    id                  BIGINT AUTO_INCREMENT NOT NULL,
+    range_start_date    date                  NOT NULL,
+    range_end_date      date                  NOT NULL,
+    cycle               VARCHAR(20)           NOT NULL,
+    pattern             TEXT                  NOT NULL,
+    exclude_holidays_yn BIT(1)                NOT NULL,
+    exclude_dates       text                  NULL,
+    create_at           timestamp             NULL,
+    updated_at          timestamp             NULL,
+    created_by          VARCHAR(255)          NULL,
+    updated_by          VARCHAR(255)          NULL,
     CONSTRAINT pk_dowith_task_routine PRIMARY KEY (id)
 );
 

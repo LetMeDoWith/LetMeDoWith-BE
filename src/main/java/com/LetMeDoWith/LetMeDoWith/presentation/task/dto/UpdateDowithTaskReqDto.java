@@ -9,11 +9,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Builder;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Set;
+import lombok.Builder;
 
 @Builder
 public record UpdateDowithTaskReqDto(
@@ -35,8 +34,7 @@ public record UpdateDowithTaskReqDto(
                         this.routineCondition.endDate,
                         EnumUtil.getEnum(TaskRoutineCycle.class, this.routineCondition.cycle),
                         this.routineCondition.pattern,
-                        this.routineCondition.isExcludeHolidays
-                ))
+                        this.routineCondition.isExcludeHolidays))
                 .build();
     }
 
@@ -55,8 +53,5 @@ public record UpdateDowithTaskReqDto(
             @Schema(description = "종료 일자", defaultValue = "2025-01-30") @NotNull LocalDate endDate,
             @Schema(description = "루틴 반복 주기", defaultValue = "DAILY") @NotNull String cycle,
             @Schema(description = "루틴 반복 패턴", defaultValue = "[1, 2, 3]") @NotNull Set<Integer> pattern,
-            @Schema(description = "루틴 반복 휴일 제외 여부", defaultValue = "false") @NotNull Boolean isExcludeHolidays
-    ) {
-    }
-
+            @Schema(description = "루틴 반복 휴일 제외 여부", defaultValue = "false") @NotNull Boolean isExcludeHolidays) {}
 }

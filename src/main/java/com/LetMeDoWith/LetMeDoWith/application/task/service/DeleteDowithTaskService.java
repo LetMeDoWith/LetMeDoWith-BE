@@ -4,9 +4,7 @@ import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.CountryCode;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
-import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTaskRoutine;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.Holiday;
-import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskSummary;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskRoutineRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.HolidayRepository;
@@ -18,7 +16,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -45,25 +46,16 @@ public class DeleteDowithTaskService {
                 .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
 
         // 두윗모드 Task 사용 가능 개수 정책 무효화로 주석 처리
-//        TaskSummary taskSummary = taskSummaryRepository
-//                .getTaskSummary(memberId)
-//                .orElseThrow(() -> new RestApiException(FailResponseStatus.INTERNAL_SERVER_ERROR));
+        //        TaskSummary taskSummary = taskSummaryRepository
+        //                .getTaskSummary(memberId)
+        //                .orElseThrow(() -> new RestApiException(FailResponseStatus.INTERNAL_SERVER_ERROR));
 
         if (!dowithTask.isDeleteAvail()) throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
 
         if (dowithTask.isRoutine()) {
-            // 삭제 대상이 루틴 설정되어있는데, routine이
-            Set<Holiday> holidaySet = new HashSet<>();
-            DowithTaskRoutine routine = dowithTask.getRoutine();
-            if (dowithTask.isRoutineExcludeHolidays()) {
-                holidaySet = holidayRepository.getHolidays(CountryCode.KR,
-                        routine.getRangeStartDate(), routine.getRangeEndDate());
-            }
-
-            Set<LocalDate> routineDates = taskRoutineDateCalculator.calculateRoutineDates(dowithTask, holidaySet);
-            if (routineDates.size() == 1 && routineDates.contains(dowithTask.getDate())) {
-                dowithTaskRoutineRepository.delete(dowithTask.getRoutine());
-            }
+            // 루틴이 있는데, 루틴에 해당되는 마지막 DowithTask인 경우 routine 삭제
+            List<DowithTask> dowithTasks = dowithTaskRepository.getDowithTasks(dowithTask.getRoutine());
+            if (dowithTasks.size() == 1) dowithTaskRoutineRepository.delete(dowithTask.getRoutine());
         }
 
         dowithTaskRepository.delete(dowithTask);
@@ -84,11 +76,29 @@ public class DeleteDowithTaskService {
                 .getDowithTask(dowithTaskId, memberId)
                 .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
 
-        TaskSummary taskSummary = taskSummaryRepository
-                .getTaskSummary(memberId)
-                .orElseThrow(() -> new RestApiException(FailResponseStatus.INTERNAL_SERVER_ERROR));
+        if (!dowithTask.isDeleteAvail()) throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
+        if (!dowithTask.isRoutine()) throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
 
-        int deletedDowithTaskCount = dowithTask.deleteWithRoutine(dowithTaskRepository, dowithTaskRoutineRepository);
-//        taskSummary.plusRemainedDowithTaskCount(deletedDowithTaskCount);
+        Set<Holiday> holidaySet = new HashSet<>();
+        if (dowithTask.isRoutineExcludeHolidays()) {
+            holidaySet = holidayRepository.getHolidays(CountryCode.KR,
+                    dowithTask.getRoutine().getRangeStartDate(),
+                    dowithTask.getRoutine().getRangeEndDate());
+        }
+        Set<LocalDate> toDeleteRoutineDates = taskRoutineDateCalculator.calculateEditableRoutineDates(dowithTask, holidaySet);
+
+        List<DowithTask> dowithTasks = dowithTaskRepository.getDowithTasks(dowithTask.getRoutine());
+        Map<Boolean, List<DowithTask>> partition = dowithTasks.stream().
+                collect(Collectors.partitioningBy(
+                        task -> toDeleteRoutineDates.contains(task.getDate())
+                ));
+
+        dowithTaskRepository.delete(partition.get(Boolean.TRUE));
+        partition.get(Boolean.FALSE).forEach(DowithTask::deleteRoutine);
+        // 두윗모드 Task 사용 가능 개수 정책 무효화로 주석 처리
+//        TaskSummary taskSummary = taskSummaryRepository
+//                .getTaskSummary(memberId)
+//                .orElseThrow(() -> new RestApiException(FailResponseStatus.INTERNAL_SERVER_ERROR));
+        //        taskSummary.plusRemainedDowithTaskCount(deletedDowithTaskCount);
     }
 }

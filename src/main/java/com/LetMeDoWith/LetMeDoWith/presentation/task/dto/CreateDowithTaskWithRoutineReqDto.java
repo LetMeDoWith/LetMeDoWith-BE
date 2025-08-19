@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Set;
@@ -41,9 +40,5 @@ public record CreateDowithTaskWithRoutineReqDto(
             @Schema(description = "종료 일자", defaultValue = "2025-01-30") @NotNull LocalDate endDate,
             @Schema(description = "루틴 반복 주기", defaultValue = "DAILY") @NotNull String cycle,
             @Schema(description = "루틴 반복 패턴", defaultValue = "[1, 2, 3]") @NotNull Set<Integer> pattern,
-            @Schema(description = "루틴 반복 휴일 제외 여부", defaultValue = "false") @NotNull Boolean isExcludeHolidays
-    ) {
-    }
-
-
+            @Schema(description = "루틴 반복 휴일 제외 여부", defaultValue = "false") @NotNull Boolean isExcludeHolidays) {}
 }

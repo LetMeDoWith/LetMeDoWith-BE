@@ -1,7 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.application.task.dto;
 
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TaskRoutineCycle;
-
 import java.time.LocalDate;
 import java.util.Set;
 

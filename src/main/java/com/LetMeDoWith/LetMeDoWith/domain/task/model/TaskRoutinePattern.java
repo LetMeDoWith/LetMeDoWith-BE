@@ -1,12 +1,11 @@
 package com.LetMeDoWith.LetMeDoWith.domain.task.model;
 
 import jakarta.persistence.Embeddable;
+import java.util.Set;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.Set;
 
 @Embeddable
 @Getter

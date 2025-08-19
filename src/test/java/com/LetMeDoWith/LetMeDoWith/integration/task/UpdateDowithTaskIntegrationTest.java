@@ -1,5 +1,11 @@
 package com.LetMeDoWith.LetMeDoWith.integration.task;
 
+import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.DOWITH_TASK_CREATE_COUNT_EXCEED;
+import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.INVALID_REQUEST;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskCategory;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.DowithTaskJpaRepository;
@@ -7,24 +13,17 @@ import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository
 import com.LetMeDoWith.LetMeDoWith.integration.AbstractIntegrationTest;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.UpdateDowithTaskReqDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.UpdateDowithTaskRoutineReqDto;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.DOWITH_TASK_CREATE_COUNT_EXCEED;
-import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.INVALID_REQUEST;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 public class UpdateDowithTaskIntegrationTest extends AbstractIntegrationTest {
 
@@ -92,9 +91,9 @@ public class UpdateDowithTaskIntegrationTest extends AbstractIntegrationTest {
                         .sorted((t1, t2) -> t1.getDate().compareTo(t2.getDate()))
                         .toList();
         assertThat(this.taskSummaryJpaRepository
-                .findById(this.taskSummary.getId())
-                .get()
-                .getRemainedDowithTaskCount())
+                        .findById(this.taskSummary.getId())
+                        .get()
+                        .getRemainedDowithTaskCount())
                 .isEqualTo(3);
         for (int i = 0; i < dowithTasks.size(); i++) {
             DowithTask task = dowithTasks.get(i);
@@ -148,9 +147,9 @@ public class UpdateDowithTaskIntegrationTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.statusCode").value(DOWITH_TASK_CREATE_COUNT_EXCEED.getStatusCode()))
                 .andDo(System.out::println);
         assertThat(this.taskSummaryJpaRepository
-                .findById(this.taskSummary.getId())
-                .get()
-                .getRemainedDowithTaskCount())
+                        .findById(this.taskSummary.getId())
+                        .get()
+                        .getRemainedDowithTaskCount())
                 .isEqualTo(5);
     }
 
@@ -189,9 +188,9 @@ public class UpdateDowithTaskIntegrationTest extends AbstractIntegrationTest {
         assertThat(savedTask.getStartTime()).isEqualTo(LocalTime.of(14, 0));
         assertThat(savedTask.isRoutine()).isFalse();
         assertThat(this.taskSummaryJpaRepository
-                .findById(this.taskSummary.getId())
-                .get()
-                .getRemainedDowithTaskCount())
+                        .findById(this.taskSummary.getId())
+                        .get()
+                        .getRemainedDowithTaskCount())
                 .isEqualTo(5);
     }
 
@@ -254,9 +253,9 @@ public class UpdateDowithTaskIntegrationTest extends AbstractIntegrationTest {
             assertThat(task.getRoutineDates()).isEqualTo(new HashSet<>(newRoutineDates));
         }
         assertThat(this.taskSummaryJpaRepository
-                .findById(this.taskSummary.getId())
-                .get()
-                .getRemainedDowithTaskCount())
+                        .findById(this.taskSummary.getId())
+                        .get()
+                        .getRemainedDowithTaskCount())
                 .isEqualTo(5);
     }
 
@@ -303,9 +302,9 @@ public class UpdateDowithTaskIntegrationTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.statusCode").value(INVALID_REQUEST.getStatusCode()))
                 .andDo(System.out::println);
         assertThat(this.taskSummaryJpaRepository
-                .findById(this.taskSummary.getId())
-                .get()
-                .getRemainedDowithTaskCount())
+                        .findById(this.taskSummary.getId())
+                        .get()
+                        .getRemainedDowithTaskCount())
                 .isEqualTo(5);
     }
 
@@ -357,9 +356,9 @@ public class UpdateDowithTaskIntegrationTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.statusCode").value(DOWITH_TASK_CREATE_COUNT_EXCEED.getStatusCode()))
                 .andDo(System.out::println);
         assertThat(this.taskSummaryJpaRepository
-                .findById(this.taskSummary.getId())
-                .get()
-                .getRemainedDowithTaskCount())
+                        .findById(this.taskSummary.getId())
+                        .get()
+                        .getRemainedDowithTaskCount())
                 .isEqualTo(5);
     }
 }

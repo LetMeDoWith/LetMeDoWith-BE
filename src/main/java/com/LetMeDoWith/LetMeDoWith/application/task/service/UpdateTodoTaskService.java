@@ -1,5 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.application.task.service;
 
+import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.INVALID_REQUEST;
+
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.TaskRoutineCondition;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateTodoTaskCommand;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateTodoTaskRoutineCommand;
@@ -15,15 +17,12 @@ import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TodoTaskRoutineReposit
 import com.LetMeDoWith.LetMeDoWith.domain.task.service.TaskRoutineDateCalculator;
 import com.LetMeDoWith.LetMeDoWith.domain.task.service.TodoTaskRoutineSplitter;
 import com.LetMeDoWith.LetMeDoWith.domain.task.service.TodoTaskRoutineSplitter.TodoTaskRoutineSplitResult;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
-
-import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.INVALID_REQUEST;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -66,12 +65,11 @@ public class UpdateTodoTaskService {
 
         // 루틴이 아닌 태스크를 루틴으로 변경하는 경우
         if (command.routineCondition().isPresent()) {
-            TaskRoutineCondition routineCondition =
-                    command.routineCondition().get();
+            TaskRoutineCondition routineCondition = command.routineCondition().get();
 
             Set<LocalDate> holidays = routineCondition.isExcludeHolidays()
                     ? holidayService.getHolidays(
-                    CountryCode.KR, routineCondition.startDate(), routineCondition.endDate())
+                            CountryCode.KR, routineCondition.startDate(), routineCondition.endDate())
                     : Set.of();
 
             // 루틴 반복 주기에 따른 루틴 수행일자 계산

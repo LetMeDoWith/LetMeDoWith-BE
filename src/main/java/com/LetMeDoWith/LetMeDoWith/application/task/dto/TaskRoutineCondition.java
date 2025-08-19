@@ -1,10 +1,9 @@
 package com.LetMeDoWith.LetMeDoWith.application.task.dto;
 
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TaskRoutineCycle;
-import lombok.Builder;
-
 import java.time.LocalDate;
 import java.util.Set;
+import lombok.Builder;
 
 @Builder
 public record TaskRoutineCondition(

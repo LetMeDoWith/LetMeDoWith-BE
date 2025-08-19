@@ -1,4 +1,3 @@
 package com.LetMeDoWith.LetMeDoWith.domain.task.model;
 
-public interface TaskRoutine {
-}
+public interface TaskRoutine {}
