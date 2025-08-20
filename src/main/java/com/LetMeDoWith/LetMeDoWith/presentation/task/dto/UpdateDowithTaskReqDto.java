@@ -8,11 +8,13 @@ import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TaskRoutineCycle;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Set;
-import lombok.Builder;
 
 @Builder
 public record UpdateDowithTaskReqDto(
@@ -52,6 +54,7 @@ public record UpdateDowithTaskReqDto(
             @Schema(description = "시작 일자", defaultValue = "2025-01-30") @NotNull LocalDate startDate,
             @Schema(description = "종료 일자", defaultValue = "2025-01-30") @NotNull LocalDate endDate,
             @Schema(description = "루틴 반복 주기", defaultValue = "DAILY") @NotNull String cycle,
-            @Schema(description = "루틴 반복 패턴", defaultValue = "[1, 2, 3]") @NotNull Set<Integer> pattern,
-            @Schema(description = "루틴 반복 휴일 제외 여부", defaultValue = "false") @NotNull Boolean isExcludeHolidays) {}
+            @Schema(description = "루틴 반복 패턴", defaultValue = "[1, 2, 3]") @Null Set<Integer> pattern,
+            @Schema(description = "루틴 반복 휴일 제외 여부", defaultValue = "false") @NotNull Boolean isExcludeHolidays) {
+    }
 }
