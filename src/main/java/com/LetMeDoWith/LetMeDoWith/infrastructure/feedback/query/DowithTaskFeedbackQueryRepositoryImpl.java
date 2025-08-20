@@ -6,6 +6,7 @@ import com.LetMeDoWith.LetMeDoWith.domain.member.model.QMember;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.feedback.query.dto.DowithTaskFeedbackQueryDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,16 @@ public class DowithTaskFeedbackQueryRepositoryImpl implements DowithTaskFeedback
     private final QMember member = QMember.member;
 
     @Override
-    public List<DowithTaskFeedbackQueryDto> findAllByTaskId(Long taskId) {
+    public Long countFeedbacksByTaskId(Long taskId) {
+        return queryFactory
+                .select(Wildcard.count)
+                .from(dowithTaskFeedback)
+                .where(dowithTaskFeedback.dowithTaskId.eq(taskId))
+                .fetchOne();
+    }
+
+    @Override
+    public List<DowithTaskFeedbackQueryDto> getFeedbacksByTaskId(Long taskId, Long offset, int size) {
         return queryFactory
                 .select(Projections.constructor(
                         DowithTaskFeedbackQueryDto.class,
@@ -40,11 +50,23 @@ public class DowithTaskFeedbackQueryRepositoryImpl implements DowithTaskFeedback
                 .fetchJoin()
                 .on(dowithTaskFeedback.senderMemberId.eq(member.id))
                 .where(dowithTaskFeedback.dowithTaskId.eq(taskId))
+                .orderBy(dowithTaskFeedback.createdAt.desc())
+                .offset(offset)
+                .limit(size)
                 .fetch();
     }
 
     @Override
-    public List<DowithTaskFeedbackQueryDto> findAllBySenderId(String senderId) {
+    public Long countFeedbacksBySenderId(String senderId) {
+        return queryFactory
+                .select(Wildcard.count)
+                .from(dowithTaskFeedback)
+                .where(dowithTaskFeedback.senderMemberId.eq(senderId))
+                .fetchOne();
+    }
+
+    @Override
+    public List<DowithTaskFeedbackQueryDto> getFeedbacksBySenderId(String senderId, Long offset, int size) {
         return queryFactory
                 .select(Projections.constructor(
                         DowithTaskFeedbackQueryDto.class,
@@ -63,11 +85,23 @@ public class DowithTaskFeedbackQueryRepositoryImpl implements DowithTaskFeedback
                 .fetchJoin()
                 .on(dowithTaskFeedback.senderMemberId.eq(member.id))
                 .where(dowithTaskFeedback.senderMemberId.eq(senderId))
+                .orderBy(dowithTaskFeedback.createdAt.desc())
+                .offset(offset)
+                .limit(size)
                 .fetch();
     }
 
     @Override
-    public List<DowithTaskFeedbackQueryDto> findAllByReceiverId(String receiverId) {
+    public Long countFeedbacksByReceiverId(String receiverId) {
+        return queryFactory
+                .select(Wildcard.count)
+                .from(dowithTaskFeedback)
+                .where(dowithTaskFeedback.receiverMemberId.eq(receiverId))
+                .fetchOne();
+    }
+
+    @Override
+    public List<DowithTaskFeedbackQueryDto> getFeedbacksByReceiverId(String receiverId, Long offset, int size) {
         return queryFactory
                 .select(Projections.constructor(
                         DowithTaskFeedbackQueryDto.class,
@@ -86,6 +120,9 @@ public class DowithTaskFeedbackQueryRepositoryImpl implements DowithTaskFeedback
                 .fetchJoin()
                 .on(dowithTaskFeedback.senderMemberId.eq(member.id))
                 .where(dowithTaskFeedback.receiverMemberId.eq(receiverId))
+                .orderBy(dowithTaskFeedback.createdAt.desc())
+                .offset(offset)
+                .limit(size)
                 .fetch();
     }
 }

@@ -7,7 +7,11 @@ import org.springframework.data.domain.Pageable;
 
 public interface QMemberFollowJpaRepository {
 
+    Long countFollowingsByFollowerMemberFetchJoinMember(Member follwerMember);
+
     List<MemberFollow> findAllFollowingsByFollowerMemberFetchJoinMember(Member followerMember, Pageable pageable);
+
+    Long countFollowersByFollowingMemberFetchJoinMember(Member followingMember);
 
     List<MemberFollow> findAllFollowersByFollowingMemberFetchJoinMember(Member followingMember, Pageable pageable);
 }

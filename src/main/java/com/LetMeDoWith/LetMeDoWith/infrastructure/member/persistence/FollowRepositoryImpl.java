@@ -26,9 +26,19 @@ public class FollowRepositoryImpl implements FollowRepository {
     }
 
     @Override
+    public Long countTotalFollowers(Member followingMember) {
+        return memberFollowJpaRepository.countFollowersByFollowingMemberFetchJoinMember(followingMember);
+    }
+
+    @Override
     public List<MemberFollow> getFollowers(Member followingMember, Pageable pageable) {
 
         return memberFollowJpaRepository.findAllFollowersByFollowingMemberFetchJoinMember(followingMember, pageable);
+    }
+
+    @Override
+    public Long countTotalFollowings(Member follwerMember) {
+        return memberFollowJpaRepository.countFollowersByFollowingMemberFetchJoinMember(follwerMember);
     }
 
     @Override

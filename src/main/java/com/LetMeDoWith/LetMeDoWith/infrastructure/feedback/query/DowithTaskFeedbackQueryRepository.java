@@ -5,9 +5,15 @@ import java.util.List;
 
 public interface DowithTaskFeedbackQueryRepository {
 
-    List<DowithTaskFeedbackQueryDto> findAllByTaskId(Long taskId);
+    Long countFeedbacksByTaskId(Long taskId);
 
-    List<DowithTaskFeedbackQueryDto> findAllBySenderId(String senderId);
+    List<DowithTaskFeedbackQueryDto> getFeedbacksByTaskId(Long taskId, Long offset, int size);
 
-    List<DowithTaskFeedbackQueryDto> findAllByReceiverId(String receiverId);
+    Long countFeedbacksBySenderId(String senderId);
+
+    List<DowithTaskFeedbackQueryDto> getFeedbacksBySenderId(String senderId, Long offset, int limit);
+
+    Long countFeedbacksByReceiverId(String receiverId);
+
+    List<DowithTaskFeedbackQueryDto> getFeedbacksByReceiverId(String receiverId, Long offset, int limit);
 }
