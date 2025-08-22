@@ -5,7 +5,7 @@ import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TaskRoutineCycle;
-import com.LetMeDoWith.LetMeDoWith.infrastructure.task.converter.TaskRooutineCycleConverter;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.task.converter.TaskRoutineCycleConverter;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.Set;
@@ -34,7 +34,7 @@ public class DowithTaskRoutine extends BaseAuditEntity {
     private LocalDate rangeEndDate;
 
     @Column(name = "cycle", nullable = false, length = 20)
-    @Convert(converter = TaskRooutineCycleConverter.class)
+    @Convert(converter = TaskRoutineCycleConverter.class)
     private TaskRoutineCycle cycle;
 
     @Column(name = "pattern")
