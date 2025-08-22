@@ -1,5 +1,10 @@
 package com.LetMeDoWith.LetMeDoWith.integration.task;
 
+import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.INVALID_REQUEST;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
@@ -7,20 +12,14 @@ import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository
 import com.LetMeDoWith.LetMeDoWith.integration.AbstractIntegrationTest;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.CreateDowithTaskReqDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.CreateDowithTaskWithRoutineReqDto;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.*;
-
-import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.INVALID_REQUEST;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class CreateDowithTaskIntegrationTest extends AbstractIntegrationTest {
 
@@ -119,55 +118,58 @@ public class CreateDowithTaskIntegrationTest extends AbstractIntegrationTest {
         assertThat(allDateSet).isEmpty();
     }
 
-//    @Test
-//    @DisplayName("[SUCCESS] 성공 - 루틴(DAILY)이 있는 경우 (공휴일 3.1절 제외)")
-//    void createDowithTaskWithRoutine2() throws Exception {
-//        // given
-//        String title = "test";
-//        setFixedClock(LocalDateTime.of(2024, 3, 1, 0, 0));
-//        LocalDateTime startDateTime = SystemTimeUtil.now();
-//        LocalDate routineStartDate = startDateTime.toLocalDate();
-//        LocalDate routineEndDate = startDateTime.plusDays(14).toLocalDate(); // 2주
-//        String cycle = "DAILY";
-//        boolean isExcludeHolidays = true;
-//
-//        Set<LocalDate> allDateSet = new HashSet<>();
-//        for (int i = 0; i <= 14; i++) {
-//            allDateSet.add(routineStartDate.plusDays(i));
-//        }
-//        allDateSet.remove(LocalDate.of(2024, 3, 1)); // 3.1절 제외
-//
-//        // when
-//        CreateDowithTaskWithRoutineReqDto requestBody = new CreateDowithTaskWithRoutineReqDto(
-//                title,
-//                null,
-//                startDateTime.toLocalDate(),
-//                startDateTime.toLocalTime(),
-//                new CreateDowithTaskWithRoutineReqDto.CreateDowithTaskRoutineCondition(
-//                        routineStartDate, routineEndDate, cycle, null, isExcludeHolidays));
-//        ResultActions resultActions = this.request(MockMvcRequestBuilders.post(CREATE_DOWITH_TASK_URL + "/with-routine")
-//                .content(this.writeRequestBodyAsString(requestBody)));
-//        DowithTask dowithTask = dowithTaskJpaRepository
-//                .findAllDowithTaskAggregates(requestMember.getId(), startDateTime.toLocalDate())
-//                .get(0);
-//        List<DowithTask> dowithTasks = dowithTaskJpaRepository.findAllDowithTaskAggregates(dowithTask.getRoutine());
-//
-//        // then
-//        resultActions.andExpect(status().is2xxSuccessful());
-//        assertThat(dowithTasks.size()).isEqualTo(allDateSet.size());
-//        for (DowithTask task : dowithTasks) {
-//            assertThat(task.getDate()).isIn(allDateSet);
-//            assertThat(task.getTitle()).isEqualTo(title);
-//            assertThat(task.getStartTime().getHour())
-//                    .isEqualTo(startDateTime.toLocalTime().getHour());
-//            assertThat(task.getStartTime().getMinute())
-//                    .isEqualTo(startDateTime.toLocalTime().getMinute());
-//            assertThat(task.getRoutine()).isNotNull();
-//            assertThat(task.getStatus()).isEqualTo(DowithTaskStatus.WAIT);
-//            allDateSet.remove(task.getDate());
-//        }
-//        assertThat(allDateSet).isEmpty();
-//    }
+    // TODO - 공휴일 데이터 DB에 없어서 비활성화 추후에 데이터 넣으면 테스트
+    //    @Test
+    //    @DisplayName("[SUCCESS] 성공 - 루틴(DAILY)이 있는 경우 (공휴일 3.1절 제외)")
+    //    void createDowithTaskWithRoutine2() throws Exception {
+    //        // given
+    //        String title = "test";
+    //        setFixedClock(LocalDateTime.of(2024, 3, 1, 0, 0));
+    //        LocalDateTime startDateTime = SystemTimeUtil.now();
+    //        LocalDate routineStartDate = startDateTime.toLocalDate();
+    //        LocalDate routineEndDate = startDateTime.plusDays(14).toLocalDate(); // 2주
+    //        String cycle = "DAILY";
+    //        boolean isExcludeHolidays = true;
+    //
+    //        Set<LocalDate> allDateSet = new HashSet<>();
+    //        for (int i = 0; i <= 14; i++) {
+    //            allDateSet.add(routineStartDate.plusDays(i));
+    //        }
+    //        allDateSet.remove(LocalDate.of(2024, 3, 1)); // 3.1절 제외
+    //
+    //        // when
+    //        CreateDowithTaskWithRoutineReqDto requestBody = new CreateDowithTaskWithRoutineReqDto(
+    //                title,
+    //                null,
+    //                startDateTime.toLocalDate(),
+    //                startDateTime.toLocalTime(),
+    //                new CreateDowithTaskWithRoutineReqDto.CreateDowithTaskRoutineCondition(
+    //                        routineStartDate, routineEndDate, cycle, null, isExcludeHolidays));
+    //        ResultActions resultActions = this.request(MockMvcRequestBuilders.post(CREATE_DOWITH_TASK_URL +
+    // "/with-routine")
+    //                .content(this.writeRequestBodyAsString(requestBody)));
+    //        DowithTask dowithTask = dowithTaskJpaRepository
+    //                .findAllDowithTaskAggregates(requestMember.getId(), startDateTime.toLocalDate())
+    //                .get(0);
+    //        List<DowithTask> dowithTasks =
+    // dowithTaskJpaRepository.findAllDowithTaskAggregates(dowithTask.getRoutine());
+    //
+    //        // then
+    //        resultActions.andExpect(status().is2xxSuccessful());
+    //        assertThat(dowithTasks.size()).isEqualTo(allDateSet.size());
+    //        for (DowithTask task : dowithTasks) {
+    //            assertThat(task.getDate()).isIn(allDateSet);
+    //            assertThat(task.getTitle()).isEqualTo(title);
+    //            assertThat(task.getStartTime().getHour())
+    //                    .isEqualTo(startDateTime.toLocalTime().getHour());
+    //            assertThat(task.getStartTime().getMinute())
+    //                    .isEqualTo(startDateTime.toLocalTime().getMinute());
+    //            assertThat(task.getRoutine()).isNotNull();
+    //            assertThat(task.getStatus()).isEqualTo(DowithTaskStatus.WAIT);
+    //            allDateSet.remove(task.getDate());
+    //        }
+    //        assertThat(allDateSet).isEmpty();
+    //    }
 
     @Test
     @DisplayName("[FAIL] Task 카테고리가 존재하지 않는 경우")
@@ -206,9 +208,9 @@ public class CreateDowithTaskIntegrationTest extends AbstractIntegrationTest {
 
         // then
         assertThat(this.taskSummaryJpaRepository
-                .findById(this.taskSummary.getId())
-                .get()
-                .getRemainedDowithTaskCount())
+                        .findById(this.taskSummary.getId())
+                        .get()
+                        .getRemainedDowithTaskCount())
                 .isEqualTo(5);
         resultActions
                 .andExpect(status().is4xxClientError())

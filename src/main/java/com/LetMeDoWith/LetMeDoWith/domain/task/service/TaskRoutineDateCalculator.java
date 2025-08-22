@@ -80,7 +80,7 @@ public class TaskRoutineDateCalculator {
                 routine.getCycle(),
                 routine.getRangeStartDate(),
                 routine.getRangeEndDate(),
-                routine.getPattern().getPattern(),
+                routine.getPattern() != null ? routine.getPattern().getPattern() : null,
                 Yn.TRUE.equals(routine.getIsExcludeHolidays()),
                 holidaySet.stream().map(Holiday::getDate).collect(Collectors.toSet()));
 
