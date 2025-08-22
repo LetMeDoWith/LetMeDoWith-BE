@@ -3,7 +3,6 @@ package com.LetMeDoWith.LetMeDoWith.domain.task.model;
 import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.INVALID_REQUEST;
 
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
-import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.AggregateRoot;
@@ -146,7 +145,7 @@ public class DowithTask extends BaseAuditEntity {
      * @return
      */
     public boolean isRoutineExcludeHolidays() {
-        return isRoutine() && this.routine.getIsExcludeHolidays().equals(Yn.TRUE);
+        return isRoutine() && this.routine.isExcludeHolidays();
     }
 
     /**

@@ -4,6 +4,7 @@ import com.LetMeDoWith.LetMeDoWith.domain.task.model.QDowithTask;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.QDowithTaskConfirm;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.QDowithTaskRoutine;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.QTaskCategory;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.dto.DowithTaskDetailQueryDto;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.dto.DowithTaskQueryDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
@@ -53,5 +54,40 @@ public class DowithTaskQueryRespositoryImpl implements DowithTaskQueryRepository
                 .on(dowithTask.routine.id.eq(dowithTaskRoutine.id))
                 .where(dowithTask.memberId.eq(memberId).and(dowithTask.date.between(startDate, endDate)))
                 .fetch();
+    }
+
+    @Override
+    public DowithTaskDetailQueryDto getDowithTask(String memberId, Long dowithTaskId) {
+        return queryFactory
+                .select(Projections.constructor(
+                        DowithTaskDetailQueryDto.class,
+                        dowithTask.id,
+                        dowithTask.taskCategoryId,
+                        taskCategory.title,
+                        dowithTask.title,
+                        dowithTask.status,
+                        dowithTask.date,
+                        dowithTask.startTime,
+                        dowithTaskConfirm.imageUrl,
+                        dowithTaskRoutine.rangeStartDate,
+                        dowithTaskRoutine.rangeEndDate,
+                        dowithTaskRoutine.cycle,
+                        dowithTaskRoutine.pattern,
+                        dowithTaskRoutine.isExcludeHolidays,
+                        Expressions.constant(0) // TODO -
+                        // 추후
+                        // FeedBack
+                        // 개발시
+                        // 추가
+                        ))
+                .from(dowithTask)
+                .leftJoin(taskCategory)
+                .on(dowithTask.taskCategoryId.eq(taskCategory.id))
+                .leftJoin(dowithTaskConfirm)
+                .on(dowithTaskConfirm.dowithTask.eq(dowithTask))
+                .leftJoin(dowithTaskRoutine)
+                .on(dowithTask.routine.id.eq(dowithTaskRoutine.id))
+                .where(dowithTask.memberId.eq(memberId).and(dowithTask.id.eq(dowithTaskId)))
+                .fetchOne();
     }
 }

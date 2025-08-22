@@ -1,7 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.domain.task.model;
 
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
-import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
@@ -42,7 +41,7 @@ public class DowithTaskRoutine extends BaseAuditEntity {
     private TaskRoutinePattern pattern;
 
     @Column(name = "exclude_holidays_yn")
-    private Yn isExcludeHolidays;
+    private boolean isExcludeHolidays;
 
     public static DowithTaskRoutine of(
             LocalDate rangeStartDate,
@@ -60,7 +59,7 @@ public class DowithTaskRoutine extends BaseAuditEntity {
                 .rangeEndDate(rangeEndDate)
                 .cycle(cycle)
                 .pattern(TaskRoutinePattern.from(pattern))
-                .isExcludeHolidays(isExcludeHolidays ? Yn.TRUE : Yn.FALSE)
+                .isExcludeHolidays(isExcludeHolidays)
                 .build();
     }
 
@@ -74,6 +73,6 @@ public class DowithTaskRoutine extends BaseAuditEntity {
         this.rangeEndDate = rangeEndDate;
         this.cycle = cycle;
         this.pattern = TaskRoutinePattern.from(pattern);
-        this.isExcludeHolidays = isExcludeHolidays ? Yn.TRUE : Yn.FALSE;
+        this.isExcludeHolidays = isExcludeHolidays;
     }
 }

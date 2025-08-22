@@ -1,5 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.task.controller;
 
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.RetrieveDowithTaskResult;
 import com.LetMeDoWith.LetMeDoWith.application.task.service.*;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiErrorResponse;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiErrorResponses;
@@ -27,19 +28,21 @@ public class DowithTaskController {
     private final UpdateDowithTaskService updateDowithTaskService;
     private final DeleteDowithTaskService deleteDowithTaskService;
     private final ConfirmDowithTaskService confirmDowithTaskService;
+    private final RetrieveTaskService retrieveTaskService;
     private final TaskSummaryService taskSummaryService;
+
+    @Operation(summary = "두윗모드 Task 조회")
+    @ApiSuccessResponse(description = "두윗모드 Task 조회 성공")
+    @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")})
+    @GetMapping("/{dowithTaskId}")
+    public ResponseEntity retrieveDowithTask(@PathVariable Long dowithTaskId) {
+        RetrieveDowithTaskResult result = this.retrieveTaskService.retrieveDowithTask(dowithTaskId);
+        return ResponseUtil.createSuccessResponse(RetrieveDowithTaskResDto.from(result));
+    }
 
     @Operation(summary = "두윗모드 Task 생성", description = "두윗모드 테스크를 생성합니다.")
     @ApiSuccessResponse(description = "두윗모드 Task 생성 성공.")
-    @ApiErrorResponses({
-        @ApiErrorResponse(
-                status = FailResponseStatus.INVALID_PARAM_ERROR,
-                description = "Request Body의 title이 공백이거나, 40자 초과인경우 / startDateTime이 null인 경우 / isRoutine이 null인 경우"),
-        @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")
-        //        @ApiErrorResponse(
-        //                status = FailResponseStatus.DOWITH_TASK_CREATE_COUNT_EXCEED,
-        //                description = "일일 두윗모드 Task 등록 가능 개수를 초과한 경우, 루틴을 가진 Task인 경우 루틴일자들도 검사합니다.")
-    })
+    @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")})
     @PostMapping("")
     public ResponseEntity createDowithTask(@Valid @RequestBody CreateDowithTaskReqDto requestBody) {
 
@@ -55,11 +58,9 @@ public class DowithTaskController {
     @ApiErrorResponses({
         @ApiErrorResponse(
                 status = FailResponseStatus.INVALID_PARAM_ERROR,
-                description = "Request Body의 title이 공백이거나, 40자 초과인경우 / startDateTime이 null인 경우 / isRoutine이 null인 경우"),
+                description =
+                        "Request Body의 title이 공백이거나, 40자 초과인경우 / date, startTime이 null인 경우 / routine의 startDate가 date와 일치하지 않는 경우"),
         @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")
-        //            @ApiErrorResponse(
-        //                    status = FailResponseStatus.DOWITH_TASK_CREATE_COUNT_EXCEED,
-        //                    description = "일일 두윗모드 Task 등록 가능 개수를 초과한 경우, 루틴을 가진 Task인 경우 루틴일자들도 검사합니다.")
     })
     @PostMapping("/with-routine")
     public ResponseEntity createDowithTaskWithRoutine(
@@ -75,7 +76,8 @@ public class DowithTaskController {
     @ApiErrorResponses({
         @ApiErrorResponse(
                 status = FailResponseStatus.INVALID_PARAM_ERROR,
-                description = "title이 공백이거나, 40자 초과인경우 / date가 null인 경우"),
+                description =
+                        "Request Body의 title이 공백이거나, 40자 초과인경우 / date, startTime이 null인 경우 / routine의 startDate가 date와 일치하지 않는 경우"),
         @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우"),
         //        @ApiErrorResponse(
         //                status = FailResponseStatus.DOWITH_TASK_CREATE_COUNT_EXCEED,
@@ -100,7 +102,8 @@ public class DowithTaskController {
     @ApiErrorResponses({
         @ApiErrorResponse(
                 status = FailResponseStatus.INVALID_PARAM_ERROR,
-                description = "Request Body의 dowithTaskId null인 경우 / routineDates null인 경우"),
+                description =
+                        "Request Body의 title이 공백이거나, 40자 초과인경우 / date, startTime이 null인 경우 / routine의 startDate가 date와 일치하지 않는 경우"),
         @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")
     })
     @PutMapping("/{dowithTaskId}/routine")

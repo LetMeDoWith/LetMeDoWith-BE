@@ -1,7 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.domain.task.service;
 
 import com.LetMeDoWith.LetMeDoWith.common.annotation.DomainService;
-import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
@@ -48,7 +47,7 @@ public class TaskRoutineDateCalculator {
                 routine.getRangeStartDate(),
                 routine.getRangeEndDate(),
                 routine.getPattern() != null ? routine.getPattern().getPattern() : null,
-                Yn.TRUE.equals(routine.getIsExcludeHolidays()),
+                routine.isExcludeHolidays(),
                 holidaySet.stream().map(Holiday::getDate).collect(Collectors.toSet()));
     }
 
@@ -81,7 +80,7 @@ public class TaskRoutineDateCalculator {
                 routine.getRangeStartDate(),
                 routine.getRangeEndDate(),
                 routine.getPattern() != null ? routine.getPattern().getPattern() : null,
-                Yn.TRUE.equals(routine.getIsExcludeHolidays()),
+                routine.isExcludeHolidays(),
                 holidaySet.stream().map(Holiday::getDate).collect(Collectors.toSet()));
 
         return dates.stream()

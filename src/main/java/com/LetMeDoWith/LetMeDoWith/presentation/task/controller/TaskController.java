@@ -7,7 +7,6 @@ import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiErrorResponses;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiSuccessResponse;
 import com.LetMeDoWith.LetMeDoWith.common.dto.ResponseDto;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
-import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.RetrieveTasksResDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,9 +37,7 @@ public class TaskController {
     public ResponseEntity<ResponseDto<RetrieveTasksResDto>> retrieveMonthTasks(
             @RequestParam(value = "year") int year, @RequestParam(value = "month") int month) {
 
-        String memberId = AuthUtil.getMemberId();
-
-        RetrieveTasksResult result = retrieveTaskService.retrieveMonthTasks(memberId, Year.of(year), Month.of(month));
+        RetrieveTasksResult result = retrieveTaskService.retrieveMonthTasks(Year.of(year), Month.of(month));
 
         return ResponseUtil.createSuccessResponse(RetrieveTasksResDto.from(result));
     }

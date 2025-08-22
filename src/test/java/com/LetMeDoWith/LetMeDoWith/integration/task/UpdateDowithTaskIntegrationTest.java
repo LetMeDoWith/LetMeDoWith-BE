@@ -3,7 +3,6 @@ package com.LetMeDoWith.LetMeDoWith.integration.task;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.common.util.EnumUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TaskRoutineCycle;
@@ -124,7 +123,7 @@ public class UpdateDowithTaskIntegrationTest extends AbstractIntegrationTest {
             assertThat(routine.getRangeEndDate()).isEqualTo(routineEndDate);
             assertThat(routine.getCycle()).isEqualTo(EnumUtil.getEnum(TaskRoutineCycle.class, cycle));
             assertThat(routine.getPattern()).isNull();
-            assertThat(routine.getIsExcludeHolidays()).isEqualTo(isExcludeHolidays ? Yn.TRUE : Yn.FALSE);
+            assertThat(routine.isExcludeHolidays()).isEqualTo(isExcludeHolidays);
 
             allDateSet.remove(task.getDate());
         }
@@ -274,6 +273,6 @@ public class UpdateDowithTaskIntegrationTest extends AbstractIntegrationTest {
         assertThat(newDowithTaskRoutine.getRangeEndDate()).isEqualTo(endDate);
         assertThat(newDowithTaskRoutine.getCycle().getCode()).isEqualTo(cycle);
         assertThat(newDowithTaskRoutine.getPattern()).isNull();
-        assertThat(newDowithTaskRoutine.getIsExcludeHolidays()).isEqualTo(isExcludeHolidays ? Yn.TRUE : Yn.FALSE);
+        assertThat(newDowithTaskRoutine.isExcludeHolidays()).isEqualTo(isExcludeHolidays);
     }
 }
