@@ -1,6 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.application.member.service;
 
-import com.LetMeDoWith.LetMeDoWith.application.member.dto.RetrieverFollowsResult;
+import com.LetMeDoWith.LetMeDoWith.application.member.dto.RetrieveFollowsResult;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.FollowType;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
@@ -9,11 +9,12 @@ import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.MemberFollow;
 import com.LetMeDoWith.LetMeDoWith.domain.member.repository.FollowRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.member.repository.MemberRepository;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -22,21 +23,21 @@ public class FollowService {
     private final MemberRepository memberRepository;
     private final FollowRepository followRepository;
 
-    public RetrieverFollowsResult retrieveFollows(String memberId, FollowType followType, Pageable pageable) {
+    public RetrieveFollowsResult retrieveFollows(String memberId, FollowType followType, Pageable pageable) {
 
         Member member = memberRepository
                 .getMember(memberId, MemberStatus.NORMAL)
                 .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_FOLLOWER_MEMBER));
 
-        RetrieverFollowsResult result = null;
+        RetrieveFollowsResult result = null;
         switch (followType) {
             case FOLLOWER -> {
                 Long totalCount = followRepository.countTotalFollowers(member);
                 List<MemberFollow> memberFollows = followRepository.getFollowers(member, pageable);
-                result = RetrieverFollowsResult.builder()
+                result = RetrieveFollowsResult.builder()
                         .totalCount(totalCount)
                         .follows(memberFollows.stream()
-                                .map(e -> new RetrieverFollowsResult.Follow(
+                                .map(e -> new RetrieveFollowsResult.Follow(
                                         e.getFollowerMember().getId(),
                                         e.getFollowerMember().getNickname(),
                                         e.getFollowerMember().getSelfDescription(),
@@ -47,10 +48,10 @@ public class FollowService {
             case FOLLOWING -> {
                 Long totalCount = followRepository.countTotalFollowings(member);
                 List<MemberFollow> memberFollows = followRepository.getFollowings(member, pageable);
-                result = RetrieverFollowsResult.builder()
+                result = RetrieveFollowsResult.builder()
                         .totalCount(totalCount)
                         .follows(memberFollows.stream()
-                                .map(e -> new RetrieverFollowsResult.Follow(
+                                .map(e -> new RetrieveFollowsResult.Follow(
                                         e.getFollowingMember().getId(),
                                         e.getFollowingMember().getNickname(),
                                         e.getFollowingMember().getSelfDescription(),

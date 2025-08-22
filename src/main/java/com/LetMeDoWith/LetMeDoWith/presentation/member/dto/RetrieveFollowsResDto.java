@@ -1,13 +1,14 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.member.dto;
 
-import com.LetMeDoWith.LetMeDoWith.application.member.dto.RetrieverFollowsResult;
-import java.util.List;
+import com.LetMeDoWith.LetMeDoWith.application.member.dto.RetrieveFollowsResult;
 import lombok.Builder;
+
+import java.util.List;
 
 @Builder
 public record RetrieveFollowsResDto(List<Follow> follows) {
 
-    public static RetrieveFollowsResDto of(RetrieverFollowsResult result) {
+    public static RetrieveFollowsResDto of(RetrieveFollowsResult result) {
         List<Follow> follows = result.follows().stream()
                 .map(e -> Follow.builder()
                         .id(e.id())
@@ -20,5 +21,6 @@ public record RetrieveFollowsResDto(List<Follow> follows) {
     }
 
     @Builder
-    public record Follow(String id, String nickname, String selfDescription, String profileImageUrl) {}
+    public record Follow(String id, String nickname, String selfDescription, String profileImageUrl) {
+    }
 }

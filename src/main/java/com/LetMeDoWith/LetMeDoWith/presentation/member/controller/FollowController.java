@@ -1,6 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.member.controller;
 
-import com.LetMeDoWith.LetMeDoWith.application.member.dto.RetrieverFollowsResult;
+import com.LetMeDoWith.LetMeDoWith.application.member.dto.RetrieveFollowsResult;
 import com.LetMeDoWith.LetMeDoWith.application.member.service.FollowService;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.FollowType;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
@@ -37,7 +37,7 @@ public class FollowController {
             throw new RestApiException(FailResponseStatus.UNAUTHORIZED);
         }
 
-        RetrieverFollowsResult result = followService.retrieveFollows(memberId, type, pageable);
+        RetrieveFollowsResult result = followService.retrieveFollows(memberId, type, pageable);
 
         return ResponseUtil.createSuccessResponse(RetrieveFollowsResDto.of(result), pageable, result.totalCount());
     }
