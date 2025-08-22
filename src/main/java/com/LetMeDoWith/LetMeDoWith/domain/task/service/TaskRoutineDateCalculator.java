@@ -8,8 +8,6 @@ import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TaskRoutineCycle;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.*;
 import com.LetMeDoWith.LetMeDoWith.domain.task.service.strategy.TaskRoutineDateCalculateStrategy;
-import lombok.RequiredArgsConstructor;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -18,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 
 /**
  * 루틴 반복 주기와 패턴에 따라 루틴 수행 일자 목록을 계산하는 서비스.
@@ -29,9 +28,9 @@ public class TaskRoutineDateCalculator {
     private static final String ROUTINE_SCHEDULE_STRATEGY_KEY_SUFFIX = "RoutineDateCalculateStrategy";
     private final Map<String, TaskRoutineDateCalculateStrategy> routineScheduleStrategies;
 
-    public static Predicate<LocalDate> isEditableDatePredicate(LocalDate nowDate, LocalTime nowTime, LocalTime startTime) {
-        return date ->
-                !date.isBefore(nowDate) || (date.isEqual(nowDate) && nowTime.isBefore(startTime));
+    public static Predicate<LocalDate> isEditableDatePredicate(
+            LocalDate nowDate, LocalTime nowTime, LocalTime startTime) {
+        return date -> !date.isBefore(nowDate) || (date.isEqual(nowDate) && nowTime.isBefore(startTime));
     }
 
     /**
@@ -48,7 +47,7 @@ public class TaskRoutineDateCalculator {
                 routine.getCycle(),
                 routine.getRangeStartDate(),
                 routine.getRangeEndDate(),
-                routine.getPattern().getPattern(),
+                routine.getPattern() != null ? routine.getPattern().getPattern() : null,
                 Yn.TRUE.equals(routine.getIsExcludeHolidays()),
                 holidaySet.stream().map(Holiday::getDate).collect(Collectors.toSet()));
     }
@@ -85,9 +84,9 @@ public class TaskRoutineDateCalculator {
                 Yn.TRUE.equals(routine.getIsExcludeHolidays()),
                 holidaySet.stream().map(Holiday::getDate).collect(Collectors.toSet()));
 
-        return dates
-                .stream()
-                .filter(isEditableDatePredicate(SystemTimeUtil.nowDate(), SystemTimeUtil.nowTime(), dowithTask.getStartTime()))
+        return dates.stream()
+                .filter(isEditableDatePredicate(
+                        SystemTimeUtil.nowDate(), SystemTimeUtil.nowTime(), dowithTask.getStartTime()))
                 .collect(Collectors.toSet());
     }
 
@@ -105,7 +104,7 @@ public class TaskRoutineDateCalculator {
         LocalDate nowDate = now.toLocalDate();
         LocalTime nowTime = now.toLocalTime();
 
-
+        // 수정 가능한 루틴일자 계산 (시작 일시가 현재 일시보다 이후인 것들만)
         Set<LocalDate> existingRoutineDates = this.calculateRoutineDates(dowithTask, holidaySet).stream()
                 .filter(isEditableDatePredicate(nowDate, nowTime, dowithTask.getStartTime()))
                 .collect(Collectors.toSet());
@@ -120,13 +119,19 @@ public class TaskRoutineDateCalculator {
                         .filter(isEditableDatePredicate(nowDate, nowTime, dowithTask.getStartTime()))
                         .collect(Collectors.toSet()));
 
-        Set<LocalDate> toDeleteRoutineDates = new HashSet<>(existingRoutineDates);
-        toDeleteRoutineDates.removeAll(newRoutineDates);
+        // 삭제 대상인 루틴 일자 계산
+        Set<LocalDate> toDeleteDates = new HashSet<>(existingRoutineDates);
+        toDeleteDates.removeAll(newRoutineDates);
 
-        Set<LocalDate> toCreateRoutineDates = new HashSet<>(newRoutineDates);
-        toCreateRoutineDates.removeAll(existingRoutineDates);
+        // 새 루틴으로 수정 대상인 루틴 일자 계산
+        Set<LocalDate> toUpdateDates = new HashSet<>(existingRoutineDates);
+        toUpdateDates.retainAll(newRoutineDates);
 
-        return new RoutineDateToModify(toCreateRoutineDates, toDeleteRoutineDates);
+        // 생성 대상인 루틴 일자 계산
+        Set<LocalDate> toCreateDates = new HashSet<>(newRoutineDates);
+        toCreateDates.removeAll(existingRoutineDates);
+
+        return new RoutineDateToModify(toCreateDates, toUpdateDates, toDeleteDates);
     }
 
     private Set<LocalDate> calculateRoutineDates(
@@ -207,9 +212,8 @@ public class TaskRoutineDateCalculator {
             LocalDate rangeEndDate,
             TaskRoutineCycle cycle,
             Set<Integer> repetitionPattern,
-            boolean isExcludeHolidays) {
-    }
+            boolean isExcludeHolidays) {}
 
-    public record RoutineDateToModify(Set<LocalDate> toCreateDates, Set<LocalDate> toDeleteDates) {
-    }
+    public record RoutineDateToModify(
+            Set<LocalDate> toCreateDates, Set<LocalDate> toUpdateDates, Set<LocalDate> toDeleteDates) {}
 }

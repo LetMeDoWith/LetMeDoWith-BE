@@ -1,5 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.domain.task.model;
 
+import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.INVALID_REQUEST;
+
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
@@ -8,8 +10,6 @@ import com.LetMeDoWith.LetMeDoWith.domain.AggregateRoot;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TaskRoutineCycle;
 import jakarta.persistence.*;
-import lombok.*;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -18,8 +18,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
-
-import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.INVALID_REQUEST;
+import lombok.*;
 
 @Entity
 @Getter
@@ -177,7 +176,6 @@ public class DowithTask extends BaseAuditEntity {
 
         this.routine = DowithTaskRoutine.of(
                 rangeStartDate, rangeEndDate, taskRoutineCycle, taskRoutinePattern, isExcludeHolidays);
-
     }
 
     /**
@@ -228,6 +226,10 @@ public class DowithTask extends BaseAuditEntity {
 
         this.routine.updateRoutineCondition(
                 rangeStartDate, rangeEndDate, taskRoutineCycle, taskRoutinePattern, isExcludeHolidays);
+    }
+
+    public void updateRoutine(DowithTaskRoutine routine) {
+        this.routine = routine;
     }
 
     /**
@@ -291,7 +293,6 @@ public class DowithTask extends BaseAuditEntity {
         this.status = DowithTaskStatus.SUCCESS;
         this.successDateTime = SystemTimeUtil.now();
     }
-
 
     public void deleteRoutine() {
         this.routine = null;

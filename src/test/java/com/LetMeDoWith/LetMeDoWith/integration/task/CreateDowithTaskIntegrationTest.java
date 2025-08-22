@@ -45,7 +45,8 @@ public class CreateDowithTaskIntegrationTest extends AbstractIntegrationTest {
     void createDowithTask() throws Exception {
         // given
         String title = "테스트";
-        LocalDateTime startDateTime = SystemTimeUtil.now().plusDays(1);
+        setFixedClock(LocalDateTime.of(2024, 3, 1, 0, 0));
+        LocalDateTime startDateTime = SystemTimeUtil.now();
         CreateDowithTaskReqDto requestBody =
                 new CreateDowithTaskReqDto(title, null, startDateTime.toLocalDate(), startDateTime.toLocalTime());
 
@@ -53,17 +54,20 @@ public class CreateDowithTaskIntegrationTest extends AbstractIntegrationTest {
         ResultActions resultActions = this.request(MockMvcRequestBuilders.post(CREATE_DOWITH_TASK_URL)
                 .content(this.writeRequestBodyAsString(requestBody)));
 
-        DowithTask dowithTask = dowithTaskJpaRepository.findAllDowithTaskAggregates(this.requestMember.getId(), startDateTime.toLocalDate()).get(0);
+        DowithTask dowithTask = dowithTaskJpaRepository
+                .findAllDowithTaskAggregates(this.requestMember.getId(), startDateTime.toLocalDate())
+                .get(0);
 
         // then
         assertThat(dowithTask.getTitle()).isEqualTo(title);
         assertThat(dowithTask.getDate()).isEqualTo(startDateTime.toLocalDate());
-        assertThat(dowithTask.getStartTime()).isEqualTo(startDateTime.toLocalTime());
+        assertThat(dowithTask.getStartTime().getHour())
+                .isEqualTo(startDateTime.toLocalTime().getHour());
+        assertThat(dowithTask.getStartTime().getMinute())
+                .isEqualTo(startDateTime.toLocalTime().getMinute());
         assertThat(dowithTask.getRoutine()).isNull();
         assertThat(dowithTask.getStatus()).isEqualTo(DowithTaskStatus.WAIT);
-        resultActions
-                .andExpect(status().is2xxSuccessful())
-                .andDo(System.out::println);
+        resultActions.andExpect(status().is2xxSuccessful()).andDo(System.out::println);
     }
 
     @Test
@@ -71,7 +75,8 @@ public class CreateDowithTaskIntegrationTest extends AbstractIntegrationTest {
     void createDowithTaskWithRoutine() throws Exception {
         // given
         String title = "test";
-        LocalDateTime startDateTime = SystemTimeUtil.now().plusDays(1);
+        setFixedClock(LocalDateTime.of(2024, 3, 1, 0, 0));
+        LocalDateTime startDateTime = SystemTimeUtil.now();
         LocalDate routineStartDate = startDateTime.toLocalDate();
         LocalDate routineEndDate = startDateTime.plusDays(14).toLocalDate(); // 2주
         String cycle = "DAILY";
@@ -89,68 +94,80 @@ public class CreateDowithTaskIntegrationTest extends AbstractIntegrationTest {
                 startDateTime.toLocalDate(),
                 startDateTime.toLocalTime(),
                 new CreateDowithTaskWithRoutineReqDto.CreateDowithTaskRoutineCondition(
-                        routineStartDate,
-                        routineEndDate,
-                        cycle,
-                        null,
-                        isExcludeHolidays
-                )
-        );
+                        routineStartDate, routineEndDate, cycle, null, isExcludeHolidays));
         ResultActions resultActions = this.request(MockMvcRequestBuilders.post(CREATE_DOWITH_TASK_URL + "/with-routine")
                 .content(this.writeRequestBodyAsString(requestBody)));
-        DowithTask dowithTask = dowithTaskJpaRepository.findAllDowithTaskAggregates(requestMember.getId(), startDateTime.toLocalDate()).get(0);
+        DowithTask dowithTask = dowithTaskJpaRepository
+                .findAllDowithTaskAggregates(requestMember.getId(), startDateTime.toLocalDate())
+                .get(0);
         List<DowithTask> dowithTasks = dowithTaskJpaRepository.findAllDowithTaskAggregates(dowithTask.getRoutine());
 
         // then
-        assertThat(dowithTasks.size()).isEqualTo(14);
+        resultActions.andExpect(status().is2xxSuccessful());
+        assertThat(dowithTasks.size()).isEqualTo(allDateSet.size());
         for (DowithTask task : dowithTasks) {
             assertThat(task.getDate()).isIn(allDateSet);
             assertThat(task.getTitle()).isEqualTo(title);
-            assertThat(task.getDate()).isEqualTo(startDateTime.toLocalDate());
-            assertThat(task.getStartTime()).isEqualTo(startDateTime.toLocalTime());
-            assertThat(task.getRoutine()).isNull();
+            assertThat(task.getStartTime().getHour())
+                    .isEqualTo(startDateTime.toLocalTime().getHour());
+            assertThat(task.getStartTime().getMinute())
+                    .isEqualTo(startDateTime.toLocalTime().getMinute());
+            assertThat(task.getRoutine()).isNotNull();
             assertThat(task.getStatus()).isEqualTo(DowithTaskStatus.WAIT);
             allDateSet.remove(task.getDate());
         }
-        resultActions.andExpect(status().is2xxSuccessful());
-//        assertThat(allDateSet).isEmpty();
-//        for (int i = 0; i < targetDates.size(); i++) {
-//
-//                    // .andExpect(jsonPath("$.data.dowithTaskDtos[" + i +
-//                    // "].id").exists())
-//                    // .andExpect(jsonPath(
-//                    // "$.data.dowithTaskDtos[" + i +
-//                    // "].taskCategoryId").value(
-//                    // requestBody.taskCategoryId()))
-//                    // .andExpect(jsonPath("$.data.dowithTaskDtos[" + i +
-//                    // "].title").value(
-//                    // requestBody.title()))
-//                    // .andExpect(jsonPath("$.data.dowithTaskDtos[" + i +
-//                    // "].status").value(
-//                    // DowithTaskStatus.WAIT.getCode()))
-//                    // .andExpect(jsonPath("$.data.dowithTaskDtos[" + i +
-//                    // "].date").value(
-//                    // DateTimeUtil.toFormatString(targetDates.get(i))))
-//                    // .andExpect(jsonPath("$.data.dowithTaskDtos[" + i +
-//                    // "].startTime").value(
-//                    //
-//                    // DateTimeUtil.toFormatString(startDateTime.toLocalTime())))
-//                    // .andExpect(jsonPath("$.data.dowithTaskDtos[" + i +
-//                    // "].isRoutine").value(
-//                    // Boolean.TRUE))
-//                    // .andExpect(jsonPath("$.data.dowithTaskDtos[" + i +
-//                    // "].routineDates").value(
-//                    // new IsEqual<>(
-//                    //
-//                    // List.of(DateTimeUtil.toFormatString(targetDates.get(0)),
-//                    //
-//                    // DateTimeUtil.toFormatString(targetDates.get(1)),
-//                    //
-//                    // DateTimeUtil.toFormatString(targetDates.get(2)))),
-//                    // List.class))
-//                    .andDo(System.out::println);
-//        }
+        assertThat(allDateSet).isEmpty();
     }
+
+//    @Test
+//    @DisplayName("[SUCCESS] 성공 - 루틴(DAILY)이 있는 경우 (공휴일 3.1절 제외)")
+//    void createDowithTaskWithRoutine2() throws Exception {
+//        // given
+//        String title = "test";
+//        setFixedClock(LocalDateTime.of(2024, 3, 1, 0, 0));
+//        LocalDateTime startDateTime = SystemTimeUtil.now();
+//        LocalDate routineStartDate = startDateTime.toLocalDate();
+//        LocalDate routineEndDate = startDateTime.plusDays(14).toLocalDate(); // 2주
+//        String cycle = "DAILY";
+//        boolean isExcludeHolidays = true;
+//
+//        Set<LocalDate> allDateSet = new HashSet<>();
+//        for (int i = 0; i <= 14; i++) {
+//            allDateSet.add(routineStartDate.plusDays(i));
+//        }
+//        allDateSet.remove(LocalDate.of(2024, 3, 1)); // 3.1절 제외
+//
+//        // when
+//        CreateDowithTaskWithRoutineReqDto requestBody = new CreateDowithTaskWithRoutineReqDto(
+//                title,
+//                null,
+//                startDateTime.toLocalDate(),
+//                startDateTime.toLocalTime(),
+//                new CreateDowithTaskWithRoutineReqDto.CreateDowithTaskRoutineCondition(
+//                        routineStartDate, routineEndDate, cycle, null, isExcludeHolidays));
+//        ResultActions resultActions = this.request(MockMvcRequestBuilders.post(CREATE_DOWITH_TASK_URL + "/with-routine")
+//                .content(this.writeRequestBodyAsString(requestBody)));
+//        DowithTask dowithTask = dowithTaskJpaRepository
+//                .findAllDowithTaskAggregates(requestMember.getId(), startDateTime.toLocalDate())
+//                .get(0);
+//        List<DowithTask> dowithTasks = dowithTaskJpaRepository.findAllDowithTaskAggregates(dowithTask.getRoutine());
+//
+//        // then
+//        resultActions.andExpect(status().is2xxSuccessful());
+//        assertThat(dowithTasks.size()).isEqualTo(allDateSet.size());
+//        for (DowithTask task : dowithTasks) {
+//            assertThat(task.getDate()).isIn(allDateSet);
+//            assertThat(task.getTitle()).isEqualTo(title);
+//            assertThat(task.getStartTime().getHour())
+//                    .isEqualTo(startDateTime.toLocalTime().getHour());
+//            assertThat(task.getStartTime().getMinute())
+//                    .isEqualTo(startDateTime.toLocalTime().getMinute());
+//            assertThat(task.getRoutine()).isNotNull();
+//            assertThat(task.getStatus()).isEqualTo(DowithTaskStatus.WAIT);
+//            allDateSet.remove(task.getDate());
+//        }
+//        assertThat(allDateSet).isEmpty();
+//    }
 
     @Test
     @DisplayName("[FAIL] Task 카테고리가 존재하지 않는 경우")
@@ -182,11 +199,8 @@ public class CreateDowithTaskIntegrationTest extends AbstractIntegrationTest {
         Collections.sort(targetDates);
 
         // when
-        CreateDowithTaskReqDto requestBody = new CreateDowithTaskReqDto(
-                "테스트",
-                null,
-                startDateTime.toLocalDate(),
-                startDateTime.toLocalTime());
+        CreateDowithTaskReqDto requestBody =
+                new CreateDowithTaskReqDto("테스트", null, startDateTime.toLocalDate(), startDateTime.toLocalTime());
         ResultActions resultActions = this.request(MockMvcRequestBuilders.post(CREATE_DOWITH_TASK_URL)
                 .content(this.writeRequestBodyAsString(requestBody)));
 

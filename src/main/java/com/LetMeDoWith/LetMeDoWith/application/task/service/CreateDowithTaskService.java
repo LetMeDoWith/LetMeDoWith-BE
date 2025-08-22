@@ -108,8 +108,8 @@ public class CreateDowithTaskService {
                     command.routineCondition().endDate());
         }
         Set<LocalDate> routineDates = this.taskRoutineDateCalculator.calculateRoutineDates(dowithTask, holidaySet);
+        dowithTasks.addAll(DowithTask.of(dowithTask, routineDates));
 
-        // 루틴에 따른 DowithTask 생성
-        return dowithTaskRepository.saveDowithTasks(DowithTask.of(dowithTask, routineDates));
+        return dowithTaskRepository.saveDowithTasks(dowithTasks);
     }
 }

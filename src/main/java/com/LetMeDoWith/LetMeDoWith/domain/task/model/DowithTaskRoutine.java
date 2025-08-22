@@ -8,10 +8,9 @@ import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TaskRoutineCycle;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.converter.TaskRooutineCycleConverter;
 import jakarta.persistence.*;
-import lombok.*;
-
 import java.time.LocalDate;
 import java.util.Set;
+import lombok.*;
 
 @Entity
 @Getter
@@ -77,5 +76,4 @@ public class DowithTaskRoutine extends BaseAuditEntity {
         this.pattern = TaskRoutinePattern.from(pattern);
         this.isExcludeHolidays = isExcludeHolidays ? Yn.TRUE : Yn.FALSE;
     }
-
 }

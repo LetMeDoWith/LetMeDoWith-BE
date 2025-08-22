@@ -10,16 +10,15 @@ import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskRoutineRepos
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.HolidayRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TaskSummaryRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.service.TaskRoutineDateCalculator;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -60,7 +59,7 @@ public class DeleteDowithTaskService {
 
         dowithTaskRepository.delete(dowithTask);
         // 두윗모드 Task 사용 가능 개수 정책 무효화로 주석 처리
-//        taskSummary.plusRemainedDowithTaskCount(1);
+        //        taskSummary.plusRemainedDowithTaskCount(1);
     }
 
     /**
@@ -81,24 +80,24 @@ public class DeleteDowithTaskService {
 
         Set<Holiday> holidaySet = new HashSet<>();
         if (dowithTask.isRoutineExcludeHolidays()) {
-            holidaySet = holidayRepository.getHolidays(CountryCode.KR,
+            holidaySet = holidayRepository.getHolidays(
+                    CountryCode.KR,
                     dowithTask.getRoutine().getRangeStartDate(),
                     dowithTask.getRoutine().getRangeEndDate());
         }
-        Set<LocalDate> toDeleteRoutineDates = taskRoutineDateCalculator.calculateEditableRoutineDates(dowithTask, holidaySet);
+        Set<LocalDate> toDeleteRoutineDates =
+                taskRoutineDateCalculator.calculateEditableRoutineDates(dowithTask, holidaySet);
 
         List<DowithTask> dowithTasks = dowithTaskRepository.getDowithTasks(dowithTask.getRoutine());
-        Map<Boolean, List<DowithTask>> partition = dowithTasks.stream().
-                collect(Collectors.partitioningBy(
-                        task -> toDeleteRoutineDates.contains(task.getDate())
-                ));
+        Map<Boolean, List<DowithTask>> partition = dowithTasks.stream()
+                .collect(Collectors.partitioningBy(task -> toDeleteRoutineDates.contains(task.getDate())));
 
         dowithTaskRepository.delete(partition.get(Boolean.TRUE));
         partition.get(Boolean.FALSE).forEach(DowithTask::deleteRoutine);
         // 두윗모드 Task 사용 가능 개수 정책 무효화로 주석 처리
-//        TaskSummary taskSummary = taskSummaryRepository
-//                .getTaskSummary(memberId)
-//                .orElseThrow(() -> new RestApiException(FailResponseStatus.INTERNAL_SERVER_ERROR));
+        //        TaskSummary taskSummary = taskSummaryRepository
+        //                .getTaskSummary(memberId)
+        //                .orElseThrow(() -> new RestApiException(FailResponseStatus.INTERNAL_SERVER_ERROR));
         //        taskSummary.plusRemainedDowithTaskCount(deletedDowithTaskCount);
     }
 }
