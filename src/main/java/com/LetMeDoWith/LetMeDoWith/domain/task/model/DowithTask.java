@@ -58,7 +58,7 @@ public class DowithTask extends BaseAuditEntity {
     private LocalDateTime completeDateTime;
 
     @OneToMany(mappedBy = "dowithTask", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<DowithTaskConfirm> confirms;
+    private List<DowithTaskSuccess> successes;
 
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "dowith_task_routine_id")
@@ -74,7 +74,7 @@ public class DowithTask extends BaseAuditEntity {
                 .date(date)
                 .startTime(startTime)
                 .routine(null)
-                .confirms(null)
+                .successes(null)
                 .build();
         task.validateStartDateTime();
         return task;
@@ -101,7 +101,7 @@ public class DowithTask extends BaseAuditEntity {
                 .date(date)
                 .startTime(startTime)
                 .routine(dowithTaskRoutine)
-                .confirms(null)
+                .successes(null)
                 .build();
     }
 
@@ -116,7 +116,7 @@ public class DowithTask extends BaseAuditEntity {
                 .date(date)
                 .startTime(dowithTask.getStartTime())
                 .routine(dowithTask.getRoutine())
-                .confirms(null)
+                .successes(null)
                 .build()));
         return result;
     }
@@ -237,7 +237,7 @@ public class DowithTask extends BaseAuditEntity {
      * @param imageFileNames
      * @return
      */
-    public List<String> generateConfirmImageKey(List<String> imageFileNames) {
+    public List<String> generateSuccessImageKey(List<String> imageFileNames) {
 
         Pattern validExtensions = Pattern.compile("(?i)^.+\\.(jpg|jpeg|png|gif|bmp|webp)$");
         if (imageFileNames.stream()
@@ -255,15 +255,15 @@ public class DowithTask extends BaseAuditEntity {
 
         int shardIndex = (int) (this.id % 16);
 
-        List<String> confirmImageKeys = new ArrayList<>();
+        List<String> successImageKeys = new ArrayList<>();
         for (String imageFileName : imageFileNames) {
             String timestamp =
                     SystemTimeUtil.now().toString().replace("[:\\-T]", "").substring(0, 14) + "Z";
             String uuid = UUID.randomUUID().toString();
-            confirmImageKeys.add(
+            successImageKeys.add(
                     String.format("dowith_task_confirms/%02d/%s_%s.%s", shardIndex, timestamp, uuid, imageFileName));
         }
-        return confirmImageKeys;
+        return successImageKeys;
     }
 
     /**
@@ -281,12 +281,12 @@ public class DowithTask extends BaseAuditEntity {
             throw new RestApiException(INVALID_REQUEST);
         }
 
-        if (confirms == null) {
-            confirms = new ArrayList<>();
+        if (successes == null) {
+            successes = new ArrayList<>();
         }
 
         for (String imageUrl : imageUrls) {
-            confirms.add(DowithTaskConfirm.of(this, imageUrl));
+            successes.add(DowithTaskSuccess.of(this, imageUrl));
         }
 
         this.status = DowithTaskStatus.SUCCESS;

@@ -1,6 +1,8 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.dto;
 
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
+import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TaskRoutineCycle;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskRoutinePattern;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Set;
@@ -13,12 +15,13 @@ public record DowithTaskDetailQueryDto(
         String status,
         LocalDate date,
         LocalTime startTime,
-        String confirmedImageUrl,
+        String successImageUrl,
+        Long routineId,
         LocalDate startDate,
         LocalDate endDate,
         String cycle,
         Set<Integer> patterns,
-        boolean isExcludeHolidays,
+        Boolean isExcludeHolidays,
         int feedBackCount) {
 
     public DowithTaskDetailQueryDto(
@@ -29,27 +32,55 @@ public record DowithTaskDetailQueryDto(
             DowithTaskStatus status,
             LocalDate date,
             LocalTime startTime,
-            String confirmedImageUrl,
+            String successImageUrl,
+            Long routineId,
             LocalDate startDate,
             LocalDate endDate,
-            String cycle,
-            Set<Integer> patterns,
-            boolean isExcludeHolidays,
+            TaskRoutineCycle cycle,
+            TaskRoutinePattern pattern,
+            Boolean isExcludeHolidays,
             int feedBackCount) {
         this(
                 id,
                 taskCategoryId,
                 taskCategoryName,
                 title,
-                status.code,
+                status.getCode(),
                 date,
                 startTime,
-                confirmedImageUrl,
+                successImageUrl,
+                routineId,
                 startDate,
                 endDate,
-                cycle,
-                patterns,
+                cycle != null ? cycle.getCode() : null,
+                pattern != null ? pattern.getPattern() : null,
                 isExcludeHolidays,
                 feedBackCount);
     }
+
+    //    public DowithTaskDetailQueryDto(
+    //            DowithTask dowithTask,
+    //            TaskCategory taskCategory,
+    //            DowithTaskSuccess dowithTaskSuccess,
+    //            DowithTaskRoutine routine,
+    //            int feedBackCount) {
+    //        this(
+    //                dowithTask.getId(),
+    //                taskCategory != null ? taskCategory.getId() : null,
+    //                taskCategory != null ? taskCategory.getTitle() : null,
+    //                dowithTask.getTitle(),
+    //                dowithTask.getStatus().getCode(),
+    //                dowithTask.getDate(),
+    //                dowithTask.getStartTime(),
+    //                dowithTaskSuccess != null ? dowithTaskSuccess.getImageUrl() : null,
+    //                routine != null ? routine.getId() : null,
+    //                routine != null ? routine.getRangeStartDate() : null,
+    //                routine != null ? routine.getRangeEndDate() : null,
+    //                routine != null ? routine.getCycle().getCode() : null,
+    //                routine != null && routine.getPattern() != null
+    //                        ? routine.getPattern().getPattern()
+    //                        : null,
+    //                routine != null ? routine.isExcludeHolidays() : null,
+    //                feedBackCount);
+    //    }
 }

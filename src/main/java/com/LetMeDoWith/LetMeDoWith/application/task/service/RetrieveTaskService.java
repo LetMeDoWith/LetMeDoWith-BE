@@ -2,6 +2,8 @@ package com.LetMeDoWith.LetMeDoWith.application.task.service;
 
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.RetrieveDowithTaskResult;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.RetrieveTasksResult;
+import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
+import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.DowithTaskQueryRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.TodoTaskQueryRepository;
@@ -32,12 +34,15 @@ public class RetrieveTaskService {
     @Transactional(readOnly = true)
     public RetrieveDowithTaskResult retrieveDowithTask(Long dowithTaskId) {
         String memberId = AuthUtil.getMemberId();
-        DowithTaskDetailQueryDto result = dowithTaskQueryRepository.getDowithTask(memberId, dowithTaskId);
+        DowithTaskDetailQueryDto result = dowithTaskQueryRepository
+                .getDowithTask(memberId, dowithTaskId)
+                .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
         return RetrieveDowithTaskResult.from(result);
     }
 
     /**
      * TodoTask 조회
+     *
      * @param todoTaskId
      */
     @Transactional(readOnly = true)

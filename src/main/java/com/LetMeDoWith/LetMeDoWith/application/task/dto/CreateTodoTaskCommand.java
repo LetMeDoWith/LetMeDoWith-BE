@@ -7,16 +7,16 @@ import java.time.LocalTime;
 import lombok.Builder;
 
 @Builder
-public record RegisterTodoTaskCommand(
+public record CreateTodoTaskCommand(
         Long taskCategoryId, String title, LocalDate date, LocalTime startTime, TaskRoutineCondition routineCondition) {
 
-    public static RegisterTodoTaskCommand of(
+    public static CreateTodoTaskCommand of(
             @Nullable Long taskCategoryId,
             String title,
             LocalDate date,
             @Nullable LocalTime startTime,
             @Nullable CreateTodoTaskReqDto.TodoTaskRoutineCondition routineCondition) {
-        return RegisterTodoTaskCommand.builder()
+        return CreateTodoTaskCommand.builder()
                 .taskCategoryId(taskCategoryId)
                 .title(title)
                 .date(date)

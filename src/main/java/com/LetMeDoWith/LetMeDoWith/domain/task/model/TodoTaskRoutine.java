@@ -3,6 +3,7 @@ package com.LetMeDoWith.LetMeDoWith.domain.task.model;
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TaskRoutineCycle;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.converter.TaskRoutineCycleConverter;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.task.converter.TaskRoutinePatternConverter;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.converter.TodoTaskRoutineDatesConverter;
 import jakarta.persistence.*;
 import java.time.LocalDate;
@@ -30,7 +31,8 @@ public class TodoTaskRoutine extends BaseAuditEntity {
     @Convert(converter = TaskRoutineCycleConverter.class)
     private TaskRoutineCycle cycle;
 
-    @Column(name = "pattern")
+    @Column(name = "pattern", columnDefinition = "TEXT")
+    @Convert(converter = TaskRoutinePatternConverter.class)
     private TaskRoutinePattern pattern;
 
     @Column(name = "is_exclude_holidays")

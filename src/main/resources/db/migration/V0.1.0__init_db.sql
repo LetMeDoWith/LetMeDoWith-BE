@@ -43,7 +43,7 @@ CREATE TABLE dowith_task
     CONSTRAINT pk_dowith_task PRIMARY KEY (id)
 );
 
-CREATE TABLE dowith_task_confirm
+CREATE TABLE dowith_task_success
 (
     id             BIGINT AUTO_INCREMENT NOT NULL,
     create_at      timestamp             NULL,
@@ -52,7 +52,7 @@ CREATE TABLE dowith_task_confirm
     updated_by     VARCHAR(255)          NULL,
     dowith_task_id BIGINT                NOT NULL,
     image_url      VARCHAR(255)          NULL,
-    CONSTRAINT pk_dowith_task_confirm PRIMARY KEY (id)
+    CONSTRAINT pk_dowith_task_success PRIMARY KEY (id)
 );
 
 CREATE TABLE dowith_task_routine
@@ -61,7 +61,7 @@ CREATE TABLE dowith_task_routine
     range_start_date    date                  NOT NULL,
     range_end_date      date                  NOT NULL,
     cycle               VARCHAR(20)           NOT NULL,
-    pattern             VARBINARY(255)        NOT NULL,
+    pattern             text                  NOT NULL,
     exclude_holidays_yn BOOLEAN               NOT NULL,
     exclude_dates       text                  NULL,
     create_at           timestamp             NULL,
@@ -219,7 +219,7 @@ CREATE TABLE todo_task_routine
     id                  BIGINT AUTO_INCREMENT NOT NULL,
     dates               text                  NULL,
     cycle               VARCHAR(20)           NOT NULL DEFAULT 'NONE',
-    pattern             VARBINARY(255)        NULL,
+    pattern             text                  NULL,
     is_exclude_holidays BOOLEAN               NOT NULL DEFAULT FALSE,
     create_at           timestamp             NULL,
     updated_at          timestamp             NULL,
@@ -244,8 +244,8 @@ CREATE TABLE task_summary
     CONSTRAINT pk_task_summary PRIMARY KEY (id)
 );
 
-ALTER TABLE dowith_task_confirm
-    ADD CONSTRAINT uc_dowith_task_confirm_dowith_task UNIQUE (dowith_task_id);
+ALTER TABLE dowith_task_success
+    ADD CONSTRAINT uc_dowith_task_success_dowith_task UNIQUE (dowith_task_id);
 
 ALTER TABLE member_alarm_setting
     ADD CONSTRAINT uc_member_alarm_setting_member UNIQUE (member_id);
@@ -253,8 +253,8 @@ ALTER TABLE member_alarm_setting
 ALTER TABLE member_term_agree
     ADD CONSTRAINT uc_member_term_agree_member UNIQUE (member_id);
 
-ALTER TABLE dowith_task_confirm
-    ADD CONSTRAINT FK_DOWITH_TASK_CONFIRM_ON_DOWITH_TASK FOREIGN KEY (dowith_task_id) REFERENCES dowith_task (id);
+ALTER TABLE dowith_task_success
+    ADD CONSTRAINT FK_DOWITH_TASK_SUCCESS_ON_DOWITH_TASK FOREIGN KEY (dowith_task_id) REFERENCES dowith_task (id);
 
 ALTER TABLE dowith_task
     ADD CONSTRAINT FK_DOWITH_TASK_ON_DOWITH_TASK_ROUTINE FOREIGN KEY (dowith_task_routine_id) REFERENCES dowith_task_routine (id);

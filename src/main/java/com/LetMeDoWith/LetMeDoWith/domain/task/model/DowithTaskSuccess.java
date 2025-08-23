@@ -10,9 +10,9 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder(access = AccessLevel.PRIVATE)
-@Table(name = "DOWITH_TASK_CONFIRM")
+@Table(name = "DOWITH_TASK_SUCCESS")
 @AggregateRoot
-public class DowithTaskConfirm extends BaseAuditEntity {
+public class DowithTaskSuccess extends BaseAuditEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,8 +26,8 @@ public class DowithTaskConfirm extends BaseAuditEntity {
     @Column(name = "image_url")
     private String imageUrl;
 
-    public static DowithTaskConfirm of(DowithTask dowithTask, String imageUrl) {
-        return DowithTaskConfirm.builder()
+    public static DowithTaskSuccess of(DowithTask dowithTask, String imageUrl) {
+        return DowithTaskSuccess.builder()
                 .dowithTask(dowithTask)
                 .imageUrl(imageUrl)
                 .build();

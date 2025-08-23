@@ -56,7 +56,7 @@ public class UpdateTodoTaskService {
                 .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
 
         // 우선 컨텐츠를 업데이트
-        todoTask.updateContent(command.title(), category.getId(), todoTask.getDate(), command.startTime());
+        todoTask.updateContent(command.title(), category.getId(), command.startTime());
 
         // 루틴에 포함되는 TodoTask의 경우, 루틴을 분리한다.
         if (todoTask.isRoutine()) {

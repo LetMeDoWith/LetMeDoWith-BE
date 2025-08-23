@@ -25,6 +25,10 @@ public class DateTimeUtil {
         return DateTimeFormatter.ofPattern(TIME_FORMAT).format(time);
     }
 
+    public static DateTimeFormatter getLocalTimeFormatter() {
+        return DateTimeFormatter.ofPattern(TIME_FORMAT);
+    }
+
     public static boolean isAfterOrEqual(LocalDate targetDate, LocalDate standardDate) {
         return targetDate.isAfter(standardDate) || targetDate.isEqual(standardDate);
     }

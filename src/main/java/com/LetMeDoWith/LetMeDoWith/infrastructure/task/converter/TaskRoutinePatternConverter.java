@@ -20,7 +20,7 @@ public class TaskRoutinePatternConverter implements AttributeConverter<TaskRouti
 
     @Override
     public TaskRoutinePattern convertToEntityAttribute(String dbData) {
-        if (dbData.isBlank()) {
+        if (dbData == null || dbData.isBlank()) {
             return TaskRoutinePattern.from(Set.of());
         } else {
             return TaskRoutinePattern.from(

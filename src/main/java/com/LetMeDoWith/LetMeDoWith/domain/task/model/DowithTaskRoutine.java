@@ -6,6 +6,7 @@ import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TaskRoutineCycle;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.converter.TaskRoutineCycleConverter;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.task.converter.TaskRoutinePatternConverter;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.Set;
@@ -38,6 +39,7 @@ public class DowithTaskRoutine extends BaseAuditEntity {
     private TaskRoutineCycle cycle;
 
     @Column(name = "pattern")
+    @Convert(converter = TaskRoutinePatternConverter.class)
     private TaskRoutinePattern pattern;
 
     @Column(name = "exclude_holidays_yn")

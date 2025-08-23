@@ -1,7 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.application.task.service;
 
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.RegisterTodoTaskCommand;
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.RegisterTodoTaskResult;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.CreateTodoTaskCommand;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.CreateTodoTaskResult;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.TaskRoutineCondition;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
@@ -33,7 +33,7 @@ public class RegisterTodoTaskService {
      * @param command  생성할 TodoTask의 정보 (카테고리 ID, 제목, 시작일, 시작시간, 루틴여부)
      * @return 생성된 TodoTask
      */
-    public RegisterTodoTaskResult registerTodoTask(String memberId, RegisterTodoTaskCommand command) {
+    public CreateTodoTaskResult registerTodoTask(String memberId, CreateTodoTaskCommand command) {
         if (command.taskCategoryId() != null) {
             taskCategoryRepository
                     .getActiveTaskCategory(command.taskCategoryId(), memberId)
@@ -43,7 +43,7 @@ public class RegisterTodoTaskService {
         TodoTask todoTask =
                 TodoTask.of(memberId, command.taskCategoryId(), command.title(), command.date(), command.startTime());
 
-        return RegisterTodoTaskResult.of(todoTaskRepository.saveTodoTask(todoTask));
+        return CreateTodoTaskResult.of(todoTaskRepository.saveTodoTask(todoTask));
     }
 
     /**
@@ -53,7 +53,7 @@ public class RegisterTodoTaskService {
      * @param command  생성할 TodoTask의 정보 (카테고리 ID, 제목, 시작일, 종료일, 시작시간, 루틴여부, 루틴 반복 주기, 루틴 반복 패턴)
      * @return 생성된 루틴의 TodoTask 목록
      */
-    public RegisterTodoTaskResult registerTodoTaskWithRoutine(String memberId, RegisterTodoTaskCommand command) {
+    public CreateTodoTaskResult registerTodoTaskWithRoutine(String memberId, CreateTodoTaskCommand command) {
 
         if (command.taskCategoryId() != null) {
             taskCategoryRepository
@@ -88,6 +88,6 @@ public class RegisterTodoTaskService {
                 routineCondition.pattern(),
                 routineCondition.isExcludeHolidays());
 
-        return RegisterTodoTaskResult.of(todoTaskRepository.saveTodoTasks(todoTasks), routineDates);
+        return CreateTodoTaskResult.of(todoTaskRepository.saveTodoTasks(todoTasks), routineDates);
     }
 }

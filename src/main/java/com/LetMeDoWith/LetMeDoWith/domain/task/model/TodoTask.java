@@ -221,6 +221,25 @@ public class TodoTask extends BaseAuditEntity {
      *
      * @param title          제목
      * @param taskCategoryId 작업 카테고리 ID
+     * @param startTime      시작 시간
+     */
+    public void updateContent(String title, Long taskCategoryId, LocalTime startTime) {
+
+        if (!isContentsEditable()) {
+            throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
+        }
+
+        this.title = title;
+        this.taskCategoryId = taskCategoryId;
+        this.startTime = startTime;
+        validate();
+    }
+
+    /**
+     * TodoTask 내용 업데이트
+     *
+     * @param title          제목
+     * @param taskCategoryId 작업 카테고리 ID
      * @param date           날짜
      * @param startTime      시작 시간
      */

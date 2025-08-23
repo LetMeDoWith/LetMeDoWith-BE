@@ -13,7 +13,7 @@ public record DowithTaskQueryDto(
         String status,
         LocalDate date,
         LocalTime startTime,
-        String confirmedImageUrl,
+        String successImageUrl,
         boolean isRoutine,
         int feedBackCount) {
 
@@ -25,7 +25,7 @@ public record DowithTaskQueryDto(
             DowithTaskStatus status,
             LocalDate date,
             LocalTime startTime,
-            String confirmedImageUrl,
+            String successImageUrl,
             DowithTaskRoutine dowithTaskRoutine,
             int feedBackCount) {
         this(
@@ -36,7 +36,7 @@ public record DowithTaskQueryDto(
                 status.code,
                 date,
                 startTime,
-                confirmedImageUrl,
+                successImageUrl,
                 dowithTaskRoutine != null,
                 feedBackCount);
     }

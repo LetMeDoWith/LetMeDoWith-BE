@@ -42,12 +42,12 @@ public class TodoTaskController {
         @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청입니다."),
     })
     @PostMapping("")
-    public ResponseEntity registerTodoTask(@Valid @RequestBody CreateTodoTaskReqDto request) {
+    public ResponseEntity createTodoTask(@Valid @RequestBody CreateTodoTaskReqDto request) {
         String memberId = AuthUtil.getMemberId();
 
-        RegisterTodoTaskResult result;
+        CreateTodoTaskResult result;
 
-        RegisterTodoTaskCommand command = RegisterTodoTaskCommand.of(
+        CreateTodoTaskCommand command = CreateTodoTaskCommand.of(
                 request.taskCategoryId(),
                 request.title(),
                 request.date(),
@@ -89,10 +89,7 @@ public class TodoTaskController {
                 memberId,
                 todoTaskId,
                 UpdateTodoTaskCommand.of(
-                        request.title(),
-                        request.startDateTime().toLocalTime(),
-                        request.taskCategoryId(),
-                        routineCondition));
+                        request.title(), request.startTime(), request.taskCategoryId(), routineCondition));
 
         return ResponseUtil.createSuccessResponse();
     }
