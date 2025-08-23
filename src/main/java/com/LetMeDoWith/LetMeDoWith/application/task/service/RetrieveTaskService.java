@@ -37,6 +37,12 @@ public class RetrieveTaskService {
     }
 
     @Transactional(readOnly = true)
+    public void retrieveTodoTask(Long todoTaskId) {
+        String memberId = AuthUtil.getMemberId();
+        // TODO - 선종 todo task 단일 조회 service 개발 필요 after TodoTaskRoutine 도메인 모델 수정 후
+    }
+
+    @Transactional(readOnly = true)
     public RetrieveTasksResult retrieveMonthTasks(Year year, Month month) {
         String memberId = AuthUtil.getMemberId();
         LocalDate startDate = LocalDate.of(year.getValue(), month, 1);
