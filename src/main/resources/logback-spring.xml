@@ -28,9 +28,11 @@
         <pattern>${PATTERN}</pattern>
       </encoder>
       <file>${APP_DIR}/app.log</file>
-      <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-        <fileNamePattern>${APP_DIR}/app-%d{yyyy-MM-dd}.log</fileNamePattern>
+      <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+        <fileNamePattern>${APP_DIR}/app-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+        <maxFileSize>10MB</maxFileSize>
         <maxHistory>7</maxHistory>
+        <totalSizeCap>100MB</totalSizeCap>
       </rollingPolicy>
     </appender>
     <appender class="ch.qos.logback.core.rolling.RollingFileAppender" name="ERROR_ONLY">
@@ -41,9 +43,11 @@
       <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
         <level>ERROR</level>
       </filter>
-      <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-        <fileNamePattern>${ERR_DIR}/error-%d{yyyy-MM-dd}.log</fileNamePattern>
+      <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+        <fileNamePattern>${ERR_DIR}/error-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+        <maxFileSize>10MB</maxFileSize>
         <maxHistory>7</maxHistory>
+        <totalSizeCap>100MB</totalSizeCap>
       </rollingPolicy>
     </appender>
     <appender class="ch.qos.logback.core.rolling.RollingFileAppender" name="SQL">
@@ -51,9 +55,11 @@
         <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %logger{36} - %msg%n</pattern>
       </encoder>
       <file>${SQL_DIR}/sql.log</file>
-      <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-        <fileNamePattern>${SQL_DIR}/sql-%d{yyyy-MM-dd}.log</fileNamePattern>
+      <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+        <fileNamePattern>${SQL_DIR}/sql-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+        <maxFileSize>10MB</maxFileSize>
         <maxHistory>7</maxHistory>
+        <totalSizeCap>100MB</totalSizeCap>
       </rollingPolicy>
     </appender>
 
