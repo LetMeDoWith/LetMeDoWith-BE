@@ -25,6 +25,10 @@ public class DateTimeUtil {
         return DateTimeFormatter.ofPattern(TIME_FORMAT).format(time);
     }
 
+    public static DateTimeFormatter getLocalTimeFormatter() {
+        return DateTimeFormatter.ofPattern(TIME_FORMAT);
+    }
+
     public static boolean isAfterOrEqual(LocalDate targetDate, LocalDate standardDate) {
         return targetDate.isAfter(standardDate) || targetDate.isEqual(standardDate);
     }
@@ -39,5 +43,13 @@ public class DateTimeUtil {
 
     public static boolean isBefore(LocalTime targetTime, LocalTime standardTime) {
         return targetTime.isBefore(standardTime);
+    }
+
+    public static LocalDate earlier(LocalDate date1, LocalDate date2) {
+        return date1.isBefore(date2) ? date1 : date2;
+    }
+
+    public static LocalDate later(LocalDate date1, LocalDate date2) {
+        return date1.isAfter(date2) ? date1 : date2;
     }
 }

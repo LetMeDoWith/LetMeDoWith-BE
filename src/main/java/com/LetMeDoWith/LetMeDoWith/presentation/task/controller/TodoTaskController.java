@@ -1,11 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.task.controller;
 
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.RegisterTodoTaskCommand;
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.RegisterTodoTaskResult;
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.TodoTaskRoutineCondition;
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateTodoTaskCommand;
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateTodoTaskRoutineCommand;
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateTodoTaskWithRoutineCommand;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.*;
 import com.LetMeDoWith.LetMeDoWith.application.task.service.DeleteTodoTaskService;
 import com.LetMeDoWith.LetMeDoWith.application.task.service.RegisterTodoTaskService;
 import com.LetMeDoWith.LetMeDoWith.application.task.service.UpdateTodoTaskService;
@@ -26,14 +21,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Todo Task", description = "투두모드 태스크")
 @RestController
@@ -54,12 +42,12 @@ public class TodoTaskController {
         @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청입니다."),
     })
     @PostMapping("")
-    public ResponseEntity registerTodoTask(@Valid @RequestBody CreateTodoTaskReqDto request) {
+    public ResponseEntity createTodoTask(@Valid @RequestBody CreateTodoTaskReqDto request) {
         String memberId = AuthUtil.getMemberId();
 
-        RegisterTodoTaskResult result;
+        CreateTodoTaskResult result;
 
-        RegisterTodoTaskCommand command = RegisterTodoTaskCommand.of(
+        CreateTodoTaskCommand command = CreateTodoTaskCommand.of(
                 request.taskCategoryId(),
                 request.title(),
                 request.date(),
@@ -86,10 +74,10 @@ public class TodoTaskController {
             @PathVariable Long todoTaskId, @RequestBody UpdateTodoTaskReqDto request) {
         String memberId = AuthUtil.getMemberId();
 
-        TodoTaskRoutineCondition routineCondition = null;
+        TaskRoutineCondition routineCondition = null;
 
         if (request.routineCondition() != null) {
-            routineCondition = TodoTaskRoutineCondition.of(
+            routineCondition = TaskRoutineCondition.of(
                     request.routineCondition().startDate(),
                     request.routineCondition().endDate(),
                     request.routineCondition().cycle(),
@@ -101,10 +89,7 @@ public class TodoTaskController {
                 memberId,
                 todoTaskId,
                 UpdateTodoTaskCommand.of(
-                        request.title(),
-                        request.startDateTime().toLocalTime(),
-                        request.taskCategoryId(),
-                        routineCondition));
+                        request.title(), request.startTime(), request.taskCategoryId(), routineCondition));
 
         return ResponseUtil.createSuccessResponse();
     }
@@ -154,10 +139,10 @@ public class TodoTaskController {
     @ApiErrorResponses({
         @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청입니다."),
     })
-    @PatchMapping("/{todoTaskId}/complete")
-    public ResponseEntity<ResponseDto<Long>> completeTodoTask(@PathVariable Long todoTaskId) {
+    @PatchMapping("/{todoTaskId}/success")
+    public ResponseEntity<ResponseDto<Long>> successTodoTask(@PathVariable Long todoTaskId) {
         String memberId = AuthUtil.getMemberId();
-        TodoTask completeTodoTask = updateTodoTaskService.completeTodoTask(memberId, todoTaskId);
+        TodoTask completeTodoTask = updateTodoTaskService.successTodoTask(memberId, todoTaskId);
         return ResponseUtil.createSuccessResponse(completeTodoTask.getId());
     }
 

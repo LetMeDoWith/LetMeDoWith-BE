@@ -30,8 +30,8 @@ public record RetrieveTasksResult(List<TodoTaskDto> todoTasks, List<DowithTaskDt
                 dowithTaskQueryDtos.stream().collect(Collectors.groupingBy(DowithTaskQueryDto::id)).values().stream()
                         .map(list -> {
                             DowithTaskQueryDto first = list.get(0);
-                            List<String> confirmImageUrls = list.stream()
-                                    .map(DowithTaskQueryDto::confirmedImageUrl)
+                            List<String> successImageUrls = list.stream()
+                                    .map(DowithTaskQueryDto::successImageUrl)
                                     .filter(Objects::nonNull)
                                     .toList();
                             return new DowithTaskDto(
@@ -42,7 +42,7 @@ public record RetrieveTasksResult(List<TodoTaskDto> todoTasks, List<DowithTaskDt
                                     first.status(),
                                     first.date(),
                                     first.startTime(),
-                                    confirmImageUrls,
+                                    successImageUrls,
                                     first.isRoutine(),
                                     first.feedBackCount());
                         })
@@ -71,7 +71,7 @@ public record RetrieveTasksResult(List<TodoTaskDto> todoTasks, List<DowithTaskDt
             String status,
             LocalDate date,
             LocalTime startTime,
-            List<String> confirmedImageUrls,
+            List<String> successImageUrls,
             boolean isRoutine,
             int feedBackCount) {}
 }

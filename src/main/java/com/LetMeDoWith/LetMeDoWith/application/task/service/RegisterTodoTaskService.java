@@ -1,8 +1,8 @@
 package com.LetMeDoWith.LetMeDoWith.application.task.service;
 
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.RegisterTodoTaskCommand;
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.RegisterTodoTaskResult;
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.TodoTaskRoutineCondition;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.CreateTodoTaskCommand;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.CreateTodoTaskResult;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.TaskRoutineCondition;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
@@ -10,7 +10,7 @@ import com.LetMeDoWith.LetMeDoWith.domain.task.enums.CountryCode;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TodoTask;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TaskCategoryRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TodoTaskRepository;
-import com.LetMeDoWith.LetMeDoWith.domain.task.service.TodoTaskRoutineDateCalculator;
+import com.LetMeDoWith.LetMeDoWith.domain.task.service.TaskRoutineDateCalculator;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
@@ -23,17 +23,17 @@ public class RegisterTodoTaskService {
 
     private final TodoTaskRepository todoTaskRepository;
     private final TaskCategoryRepository taskCategoryRepository;
-    private final TodoTaskRoutineDateCalculator routineDateCalculator;
+    private final TaskRoutineDateCalculator routineDateCalculator;
     private final HolidayService holidayService;
 
     /**
      * 루틴이 아닌 TodoTask를 생성한다.
      *
      * @param memberId TodoTask를 생성할 사용자의 ID
-     * @param command 생성할 TodoTask의 정보 (카테고리 ID, 제목, 시작일, 시작시간, 루틴여부)
+     * @param command  생성할 TodoTask의 정보 (카테고리 ID, 제목, 시작일, 시작시간, 루틴여부)
      * @return 생성된 TodoTask
      */
-    public RegisterTodoTaskResult registerTodoTask(String memberId, RegisterTodoTaskCommand command) {
+    public CreateTodoTaskResult registerTodoTask(String memberId, CreateTodoTaskCommand command) {
         if (command.taskCategoryId() != null) {
             taskCategoryRepository
                     .getActiveTaskCategory(command.taskCategoryId(), memberId)
@@ -43,17 +43,17 @@ public class RegisterTodoTaskService {
         TodoTask todoTask =
                 TodoTask.of(memberId, command.taskCategoryId(), command.title(), command.date(), command.startTime());
 
-        return RegisterTodoTaskResult.of(todoTaskRepository.saveTodoTask(todoTask));
+        return CreateTodoTaskResult.of(todoTaskRepository.saveTodoTask(todoTask));
     }
 
     /**
      * TodoTask 루틴을 생성한다.
      *
      * @param memberId TodoTask를 생성할 사용자의 ID
-     * @param command 생성할 TodoTask의 정보 (카테고리 ID, 제목, 시작일, 종료일, 시작시간, 루틴여부, 루틴 반복 주기, 루틴 반복 패턴)
+     * @param command  생성할 TodoTask의 정보 (카테고리 ID, 제목, 시작일, 종료일, 시작시간, 루틴여부, 루틴 반복 주기, 루틴 반복 패턴)
      * @return 생성된 루틴의 TodoTask 목록
      */
-    public RegisterTodoTaskResult registerTodoTaskWithRoutine(String memberId, RegisterTodoTaskCommand command) {
+    public CreateTodoTaskResult registerTodoTaskWithRoutine(String memberId, CreateTodoTaskCommand command) {
 
         if (command.taskCategoryId() != null) {
             taskCategoryRepository
@@ -61,7 +61,7 @@ public class RegisterTodoTaskService {
                     .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
         }
 
-        TodoTaskRoutineCondition routineCondition = command.routineCondition();
+        TaskRoutineCondition routineCondition = command.routineCondition();
 
         // 루틴 반복 주기에 따른 루틴 수행일자 계산
         Set<LocalDate> routineDates = routineDateCalculator.computeRoutineDates(
@@ -88,6 +88,6 @@ public class RegisterTodoTaskService {
                 routineCondition.pattern(),
                 routineCondition.isExcludeHolidays());
 
-        return RegisterTodoTaskResult.of(todoTaskRepository.saveTodoTasks(todoTasks), routineDates);
+        return CreateTodoTaskResult.of(todoTaskRepository.saveTodoTasks(todoTasks), routineDates);
     }
 }

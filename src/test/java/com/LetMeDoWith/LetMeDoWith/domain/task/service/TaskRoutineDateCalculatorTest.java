@@ -6,8 +6,8 @@ import static org.mockito.Mockito.when;
 
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
-import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TodoTaskRoutineCycle;
-import com.LetMeDoWith.LetMeDoWith.domain.task.service.strategy.TodoTaskRoutineDateCalculateStrategy;
+import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TaskRoutineCycle;
+import com.LetMeDoWith.LetMeDoWith.domain.task.service.strategy.TaskRoutineDateCalculateStrategy;
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.Set;
@@ -19,16 +19,16 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class TodoTaskRoutineDateCalculatorTest {
+class TaskRoutineDateCalculatorTest {
 
     @Mock
-    private Map<String, TodoTaskRoutineDateCalculateStrategy> routineScheduleStrategies;
+    private Map<String, TaskRoutineDateCalculateStrategy> routineScheduleStrategies;
 
     @Mock
-    private TodoTaskRoutineDateCalculateStrategy dailyStrategy;
+    private TaskRoutineDateCalculateStrategy dailyStrategy;
 
     @InjectMocks
-    private TodoTaskRoutineDateCalculator routineDateCalculator;
+    private TaskRoutineDateCalculator routineDateCalculator;
 
     @Test
     @DisplayName("시작일이 종료일보다 늦은 경우 예외가 발생한다.")
@@ -39,7 +39,7 @@ class TodoTaskRoutineDateCalculatorTest {
 
         // when & then
         assertThatThrownBy(() -> routineDateCalculator.computeRoutineDates(
-                        TodoTaskRoutineCycle.DAILY, startDate, endDate, Set.of(1)))
+                        TaskRoutineCycle.DAILY, startDate, endDate, Set.of(1)))
                 .isInstanceOf(RestApiException.class)
                 .hasFieldOrPropertyWithValue("status", FailResponseStatus.INVALID_REQUEST);
     }
@@ -55,7 +55,7 @@ class TodoTaskRoutineDateCalculatorTest {
 
         // when & then
         assertThatThrownBy(() -> routineDateCalculator.computeRoutineDates(
-                        TodoTaskRoutineCycle.DAILY, startDate, endDate, Set.of(1)))
+                        TaskRoutineCycle.DAILY, startDate, endDate, Set.of(1)))
                 .isInstanceOf(RestApiException.class)
                 .hasFieldOrPropertyWithValue("status", FailResponseStatus.INVALID_REQUEST);
     }
@@ -73,7 +73,7 @@ class TodoTaskRoutineDateCalculatorTest {
 
         // when
         Set<LocalDate> actualDates =
-                routineDateCalculator.computeRoutineDates(TodoTaskRoutineCycle.DAILY, startDate, endDate, Set.of(1));
+                routineDateCalculator.computeRoutineDates(TaskRoutineCycle.DAILY, startDate, endDate, Set.of(1));
 
         // then
         assertThat(actualDates).isEqualTo(expectedDates);

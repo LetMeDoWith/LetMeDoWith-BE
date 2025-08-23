@@ -3,10 +3,10 @@ package com.LetMeDoWith.LetMeDoWith.integration.task;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TodoTaskRoutineCycle;
+import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TaskRoutineCycle;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskCategory;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TodoTask;
-import com.LetMeDoWith.LetMeDoWith.domain.task.service.TodoTaskRoutineDateCalculator;
+import com.LetMeDoWith.LetMeDoWith.domain.task.service.TaskRoutineDateCalculator;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.TaskCategoryJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.TodoTaskJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.integration.AbstractIntegrationTest;
@@ -50,7 +50,7 @@ public class DeleteTodoTaskIntegrationTest extends AbstractIntegrationTest {
     private TaskCategoryJpaRepository taskCategoryRepository;
 
     @Autowired
-    private TodoTaskRoutineDateCalculator todoTaskRoutineDateCalculator;
+    private TaskRoutineDateCalculator taskRoutineDateCalculator;
 
     private TaskCategory taskCategory;
 
@@ -105,8 +105,8 @@ public class DeleteTodoTaskIntegrationTest extends AbstractIntegrationTest {
         // given
         setFixedClock(FIXED_CLOCK_TIME);
 
-        Set<LocalDate> routineDates = todoTaskRoutineDateCalculator.computeRoutineDates(
-                TodoTaskRoutineCycle.DAILY, TEST_DATE, ROUTINE_END_DATE, null);
+        Set<LocalDate> routineDates = taskRoutineDateCalculator.computeRoutineDates(
+                TaskRoutineCycle.DAILY, TEST_DATE, ROUTINE_END_DATE, null);
 
         List<TodoTask> todoTasks = TodoTask.ofWithRoutine(
                 this.requestMember.getId(),
@@ -114,7 +114,7 @@ public class DeleteTodoTaskIntegrationTest extends AbstractIntegrationTest {
                 TEST_TITLE,
                 TEST_START_TIME,
                 routineDates,
-                TodoTaskRoutineCycle.DAILY,
+                TaskRoutineCycle.DAILY,
                 null,
                 false);
 
@@ -164,8 +164,8 @@ public class DeleteTodoTaskIntegrationTest extends AbstractIntegrationTest {
         // given
         setFixedClock(FIXED_CLOCK_TIME);
 
-        Set<LocalDate> routineDates = todoTaskRoutineDateCalculator.computeRoutineDates(
-                TodoTaskRoutineCycle.DAILY, TEST_DATE, ROUTINE_END_DATE, null);
+        Set<LocalDate> routineDates = taskRoutineDateCalculator.computeRoutineDates(
+                TaskRoutineCycle.DAILY, TEST_DATE, ROUTINE_END_DATE, null);
 
         List<TodoTask> todoTasks = TodoTask.ofWithRoutine(
                 this.requestMember.getId(),
@@ -173,7 +173,7 @@ public class DeleteTodoTaskIntegrationTest extends AbstractIntegrationTest {
                 TEST_TITLE,
                 TEST_START_TIME,
                 routineDates,
-                TodoTaskRoutineCycle.DAILY,
+                TaskRoutineCycle.DAILY,
                 null,
                 false);
 

@@ -5,9 +5,10 @@ import java.time.LocalTime;
 import lombok.Builder;
 
 @Builder
-public record CreateDowithTaskWithRoutineCommand(
-        Long taskCategoryId,
+public record UpdateDowithTaskContentsAndCreateRoutineCommand(
+        Long dowithTaskId,
         String title,
+        Long taskCategoryId,
         LocalDate date,
         LocalTime startTime,
-        TaskRoutineCondition routineCondition) {}
+        TaskRoutineCondition taskRoutineCondition) {}

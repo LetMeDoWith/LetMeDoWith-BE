@@ -13,31 +13,31 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class ConfirmDowithTaskService {
+public class SuccessDowithTaskService {
 
     private final DowithTaskRepository dowithTaskRepository;
     private final FileClient fileClient;
 
-    public List<String> generateDowithTaskConfirmImageUploadPresignedUrls(
+    public List<String> generateDowithTaskSuccessImageUploadPresignedUrls(
             String memberId, Long dowithTaskId, List<String> imageFileNames) {
 
         DowithTask dowithTask = dowithTaskRepository
                 .getDowithTask(dowithTaskId, memberId)
                 .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
 
-        List<String> keys = dowithTask.generateConfirmImageKey(imageFileNames);
+        List<String> keys = dowithTask.generateSuccessImageKey(imageFileNames);
         return keys.stream()
                 .map(key -> fileClient.getUploadPresignedUrl(key, Duration.ofSeconds(30)))
                 .toList();
     }
 
     @Transactional
-    public void confirmDowithTask(String memberId, Long dowithTaskId, List<String> imageUrls) {
+    public void successDowithTask(String memberId, Long dowithTaskId, List<String> imageUrls) {
 
         DowithTask dowithTask = dowithTaskRepository
                 .getDowithTask(dowithTaskId, memberId)
                 .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
 
-        dowithTask.confirm(imageUrls);
+        dowithTask.success(imageUrls);
     }
 }
