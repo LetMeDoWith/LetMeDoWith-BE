@@ -88,12 +88,14 @@ server:
     accesslog:
       enabled: true
       pattern: '%t %a "%r" %s %b %D'
-      directory: ./logs/access-log
+      directory: /var/logs/access-log
       prefix: access
       suffix: .log
       file-date-format: .yyyy-MM-dd
       max-days: 7
       rotate: true
+    remoteip:
+      remote-ip-header: X-Forwarded-For
 ---
 spring:
   config:

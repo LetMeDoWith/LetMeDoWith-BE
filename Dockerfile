@@ -12,17 +12,10 @@ ENV JAVA_TOOL_OPTIONS="\
  -Duser.timezone=Asia/Seoul \
  -XX:+UseContainerSupport \
  -XX:MaxRAMPercentage=60 -XX:InitialRAMPercentage=30 \
- -Xlog:gc*:file=/var/log/app/gc-%t.log:time,level,tags,uptime:filecount=5,filesize=20m \
- -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/var/log/app/heap.hprof \
- -XX:StartFlightRecording=filename=/var/log/app/app.jfr,settings=profile,maxage=2d,maxsize=256m,dumponexit=true \
+ -Xlog:gc*:file=/var/logs/gc/gc-%t.log:time,level,tags,uptime:filecount=5,filesize=20m \
+ -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/var/logs/heap/heap.hprof \
+ -XX:StartFlightRecording=filename=/var/logs/jfr/app.jfr,settings=profile,maxage=2d,maxsize=256m,dumponexit=true \
 "
-
-# 로그 디렉토리 생성
-RUN mkdir -p /var/log/app
-RUN mkdir -p ./logs/app ./logs/access-log ./logs/query ./logs/app/error
-
-# 볼륨 마운트 포인트 정의
-VOLUME ["/var/log/app", "/logs"]
 
 # 포트 오픈
 EXPOSE 8080

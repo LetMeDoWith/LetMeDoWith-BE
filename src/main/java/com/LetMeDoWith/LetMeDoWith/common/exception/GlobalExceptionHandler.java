@@ -7,6 +7,7 @@ import com.LetMeDoWith.LetMeDoWith.common.dto.InvalidParamResponseDto;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -15,11 +16,13 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 
     @ExceptionHandler({RestApiException.class})
     protected ResponseEntity<FailResponseDto> handleRestApiException(RestApiException ex) {
-        ex.printStackTrace();
+        log.error("{}: {}", ex.getStatus().getStatusName(), ex.getMessage());
+
         FailResponseDto responseBody = FailResponseDto.builder()
                 .statusCode(ex.getStatus().getStatusCode())
                 .message(ex.getMessage() == null ? ex.getStatus().getMessage() : ex.getMessage())
@@ -29,7 +32,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({RestApiAuthException.class})
     protected ResponseEntity<FailResponseDto> handleRestApiAuthException(RestApiAuthException ex) {
-        ex.printStackTrace();
+        log.error("{}: {}", ex.getStatus(), ex.getMessage());
+
         FailResponseDto responseBody = FailResponseDto.builder()
                 .statusCode(ex.getStatus().getStatusCode()) // TODO -
                 // Auth 관련
@@ -63,7 +67,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({Exception.class})
     protected ResponseEntity<FailResponseDto> handleException(Exception ex) {
-        ex.printStackTrace();
+        log.error("{}: {}", ex.getCause().getMessage(), ex.getMessage());
+
         FailResponseDto responseBody = FailResponseDto.builder()
                 .statusCode(FailResponseStatus.INTERNAL_SERVER_ERROR.getStatusCode())
                 .message(ex.getMessage())

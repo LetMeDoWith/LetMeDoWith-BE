@@ -2,7 +2,7 @@
 <configuration scan="false">
 
   <property name="PATTERN"
-    value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] [%X{traceId:-}] %logger{36} - %msg%n"/>
+    value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] [%X{traceId:-}] %logger{36} - %msg%n%ex"/>
 
   <!-- ================= local: 콘솔 ================= -->
   <springProfile name="local">
@@ -43,6 +43,7 @@
       <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
         <level>ERROR</level>
       </filter>
+      <immediateFlush>true</immediateFlush>
       <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
         <fileNamePattern>${ERR_DIR}/error-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
         <maxFileSize>10MB</maxFileSize>
@@ -72,11 +73,11 @@
 
     <logger level="OFF" name="org.hibernate.orm.jdbc.bind"/>
 
-    <property name="APP_DIR" value="/logs/app"/>
+    <property name="APP_DIR" value="/var/logs/app"/>
 
-    <property name="ERR_DIR" value="/logs/app/error"/>
+    <property name="ERR_DIR" value="/var/logs/app/error"/>
 
-    <property name="SQL_DIR" value="/logs/query"/>
+    <property name="SQL_DIR" value="/var/logs/query"/>
     <root level="INFO">
       <appender-ref ref="APP"/>
       <appender-ref ref="ERROR_ONLY"/>
