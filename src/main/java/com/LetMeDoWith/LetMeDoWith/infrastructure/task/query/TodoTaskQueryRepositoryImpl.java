@@ -42,4 +42,27 @@ public class TodoTaskQueryRepositoryImpl implements TodoTaskQueryRepository {
                 .where(todoTask.memberId.eq(memberId).and(todoTask.date.between(startDate, endDate)))
                 .fetch();
     }
+
+    // TODO - 선종 TodoTaskRoutine 도메인 모델부터 수정 필요
+    //    @Override
+    //    public TodoTaskDetailQueryDto getTodoTask(String memberId, Long todoTaskId) {
+    //        return queryFactory
+    //                .select(Projections.constructor(
+    //                        TodoTaskDetailQueryDto.class,
+    //                        todoTask.id,
+    //                        todoTask.taskCategoryId,
+    //                        taskCategory.title,
+    //                        todoTask.title,
+    //                        todoTask.status,
+    //                        todoTask.date,
+    //                        todoTask.startTime,
+    //                        todoTaskRoutine.))
+    //                .from(todoTask)
+    //                .leftJoin(taskCategory)
+    //                .on(todoTask.taskCategoryId.eq(taskCategory.id))
+    //                .leftJoin(todoTaskRoutine)
+    //                .on(todoTask.routine.id.eq(todoTaskRoutine.id))
+    //                .where(todoTask.memberId.eq(memberId).and(todoTask.id.eq(todoTaskId)))
+    //                .fetchOne();
+    //    }
 }

@@ -143,3 +143,43 @@ VALUES ((SELECT id FROM badge WHERE name = '뱃지1'), 'Y', (SELECT id FROM memb
         'admin', 'admin'),
        ((SELECT id FROM badge WHERE name = '뱃지9'), 'N', (SELECT id FROM member WHERE nickname = 'a2'), NOW(), NOW(),
         'admin', 'admin');
+
+
+INSERT INTO dowith_task (id, member_id, title, status, date, start_time)
+VALUES (1, 'test-member-id', '테스트 태스크', 'WAIT', CURRENT_DATE(),
+        DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 10 MINUTE), '%H:%i:%s'));
+
+-- 2. 테스트용 피드백 템플릿 생성 (id=1)
+INSERT INTO task_feedback_template (id, emoji_url, title, description, is_active, create_at, updated_at, created_by,
+                                    updated_by)
+VALUES (1, 'http://test.emoji.url', '칭찬', '잘했어요!', 'Y', NOW(), NOW(), 'system', 'system');
+
+-- 3. 테스트용 피드백 템플릿 메시지 생성 (id=1)
+INSERT INTO task_feedback_template_message (id, task_feedback_template_id, message, language, create_at, updated_at,
+                                            created_by, updated_by)
+VALUES (1, 1, '정말 잘했어요!', 'KR', NOW(), NOW(), 'system', 'system');
+
+INSERT INTO notification_template (code,
+                                   title,
+                                   body,
+                                   app_deep_link,
+                                   create_at,
+                                   updated_at,
+                                   created_by,
+                                   updated_by)
+VALUES ('SIGN_UP_COMPLETE',
+        '👋 환영해요 {{userName}}님! 회원가입이 완료되었습니다.',
+        '프로필을 설정하고 서비스를 시작해 보세요!',
+        NULL,
+        NOW(),
+        NOW(),
+        'system',
+        'system'),
+       ('ENABLE_NOTIFICATION_REQUEST',
+        '🔔알림을 켜고 더 재미있게 사용해봐요!',
+        '알림이 있어야 두윗러로써의 삶을 제대로 경험할 수 있답니다.\n이제 알림을 켜고 시작해볼까요?',
+        NULL,
+        NOW(),
+        NOW(),
+        'system',
+        'system');

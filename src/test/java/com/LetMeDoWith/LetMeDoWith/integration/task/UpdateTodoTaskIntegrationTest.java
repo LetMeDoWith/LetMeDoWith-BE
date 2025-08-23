@@ -3,10 +3,10 @@ package com.LetMeDoWith.LetMeDoWith.integration.task;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TodoTaskRoutineCycle;
+import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TaskRoutineCycle;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskCategory;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TodoTask;
-import com.LetMeDoWith.LetMeDoWith.domain.task.service.TodoTaskRoutineDateCalculator;
+import com.LetMeDoWith.LetMeDoWith.domain.task.service.TaskRoutineDateCalculator;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.TaskCategoryJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.TodoTaskJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.integration.AbstractIntegrationTest;
@@ -58,7 +58,7 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
     private TaskCategoryJpaRepository taskCategoryRepository;
 
     @Autowired
-    private TodoTaskRoutineDateCalculator todoTaskRoutineDateCalculator;
+    private TaskRoutineDateCalculator taskRoutineDateCalculator;
 
     private TaskCategory taskCategory;
     private TaskCategory taskCategory2;
@@ -149,8 +149,7 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
                 UPDATED_TITLE,
                 updateStartDateTime,
                 updatedCategoryId,
-                UpdateTodoTaskRoutineReqDto.of(
-                        ORIGINAL_DATE, ROUTINE_END_DATE, TodoTaskRoutineCycle.DAILY, null, false));
+                UpdateTodoTaskRoutineReqDto.of(ORIGINAL_DATE, ROUTINE_END_DATE, TaskRoutineCycle.DAILY, null, false));
 
         long gap = ChronoUnit.DAYS.between(ORIGINAL_DATE, ROUTINE_END_DATE);
 
@@ -183,8 +182,8 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
         // given
         setFixedClock(FIXED_CLOCK_TIME);
 
-        Set<LocalDate> routineDates = todoTaskRoutineDateCalculator.computeRoutineDates(
-                TodoTaskRoutineCycle.DAILY, ORIGINAL_DATE, ROUTINE_END_DATE, null);
+        Set<LocalDate> routineDates = taskRoutineDateCalculator.computeRoutineDates(
+                TaskRoutineCycle.DAILY, ORIGINAL_DATE, ROUTINE_END_DATE, null);
 
         List<TodoTask> todoTasks = TodoTask.ofWithRoutine(
                 this.requestMember.getId(),
@@ -192,7 +191,7 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
                 ORIGINAL_TITLE,
                 ORIGINAL_START_TIME,
                 routineDates,
-                TodoTaskRoutineCycle.DAILY,
+                TaskRoutineCycle.DAILY,
                 null,
                 false);
 
@@ -257,8 +256,8 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
         // given
         setFixedClock(FIXED_CLOCK_TIME);
 
-        Set<LocalDate> routineDates = todoTaskRoutineDateCalculator.computeRoutineDates(
-                TodoTaskRoutineCycle.DAILY, ORIGINAL_DATE, ROUTINE_END_DATE, null);
+        Set<LocalDate> routineDates = taskRoutineDateCalculator.computeRoutineDates(
+                TaskRoutineCycle.DAILY, ORIGINAL_DATE, ROUTINE_END_DATE, null);
 
         List<TodoTask> todoTasks = TodoTask.ofWithRoutine(
                 this.requestMember.getId(),
@@ -266,7 +265,7 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
                 ORIGINAL_TITLE,
                 ORIGINAL_START_TIME,
                 routineDates,
-                TodoTaskRoutineCycle.DAILY,
+                TaskRoutineCycle.DAILY,
                 null,
                 false);
 
@@ -335,8 +334,8 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
         // given
         setFixedClock(FIXED_CLOCK_TIME);
 
-        Set<LocalDate> routineDates = todoTaskRoutineDateCalculator.computeRoutineDates(
-                TodoTaskRoutineCycle.DAILY, ORIGINAL_DATE, ROUTINE_END_DATE, null);
+        Set<LocalDate> routineDates = taskRoutineDateCalculator.computeRoutineDates(
+                TaskRoutineCycle.DAILY, ORIGINAL_DATE, ROUTINE_END_DATE, null);
 
         List<TodoTask> todoTasks = TodoTask.ofWithRoutine(
                 this.requestMember.getId(),
@@ -344,7 +343,7 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
                 ORIGINAL_TITLE,
                 ORIGINAL_START_TIME,
                 routineDates,
-                TodoTaskRoutineCycle.DAILY,
+                TaskRoutineCycle.DAILY,
                 null,
                 false);
 
@@ -363,7 +362,7 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
         UpdateTodoTaskRoutineReqDto req = UpdateTodoTaskRoutineReqDto.of(
                 LocalDate.of(2024, 6, 3),
                 ROUTINE_END_DATE,
-                TodoTaskRoutineCycle.MONTHLY,
+                TaskRoutineCycle.MONTHLY,
                 updatedPattern, // 10, 20, 30일로 변경
                 false // 공휴일 제외 여부는 false로 유지
                 );
@@ -404,7 +403,7 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     @DisplayName("[SUCCESS] 투두모드 태스크 완료")
-    void completeTodoTaskTest() throws Exception {
+    void successTodoTaskTest() throws Exception {
         // given
         setFixedClock(FIXED_CLOCK_TIME);
 
@@ -413,7 +412,7 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
 
         // when
         ResultActions resultActions =
-                this.request(MockMvcRequestBuilders.patch(URL + "/" + todoTask.getId() + "/complete"));
+                this.request(MockMvcRequestBuilders.patch(URL + "/" + todoTask.getId() + "/success"));
 
         // then
         resultActions.andExpect(status().isOk());
@@ -462,7 +461,7 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
                 this.requestMember.getId(), taskCategory.getId(), ORIGINAL_TITLE, ORIGINAL_DATE, ORIGINAL_START_TIME));
 
         // 태스크를 완료 상태로 변경 (테스트를 위해 수동으로 처리)
-        todoTask.complete();
+        todoTask.success();
         todoTaskRepository.save(todoTask);
 
         // when

@@ -1,8 +1,13 @@
 package com.LetMeDoWith.LetMeDoWith.application.task.service;
 
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.RetrieveDowithTaskResult;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.RetrieveTasksResult;
+import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
+import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.DowithTaskQueryRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.TodoTaskQueryRepository;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.dto.DowithTaskDetailQueryDto;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.dto.DowithTaskQueryDto;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.dto.TodoTaskQueryDto;
 import java.time.LocalDate;
@@ -20,8 +25,35 @@ public class RetrieveTaskService {
     private final TodoTaskQueryRepository todoTaskQueryRepository;
     private final DowithTaskQueryRepository dowithTaskQueryRepository;
 
+    /**
+     * DowithTask 조회
+     *
+     * @param dowithTaskId
+     * @return
+     */
     @Transactional(readOnly = true)
-    public RetrieveTasksResult retrieveMonthTasks(String memberId, Year year, Month month) {
+    public RetrieveDowithTaskResult retrieveDowithTask(Long dowithTaskId) {
+        String memberId = AuthUtil.getMemberId();
+        DowithTaskDetailQueryDto result = dowithTaskQueryRepository
+                .getDowithTask(memberId, dowithTaskId)
+                .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
+        return RetrieveDowithTaskResult.from(result);
+    }
+
+    /**
+     * TodoTask 조회
+     *
+     * @param todoTaskId
+     */
+    @Transactional(readOnly = true)
+    public void retrieveTodoTask(Long todoTaskId) {
+        String memberId = AuthUtil.getMemberId();
+        // TODO - 선종 todo task 단일 조회 service 개발 필요 after TodoTaskRoutine 도메인 모델 수정 후
+    }
+
+    @Transactional(readOnly = true)
+    public RetrieveTasksResult retrieveMonthTasks(Year year, Month month) {
+        String memberId = AuthUtil.getMemberId();
         LocalDate startDate = LocalDate.of(year.getValue(), month, 1);
         LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
 

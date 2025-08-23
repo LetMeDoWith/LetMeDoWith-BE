@@ -1,10 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository;
 
-import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
-import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTaskRoutine;
-import com.LetMeDoWith.LetMeDoWith.domain.task.model.QDowithTask;
-import com.LetMeDoWith.LetMeDoWith.domain.task.model.QDowithTaskConfirm;
-import com.LetMeDoWith.LetMeDoWith.domain.task.model.QDowithTaskRoutine;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.*;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.sql.Date;
@@ -22,14 +18,14 @@ public class QDowithTaskRepositoryImpl implements QDowithTaskRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     private final QDowithTask qDowithTask = QDowithTask.dowithTask;
-    private final QDowithTaskConfirm qDowithTaskConfirm = QDowithTaskConfirm.dowithTaskConfirm;
+    private final QDowithTaskSuccess qDowithTaskSuccess = QDowithTaskSuccess.dowithTaskSuccess;
     private final QDowithTaskRoutine qDowithTaskRoutine = QDowithTaskRoutine.dowithTaskRoutine;
 
     @Override
     public Optional<DowithTask> findDowithTaskAggregate(Long id) {
         return Optional.ofNullable(jpaQueryFactory
                 .selectFrom(qDowithTask)
-                .leftJoin(qDowithTask.confirms, qDowithTaskConfirm)
+                .leftJoin(qDowithTask.successes, qDowithTaskSuccess)
                 .leftJoin(qDowithTask.routine, qDowithTaskRoutine)
                 .where(qDowithTask.id.eq(id))
                 .fetchJoin()
@@ -41,7 +37,7 @@ public class QDowithTaskRepositoryImpl implements QDowithTaskRepository {
         Date targetDate = Date.valueOf(date);
         return jpaQueryFactory
                 .selectFrom(qDowithTask)
-                .leftJoin(qDowithTask.confirms, qDowithTaskConfirm)
+                .leftJoin(qDowithTask.successes, qDowithTaskSuccess)
                 .leftJoin(qDowithTask.routine, qDowithTaskRoutine)
                 .where(Expressions.dateTemplate(java.sql.Date.class, "DATE({0})", qDowithTask.date)
                         .eq(targetDate)
@@ -56,7 +52,7 @@ public class QDowithTaskRepositoryImpl implements QDowithTaskRepository {
         List<Date> targetDates = dates.stream().map(Date::valueOf).toList();
         return jpaQueryFactory
                 .selectFrom(qDowithTask)
-                .leftJoin(qDowithTask.confirms, qDowithTaskConfirm)
+                .leftJoin(qDowithTask.successes, qDowithTaskSuccess)
                 .leftJoin(qDowithTask.routine, qDowithTaskRoutine)
                 .where(Expressions.dateTemplate(java.sql.Date.class, "DATE({0})", qDowithTask.date)
                         .in(targetDates)
@@ -70,7 +66,7 @@ public class QDowithTaskRepositoryImpl implements QDowithTaskRepository {
     public Optional<DowithTask> findDowithTaskAggregate(Long id, String memberId) {
         return Optional.ofNullable(jpaQueryFactory
                 .selectFrom(qDowithTask)
-                .leftJoin(qDowithTask.confirms, qDowithTaskConfirm)
+                .leftJoin(qDowithTask.successes, qDowithTaskSuccess)
                 .leftJoin(qDowithTask.routine, qDowithTaskRoutine)
                 .where(qDowithTask.id.eq(id).and(qDowithTask.memberId.eq(memberId)))
                 .fetchJoin()
@@ -81,7 +77,7 @@ public class QDowithTaskRepositoryImpl implements QDowithTaskRepository {
     public List<DowithTask> findAllDowithTaskAggregates(DowithTaskRoutine dowithTaskRoutine) {
         return jpaQueryFactory
                 .selectFrom(qDowithTask)
-                .leftJoin(qDowithTask.confirms, qDowithTaskConfirm)
+                .leftJoin(qDowithTask.successes, qDowithTaskSuccess)
                 .leftJoin(qDowithTask.routine, qDowithTaskRoutine)
                 .where(qDowithTask.routine.eq(dowithTaskRoutine))
                 .orderBy(qDowithTask.createdAt.asc())

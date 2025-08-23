@@ -9,8 +9,8 @@ import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskCategory;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.DowithTaskJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.TaskCategoryJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.integration.AbstractIntegrationTest;
-import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.ConfirmDowithTaskReqDto;
-import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.GenerateDowithTaskConfirmImageUploadPresignedUrlsReqDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.GenerateDowithTaskSuccessImageUploadPresignedUrlsReqDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.successDowithTaskReqDto;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -23,12 +23,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-public class ConfrimDowithTaskIntegrationTest extends AbstractIntegrationTest {
+public class SuccessDowithTaskIntegrationTest extends AbstractIntegrationTest {
 
     static final String RETRIEVE_TASKS_URL = "/api/v1/tasks";
-    private static final String CONFIRM_TASK_URL = "/api/v1/tasks/dowith/{dowithTaskId}/confirm";
+    private static final String SUCCESS_TASK_URL = "/api/v1/tasks/dowith/{dowithTaskId}/success";
     private static final String GET_CONFIRM_UPLOAD_PRESIGNED_URL =
-            "/api/v1/tasks/dowith/{dowithTaskId}/confirm/image/upload-presigned-url";
+            "/api/v1/tasks/dowith/{dowithTaskId}/success/image/upload-presigned-url";
 
     @Autowired
     private DowithTaskJpaRepository dowithTaskJpaRepository;
@@ -66,14 +66,14 @@ public class ConfrimDowithTaskIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     @DisplayName("[SUCCESS] 두윗모드 Task 인증 사진 업로드 Presigned URL 발급")
-    void generateConfirmUploadPresignedUrl1() throws Exception {
+    void generateSuccessUploadPresignedUrl1() throws Exception {
         // given
         List<String> confirmImageFileNames = List.of("photo1.jpg", "photo2.jpg");
         this.setFixedClock(LocalDateTime.of(2024, 3, 1, 12, 0));
 
         // when
-        GenerateDowithTaskConfirmImageUploadPresignedUrlsReqDto requestBody =
-                new GenerateDowithTaskConfirmImageUploadPresignedUrlsReqDto(confirmImageFileNames);
+        GenerateDowithTaskSuccessImageUploadPresignedUrlsReqDto requestBody =
+                new GenerateDowithTaskSuccessImageUploadPresignedUrlsReqDto(confirmImageFileNames);
 
         ResultActions resultActions =
                 this.request(MockMvcRequestBuilders.post(GET_CONFIRM_UPLOAD_PRESIGNED_URL, dowithTask.getId())
@@ -98,8 +98,8 @@ public class ConfrimDowithTaskIntegrationTest extends AbstractIntegrationTest {
         List<String> confirmImageFileNames = List.of("photo1.pdf", "photo2.jpg");
         this.setFixedClock(LocalDateTime.of(2024, 3, 1, 12, 0));
         // when
-        GenerateDowithTaskConfirmImageUploadPresignedUrlsReqDto requestBody =
-                new GenerateDowithTaskConfirmImageUploadPresignedUrlsReqDto(confirmImageFileNames);
+        GenerateDowithTaskSuccessImageUploadPresignedUrlsReqDto requestBody =
+                new GenerateDowithTaskSuccessImageUploadPresignedUrlsReqDto(confirmImageFileNames);
 
         ResultActions resultActions =
                 this.request(MockMvcRequestBuilders.post(GET_CONFIRM_UPLOAD_PRESIGNED_URL, dowithTask.getId())
@@ -111,13 +111,13 @@ public class ConfrimDowithTaskIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     @DisplayName("[FAIL] 시작 시간 이후에 인증 시도하는 경우")
-    void generateConfirmUploadPresignedUrl3() throws Exception {
+    void generateSuccessUploadPresignedUrl3() throws Exception {
         // given
         List<String> confirmImageFileNames = List.of("photo1.jpg", "photo2.jpg");
         this.setFixedClock(LocalDateTime.of(2024, 3, 1, 15, 0));
         // when
-        GenerateDowithTaskConfirmImageUploadPresignedUrlsReqDto requestBody =
-                new GenerateDowithTaskConfirmImageUploadPresignedUrlsReqDto(confirmImageFileNames);
+        GenerateDowithTaskSuccessImageUploadPresignedUrlsReqDto requestBody =
+                new GenerateDowithTaskSuccessImageUploadPresignedUrlsReqDto(confirmImageFileNames);
 
         ResultActions resultActions =
                 this.request(MockMvcRequestBuilders.post(GET_CONFIRM_UPLOAD_PRESIGNED_URL, dowithTask.getId())
@@ -129,15 +129,15 @@ public class ConfrimDowithTaskIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     @DisplayName("[SUCCESS] Dowith Task 인증 성공")
-    void confirmDowithTask1() throws Exception {
+    void successDowithTask1() throws Exception {
         // given
         List<String> publicImageUrls = List.of("https://example.com/photo1.jpg", "https://example.com/photo2.jpg");
         this.setFixedClock(LocalDateTime.of(2024, 3, 1, 10, 0));
 
         // when
-        ConfirmDowithTaskReqDto requestBody = new ConfirmDowithTaskReqDto(publicImageUrls);
+        successDowithTaskReqDto requestBody = new successDowithTaskReqDto(publicImageUrls);
         ResultActions confirmResultActions =
-                this.request(MockMvcRequestBuilders.post(CONFIRM_TASK_URL, dowithTask.getId())
+                this.request(MockMvcRequestBuilders.post(SUCCESS_TASK_URL, dowithTask.getId())
                         .content(this.writeRequestBodyAsString(requestBody)));
         ResultActions retrieveResultActions = this.request(MockMvcRequestBuilders.get(RETRIEVE_TASKS_URL)
                         .param("year", "2024")
@@ -156,15 +156,15 @@ public class ConfrimDowithTaskIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     @DisplayName("[FAIL] 시작시간이 지난 후 인증 시도하는 경우")
-    void confirmDowithTask2() throws Exception {
+    void successDowithTask2() throws Exception {
         // given
         List<String> publicImageUrls = List.of("https://example.com/photo1.jpg", "https://example.com/photo2.jpg");
         this.setFixedClock(LocalDateTime.of(2024, 3, 1, 14, 1));
 
         // when
-        ConfirmDowithTaskReqDto requestBody = new ConfirmDowithTaskReqDto(publicImageUrls);
+        successDowithTaskReqDto requestBody = new successDowithTaskReqDto(publicImageUrls);
         ResultActions confirmResultActions =
-                this.request(MockMvcRequestBuilders.post(CONFIRM_TASK_URL, dowithTask.getId())
+                this.request(MockMvcRequestBuilders.post(SUCCESS_TASK_URL, dowithTask.getId())
                         .content(this.writeRequestBodyAsString(requestBody)));
         ResultActions retrieveResultActions = this.request(MockMvcRequestBuilders.get(RETRIEVE_TASKS_URL)
                         .param("year", "2024")

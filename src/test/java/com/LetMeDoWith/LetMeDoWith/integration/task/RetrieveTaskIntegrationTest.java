@@ -90,7 +90,7 @@ public class RetrieveTaskIntegrationTest extends AbstractIntegrationTest {
                 LocalDate.of(2024, 3, 14),
                 LocalTime.of(14, 0));
 
-        dowithTask3.confirm(List.of("https://example.com/image1.jpg", "https://example.com/image2.jpg"));
+        dowithTask3.success(List.of("https://example.com/image1.jpg", "https://example.com/image2.jpg"));
 
         dowithTaskJpaRepository.saveAll(List.of(dowithTask1, dowithTask2, dowithTask3));
     }

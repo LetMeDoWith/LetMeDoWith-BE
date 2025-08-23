@@ -1,6 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.task.dto;
 
-import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TodoTaskRoutineCycle;
+import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TaskRoutineCycle;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -20,7 +20,7 @@ public record CreateTodoTaskReqDto(
     public record TodoTaskRoutineCondition(
             @Schema(description = "시작 일자", defaultValue = "2025-01-30") @NotNull LocalDate startDate,
             @Schema(description = "종료 일자", defaultValue = "2025-01-30") @NotNull LocalDate endDate,
-            @Schema(description = "루틴 반복 주기", defaultValue = "DAILY") @NotNull TodoTaskRoutineCycle cycle,
+            @Schema(description = "루틴 반복 주기", defaultValue = "DAILY") @NotNull TaskRoutineCycle cycle,
             @Schema(description = "루틴 반복 패턴", defaultValue = "[1, 2, 3]") @NotNull Set<Integer> pattern,
             @Schema(description = "루틴 반복 휴일 제외 여부", defaultValue = "false") @NotNull Boolean isExcludeHolidays) {}
 }
