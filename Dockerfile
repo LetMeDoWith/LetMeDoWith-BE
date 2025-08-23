@@ -21,6 +21,9 @@ ENV JAVA_TOOL_OPTIONS="\
 RUN mkdir -p /var/log/app
 RUN mkdir -p ./logs/app ./logs/access-log ./logs/query ./logs/app/error
 
+# 볼륨 마운트 포인트 정의
+VOLUME ["/var/log/app", "/logs"]
+
 # 포트 오픈
 EXPOSE 8080
 
