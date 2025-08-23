@@ -180,11 +180,11 @@ public class UpdateTodoTaskService {
      * @param todoTaskId 완료할 투두모드 태스크의 ID
      */
     @Transactional
-    public TodoTask completeTodoTask(String memberId, Long todoTaskId) {
+    public TodoTask successTodoTask(String memberId, Long todoTaskId) {
         return todoTaskRepository
                 .getTodoTask(todoTaskId, memberId)
                 .orElseThrow(() -> new RestApiException(INVALID_REQUEST))
-                .complete();
+                .success();
     }
 
     /**

@@ -5,15 +5,16 @@ import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskRepository;
-import java.time.Duration;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
-public class ConfirmDowithTaskService {
+public class SuccessDowithTaskService {
 
     private final DowithTaskRepository dowithTaskRepository;
     private final FileClient fileClient;
@@ -32,12 +33,12 @@ public class ConfirmDowithTaskService {
     }
 
     @Transactional
-    public void confirmDowithTask(String memberId, Long dowithTaskId, List<String> imageUrls) {
+    public void successDowithTask(String memberId, Long dowithTaskId, List<String> imageUrls) {
 
         DowithTask dowithTask = dowithTaskRepository
                 .getDowithTask(dowithTaskId, memberId)
                 .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
 
-        dowithTask.confirm(imageUrls);
+        dowithTask.success(imageUrls);
     }
 }

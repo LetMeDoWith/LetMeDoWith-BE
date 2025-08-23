@@ -403,7 +403,7 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     @DisplayName("[SUCCESS] 투두모드 태스크 완료")
-    void completeTodoTaskTest() throws Exception {
+    void successTodoTaskTest() throws Exception {
         // given
         setFixedClock(FIXED_CLOCK_TIME);
 
@@ -412,7 +412,7 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
 
         // when
         ResultActions resultActions =
-                this.request(MockMvcRequestBuilders.patch(URL + "/" + todoTask.getId() + "/complete"));
+                this.request(MockMvcRequestBuilders.patch(URL + "/" + todoTask.getId() + "/success"));
 
         // then
         resultActions.andExpect(status().isOk());
@@ -461,7 +461,7 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
                 this.requestMember.getId(), taskCategory.getId(), ORIGINAL_TITLE, ORIGINAL_DATE, ORIGINAL_START_TIME));
 
         // 태스크를 완료 상태로 변경 (테스트를 위해 수동으로 처리)
-        todoTask.complete();
+        todoTask.success();
         todoTaskRepository.save(todoTask);
 
         // when

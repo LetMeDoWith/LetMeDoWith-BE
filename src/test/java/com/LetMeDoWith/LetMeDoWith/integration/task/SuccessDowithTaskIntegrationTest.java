@@ -1,20 +1,13 @@
 package com.LetMeDoWith.LetMeDoWith.integration.task;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskCategory;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.DowithTaskJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.TaskCategoryJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.integration.AbstractIntegrationTest;
-import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.ConfirmDowithTaskReqDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.GenerateDowithTaskConfirmImageUploadPresignedUrlsReqDto;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.List;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.successDowithTaskReqDto;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,10 +16,18 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-public class ConfrimDowithTaskIntegrationTest extends AbstractIntegrationTest {
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
+
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+public class SuccessDowithTaskIntegrationTest extends AbstractIntegrationTest {
 
     static final String RETRIEVE_TASKS_URL = "/api/v1/tasks";
-    private static final String CONFIRM_TASK_URL = "/api/v1/tasks/dowith/{dowithTaskId}/confirm";
+    private static final String SUCCESS_TASK_URL = "/api/v1/tasks/dowith/{dowithTaskId}/success";
     private static final String GET_CONFIRM_UPLOAD_PRESIGNED_URL =
             "/api/v1/tasks/dowith/{dowithTaskId}/confirm/image/upload-presigned-url";
 
@@ -135,9 +136,9 @@ public class ConfrimDowithTaskIntegrationTest extends AbstractIntegrationTest {
         this.setFixedClock(LocalDateTime.of(2024, 3, 1, 10, 0));
 
         // when
-        ConfirmDowithTaskReqDto requestBody = new ConfirmDowithTaskReqDto(publicImageUrls);
+        successDowithTaskReqDto requestBody = new successDowithTaskReqDto(publicImageUrls);
         ResultActions confirmResultActions =
-                this.request(MockMvcRequestBuilders.post(CONFIRM_TASK_URL, dowithTask.getId())
+                this.request(MockMvcRequestBuilders.post(SUCCESS_TASK_URL, dowithTask.getId())
                         .content(this.writeRequestBodyAsString(requestBody)));
         ResultActions retrieveResultActions = this.request(MockMvcRequestBuilders.get(RETRIEVE_TASKS_URL)
                         .param("year", "2024")
@@ -162,9 +163,9 @@ public class ConfrimDowithTaskIntegrationTest extends AbstractIntegrationTest {
         this.setFixedClock(LocalDateTime.of(2024, 3, 1, 14, 1));
 
         // when
-        ConfirmDowithTaskReqDto requestBody = new ConfirmDowithTaskReqDto(publicImageUrls);
+        successDowithTaskReqDto requestBody = new successDowithTaskReqDto(publicImageUrls);
         ResultActions confirmResultActions =
-                this.request(MockMvcRequestBuilders.post(CONFIRM_TASK_URL, dowithTask.getId())
+                this.request(MockMvcRequestBuilders.post(SUCCESS_TASK_URL, dowithTask.getId())
                         .content(this.writeRequestBodyAsString(requestBody)));
         ResultActions retrieveResultActions = this.request(MockMvcRequestBuilders.get(RETRIEVE_TASKS_URL)
                         .param("year", "2024")

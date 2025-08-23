@@ -142,10 +142,10 @@ public class TodoTaskController {
     @ApiErrorResponses({
         @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청입니다."),
     })
-    @PatchMapping("/{todoTaskId}/complete")
-    public ResponseEntity<ResponseDto<Long>> completeTodoTask(@PathVariable Long todoTaskId) {
+    @PatchMapping("/{todoTaskId}/success")
+    public ResponseEntity<ResponseDto<Long>> successTodoTask(@PathVariable Long todoTaskId) {
         String memberId = AuthUtil.getMemberId();
-        TodoTask completeTodoTask = updateTodoTaskService.completeTodoTask(memberId, todoTaskId);
+        TodoTask completeTodoTask = updateTodoTaskService.successTodoTask(memberId, todoTaskId);
         return ResponseUtil.createSuccessResponse(completeTodoTask.getId());
     }
 

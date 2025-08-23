@@ -13,10 +13,11 @@ import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Tag(name = "Dowith Task", description = "두윗모드 테스크")
 @RestController
@@ -27,7 +28,7 @@ public class DowithTaskController {
     private final CreateDowithTaskService createDowithTaskService;
     private final UpdateDowithTaskService updateDowithTaskService;
     private final DeleteDowithTaskService deleteDowithTaskService;
-    private final ConfirmDowithTaskService confirmDowithTaskService;
+    private final SuccessDowithTaskService successDowithTaskService;
     private final RetrieveTaskService retrieveTaskService;
     private final TaskSummaryService taskSummaryService;
 
@@ -56,11 +57,11 @@ public class DowithTaskController {
     @Operation(summary = "두윗모드 Task (루틴) 생성", description = "두윗모드 테스크를 생성합니다. RoutineCondition에 루틴 조건을 넣어줍니다.")
     @ApiSuccessResponse(description = "두윗모드 Task (루틴) 생성 성공.")
     @ApiErrorResponses({
-        @ApiErrorResponse(
-                status = FailResponseStatus.INVALID_PARAM_ERROR,
-                description =
-                        "Request Body의 title이 공백이거나, 40자 초과인경우 / date, startTime이 null인 경우 / routine의 startDate가 date와 일치하지 않는 경우"),
-        @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")
+            @ApiErrorResponse(
+                    status = FailResponseStatus.INVALID_PARAM_ERROR,
+                    description =
+                            "Request Body의 title이 공백이거나, 40자 초과인경우 / date, startTime이 null인 경우 / routine의 startDate가 date와 일치하지 않는 경우"),
+            @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")
     })
     @PostMapping("/with-routine")
     public ResponseEntity createDowithTaskWithRoutine(
@@ -74,14 +75,14 @@ public class DowithTaskController {
     @Operation(summary = "두윗모드 Task 수정", description = "두윗모드 Task를 수정합니다.")
     @ApiSuccessResponse(description = "두윗모드 Task 수정 성공")
     @ApiErrorResponses({
-        @ApiErrorResponse(
-                status = FailResponseStatus.INVALID_PARAM_ERROR,
-                description =
-                        "Request Body의 title이 공백이거나, 40자 초과인경우 / date, startTime이 null인 경우 / routine의 startDate가 date와 일치하지 않는 경우"),
-        @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우"),
-        //        @ApiErrorResponse(
-        //                status = FailResponseStatus.DOWITH_TASK_CREATE_COUNT_EXCEED,
-        //                description = "일일 두윗모드 Task 등록 가능 개수를 초과한 경우")
+            @ApiErrorResponse(
+                    status = FailResponseStatus.INVALID_PARAM_ERROR,
+                    description =
+                            "Request Body의 title이 공백이거나, 40자 초과인경우 / date, startTime이 null인 경우 / routine의 startDate가 date와 일치하지 않는 경우"),
+            @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우"),
+            //        @ApiErrorResponse(
+            //                status = FailResponseStatus.DOWITH_TASK_CREATE_COUNT_EXCEED,
+            //                description = "일일 두윗모드 Task 등록 가능 개수를 초과한 경우")
     })
     @PutMapping("/{dowithTaskId}")
     public ResponseEntity updateDowithTask(
@@ -100,11 +101,11 @@ public class DowithTaskController {
     @Operation(summary = "두윗모드 Task 루틴 수정", description = "두윗모드 Task의 루틴을 수정합니다.")
     @ApiSuccessResponse(description = "두윗모드 Task 루틴 수정 성공")
     @ApiErrorResponses({
-        @ApiErrorResponse(
-                status = FailResponseStatus.INVALID_PARAM_ERROR,
-                description =
-                        "Request Body의 title이 공백이거나, 40자 초과인경우 / date, startTime이 null인 경우 / routine의 startDate가 date와 일치하지 않는 경우"),
-        @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")
+            @ApiErrorResponse(
+                    status = FailResponseStatus.INVALID_PARAM_ERROR,
+                    description =
+                            "Request Body의 title이 공백이거나, 40자 초과인경우 / date, startTime이 null인 경우 / routine의 startDate가 date와 일치하지 않는 경우"),
+            @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")
     })
     @PutMapping("/{dowithTaskId}/routine")
     public ResponseEntity updateDowithTaskRoutine(
@@ -144,13 +145,13 @@ public class DowithTaskController {
     @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")})
     @PostMapping("/{dowithTaskId}/confirm/image/upload-presigned-url")
     public ResponseEntity<ResponseDto<GenerateDowithTaskConfirmImageUploadPresignedUrlsResDto>>
-            generateDowithTaskConfirmImageUploadPresignedUrls(
-                    @PathVariable Long dowithTaskId,
-                    @RequestBody GenerateDowithTaskConfirmImageUploadPresignedUrlsReqDto requestBody) {
+    generateDowithTaskConfirmImageUploadPresignedUrls(
+            @PathVariable Long dowithTaskId,
+            @RequestBody GenerateDowithTaskConfirmImageUploadPresignedUrlsReqDto requestBody) {
 
         String memberId = AuthUtil.getMemberId();
 
-        List<String> presignedUrls = confirmDowithTaskService.generateDowithTaskConfirmImageUploadPresignedUrls(
+        List<String> presignedUrls = successDowithTaskService.generateDowithTaskConfirmImageUploadPresignedUrls(
                 memberId, dowithTaskId, requestBody.imageFileNames());
 
         return ResponseUtil.createSuccessResponse(
@@ -160,13 +161,13 @@ public class DowithTaskController {
     @Operation(summary = "두윗모드 Task 인증", description = "Presigned url을 통해서 업로드한 파일의 public url을 body에 담아 요청합니다.")
     @ApiSuccessResponse(description = "두윗모드 Task 인증 성공")
     @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")})
-    @PostMapping("/{dowithTaskId}/confirm")
-    public ResponseEntity<ResponseDto<Object>> confirmDowithTask(
-            @PathVariable Long dowithTaskId, @RequestBody ConfirmDowithTaskReqDto requestBody) {
+    @PostMapping("/{dowithTaskId}/success")
+    public ResponseEntity<ResponseDto<Object>> successDowithTask(
+            @PathVariable Long dowithTaskId, @RequestBody successDowithTaskReqDto requestBody) {
 
         String memberId = AuthUtil.getMemberId();
 
-        confirmDowithTaskService.confirmDowithTask(memberId, dowithTaskId, requestBody.publicImageUrls());
+        successDowithTaskService.successDowithTask(memberId, dowithTaskId, requestBody.publicImageUrls());
 
         return ResponseUtil.createSuccessResponse();
     }

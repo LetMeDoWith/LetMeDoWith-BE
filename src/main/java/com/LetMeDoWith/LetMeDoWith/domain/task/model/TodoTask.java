@@ -262,7 +262,7 @@ public class TodoTask extends BaseAuditEntity {
         }
     }
 
-    public TodoTask complete() {
+    public TodoTask success() {
         if (this.status != TodoTaskStatus.WAIT) {
             throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
         }

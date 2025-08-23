@@ -271,7 +271,7 @@ public class DowithTask extends BaseAuditEntity {
      *
      * @param imageUrls
      */
-    public void confirm(List<String> imageUrls) {
+    public void success(List<String> imageUrls) {
 
         if (!status.equals(DowithTaskStatus.WAIT)) {
             throw new RestApiException(INVALID_REQUEST);
