@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="false">
+
+  <property name="PATTERN"
+    value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] [%X{traceId:-}] %logger{36} - %msg%n"/>
+
+  <!-- ================= local: 콘솔 ================= -->
+  <springProfile name="local">
+    <appender class="ch.qos.logback.core.ConsoleAppender" name="CONSOLE">
+      <encoder>
+        <pattern>${PATTERN}</pattern>
+      </encoder>
+    </appender>
+
+    <logger level="OFF" name="org.hibernate.SQL"/>
+
+    <logger level="OFF" name="org.hibernate.orm.jdbc.bind"/>
+    <root level="INFO">
+      <appender-ref ref="CONSOLE"/>
+    </root>
+  </springProfile>
+
+  <!-- ================= dev: 파일 ================= -->
+  <springProfile name="dev">
+
+    <appender class="ch.qos.logback.core.rolling.RollingFileAppender" name="APP">
+      <encoder>
+        <pattern>${PATTERN}</pattern>
+      </encoder>
+      <file>${APP_DIR}/app.log</file>
+      <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+        <fileNamePattern>${APP_DIR}/app-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+        <maxFileSize>10MB</maxFileSize>
+        <maxHistory>7</maxHistory>
+        <totalSizeCap>100MB</totalSizeCap>
+      </rollingPolicy>
+    </appender>
+    <appender class="ch.qos.logback.core.rolling.RollingFileAppender" name="ERROR_ONLY">
+      <encoder>
+        <pattern>${PATTERN}</pattern>
+      </encoder>
+      <file>${ERR_DIR}/error.log</file>
+      <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+        <level>ERROR</level>
+      </filter>
+      <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+        <fileNamePattern>${ERR_DIR}/error-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+        <maxFileSize>10MB</maxFileSize>
+        <maxHistory>7</maxHistory>
+        <totalSizeCap>100MB</totalSizeCap>
+      </rollingPolicy>
+    </appender>
+    <appender class="ch.qos.logback.core.rolling.RollingFileAppender" name="SQL">
+      <encoder>
+        <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %logger{36} - %msg%n</pattern>
+      </encoder>
+      <file>${SQL_DIR}/sql.log</file>
+      <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+        <fileNamePattern>${SQL_DIR}/sql-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+        <maxFileSize>10MB</maxFileSize>
+        <maxHistory>7</maxHistory>
+        <totalSizeCap>100MB</totalSizeCap>
+      </rollingPolicy>
+    </appender>
+
+    <!-- App: 일별 롤링, 7일 보관 -->
+    <logger additivity="false" level="DEBUG" name="datasource-proxy">
+      <appender-ref ref="SQL"/>
+    </logger>
+
+    <logger level="OFF" name="org.hibernate.SQL"/>
+
+    <logger level="OFF" name="org.hibernate.orm.jdbc.bind"/>
+
+    <property name="APP_DIR" value="/logs/app"/>
+
+    <property name="ERR_DIR" value="/logs/app/error"/>
+
+    <property name="SQL_DIR" value="/logs/query"/>
+    <root level="INFO">
+      <appender-ref ref="APP"/>
+      <appender-ref ref="ERROR_ONLY"/>
+    </root>
+
+  </springProfile>
+</configuration>

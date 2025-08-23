@@ -14,7 +14,13 @@ server:
   error:
     include-stacktrace: always
 
-
+decorator:
+  datasource:
+    datasource-proxy:
+      query:
+        log-level: info
+        logger-name: datasource-proxy
+      format-sql: true
 
 ---
 spring:
@@ -33,10 +39,6 @@ spring:
     hibernate:
       ddl-auto: validate
     generate-ddl: true
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
   flyway:
     baseline-on-migrate: true
     baseline-version: 1
@@ -45,14 +47,9 @@ spring:
 
 logging:
   level:
-    org:
-      hibernate:
-        sql: debug
-        type:
-          descriptor:
-            sql: trace
     com.LetMeDoWith.LetMeDoWith: info
     root: info
+
 
 ---
 spring:
@@ -62,6 +59,8 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://${DB_URL}:${DB_PORT}/${DB_SCHEMA}
+    hikari:
+      leak-detection-threshold: 20000
   #  data:
   #    redis:
   #      host: ${REDIS_URL}
@@ -71,10 +70,6 @@ spring:
     hibernate:
       ddl-auto: validate
     generate-ddl: true
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
   flyway:
     baseline-on-migrate: true
     baseline-version: 1
@@ -83,15 +78,22 @@ spring:
 
 logging:
   level:
-    org:
-      hibernate:
-        sql: debug
-        type:
-          descriptor:
-            sql: trace
-    com.LetMeDoWith.LetMeDoWith: info
+    com:
+      LetMeDoWith.LetMeDoWith: info
+      zaxxer.hikari: debug
     root: info
 
+server:
+  tomcat:
+    accesslog:
+      enabled: true
+      pattern: '%t %a "%r" %s %b %D'
+      directory: ./logs/access-log
+      prefix: access
+      suffix: .log
+      file-date-format: .yyyy-MM-dd
+      max-days: 7
+      rotate: true
 ---
 spring:
   config:
