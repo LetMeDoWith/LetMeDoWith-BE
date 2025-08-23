@@ -36,6 +36,10 @@ public class RetrieveTaskService {
         return RetrieveDowithTaskResult.from(result);
     }
 
+    /**
+     * TodoTask 조회
+     * @param todoTaskId
+     */
     @Transactional(readOnly = true)
     public void retrieveTodoTask(Long todoTaskId) {
         String memberId = AuthUtil.getMemberId();
