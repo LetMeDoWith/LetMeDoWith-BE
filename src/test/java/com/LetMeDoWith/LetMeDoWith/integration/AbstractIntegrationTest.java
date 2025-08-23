@@ -3,6 +3,7 @@ package com.LetMeDoWith.LetMeDoWith.integration;
 import com.LetMeDoWith.LetMeDoWith.application.auth.provider.AccessTokenProvider;
 import com.LetMeDoWith.LetMeDoWith.application.auth.provider.RefreshTokenProvider;
 import com.LetMeDoWith.LetMeDoWith.common.dto.ResponseDto;
+import com.LetMeDoWith.LetMeDoWith.common.dto.ResponsePageDto;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.Gender;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
@@ -97,7 +98,9 @@ public abstract class AbstractIntegrationTest {
         }
     }
 
-    /** 해당 Abstract Class 상속 받은 테스트는 모든 Test 메서드 시작전에 request Member 세팅 */
+    /**
+     * 해당 Abstract Class 상속 받은 테스트는 모든 Test 메서드 시작전에 request Member 세팅
+     */
     private void createMemberTestData() {
         requestMember = memberJpaRepository.save(Member.builder()
                 .status(MemberStatus.NORMAL)
@@ -113,10 +116,14 @@ public abstract class AbstractIntegrationTest {
                 requestMember.getId(), requestMemberAccessToken.getToken(), "iphone"); // TODO - 추후 안드로이드 유져 하나 추가
     }
 
-    /** 이전 Test의 test data 삭제 - abstract method */
+    /**
+     * 이전 Test의 test data 삭제 - abstract method
+     */
     protected abstract void deleteTestData();
 
-    /** Test Data 생성 - abstract method */
+    /**
+     * Test Data 생성 - abstract method
+     */
     protected abstract void createTestData();
 
     /**
@@ -150,7 +157,7 @@ public abstract class AbstractIntegrationTest {
      *
      * @param responseBody API Response 원문
      * @param responseType 변환하려는 응답 타입
-     * @param <T> 변환하려는 응답 타입의 제네릭
+     * @param <T>          변환하려는 응답 타입의 제네릭
      * @return 변환된 응답 객체
      */
     public <T> T readResponse(String responseBody, Class<T> responseType) {
@@ -160,6 +167,20 @@ public abstract class AbstractIntegrationTest {
             ResponseDto<T> responseDto = objectMapper.readValue(responseBody, type);
 
             return responseDto.data();
+        } catch (Exception e) {
+            log.error("readResponse error", e);
+            Assertions.fail("Response 변환 중 에러 발생" + e.getMessage());
+            return null;
+        }
+    }
+
+    public <T> T readPagingResponse(String responseBody, Class<T> responseType) {
+        try {
+            JavaType type = objectMapper.getTypeFactory().constructParametricType(ResponsePageDto.class, responseType);
+
+            ResponsePageDto<T> responsePageDto = objectMapper.readValue(responseBody, type);
+
+            return responsePageDto.data();
         } catch (Exception e) {
             log.error("readResponse error", e);
             Assertions.fail("Response 변환 중 에러 발생" + e.getMessage());

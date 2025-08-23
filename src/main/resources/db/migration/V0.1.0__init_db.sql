@@ -332,10 +332,6 @@ CREATE TABLE dowith_task_feedback
     CONSTRAINT pk_dowith_task_feedback PRIMARY KEY (id)
 );
 
--- Unique Constraints
-ALTER TABLE dowith_task_feedback
-    ADD CONSTRAINT uc_dowith_task_feedback_dowith_task UNIQUE (dowith_task_id);
-
 -- Foreign Key Constraints
 
 
@@ -389,5 +385,3 @@ CREATE TABLE notification_template
     created_by    VARCHAR(255) NULL,
     updated_by    VARCHAR(255) NULL
 );
-
-

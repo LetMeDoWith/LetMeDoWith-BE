@@ -39,13 +39,16 @@ public class ResponseUtil {
         return new ResponseEntity<>(dto, SuccessResponseStatus.OK.getHttpStatusCode());
     }
 
-    public static <T> ResponseEntity<ResponsePageDto<T>> createSuccessResponse(T data, Pageable pageable) {
+    public static <T> ResponseEntity<ResponsePageDto<T>> createSuccessResponse(
+            T data, Pageable pageable, Long totalCount) {
         ResponsePageDto<T> dto = ResponsePageDto.<T>builder()
                 .statusCode(SuccessResponseStatus.OK.getStatusCode())
                 .message(SuccessResponseStatus.OK.getMessage())
                 .data(data)
-                .page(pageable.getOffset())
+                .page(pageable.getPageNumber())
                 .size(pageable.getPageSize())
+                .totalPage((int) Math.ceil((double) totalCount / pageable.getPageSize()))
+                .totalCount(totalCount)
                 .build();
         return new ResponseEntity<>(dto, SuccessResponseStatus.OK.getHttpStatusCode());
     }

@@ -5,6 +5,7 @@ import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.MemberFollow;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.QMember;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.QMemberFollow;
+import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +18,19 @@ public class QMemberFollowJpaRepositoryImpl implements QMemberFollowJpaRepositor
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    private QMemberFollow qMemberFollow = QMemberFollow.memberFollow;
-    private QMember qMember = QMember.member;
+    private final QMemberFollow qMemberFollow = QMemberFollow.memberFollow;
+    private final QMember qMember = QMember.member;
+
+    @Override
+    public Long countFollowingsByFollowerMemberFetchJoinMember(Member follwerMember) {
+        return jpaQueryFactory
+                .select(Wildcard.count)
+                .from(qMemberFollow)
+                .innerJoin(qMemberFollow.followingMember, qMember)
+                .on(qMemberFollow.followingMember.status.eq(MemberStatus.NORMAL))
+                .where(qMemberFollow.followerMember.eq(follwerMember))
+                .fetchOne();
+    }
 
     @Override
     public List<MemberFollow> findAllFollowingsByFollowerMemberFetchJoinMember(
@@ -33,6 +45,17 @@ public class QMemberFollowJpaRepositoryImpl implements QMemberFollowJpaRepositor
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
+    }
+
+    @Override
+    public Long countFollowersByFollowingMemberFetchJoinMember(Member followingMember) {
+        return jpaQueryFactory
+                .select(Wildcard.count)
+                .from(qMemberFollow)
+                .innerJoin(qMemberFollow.followerMember, qMember)
+                .on(qMemberFollow.followerMember.status.eq(MemberStatus.NORMAL))
+                .where(qMemberFollow.followingMember.eq(followingMember))
+                .fetchOne();
     }
 
     @Override

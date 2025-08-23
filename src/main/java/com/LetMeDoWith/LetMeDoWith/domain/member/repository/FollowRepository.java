@@ -10,7 +10,11 @@ public interface FollowRepository {
 
     MemberFollow save(Member followerMember, Member followingMember);
 
+    Long countTotalFollowers(Member followingMember);
+
     List<MemberFollow> getFollowers(Member followingMember, Pageable pageable);
+
+    Long countTotalFollowings(Member follwerMember);
 
     List<MemberFollow> getFollowings(Member followerMember, Pageable pageable);
 

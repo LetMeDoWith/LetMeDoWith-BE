@@ -7,10 +7,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 
 @Schema(description = "두윗모드 Task 잔소리 조회 결과")
-public record RetrieveTaskFeedbackResult(List<TaskFeedbackDto> feedbacks) {
+public record RetrieveTaskFeedbackResult(Long totalCount, List<TaskFeedbackDto> feedbacks) {
 
     public static RetrieveTaskFeedbackResult of(
-            List<DowithTaskFeedbackQueryDto> feedbacks, List<TaskFeedbackTemplateQueryDto> templates) {
+            Long totalCount, List<DowithTaskFeedbackQueryDto> feedbacks, List<TaskFeedbackTemplateQueryDto> templates) {
         List<TaskFeedbackDto> feedbackDtos = feedbacks.stream()
                 .map(feedback -> new TaskFeedbackDto(
                         feedback.id(),
@@ -25,7 +25,7 @@ public record RetrieveTaskFeedbackResult(List<TaskFeedbackDto> feedbacks) {
                                 .get())))
                 .toList();
 
-        return new RetrieveTaskFeedbackResult(feedbackDtos);
+        return new RetrieveTaskFeedbackResult(totalCount, feedbackDtos);
     }
 
     public record TaskFeedbackDto(

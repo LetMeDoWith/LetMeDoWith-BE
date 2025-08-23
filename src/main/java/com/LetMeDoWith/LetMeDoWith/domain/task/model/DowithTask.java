@@ -307,8 +307,8 @@ public class DowithTask extends BaseAuditEntity {
         LocalDateTime taskStartDateTime = LocalDateTime.of(this.date, this.startTime);
 
         // 현재 시간이 Task 시작 시간 이후이고, Task 시작 시간으로부터 1시간 이내인 경우
-        return now.isAfter(taskStartDateTime)
-                && now.isBefore(taskStartDateTime.plusHours(1))
+        return now.isAfter(taskStartDateTime.minusMinutes(1))
+                && now.isBefore(taskStartDateTime.plusHours(1).plusMinutes(1))
                 && status.equals(DowithTaskStatus.WAIT);
     }
 
