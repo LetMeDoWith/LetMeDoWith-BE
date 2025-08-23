@@ -9,12 +9,11 @@ import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.MemberFollow;
 import com.LetMeDoWith.LetMeDoWith.domain.member.repository.FollowRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.member.repository.MemberRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor

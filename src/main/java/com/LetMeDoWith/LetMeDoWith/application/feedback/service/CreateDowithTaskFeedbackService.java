@@ -27,8 +27,8 @@ public class CreateDowithTaskFeedbackService {
     /**
      * DowithTask에 대한 잔소리를 생성한다.
      *
-     * @param senderId 잔소리를 보내는 사람의 ID
-     * @param dowithTaskId 잔소리를 보낼 DowithTask의 ID
+     * @param senderId               잔소리를 보내는 사람의 ID
+     * @param dowithTaskId           잔소리를 보낼 DowithTask의 ID
      * @param taskFeedbackTemplateId 잔소리 템플릿의 ID
      */
     @Transactional
@@ -44,8 +44,8 @@ public class CreateDowithTaskFeedbackService {
 
         Optional<DowithTaskFeedback> latestFeedback = dowithTaskFeedbackRepository.getLatest(dowithTaskId, senderId);
 
-        if (!(feedbackCreationPolicy.isAdditionalFeedbackAvailable(latestFeedback, SystemTimeUtil.now())
-                && dowithTask.isFeedbackAvailable())) {
+        if (!feedbackCreationPolicy.isAdditionalFeedbackAvailable(latestFeedback, SystemTimeUtil.now())
+                || !dowithTask.isFeedbackAvailable()) {
 
             // 피드백 생성 조건을 만족하지 못하는 경우
             throw new RestApiException(FailResponseStatus.INVALID_REQUEST);

@@ -46,10 +46,6 @@ CREATE TABLE dowith_task_feedback
     CONSTRAINT pk_dowith_task_feedback PRIMARY KEY (id)
 );
 
--- Unique Constraints
-ALTER TABLE dowith_task_feedback
-    ADD CONSTRAINT uc_dowith_task_feedback_dowith_task UNIQUE (dowith_task_id);
-
 -- Foreign Key Constraints
 
 

@@ -1,9 +1,8 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.member.dto;
 
 import com.LetMeDoWith.LetMeDoWith.application.member.dto.RetrieveFollowsResult;
-import lombok.Builder;
-
 import java.util.List;
+import lombok.Builder;
 
 @Builder
 public record RetrieveFollowsResDto(List<Follow> follows) {
@@ -21,6 +20,5 @@ public record RetrieveFollowsResDto(List<Follow> follows) {
     }
 
     @Builder
-    public record Follow(String id, String nickname, String selfDescription, String profileImageUrl) {
-    }
+    public record Follow(String id, String nickname, String selfDescription, String profileImageUrl) {}
 }
