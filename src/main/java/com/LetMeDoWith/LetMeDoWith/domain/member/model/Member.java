@@ -6,7 +6,12 @@ import com.LetMeDoWith.LetMeDoWith.common.enums.member.Gender;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
 import io.hypersistence.utils.hibernate.id.Tsid;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -153,8 +158,8 @@ public class Member extends BaseAuditEntity {
     /**
      * Member의 약관 동의 객체를 업데이트한다. 약관 동의 객체가 없는 경우 초기 생성한다.
      *
-     * @param isTermsOfAgree 사용 약관 동의 여부
-     * @param isPrivacy 개인정보 활용 동의 여부
+     * @param isTermsOfAgree  사용 약관 동의 여부
+     * @param isPrivacy       개인정보 활용 동의 여부
      * @param isAdvertisement 광고성 메세지 수신 동의 여부
      * @return 약관 동의 여부가 업데이트된 Member
      */
@@ -171,15 +176,23 @@ public class Member extends BaseAuditEntity {
     /**
      * Member의 정보를 수정한다
      *
-     * @param nickname 닉네임
+     * @param nickname        닉네임
      * @param selfDescription 자기소개
      * @param profileImageUrl 프로필 이미지 URL
      * @return 수정된 Member 객체
      */
     public Member updateMemberInfo(String nickname, String selfDescription, String profileImageUrl) {
-        this.nickname = nickname;
-        this.selfDescription = selfDescription;
-        this.profileImageUrl = profileImageUrl;
+        if (nickname != null) {
+            this.nickname = nickname;
+        }
+
+        if (selfDescription != null) {
+            this.selfDescription = selfDescription;
+        }
+
+        if (profileImageUrl != null) {
+            this.profileImageUrl = profileImageUrl;
+        }
 
         return this;
     }

@@ -133,7 +133,7 @@ public class MemberService {
             String memberId, boolean isTermsAgree, boolean isPrivacyAgree, boolean isAdvertisementAgree) {
         Member member = memberRepository
                 .getMember(memberId, MemberStatus.NORMAL)
-                .orElseThrow(() -> new RestApiException(FailResponseStatus.MEMBER_NOT_EXIST));
+                .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
 
         member.updateTermAgree(isTermsAgree, isPrivacyAgree, isAdvertisementAgree);
 
@@ -144,12 +144,9 @@ public class MemberService {
     public void updateMemberInfo(String memberId, String nickname, String selfDescription, String profileImageUrl) {
         Member member = memberRepository
                 .getMember(memberId, MemberStatus.NORMAL)
-                .orElseThrow(() -> new RestApiException(FailResponseStatus.MEMBER_NOT_EXIST));
+                .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
 
-        member.updateMemberInfo(
-                nickname != null ? nickname : member.getNickname(),
-                selfDescription != null ? selfDescription : member.getSelfDescription(),
-                profileImageUrl != null ? profileImageUrl : member.getProfileImageUrl());
+        member.updateMemberInfo(nickname, selfDescription, profileImageUrl);
 
         memberRepository.save(member);
     }
