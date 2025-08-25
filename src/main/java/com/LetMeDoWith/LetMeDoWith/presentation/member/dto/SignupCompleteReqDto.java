@@ -10,6 +10,6 @@ import lombok.Builder;
 public record SignupCompleteReqDto(
         @Schema(description = "회원의 닉네임") String nickname,
         @Schema(description = "회원의 생년월일") LocalDate dateOfBirth,
-        @Schema(description = "회원의 성별", implementation = Gender.class) Gender gender,
+        @Schema(description = "회원의 성별", example = "M") Gender gender,
         @Schema(description = "회원의 약관 항목별 동의 여부", implementation = CreateMemberTermAgreeReqDto.class)
                 CreateMemberTermAgreeReqDto agreements) {}
