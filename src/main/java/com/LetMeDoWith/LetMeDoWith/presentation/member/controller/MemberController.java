@@ -25,7 +25,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -51,30 +50,30 @@ public class MemberController {
     @ApiSuccessResponse(description = "회원가입 완료, 회원 정보를 업데이트하고 로그인을 완료함 (토큰 발급).")
     @ApiErrorResponses({
         @ApiErrorResponse(
-                status = FailResponseStatus.MEMBER_NOT_EXIST,
-                description = "SIGNUP TOKEN 을 통해 얻은 memberId가 존재하지 않을 때 발생"),
+            status = FailResponseStatus.MEMBER_NOT_EXIST,
+            description = "SIGNUP TOKEN 을 통해 얻은 memberId가 존재하지 않을 때 발생"),
         @ApiErrorResponse(status = FailResponseStatus.DUPLICATE_NICKNAME),
         @ApiErrorResponse(
-                status = FailResponseStatus.TOKEN_EXPIRED_BY_ADMIN,
-                description = "ATK가 운영자에 의해 강제로 만료됨. 재시도 필요")
+            status = FailResponseStatus.TOKEN_EXPIRED_BY_ADMIN,
+            description = "ATK가 운영자에 의해 강제로 만료됨. 재시도 필요")
     })
     @PutMapping("")
     public ResponseEntity<ResponseDto<CreateTokenResDto>> completeSignup(
-            @RequestBody SignupCompleteReqDto signupCompleteReqDto) {
+        @RequestBody SignupCompleteReqDto signupCompleteReqDto) {
         CreateSignupCompletedMemberCommand command = CreateSignupCompletedMemberCommand.builder()
-                .nickname(signupCompleteReqDto.nickname())
-                .dateOfBirth(signupCompleteReqDto.dateOfBirth())
-                .gender(signupCompleteReqDto.gender())
-                .isTerms(signupCompleteReqDto.agreements().termsOfAgree())
-                .isPrivacy(signupCompleteReqDto.agreements().privacy())
-                .isAdvertisement(signupCompleteReqDto.agreements().advertisement())
-                .build();
+            .nickname(signupCompleteReqDto.nickname())
+            .dateOfBirth(signupCompleteReqDto.dateOfBirth())
+            .gender(signupCompleteReqDto.gender())
+            .isTerms(signupCompleteReqDto.agreements().termsOfAgree())
+            .isPrivacy(signupCompleteReqDto.agreements().privacy())
+            .isAdvertisement(signupCompleteReqDto.agreements().advertisement())
+            .build();
 
         Member signupCompletedMember = memberService.createSignupCompletedMember(command);
         CreateTokenResult createTokenResult = createTokenService.createToken(signupCompletedMember);
 
         return ResponseUtil.createSuccessResponse(
-                SuccessResponseStatus.OK, CreateTokenResDto.fromCreateTokenResult(createTokenResult));
+            SuccessResponseStatus.OK, CreateTokenResDto.fromCreateTokenResult(createTokenResult));
     }
 
     /**
@@ -87,7 +86,8 @@ public class MemberController {
     @ApiSuccessResponse(description = "사용 가능한 닉네임")
     @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.DUPLICATE_NICKNAME)})
     @PostMapping("/nickname")
-    public ResponseEntity<ResponseDto<String>> checkNickname(@RequestBody CheckNicknameReqDto checkNicknameReqDto) {
+    public ResponseEntity<ResponseDto<String>> checkNickname(
+        @RequestBody CheckNicknameReqDto checkNicknameReqDto) {
         if (memberService.isExistingNickname(checkNicknameReqDto.nickname())) {
             throw new RestApiException(FailResponseStatus.DUPLICATE_NICKNAME);
         } else {
@@ -103,13 +103,9 @@ public class MemberController {
     @Operation(summary = "탈퇴", description = "해당 회원을 탈퇴 처리 합니다.")
     @ApiSuccessResponse(description = "회원 탈퇴 완료")
     @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.MEMBER_NOT_EXIST)})
-    @DeleteMapping("/{memberId}")
-    public <T> ResponseEntity<ResponseDto<T>> withdrawMember(@PathVariable String memberId) {
-        String memberIdFromToken = AuthUtil.getMemberId();
-        if (!memberIdFromToken.equals(memberId)) {
-            throw new RestApiException(FailResponseStatus.INVALID_TOKEN);
-        }
-
+    @DeleteMapping("/")
+    public <T> ResponseEntity<ResponseDto<T>> withdrawMember() {
+        String memberId = AuthUtil.getMemberId();
         memberService.withdrawMember(memberId);
 
         return ResponseUtil.createSuccessResponse(SuccessResponseStatus.OK);
@@ -118,42 +114,44 @@ public class MemberController {
     /**
      * 회원의 약관 동의 정보를 업데이트한다.
      *
-     * @param memberId 약관 동의 정보를 업데이트할 회원의 ID
      * @param updateMemberTermAgreeReqDto 약관 동의 정보
      * @return 약관 동의 정보 업데이트 완료
      */
     @Operation(summary = "약관 동의 정보 업데이트", description = "회원의 약관 동의 정보를 업데이트합니다.")
     @ApiSuccessResponse(description = "약관 동의 정보 업데이트 완료")
     @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.MEMBER_NOT_EXIST)})
-    @PatchMapping("/{memberId}/agreements")
+    @PatchMapping("/agreements")
     public <T> ResponseEntity<ResponseDto<T>> updateMemberTermAgree(
-            @PathVariable String memberId, @RequestBody UpdateMemberTermAgreeReqDto updateMemberTermAgreeReqDto) {
+        @RequestBody UpdateMemberTermAgreeReqDto updateMemberTermAgreeReqDto) {
+        String memberId = AuthUtil.getMemberId();
+
         memberService.updateMemberTermAgree(
-                memberId,
-                updateMemberTermAgreeReqDto.isTermsAgree(),
-                updateMemberTermAgreeReqDto.isPrivacyAgree(),
-                updateMemberTermAgreeReqDto.isAdvertisementAgree());
+            memberId,
+            updateMemberTermAgreeReqDto.isTermsAgree(),
+            updateMemberTermAgreeReqDto.isPrivacyAgree(),
+            updateMemberTermAgreeReqDto.isAdvertisementAgree());
         return ResponseUtil.createSuccessResponse(SuccessResponseStatus.OK);
     }
 
     /**
      * 회원의 정보를 업데이트한다.
      *
-     * @param memberId 정보를 업데이트할 회원의 ID
      * @param updateMemberInfoReqDto 정보 업데이트 요청
      * @return 정보 업데이트 완료
      */
     @Operation(summary = "회원 정보 업데이트", description = "회원의 정보를 업데이트합니다.")
     @ApiSuccessResponse(description = "회원 정보 업데이트 완료")
     @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.MEMBER_NOT_EXIST)})
-    @PatchMapping("/{memberId}")
+    @PatchMapping("")
     public <T> ResponseEntity<ResponseDto<T>> updateMemberInfo(
-            @PathVariable String memberId, @RequestBody UpdateMemberInfoReqDto updateMemberInfoReqDto) {
+        @RequestBody UpdateMemberInfoReqDto updateMemberInfoReqDto) {
+        String memberId = AuthUtil.getMemberId();
+
         memberService.updateMemberInfo(
-                memberId,
-                updateMemberInfoReqDto.nickname(),
-                updateMemberInfoReqDto.selfDescription(),
-                updateMemberInfoReqDto.profileImageUrl());
+            memberId,
+            updateMemberInfoReqDto.nickname(),
+            updateMemberInfoReqDto.selfDescription(),
+            updateMemberInfoReqDto.profileImageUrl());
         return ResponseUtil.createSuccessResponse(SuccessResponseStatus.OK);
     }
 }
