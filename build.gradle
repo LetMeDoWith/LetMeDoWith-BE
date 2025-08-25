@@ -205,4 +205,5 @@ tasks.test {
 
 compileJava {
     dependsOn spotlessApply
+    options.compilerArgs += ['-parameters']
 }

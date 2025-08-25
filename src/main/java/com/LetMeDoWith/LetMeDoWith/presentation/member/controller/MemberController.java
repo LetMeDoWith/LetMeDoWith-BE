@@ -17,12 +17,14 @@ import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
 import com.LetMeDoWith.LetMeDoWith.presentation.auth.dto.CreateTokenResDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.CheckNicknameReqDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.SignupCompleteReqDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.UpdateMemberInfoReqDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.UpdateMemberTermAgreeReqDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -100,15 +102,55 @@ public class MemberController {
     @Operation(summary = "탈퇴", description = "해당 회원을 탈퇴 처리 합니다.")
     @ApiSuccessResponse(description = "회원 탈퇴 완료")
     @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.MEMBER_NOT_EXIST)})
-    @DeleteMapping("/{memberId}")
-    public <T> ResponseEntity<ResponseDto<T>> withdrawMember(@PathVariable String memberId) {
-        String memberIdFromToken = AuthUtil.getMemberId();
-        if (!memberIdFromToken.equals(memberId)) {
-            throw new RestApiException(FailResponseStatus.INVALID_TOKEN);
-        }
-
+    @DeleteMapping("")
+    public <T> ResponseEntity<ResponseDto<T>> withdrawMember() {
+        String memberId = AuthUtil.getMemberId();
         memberService.withdrawMember(memberId);
 
+        return ResponseUtil.createSuccessResponse(SuccessResponseStatus.OK);
+    }
+
+    /**
+     * 회원의 약관 동의 정보를 업데이트한다.
+     *
+     * @param updateMemberTermAgreeReqDto 약관 동의 정보
+     * @return 약관 동의 정보 업데이트 완료
+     */
+    @Operation(summary = "약관 동의 정보 업데이트", description = "회원의 약관 동의 정보를 업데이트합니다.")
+    @ApiSuccessResponse(description = "약관 동의 정보 업데이트 완료")
+    @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.MEMBER_NOT_EXIST)})
+    @PatchMapping("/agreements")
+    public <T> ResponseEntity<ResponseDto<T>> updateMemberTermAgree(
+            @RequestBody UpdateMemberTermAgreeReqDto updateMemberTermAgreeReqDto) {
+        String memberId = AuthUtil.getMemberId();
+
+        memberService.updateMemberTermAgree(
+                memberId,
+                updateMemberTermAgreeReqDto.isTermsAgree(),
+                updateMemberTermAgreeReqDto.isPrivacyAgree(),
+                updateMemberTermAgreeReqDto.isAdvertisementAgree());
+        return ResponseUtil.createSuccessResponse(SuccessResponseStatus.OK);
+    }
+
+    /**
+     * 회원의 정보를 업데이트한다.
+     *
+     * @param updateMemberInfoReqDto 정보 업데이트 요청
+     * @return 정보 업데이트 완료
+     */
+    @Operation(summary = "회원 정보 업데이트", description = "회원의 정보를 업데이트합니다.")
+    @ApiSuccessResponse(description = "회원 정보 업데이트 완료")
+    @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.MEMBER_NOT_EXIST)})
+    @PatchMapping("")
+    public <T> ResponseEntity<ResponseDto<T>> updateMemberInfo(
+            @RequestBody UpdateMemberInfoReqDto updateMemberInfoReqDto) {
+        String memberId = AuthUtil.getMemberId();
+
+        memberService.updateMemberInfo(
+                memberId,
+                updateMemberInfoReqDto.nickname(),
+                updateMemberInfoReqDto.selfDescription(),
+                updateMemberInfoReqDto.profileImageUrl());
         return ResponseUtil.createSuccessResponse(SuccessResponseStatus.OK);
     }
 }
