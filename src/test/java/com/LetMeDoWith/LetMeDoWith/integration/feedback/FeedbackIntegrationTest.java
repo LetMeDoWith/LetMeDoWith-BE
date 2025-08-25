@@ -3,7 +3,6 @@ package com.LetMeDoWith.LetMeDoWith.integration.feedback;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.LetMeDoWith.LetMeDoWith.application.feedback.dto.RetrieveTaskFeedbackResult;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.model.TaskFeedbackTemplate;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.model.TaskFeedbackTemplateMessage;
@@ -92,7 +91,6 @@ public class FeedbackIntegrationTest extends AbstractIntegrationTest {
                 .build());
     }
 
-    // TODO: readPagingResponse로 수정해야 함.
     @Test
     @DisplayName("[SUCCESS] 잔소리 생성")
     void createFeedback_success() throws Exception {
@@ -101,14 +99,15 @@ public class FeedbackIntegrationTest extends AbstractIntegrationTest {
                 this.request(MockMvcRequestBuilders.post("/api/v1/feedbacks").content(writeRequestBodyAsString(req)));
         resultActions.andExpect(status().isOk());
         // CQRS 조회로 생성 검증
-        MvcResult retrieveResult = this.request(MockMvcRequestBuilders.get("/api/v1/feedbacks/")
-                        .param("taskId", String.valueOf(dowithTask.getId())))
+        MvcResult retrieveResult = this.request(
+                        MockMvcRequestBuilders.get("/api/v1/feedbacks/dowith-task/" + dowithTask.getId()))
                 .andExpect(status().isOk())
                 .andReturn();
         String content = retrieveResult.getResponse().getContentAsString();
-        var result = this.readResponse(content, RetrieveTaskFeedbackResult.class);
+        RetrieveTaskFeedbacksResDto result = this.readPagingResponse(content, RetrieveTaskFeedbacksResDto.class);
         assertThat(result.feedbacks()).isNotEmpty();
-        var feedback = result.feedbacks().get(0);
+
+        RetrieveTaskFeedbackDto feedback = result.feedbacks().get(0);
         assertThat(feedback.dowithTaskId()).isEqualTo(dowithTask.getId());
         assertThat(feedback.taskFeedbackTemplate().id()).isEqualTo(template1.getId());
         assertThat(feedback.isChecked()).isFalse();
