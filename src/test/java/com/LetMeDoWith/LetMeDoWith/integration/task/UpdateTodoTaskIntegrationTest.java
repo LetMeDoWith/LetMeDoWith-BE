@@ -97,7 +97,7 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
                 UPDATED_START_TIME.getMinute());
         Long updatedCategoryId = taskCategory2.getId();
         UpdateTodoTaskReqDto updateReq =
-                new UpdateTodoTaskReqDto(UPDATED_TITLE, updateStartDateTime, updatedCategoryId, null);
+                new UpdateTodoTaskReqDto(UPDATED_TITLE, LocalTime.from(updateStartDateTime), updatedCategoryId, null);
 
         ResultActions resultActions = this.request(
                 org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put(URL + "/" + todoTask.getId())
@@ -147,7 +147,7 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
         Long updatedCategoryId = taskCategory2.getId();
         UpdateTodoTaskReqDto updateReq = new UpdateTodoTaskReqDto(
                 UPDATED_TITLE,
-                updateStartDateTime,
+                LocalTime.from(updateStartDateTime),
                 updatedCategoryId,
                 UpdateTodoTaskRoutineReqDto.of(ORIGINAL_DATE, ROUTINE_END_DATE, TaskRoutineCycle.DAILY, null, false));
 
@@ -212,7 +212,7 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
                 .get();
 
         UpdateTodoTaskReqDto req =
-                new UpdateTodoTaskReqDto(UPDATED_TITLE, updateStartDateTime, updatedCategoryId, null);
+                new UpdateTodoTaskReqDto(UPDATED_TITLE, LocalTime.from(updateStartDateTime), updatedCategoryId, null);
 
         ResultActions resultActions = this.request(MockMvcRequestBuilders.put(URL + "/" + taskToModified.getId())
                 .content(this.writeRequestBodyAsString(req)));
