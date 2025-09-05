@@ -80,13 +80,14 @@ public class UpdateTodoTaskService {
                     routineCondition.pattern(),
                     holidays);
 
-            List<TodoTask> todoTasksWithRoutine = todoTask.createRoutine(
-                    routineDates,
+            todoTask.createRoutine(
+                    routineCondition.startDate(),
+                    routineCondition.endDate(),
                     routineCondition.cycle(),
                     routineCondition.pattern(),
                     routineCondition.isExcludeHolidays());
 
-            todoTaskRepository.saveTodoTasks(todoTasksWithRoutine);
+            todoTaskRepository.saveTodoTasks(TodoTask.of(todoTask, routineDates));
         }
     }
 
@@ -170,7 +171,12 @@ public class UpdateTodoTaskService {
         // 분할된 루틴의 조건 업데이트
         splitResult
                 .getNewRoutine()
-                .update(newRoutineDates, command.cycle(), command.pattern(), command.isExcludeHolidays());
+                .update(
+                        command.startDate(),
+                        command.endDate(),
+                        command.cycle(),
+                        command.pattern(),
+                        command.isExcludeHolidays());
     }
 
     /**

@@ -217,7 +217,8 @@ CREATE TABLE todo_task
 CREATE TABLE todo_task_routine
 (
     id                  BIGINT AUTO_INCREMENT NOT NULL,
-    dates               text                  NULL,
+    range_start_date    date                  NOT NULL,
+    range_end_date      date                  NOT NULL,
     cycle               VARCHAR(20)           NOT NULL DEFAULT 'NONE',
     pattern             text                  NULL,
     is_exclude_holidays BOOLEAN               NOT NULL DEFAULT FALSE,
