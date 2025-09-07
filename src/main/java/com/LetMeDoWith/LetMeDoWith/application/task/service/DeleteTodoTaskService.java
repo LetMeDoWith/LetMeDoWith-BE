@@ -33,10 +33,6 @@ public class DeleteTodoTaskService {
                 .getTodoTask(todoTaskId, memberId)
                 .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
 
-        if (todoTask.isRoutine()) {
-            todoTask.detachRoutine();
-        }
-
         todoTaskRepository.deleteTodoTask(todoTask);
     }
 
