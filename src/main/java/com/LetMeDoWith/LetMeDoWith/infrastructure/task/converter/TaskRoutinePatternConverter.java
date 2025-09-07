@@ -12,6 +12,10 @@ public class TaskRoutinePatternConverter implements AttributeConverter<TaskRouti
 
     @Override
     public String convertToDatabaseColumn(TaskRoutinePattern pattern) {
+        if (pattern == null || pattern.getPattern() == null) {
+            return null;
+        }
+
         return pattern.getPattern().stream()
                 .map(String::valueOf)
                 .reduce((a, b) -> a + "," + b)
@@ -20,7 +24,7 @@ public class TaskRoutinePatternConverter implements AttributeConverter<TaskRouti
 
     @Override
     public TaskRoutinePattern convertToEntityAttribute(String dbData) {
-        if (dbData == null || dbData.isBlank()) {
+        if (dbData == null || dbData.isEmpty()) {
             return TaskRoutinePattern.from(Set.of());
         } else {
             return TaskRoutinePattern.from(

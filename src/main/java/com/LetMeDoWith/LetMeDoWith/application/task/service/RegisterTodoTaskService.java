@@ -75,7 +75,7 @@ public class RegisterTodoTaskService {
 
         if (Boolean.TRUE.equals(routineCondition.isExcludeHolidays())) {
             // 공휴일 목록 조회
-            Set<LocalDate> holidays = holidayService.getHolidays(
+            Set<LocalDate> holidays = holidayService.getHolidayDates(
                     CountryCode.KR, routineCondition.startDate(), routineCondition.endDate());
 
             routineDates.removeAll(holidays);

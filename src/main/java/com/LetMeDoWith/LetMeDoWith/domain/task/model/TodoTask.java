@@ -177,16 +177,6 @@ public class TodoTask extends BaseAuditEntity {
     }
 
     /**
-     * 수정 가능한 루틴 날짜 조회
-     *
-     * @return 수정 가능한 루틴 날짜 세트
-     */
-    @Deprecated
-    public Set<LocalDate> getUpdateAvailableDates() {
-        return Set.of();
-    }
-
-    /**
      * TodoTask 내용 업데이트
      *
      * @param title          제목
