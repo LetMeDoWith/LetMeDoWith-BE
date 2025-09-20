@@ -37,7 +37,7 @@ spring:
   jpa:
     database: mysql
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     generate-ddl: true
   flyway:
     baseline-on-migrate: true
@@ -68,7 +68,7 @@ spring:
   jpa:
     database: mysql
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     generate-ddl: true
   flyway:
     baseline-on-migrate: true

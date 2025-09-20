@@ -2,12 +2,11 @@ package com.LetMeDoWith.LetMeDoWith.domain.ranking.model;
 
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
 import jakarta.persistence.*;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @Entity
 @Getter
@@ -30,5 +29,4 @@ public class RankingTopic extends BaseAuditEntity {
 
     @OneToMany(mappedBy = "rankingTopic", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Ranking> rankings;
-
 }

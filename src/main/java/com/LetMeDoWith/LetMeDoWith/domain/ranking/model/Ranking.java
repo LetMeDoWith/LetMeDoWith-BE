@@ -12,11 +12,13 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "ranking",
+@Table(
+        name = "ranking",
         uniqueConstraints = {
-                @UniqueConstraint(name = "uk_ranking_1", columnNames = {"ranking_topic_id", "member_id"})
-        }
-)
+            @UniqueConstraint(
+                    name = "uk_ranking_1",
+                    columnNames = {"ranking_topic_id", "member_id"})
+        })
 public class Ranking extends BaseAuditEntity {
 
     @Id
@@ -25,16 +27,15 @@ public class Ranking extends BaseAuditEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "ranking_topic_id", nullable = false)
+    @JoinColumn(name = "ranking_topic_id", nullable = false)
     private RankingTopic rankingTopic;
 
     @Column(name = "member_id", nullable = false, length = 26)
     private String memberId;
 
-    @Column(name = "rank", nullable = false)
-    private Long rank;
+    @Column(name = "current_rank", nullable = false)
+    private Long currentRank;
 
     @Column(name = "previous_rank", nullable = true)
     private Long previousRank;
-
 }

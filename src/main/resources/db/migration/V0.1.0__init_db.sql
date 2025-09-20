@@ -1,387 +1,448 @@
-# CREATE TABLE badge
-# (
-#     id           BIGINT AUTO_INCREMENT NOT NULL,
-#     create_at    timestamp             NULL,
-#     updated_at   timestamp             NULL,
-#     created_by   VARCHAR(255)          NULL,
-#     updated_by   VARCHAR(255)          NULL,
-#     status       VARCHAR(255)          NOT NULL,
-#     name         VARCHAR(255)          NOT NULL,
-#     description  VARCHAR(255)          NULL,
-#     acquire_hint VARCHAR(255)          NULL,
-#     image_url    VARCHAR(255)          NULL,
-#     sort_order   INT                   NULL,
-#     CONSTRAINT pk_badge PRIMARY KEY (id)
-# );
-#
-# CREATE TABLE dev_refresh_token
-# (
-#     token        VARCHAR(512) NOT NULL,
-#     access_token VARCHAR(800) NULL,
-#     member_id    VARCHAR(255) NULL,
-#     user_agent   VARCHAR(255) NULL,
-#     expire_at    timestamp    NULL,
-#     CONSTRAINT pk_dev_refresh_token PRIMARY KEY (token)
-# );
-#
-# CREATE TABLE dowith_task
-# (
-#     id                     BIGINT AUTO_INCREMENT NOT NULL,
-#     create_at              timestamp             NULL,
-#     updated_at             timestamp             NULL,
-#     created_by             VARCHAR(255)          NULL,
-#     updated_by             VARCHAR(255)          NULL,
-#     member_id              VARCHAR(26)           NOT NULL,
-#     task_category_id       BIGINT                NULL,
-#     title                  VARCHAR(255)          NOT NULL,
-#     status                 VARCHAR(255)          NOT NULL,
-#     date                   date                  NOT NULL,
-#     start_time             time                  NULL,
-#     success_at             timestamp             NULL,
-#     complete_at            timestamp             NULL,
-#     dowith_task_routine_id BIGINT                NULL,
-#     CONSTRAINT pk_dowith_task PRIMARY KEY (id)
-# );
-#
-# CREATE TABLE dowith_task_success
-# (
-#     id             BIGINT AUTO_INCREMENT NOT NULL,
-#     create_at      timestamp             NULL,
-#     updated_at     timestamp             NULL,
-#     created_by     VARCHAR(255)          NULL,
-#     updated_by     VARCHAR(255)          NULL,
-#     dowith_task_id BIGINT                NOT NULL,
-#     image_url      VARCHAR(255)          NULL,
-#     CONSTRAINT pk_dowith_task_success PRIMARY KEY (id)
-# );
-#
-# CREATE TABLE dowith_task_routine
-# (
-#     id                  BIGINT AUTO_INCREMENT NOT NULL,
-#     range_start_date    date                  NOT NULL,
-#     range_end_date      date                  NOT NULL,
-#     cycle               VARCHAR(20)           NOT NULL,
-#     pattern             text                  NOT NULL,
-#     exclude_holidays_yn BOOLEAN               NOT NULL,
-#     exclude_dates       text                  NULL,
-#     create_at           timestamp             NULL,
-#     updated_at          timestamp             NULL,
-#     created_by          VARCHAR(255)          NULL,
-#     updated_by          VARCHAR(255)          NULL,
-#     CONSTRAINT pk_dowith_task_routine PRIMARY KEY (id)
-# );
-#
-# CREATE TABLE holiday
-# (
-#     id           BIGINT AUTO_INCREMENT NOT NULL,
-#     create_at    timestamp             NULL,
-#     updated_at   timestamp             NULL,
-#     created_by   VARCHAR(255)          NULL,
-#     updated_by   VARCHAR(255)          NULL,
-#     country_code VARCHAR(255)          NOT NULL,
-#     date         date                  NOT NULL,
-#     name         VARCHAR(255)          NOT NULL,
-#     CONSTRAINT pk_holiday PRIMARY KEY (id)
-# );
-#
-# CREATE TABLE member
-# (
-#     id                VARCHAR(26)  NOT NULL,
-#     create_at         timestamp    NULL,
-#     updated_at        timestamp    NULL,
-#     created_by        VARCHAR(255) NULL,
-#     updated_by        VARCHAR(255) NULL,
-#     subject           VARCHAR(255) NULL,
-#     status            VARCHAR(255) NOT NULL,
-#     nickname          VARCHAR(255) NULL,
-#     self_description  VARCHAR(255) NULL,
-#     gender            VARCHAR(2)   NULL,
-#     date_of_birth     date         NULL,
-#     type              VARCHAR(255) NOT NULL,
-#     profile_image_url VARCHAR(255) NULL,
-#     CONSTRAINT pk_member PRIMARY KEY (id)
-# );
-#
-# CREATE TABLE member_alarm_setting
-# (
-#     id            BIGINT AUTO_INCREMENT NOT NULL,
-#     create_at     timestamp             NULL,
-#     updated_at    timestamp             NULL,
-#     created_by    VARCHAR(255)          NULL,
-#     updated_by    VARCHAR(255)          NULL,
-#     member_id     VARCHAR(26)           NOT NULL,
-#     base_alarm_yn BIT(1)                NOT NULL,
-#     todo_bot_yn   BIT(1)                NOT NULL,
-#     feedback_yn   BIT(1)                NOT NULL,
-#     marketing_yn  BIT(1)                NOT NULL,
-#     CONSTRAINT pk_member_alarm_setting PRIMARY KEY (id)
-# );
-#
-# CREATE TABLE member_badge
-# (
-#     id         BIGINT AUTO_INCREMENT NOT NULL,
-#     create_at  timestamp             NULL,
-#     updated_at timestamp             NULL,
-#     created_by VARCHAR(255)          NULL,
-#     updated_by VARCHAR(255)          NULL,
-#     member_id  VARCHAR(26)           NULL,
-#     badge_id   BIGINT                NOT NULL,
-#     main_yn    VARCHAR(255)          NOT NULL,
-#     CONSTRAINT pk_member_badge PRIMARY KEY (id)
-# );
-#
-# CREATE TABLE member_follow
-# (
-#     id           BIGINT AUTO_INCREMENT NOT NULL,
-#     create_at    timestamp             NULL,
-#     updated_at   timestamp             NULL,
-#     created_by   VARCHAR(255)          NULL,
-#     updated_by   VARCHAR(255)          NULL,
-#     follower_id  VARCHAR(26)           NOT NULL,
-#     following_id VARCHAR(26)           NOT NULL,
-#     CONSTRAINT pk_member_follow PRIMARY KEY (id)
-# );
-#
-# CREATE TABLE member_social_account
-# (
-#     id         BIGINT AUTO_INCREMENT NOT NULL,
-#     create_at  timestamp             NULL,
-#     updated_at timestamp             NULL,
-#     created_by VARCHAR(255)          NULL,
-#     updated_by VARCHAR(255)          NULL,
-#     member_id  VARCHAR(26)           NOT NULL,
-#     provider   VARCHAR(255)          NOT NULL,
-#     CONSTRAINT pk_member_social_account PRIMARY KEY (id)
-# );
-#
-# CREATE TABLE member_status_history
-# (
-#     id                BIGINT AUTO_INCREMENT NOT NULL,
-#     create_at         timestamp             NULL,
-#     updated_at        timestamp             NULL,
-#     created_by        VARCHAR(255)          NULL,
-#     updated_by        VARCHAR(255)          NULL,
-#     member_id         VARCHAR(26)           NOT NULL,
-#     status            VARCHAR(255)          NOT NULL,
-#     status_changed_at timestamp             NOT NULL,
-#     status_end_at     timestamp             NOT NULL,
-#     CONSTRAINT pk_member_status_history PRIMARY KEY (id)
-# );
-#
-# CREATE TABLE member_term_agree
-# (
-#     id             BIGINT AUTO_INCREMENT NOT NULL,
-#     create_at      timestamp             NULL,
-#     updated_at     timestamp             NULL,
-#     created_by     VARCHAR(255)          NULL,
-#     updated_by     VARCHAR(255)          NULL,
-#     member_id      VARCHAR(26)           NOT NULL,
-#     terms_of_agree BIT(1)                NOT NULL,
-#     privacy        BIT(1)                NOT NULL,
-#     advertisement  BIT(1)                NOT NULL,
-#     CONSTRAINT pk_member_term_agree PRIMARY KEY (id)
-# );
-#
-# CREATE TABLE task_category
-# (
-#     id                 BIGINT AUTO_INCREMENT NOT NULL,
-#     create_at          timestamp             NULL,
-#     updated_at         timestamp             NULL,
-#     created_by         VARCHAR(255)          NULL,
-#     updated_by         VARCHAR(255)          NULL,
-#     title              VARCHAR(255)          NOT NULL,
-#     active_yn          VARCHAR(255)          NOT NULL,
-#     creation_type      VARCHAR(255)          NOT NULL,
-#     emoji              VARCHAR(255)          NOT NULL,
-#     category_holder_id VARCHAR(26)           NULL,
-#     CONSTRAINT pk_task_category PRIMARY KEY (id)
-# );
-#
-# CREATE TABLE todo_task
-# (
-#     id                   BIGINT AUTO_INCREMENT NOT NULL,
-#     create_at            timestamp             NULL,
-#     updated_at           timestamp             NULL,
-#     created_by           VARCHAR(255)          NULL,
-#     updated_by           VARCHAR(255)          NULL,
-#     member_id            VARCHAR(26)           NOT NULL,
-#     task_category_id     BIGINT                NULL,
-#     title                VARCHAR(255)          NOT NULL,
-#     status               VARCHAR(255)          NOT NULL,
-#     date                 date                  NOT NULL,
-#     start_time           time                  NULL,
-#     todo_task_routine_id BIGINT                NULL,
-#     CONSTRAINT pk_todo_task PRIMARY KEY (id)
-# );
-#
-# CREATE TABLE todo_task_routine
-# (
-#     id                  BIGINT AUTO_INCREMENT NOT NULL,
-#     dates               text                  NULL,
-#     cycle               VARCHAR(20)           NOT NULL DEFAULT 'NONE',
-#     pattern             text                  NULL,
-#     is_exclude_holidays BOOLEAN               NOT NULL DEFAULT FALSE,
-#     create_at           timestamp             NULL,
-#     updated_at          timestamp             NULL,
-#     created_by          VARCHAR(255)          NULL,
-#     updated_by          VARCHAR(255)          NULL,
-#
-#     CONSTRAINT pk_todo_task_routine PRIMARY KEY (id)
-# );
-#
-# CREATE TABLE task_summary
-# (
-#     id                                    BIGINT AUTO_INCREMENT NOT NULL,
-#     member_id                             VARCHAR(26)           NOT NULL,
-#     remained_dowith_task_count            INT                   NOT NULL DEFAULT 0,
-#     remained_dowith_task_count_updated_at timestamp             NULL,
-#     last_attendance_date                  date                  NULL,
-#     task_complete_level                   VARCHAR(10)           NOT NULL DEFAULT 'GOOD',
-#     create_at                             timestamp             NULL,
-#     updated_at                            timestamp             NULL,
-#     created_by                            VARCHAR(255)          NULL,
-#     updated_by                            VARCHAR(255)          NULL,
-#     CONSTRAINT pk_task_summary PRIMARY KEY (id)
-# );
-#
-# ALTER TABLE dowith_task_success
-#     ADD CONSTRAINT uc_dowith_task_success_dowith_task UNIQUE (dowith_task_id);
-#
-# ALTER TABLE member_alarm_setting
-#     ADD CONSTRAINT uc_member_alarm_setting_member UNIQUE (member_id);
-#
-# ALTER TABLE member_term_agree
-#     ADD CONSTRAINT uc_member_term_agree_member UNIQUE (member_id);
-#
-# ALTER TABLE dowith_task_success
-#     ADD CONSTRAINT FK_DOWITH_TASK_SUCCESS_ON_DOWITH_TASK FOREIGN KEY (dowith_task_id) REFERENCES dowith_task (id);
-#
-# ALTER TABLE dowith_task
-#     ADD CONSTRAINT FK_DOWITH_TASK_ON_DOWITH_TASK_ROUTINE FOREIGN KEY (dowith_task_routine_id) REFERENCES dowith_task_routine (id);
-#
-# ALTER TABLE member_alarm_setting
-#     ADD CONSTRAINT FK_MEMBER_ALARM_SETTING_ON_MEMBER FOREIGN KEY (member_id) REFERENCES member (id);
-#
-# ALTER TABLE member_badge
-#     ADD CONSTRAINT FK_MEMBER_BADGE_ON_BADGE FOREIGN KEY (badge_id) REFERENCES badge (id);
-#
-# ALTER TABLE todo_task
-#     ADD CONSTRAINT FK_TODO_TASK_ON_TODO_TASK_ROUTINE FOREIGN KEY (todo_task_routine_id) REFERENCES todo_task_routine (id);
-#
-# ALTER TABLE member_follow
-#     ADD CONSTRAINT FK_MEMBER_FOLLOW_ON_FOLLOWER FOREIGN KEY (follower_id) REFERENCES member (id);
-#
-# ALTER TABLE member_follow
-#     ADD CONSTRAINT FK_MEMBER_FOLLOW_ON_FOLLOWING FOREIGN KEY (following_id) REFERENCES member (id);
-#
-# ALTER TABLE member_social_account
-#     ADD CONSTRAINT FK_MEMBER_SOCIAL_ACCOUNT_ON_MEMBER FOREIGN KEY (member_id) REFERENCES member (id);
-#
-# ALTER TABLE member_status_history
-#     ADD CONSTRAINT FK_MEMBER_STATUS_HISTORY_ON_MEMBER FOREIGN KEY (member_id) REFERENCES member (id);
-#
-# ALTER TABLE member_term_agree
-#     ADD CONSTRAINT FK_MEMBER_TERM_AGREE_ON_MEMBER FOREIGN KEY (member_id) REFERENCES member (id);
-#
-# ALTER TABLE task_summary
-#     ADD CONSTRAINT FK_TASK_SUMMARY_ON_MEMBER FOREIGN KEY (member_id) REFERENCES member (id);
-#
-#
-# -- 1. task_feedback_template 테이블
-# CREATE TABLE task_feedback_template
-# (
-#     id          BIGINT AUTO_INCREMENT NOT NULL,
-#     create_at   timestamp             NULL,
-#     updated_at  timestamp             NULL,
-#     created_by  VARCHAR(255)          NULL,
-#     updated_by  VARCHAR(255)          NULL,
-#     emoji_url   VARCHAR(255)          NOT NULL,
-#     title       VARCHAR(255)          NOT NULL,
-#     description VARCHAR(255)          NOT NULL,
-#     is_active   VARCHAR(255)          NOT NULL,
-#     CONSTRAINT pk_task_feedback_template PRIMARY KEY (id)
-# );
-#
-# -- 2. task_feedback_template_message 테이블
-# CREATE TABLE task_feedback_template_message
-# (
-#     id                        BIGINT AUTO_INCREMENT NOT NULL,
-#     create_at                 timestamp             NULL,
-#     updated_at                timestamp             NULL,
-#     created_by                VARCHAR(255)          NULL,
-#     updated_by                VARCHAR(255)          NULL,
-#     task_feedback_template_id BIGINT                NOT NULL,
-#     message                   VARCHAR(255)          NOT NULL,
-#     language                  VARCHAR(255)          NOT NULL,
-#     CONSTRAINT pk_task_feedback_template_message PRIMARY KEY (id)
-# );
-#
-# -- 3. dowith_task_feedback 테이블
-# CREATE TABLE dowith_task_feedback
-# (
-#     id                        BIGINT AUTO_INCREMENT NOT NULL,
-#     create_at                 timestamp             NULL,
-#     updated_at                timestamp             NULL,
-#     created_by                VARCHAR(255)          NULL,
-#     updated_by                VARCHAR(255)          NULL,
-#     task_feedback_template_id BIGINT                NOT NULL,
-#     dowith_task_id            BIGINT                NOT NULL,
-#     sender_member_id          VARCHAR(26)           NOT NULL,
-#     receiver_member_id        VARCHAR(26)           NOT NULL,
-#     is_checked                VARCHAR(255)          NOT NULL,
-#     CONSTRAINT pk_dowith_task_feedback PRIMARY KEY (id)
-# );
-#
-# -- Foreign Key Constraints
-#
-#
-# ALTER TABLE task_feedback_template_message
-#     ADD CONSTRAINT FK_TASK_FEEDBACK_TEMPLATE_MESSAGE_ON_TASK_FEEDBACK_TEMPLATE FOREIGN KEY (task_feedback_template_id) REFERENCES task_feedback_template (id);
-#
-# ALTER TABLE dowith_task_feedback
-#     ADD CONSTRAINT FK_DOWITH_TASK_FEEDBACK_ON_TASK_FEEDBACK_TEMPLATE FOREIGN KEY (task_feedback_template_id) REFERENCES task_feedback_template (id);
-#
-# ALTER TABLE dowith_task_feedback
-#     ADD CONSTRAINT FK_DOWITH_TASK_FEEDBACK_ON_DOWITH_TASK FOREIGN KEY (dowith_task_id) REFERENCES dowith_task (id);
-#
-#
-# CREATE TABLE notification
-# (
-#     id                         BIGINT AUTO_INCREMENT PRIMARY KEY,
-#     member_id                  VARCHAR(26)  NOT NULL,
-#     title                      TEXT         NOT NULL,
-#     body                       TEXT         NOT NULL,
-#     deep_link                  TEXT,
-#     confirmed_yn               VARCHAR(1)   NOT NULL, -- ENUM 대체
-#     confirm_date_time          DATETIME,
-#     notification_template_code VARCHAR(50),
-#     create_at                  timestamp    NULL,
-#     updated_at                 timestamp    NULL,
-#     created_by                 VARCHAR(255) NULL,
-#     updated_by                 VARCHAR(255) NULL
-# );
-#
-# CREATE TABLE notification_token
-# (
-#     id         BIGINT AUTO_INCREMENT PRIMARY KEY,
-#     member_id  VARCHAR(26)  NOT NULL,
-#     token      VARCHAR(255) NOT NULL,
-#     expired_yn VARCHAR(1)   NOT NULL, -- ENUM 대체
-#     create_at  timestamp    NULL,
-#     updated_at timestamp    NULL,
-#     created_by VARCHAR(255) NULL,
-#     updated_by VARCHAR(255) NULL
-# );
-#
-# CREATE TABLE notification_template
-# (
-#     id            BIGINT AUTO_INCREMENT PRIMARY KEY,
-#     code          VARCHAR(50)  NOT NULL UNIQUE,
-#     title         TEXT         NOT NULL,
-#     body          TEXT         NOT NULL,
-#     app_deep_link TEXT,
-#     create_at     timestamp    NULL,
-#     updated_at    timestamp    NULL,
-#     created_by    VARCHAR(255) NULL,
-#     updated_by    VARCHAR(255) NULL
-# );
+CREATE TABLE `badge`
+(
+    `id`           bigint       NOT NULL AUTO_INCREMENT,
+    `create_at`    datetime(6)  DEFAULT NULL,
+    `created_by`   varchar(255) DEFAULT NULL,
+    `updated_at`   datetime(6)  DEFAULT NULL,
+    `updated_by`   varchar(255) DEFAULT NULL,
+    `acquire_hint` varchar(255) DEFAULT NULL,
+    `status`       varchar(255) NOT NULL,
+    `description`  varchar(255) DEFAULT NULL,
+    `image_url`    varchar(255) DEFAULT NULL,
+    `name`         varchar(255) NOT NULL,
+    `sort_order`   int          DEFAULT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_0900_ai_ci;
+
+CREATE TABLE `dev_refresh_token`
+(
+    `token`        varchar(255) NOT NULL,
+    `access_token` varchar(255) DEFAULT NULL,
+    `expire_at`    datetime(6)  DEFAULT NULL,
+    `member_id`    varchar(255) DEFAULT NULL,
+    `user_agent`   varchar(255) DEFAULT NULL,
+    PRIMARY KEY (`token`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_0900_ai_ci;
+
+CREATE TABLE `dowith_task_routine`
+(
+    `id`                  bigint      NOT NULL AUTO_INCREMENT,
+    `create_at`           datetime(6)  DEFAULT NULL,
+    `created_by`          varchar(255) DEFAULT NULL,
+    `updated_at`          datetime(6)  DEFAULT NULL,
+    `updated_by`          varchar(255) DEFAULT NULL,
+    `cycle`               varchar(20) NOT NULL,
+    `exclude_holidays_yn` bit(1)       DEFAULT NULL,
+    `pattern`             varchar(255) DEFAULT NULL,
+    `range_end_date`      date        NOT NULL,
+    `range_start_date`    date        NOT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_0900_ai_ci;
+
+CREATE TABLE `dowith_task`
+(
+    `id`                     bigint       NOT NULL AUTO_INCREMENT,
+    `create_at`              datetime(6)  DEFAULT NULL,
+    `created_by`             varchar(255) DEFAULT NULL,
+    `updated_at`             datetime(6)  DEFAULT NULL,
+    `updated_by`             varchar(255) DEFAULT NULL,
+    `complete_at`            datetime(6)  DEFAULT NULL,
+    `date`                   date         NOT NULL,
+    `member_id`              varchar(26)  NOT NULL,
+    `start_time`             time(6)      DEFAULT NULL,
+    `status`                 varchar(255) NOT NULL,
+    `success_at`             datetime(6)  DEFAULT NULL,
+    `task_category_id`       bigint       DEFAULT NULL,
+    `title`                  varchar(255) NOT NULL,
+    `dowith_task_routine_id` bigint       DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    KEY `FKkjm1t4jam94wtf486023jdaam` (`dowith_task_routine_id`),
+    CONSTRAINT `FKkjm1t4jam94wtf486023jdaam` FOREIGN KEY (`dowith_task_routine_id`) REFERENCES `dowith_task_routine` (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_0900_ai_ci;
+
+CREATE TABLE `dowith_task_feedback`
+(
+    `id`                        bigint       NOT NULL AUTO_INCREMENT,
+    `create_at`                 datetime(6)  DEFAULT NULL,
+    `created_by`                varchar(255) DEFAULT NULL,
+    `updated_at`                datetime(6)  DEFAULT NULL,
+    `updated_by`                varchar(255) DEFAULT NULL,
+    `dowith_task_id`            bigint       NOT NULL,
+    `is_checked`                varchar(255) NOT NULL,
+    `receiver_member_id`        varchar(255) NOT NULL,
+    `sender_member_id`          varchar(255) NOT NULL,
+    `task_feedback_template_id` bigint       NOT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_0900_ai_ci;
+
+CREATE TABLE `dowith_task_like`
+(
+    `id`             bigint      NOT NULL AUTO_INCREMENT,
+    `create_at`      datetime(6)  DEFAULT NULL,
+    `created_by`     varchar(255) DEFAULT NULL,
+    `updated_at`     datetime(6)  DEFAULT NULL,
+    `updated_by`     varchar(255) DEFAULT NULL,
+    `member_id`      varchar(26) NOT NULL,
+    `dowith_task_id` bigint      NOT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_dowith_task_like_1` (`member_id`, `dowith_task_id`),
+    KEY `FKe3yxe45m46uwf8fhgul36un9v` (`dowith_task_id`),
+    CONSTRAINT `FKe3yxe45m46uwf8fhgul36un9v` FOREIGN KEY (`dowith_task_id`) REFERENCES `dowith_task` (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_0900_ai_ci;
+
+CREATE TABLE `dowith_task_success`
+(
+    `id`             bigint NOT NULL AUTO_INCREMENT,
+    `create_at`      datetime(6)  DEFAULT NULL,
+    `created_by`     varchar(255) DEFAULT NULL,
+    `updated_at`     datetime(6)  DEFAULT NULL,
+    `updated_by`     varchar(255) DEFAULT NULL,
+    `image_url`      varchar(255) DEFAULT NULL,
+    `dowith_task_id` bigint NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY `FKg8cantau9xpnh63og64mn8svu` (`dowith_task_id`),
+    CONSTRAINT `FKg8cantau9xpnh63og64mn8svu` FOREIGN KEY (`dowith_task_id`) REFERENCES `dowith_task` (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_0900_ai_ci;
+
+CREATE TABLE `holiday`
+(
+    `id`           bigint       NOT NULL AUTO_INCREMENT,
+    `create_at`    datetime(6)  DEFAULT NULL,
+    `created_by`   varchar(255) DEFAULT NULL,
+    `updated_at`   datetime(6)  DEFAULT NULL,
+    `updated_by`   varchar(255) DEFAULT NULL,
+    `country_code` varchar(255) NOT NULL,
+    `date`         date         NOT NULL,
+    `name`         varchar(255) NOT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_0900_ai_ci;
+
+CREATE TABLE `member`
+(
+    `id`                varchar(26)  NOT NULL,
+    `create_at`         datetime(6)  DEFAULT NULL,
+    `created_by`        varchar(255) DEFAULT NULL,
+    `updated_at`        datetime(6)  DEFAULT NULL,
+    `updated_by`        varchar(255) DEFAULT NULL,
+    `date_of_birth`     date         DEFAULT NULL,
+    `gender`            varchar(2)   DEFAULT NULL,
+    `nickname`          varchar(255) DEFAULT NULL,
+    `profile_image_url` varchar(255) DEFAULT NULL,
+    `self_description`  varchar(255) DEFAULT NULL,
+    `status`            varchar(255) NOT NULL,
+    `subject`           varchar(255) DEFAULT NULL,
+    `type`              varchar(255) NOT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_0900_ai_ci;
+
+CREATE TABLE `member_alarm_setting`
+(
+    `id`            bigint      NOT NULL AUTO_INCREMENT,
+    `create_at`     datetime(6)  DEFAULT NULL,
+    `created_by`    varchar(255) DEFAULT NULL,
+    `updated_at`    datetime(6)  DEFAULT NULL,
+    `updated_by`    varchar(255) DEFAULT NULL,
+    `base_alarm_yn` bit(1)      NOT NULL,
+    `feedback_yn`   bit(1)      NOT NULL,
+    `marketing_yn`  bit(1)      NOT NULL,
+    `todo_bot_yn`   bit(1)      NOT NULL,
+    `member_id`     varchar(26) NOT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `UK_3fqfed76e6nv6je3yj98b7yag` (`member_id`),
+    CONSTRAINT `FKj6uf0pevg5lu24k0fe5j1e38p` FOREIGN KEY (`member_id`) REFERENCES `member` (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_0900_ai_ci;
+
+CREATE TABLE `member_badge`
+(
+    `id`         bigint       NOT NULL AUTO_INCREMENT,
+    `create_at`  datetime(6)  DEFAULT NULL,
+    `created_by` varchar(255) DEFAULT NULL,
+    `updated_at` datetime(6)  DEFAULT NULL,
+    `updated_by` varchar(255) DEFAULT NULL,
+    `main_yn`    varchar(255) NOT NULL,
+    `member_id`  varchar(26)  DEFAULT NULL,
+    `badge_id`   bigint       NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY `FK39altb7wsyx1gyx3m492wf2kb` (`badge_id`),
+    CONSTRAINT `FK39altb7wsyx1gyx3m492wf2kb` FOREIGN KEY (`badge_id`) REFERENCES `badge` (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_0900_ai_ci;
+
+CREATE TABLE `member_follow`
+(
+    `id`           bigint      NOT NULL AUTO_INCREMENT,
+    `create_at`    datetime(6)  DEFAULT NULL,
+    `created_by`   varchar(255) DEFAULT NULL,
+    `updated_at`   datetime(6)  DEFAULT NULL,
+    `updated_by`   varchar(255) DEFAULT NULL,
+    `follower_id`  varchar(26) NOT NULL,
+    `following_id` varchar(26) NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY `FKrshygjds7c4j7prtkkok4ax6p` (`follower_id`),
+    KEY `FK1wlcnyo4j7gl8oxjje8m27119` (`following_id`),
+    CONSTRAINT `FK1wlcnyo4j7gl8oxjje8m27119` FOREIGN KEY (`following_id`) REFERENCES `member` (`id`),
+    CONSTRAINT `FKrshygjds7c4j7prtkkok4ax6p` FOREIGN KEY (`follower_id`) REFERENCES `member` (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_0900_ai_ci;
+
+CREATE TABLE `member_social_account`
+(
+    `id`         bigint       NOT NULL AUTO_INCREMENT,
+    `create_at`  datetime(6)  DEFAULT NULL,
+    `created_by` varchar(255) DEFAULT NULL,
+    `updated_at` datetime(6)  DEFAULT NULL,
+    `updated_by` varchar(255) DEFAULT NULL,
+    `provider`   varchar(255) NOT NULL,
+    `member_id`  varchar(26)  NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY `FK3f6sh5arekj1s8ta6j8g6ojtx` (`member_id`),
+    CONSTRAINT `FK3f6sh5arekj1s8ta6j8g6ojtx` FOREIGN KEY (`member_id`) REFERENCES `member` (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_0900_ai_ci;
+
+CREATE TABLE `member_status_history`
+(
+    `id`                bigint       NOT NULL AUTO_INCREMENT,
+    `create_at`         datetime(6)  DEFAULT NULL,
+    `created_by`        varchar(255) DEFAULT NULL,
+    `updated_at`        datetime(6)  DEFAULT NULL,
+    `updated_by`        varchar(255) DEFAULT NULL,
+    `status`            varchar(255) NOT NULL,
+    `status_changed_at` datetime(6)  NOT NULL,
+    `status_end_at`     datetime(6)  NOT NULL,
+    `member_id`         varchar(26)  NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY `FK2oi1yq1grh5gq36u5w5rakqau` (`member_id`),
+    CONSTRAINT `FK2oi1yq1grh5gq36u5w5rakqau` FOREIGN KEY (`member_id`) REFERENCES `member` (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_0900_ai_ci;
+
+CREATE TABLE `member_term_agree`
+(
+    `id`             bigint      NOT NULL AUTO_INCREMENT,
+    `create_at`      datetime(6)  DEFAULT NULL,
+    `created_by`     varchar(255) DEFAULT NULL,
+    `updated_at`     datetime(6)  DEFAULT NULL,
+    `updated_by`     varchar(255) DEFAULT NULL,
+    `advertisement`  bit(1)      NOT NULL,
+    `privacy`        bit(1)      NOT NULL,
+    `terms_of_agree` bit(1)      NOT NULL,
+    `member_id`      varchar(26) NOT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `UK_qhgrwea9j7tlelvr8tcu4lxfn` (`member_id`),
+    CONSTRAINT `FK27udwntf6y3danhk4kf00ifyt` FOREIGN KEY (`member_id`) REFERENCES `member` (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_0900_ai_ci;
+
+CREATE TABLE `notification`
+(
+    `id`                         bigint       NOT NULL AUTO_INCREMENT,
+    `create_at`                  datetime(6)  DEFAULT NULL,
+    `created_by`                 varchar(255) DEFAULT NULL,
+    `updated_at`                 datetime(6)  DEFAULT NULL,
+    `updated_by`                 varchar(255) DEFAULT NULL,
+    `body`                       text         NOT NULL,
+    `confirm_date_time`          datetime(6)  DEFAULT NULL,
+    `deep_link`                  text,
+    `confirmed_yn`               varchar(255) NOT NULL,
+    `member_id`                  varchar(255) NOT NULL,
+    `notification_template_code` varchar(255) DEFAULT NULL,
+    `title`                      text         NOT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_0900_ai_ci;
+
+CREATE TABLE `notification_template`
+(
+    `id`            bigint       NOT NULL AUTO_INCREMENT,
+    `create_at`     datetime(6)  DEFAULT NULL,
+    `created_by`    varchar(255) DEFAULT NULL,
+    `updated_at`    datetime(6)  DEFAULT NULL,
+    `updated_by`    varchar(255) DEFAULT NULL,
+    `app_deep_link` text,
+    `body`          text         NOT NULL,
+    `code`          varchar(255) NOT NULL,
+    `title`         text         NOT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `UK_78ljxu1rtyj29qj8a3bao9bfx` (`code`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_0900_ai_ci;
+
+CREATE TABLE `notification_token`
+(
+    `id`         bigint       NOT NULL AUTO_INCREMENT,
+    `create_at`  datetime(6)  DEFAULT NULL,
+    `created_by` varchar(255) DEFAULT NULL,
+    `updated_at` datetime(6)  DEFAULT NULL,
+    `updated_by` varchar(255) DEFAULT NULL,
+    `expired_yn` varchar(255) NOT NULL,
+    `member_id`  varchar(255) NOT NULL,
+    `token`      varchar(255) NOT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_0900_ai_ci;
+
+CREATE TABLE `ranking_topic`
+(
+    `id`          bigint       NOT NULL AUTO_INCREMENT,
+    `create_at`   datetime(6)  DEFAULT NULL,
+    `created_by`  varchar(255) DEFAULT NULL,
+    `updated_at`  datetime(6)  DEFAULT NULL,
+    `updated_by`  varchar(255) DEFAULT NULL,
+    `description` varchar(255) DEFAULT NULL,
+    `title`       varchar(255) NOT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_0900_ai_ci;
+
+CREATE TABLE `ranking`
+(
+    `id`               bigint      NOT NULL AUTO_INCREMENT,
+    `create_at`        datetime(6)  DEFAULT NULL,
+    `created_by`       varchar(255) DEFAULT NULL,
+    `updated_at`       datetime(6)  DEFAULT NULL,
+    `updated_by`       varchar(255) DEFAULT NULL,
+    `current_rank`     bigint      NOT NULL,
+    `member_id`        varchar(26) NOT NULL,
+    `previous_rank`    bigint       DEFAULT NULL,
+    `ranking_topic_id` bigint      NOT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_ranking_1` (`ranking_topic_id`, `member_id`),
+    CONSTRAINT `FKggr9gbi0wjxwekbl0mpnrhm99` FOREIGN KEY (`ranking_topic_id`) REFERENCES `ranking_topic` (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_0900_ai_ci;
+
+CREATE TABLE `task_category`
+(
+    `id`                 bigint       NOT NULL AUTO_INCREMENT,
+    `create_at`          datetime(6)  DEFAULT NULL,
+    `created_by`         varchar(255) DEFAULT NULL,
+    `updated_at`         datetime(6)  DEFAULT NULL,
+    `updated_by`         varchar(255) DEFAULT NULL,
+    `category_holder_id` varchar(26)  DEFAULT NULL,
+    `creation_type`      varchar(255) NOT NULL,
+    `emoji`              varchar(255) NOT NULL,
+    `active_yn`          varchar(255) NOT NULL,
+    `title`              varchar(255) NOT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_0900_ai_ci;
+
+CREATE TABLE `task_feedback_template`
+(
+    `id`          bigint       NOT NULL AUTO_INCREMENT,
+    `create_at`   datetime(6)  DEFAULT NULL,
+    `created_by`  varchar(255) DEFAULT NULL,
+    `updated_at`  datetime(6)  DEFAULT NULL,
+    `updated_by`  varchar(255) DEFAULT NULL,
+    `description` varchar(255) NOT NULL,
+    `emoji_url`   varchar(255) NOT NULL,
+    `is_active`   varchar(255) NOT NULL,
+    `title`       varchar(255) NOT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_0900_ai_ci;
+
+CREATE TABLE `task_feedback_template_message`
+(
+    `id`                        bigint       NOT NULL AUTO_INCREMENT,
+    `create_at`                 datetime(6)  DEFAULT NULL,
+    `created_by`                varchar(255) DEFAULT NULL,
+    `updated_at`                datetime(6)  DEFAULT NULL,
+    `updated_by`                varchar(255) DEFAULT NULL,
+    `language`                  varchar(255) NOT NULL,
+    `message`                   varchar(255) NOT NULL,
+    `task_feedback_template_id` bigint       NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY `FK2xw1gd0ww0s08iv3lo6qat0oo` (`task_feedback_template_id`),
+    CONSTRAINT `FK2xw1gd0ww0s08iv3lo6qat0oo` FOREIGN KEY (`task_feedback_template_id`) REFERENCES `task_feedback_template` (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_0900_ai_ci;
+
+CREATE TABLE `task_summary`
+(
+    `id`                                    bigint       NOT NULL AUTO_INCREMENT,
+    `create_at`                             datetime(6)  DEFAULT NULL,
+    `created_by`                            varchar(255) DEFAULT NULL,
+    `updated_at`                            datetime(6)  DEFAULT NULL,
+    `updated_by`                            varchar(255) DEFAULT NULL,
+    `last_attendance_date`                  date         DEFAULT NULL,
+    `member_id`                             varchar(26)  NOT NULL,
+    `remained_dowith_task_count`            int          NOT NULL,
+    `remained_dowith_task_count_updated_at` datetime(6)  DEFAULT NULL,
+    `task_complete_level`                   varchar(255) NOT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_0900_ai_ci;
+
+CREATE TABLE `todo_task_routine`
+(
+    `id`                  bigint      NOT NULL AUTO_INCREMENT,
+    `create_at`           datetime(6)  DEFAULT NULL,
+    `created_by`          varchar(255) DEFAULT NULL,
+    `updated_at`          datetime(6)  DEFAULT NULL,
+    `updated_by`          varchar(255) DEFAULT NULL,
+    `cycle`               varchar(20) NOT NULL,
+    `is_exclude_holidays` bit(1)       DEFAULT NULL,
+    `pattern`             text,
+    `dates`               text,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_0900_ai_ci;
+
+
+CREATE TABLE `todo_task`
+(
+    `id`                   bigint       NOT NULL AUTO_INCREMENT,
+    `create_at`            datetime(6)  DEFAULT NULL,
+    `created_by`           varchar(255) DEFAULT NULL,
+    `updated_at`           datetime(6)  DEFAULT NULL,
+    `updated_by`           varchar(255) DEFAULT NULL,
+    `date`                 date         NOT NULL,
+    `member_id`            varchar(26)  NOT NULL,
+    `start_time`           time(6)      DEFAULT NULL,
+    `status`               varchar(255) NOT NULL,
+    `task_category_id`     bigint       DEFAULT NULL,
+    `title`                varchar(255) NOT NULL,
+    `todo_task_routine_id` bigint       DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    KEY `FKq9txtlns4mgoyh11t1jqumpme` (`todo_task_routine_id`),
+    CONSTRAINT `FKq9txtlns4mgoyh11t1jqumpme` FOREIGN KEY (`todo_task_routine_id`) REFERENCES `todo_task_routine` (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_0900_ai_ci;
