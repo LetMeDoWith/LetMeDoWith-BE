@@ -1,7 +1,5 @@
 package com.LetMeDoWith.LetMeDoWith.domain.task.model;
 
-import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.INVALID_REQUEST;
-
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
@@ -9,6 +7,8 @@ import com.LetMeDoWith.LetMeDoWith.domain.AggregateRoot;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TaskRoutineCycle;
 import jakarta.persistence.*;
+import lombok.*;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -17,7 +17,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
-import lombok.*;
+
+import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.INVALID_REQUEST;
 
 @Entity
 @Getter
@@ -59,6 +60,9 @@ public class DowithTask extends BaseAuditEntity {
 
     @OneToMany(mappedBy = "dowithTask", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<DowithTaskSuccess> successes;
+
+    @OneToMany(mappedBy = "dowithTask", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<DowithTaskLike> likes;
 
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "dowith_task_routine_id")

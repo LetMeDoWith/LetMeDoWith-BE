@@ -8,9 +8,10 @@ import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TaskRoutineCycle;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.converter.TaskRoutineCycleConverter;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.converter.TaskRoutinePatternConverter;
 import jakarta.persistence.*;
+import lombok.*;
+
 import java.time.LocalDate;
 import java.util.Set;
-import lombok.*;
 
 @Entity
 @Getter
@@ -25,9 +26,6 @@ public class DowithTaskRoutine extends BaseAuditEntity {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    //    @Column(name = "dates", columnDefinition = "TEXT")
-    //    @Convert(converter = DowithTaskRoutineDatesConverter.class)
-    //    private DowithTaskRoutineDates routineDates;
     @Column(name = "range_start_date", nullable = false)
     private LocalDate rangeStartDate;
 
