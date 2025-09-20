@@ -12,7 +12,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "ranking")
+@Table(name = "ranking",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_ranking_1", columnNames = {"ranking_topic_id", "member_id"})
+        }
+)
 public class Ranking extends BaseAuditEntity {
 
     @Id
