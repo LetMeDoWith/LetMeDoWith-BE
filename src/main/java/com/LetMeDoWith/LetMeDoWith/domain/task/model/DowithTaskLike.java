@@ -15,9 +15,9 @@ import lombok.NoArgsConstructor;
 @Table(
         name = "dowith_task_like",
         uniqueConstraints = {
-            @UniqueConstraint(
-                    name = "uk_dowith_task_like_1",
-                    columnNames = {"member_id", "dowith_task_id"})
+                @UniqueConstraint(
+                        name = "uk_dowith_task_like_1",
+                        columnNames = {"member_id", "dowith_task_id"})
         })
 public class DowithTaskLike extends BaseAuditEntity {
 
@@ -32,4 +32,11 @@ public class DowithTaskLike extends BaseAuditEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dowith_task_id", nullable = false)
     private DowithTask dowithTask;
+
+    public static DowithTaskLike of(String memberId, DowithTask dowithTask) {
+        return DowithTaskLike.builder()
+                .memberId(memberId)
+                .dowithTask(dowithTask)
+                .build();
+    }
 }
