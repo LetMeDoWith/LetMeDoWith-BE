@@ -15,9 +15,9 @@ import lombok.NoArgsConstructor;
 @Table(
         name = "dowith_task_like",
         uniqueConstraints = {
-                @UniqueConstraint(
-                        name = "uk_dowith_task_like_1",
-                        columnNames = {"member_id", "dowith_task_id"})
+            @UniqueConstraint(
+                    name = "uk_dowith_task_like_1",
+                    columnNames = {"member_id", "dowith_task_id"})
         })
 public class DowithTaskLike extends BaseAuditEntity {
 
