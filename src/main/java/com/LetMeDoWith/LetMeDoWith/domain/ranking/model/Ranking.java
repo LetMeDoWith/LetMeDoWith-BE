@@ -30,6 +30,15 @@ public class Ranking extends BaseAuditEntity {
     @JoinColumn(name = "ranking_topic_id", nullable = false)
     private RankingTopic rankingTopic;
 
+    @Column(name = "year", nullable = false)
+    private int year;
+
+    @Column(name = "month", nullable = false)
+    private int month;
+
+    @Column(name = "week", nullable = false)
+    private int week;
+
     @Column(name = "member_id", nullable = false, length = 26)
     private String memberId;
 
