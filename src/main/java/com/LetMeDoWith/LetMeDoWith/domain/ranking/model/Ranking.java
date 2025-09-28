@@ -15,9 +15,9 @@ import lombok.NoArgsConstructor;
 @Table(
         name = "ranking",
         uniqueConstraints = {
-            @UniqueConstraint(
-                    name = "uk_ranking_1",
-                    columnNames = {"ranking_topic_id", "member_id"})
+                @UniqueConstraint(
+                        name = "uk_ranking_1",
+                        columnNames = {"ranking_topic_id", "member_id"})
         })
 public class Ranking extends BaseAuditEntity {
 
@@ -31,13 +31,13 @@ public class Ranking extends BaseAuditEntity {
     private RankingTopic rankingTopic;
 
     @Column(name = "year", nullable = false)
-    private int year;
+    private Integer year;
 
     @Column(name = "month", nullable = false)
-    private int month;
+    private Integer month;
 
     @Column(name = "week", nullable = false)
-    private int week;
+    private Integer week;
 
     @Column(name = "member_id", nullable = false, length = 26)
     private String memberId;
