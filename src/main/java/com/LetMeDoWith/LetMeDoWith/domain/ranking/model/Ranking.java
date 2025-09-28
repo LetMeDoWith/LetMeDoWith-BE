@@ -15,9 +15,9 @@ import lombok.NoArgsConstructor;
 @Table(
         name = "ranking",
         uniqueConstraints = {
-                @UniqueConstraint(
-                        name = "uk_ranking_1",
-                        columnNames = {"ranking_topic_id", "member_id"})
+            @UniqueConstraint(
+                    name = "uk_ranking_1",
+                    columnNames = {"ranking_topic_id", "member_id"})
         })
 public class Ranking extends BaseAuditEntity {
 
