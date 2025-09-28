@@ -108,17 +108,19 @@ public class DeleteTodoTaskIntegrationTest extends AbstractIntegrationTest {
         Set<LocalDate> routineDates = taskRoutineDateCalculator.computeRoutineDates(
                 TaskRoutineCycle.DAILY, TEST_DATE, ROUTINE_END_DATE, null);
 
-        List<TodoTask> todoTasks = TodoTask.ofWithRoutine(
+        TodoTask todoTask = TodoTask.ofWithRoutine(
                 this.requestMember.getId(),
                 taskCategory.getId(),
                 TEST_TITLE,
+                TEST_DATE,
                 TEST_START_TIME,
-                routineDates,
+                TEST_DATE,
+                ROUTINE_END_DATE,
                 TaskRoutineCycle.DAILY,
                 null,
                 false);
 
-        List<TodoTask> savedTodoTasks = todoTaskRepository.saveAll(todoTasks);
+        List<TodoTask> savedTodoTasks = todoTaskRepository.saveAll(TodoTask.of(todoTask, routineDates));
 
         // 중간에 있는 태스크를 선택해서 삭제
         TodoTask taskToDelete = savedTodoTasks.stream()
@@ -167,17 +169,19 @@ public class DeleteTodoTaskIntegrationTest extends AbstractIntegrationTest {
         Set<LocalDate> routineDates = taskRoutineDateCalculator.computeRoutineDates(
                 TaskRoutineCycle.DAILY, TEST_DATE, ROUTINE_END_DATE, null);
 
-        List<TodoTask> todoTasks = TodoTask.ofWithRoutine(
+        TodoTask todoTask = TodoTask.ofWithRoutine(
                 this.requestMember.getId(),
                 taskCategory.getId(),
                 TEST_TITLE,
+                TEST_DATE,
                 TEST_START_TIME,
-                routineDates,
+                TEST_DATE,
+                ROUTINE_END_DATE,
                 TaskRoutineCycle.DAILY,
                 null,
                 false);
 
-        List<TodoTask> savedTodoTasks = todoTaskRepository.saveAll(todoTasks);
+        List<TodoTask> savedTodoTasks = todoTaskRepository.saveAll(TodoTask.of(todoTask, routineDates));
 
         // 중간에 있는 태스크를 선택 (기준 태스크)
         TodoTask pivotTask = savedTodoTasks.stream()

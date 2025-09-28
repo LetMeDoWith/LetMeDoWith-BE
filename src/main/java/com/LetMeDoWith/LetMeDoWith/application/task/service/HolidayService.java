@@ -23,10 +23,14 @@ public class HolidayService {
      * @param end 종료일
      * @return 공휴일 목록
      */
-    public Set<LocalDate> getHolidays(CountryCode countryCode, LocalDate start, LocalDate end) {
+    public Set<LocalDate> getHolidayDates(CountryCode countryCode, LocalDate start, LocalDate end) {
         return holidayRepository.getHolidays(countryCode, start, end).stream()
                 .map(Holiday::getDate)
                 .collect(Collectors.toSet());
+    }
+
+    public Set<Holiday> getHolidays(CountryCode countryCode, LocalDate start, LocalDate end) {
+        return holidayRepository.getHolidays(countryCode, start, end);
     }
 
     /**

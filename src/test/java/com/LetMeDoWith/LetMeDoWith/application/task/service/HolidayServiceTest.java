@@ -78,7 +78,7 @@ class HolidayServiceTest {
         when(holidayRepository.getHolidays(CountryCode.KR, startDate, endDate)).thenReturn(holidays);
 
         // when
-        Set<LocalDate> result = holidayService.getHolidays(CountryCode.KR, startDate, endDate);
+        Set<LocalDate> result = holidayService.getHolidayDates(CountryCode.KR, startDate, endDate);
 
         // then
         assertThat(result).hasSize(holidays.size());
@@ -98,7 +98,7 @@ class HolidayServiceTest {
                 .thenReturn(multiYearHolidays);
 
         // when
-        Set<LocalDate> result = holidayService.getHolidays(CountryCode.KR, multiYearStartDate, multiYearEndDate);
+        Set<LocalDate> result = holidayService.getHolidayDates(CountryCode.KR, multiYearStartDate, multiYearEndDate);
 
         // then
         assertThat(result).hasSize(2);

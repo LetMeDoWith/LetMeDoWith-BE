@@ -12,6 +12,7 @@ import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TaskCategoryRepository
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TodoTaskRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.service.TaskRoutineDateCalculator;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
@@ -61,6 +62,8 @@ public class RegisterTodoTaskService {
                     .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
         }
 
+        List<TodoTask> todoTasks = new ArrayList<>();
+
         TaskRoutineCondition routineCondition = command.routineCondition();
 
         // 루틴 반복 주기에 따른 루틴 수행일자 계산
@@ -72,21 +75,26 @@ public class RegisterTodoTaskService {
 
         if (Boolean.TRUE.equals(routineCondition.isExcludeHolidays())) {
             // 공휴일 목록 조회
-            Set<LocalDate> holidays = holidayService.getHolidays(
+            Set<LocalDate> holidays = holidayService.getHolidayDates(
                     CountryCode.KR, routineCondition.startDate(), routineCondition.endDate());
 
             routineDates.removeAll(holidays);
         }
 
-        List<TodoTask> todoTasks = TodoTask.ofWithRoutine(
+        TodoTask todoTask = TodoTask.ofWithRoutine(
                 memberId,
                 command.taskCategoryId(),
                 command.title(),
+                command.date(),
                 command.startTime(),
-                routineDates,
+                routineCondition.startDate(),
+                routineCondition.endDate(),
                 routineCondition.cycle(),
                 routineCondition.pattern(),
                 routineCondition.isExcludeHolidays());
+
+        todoTasks.add(todoTask);
+        todoTasks.addAll(TodoTask.of(todoTask, routineDates));
 
         return CreateTodoTaskResult.of(todoTaskRepository.saveTodoTasks(todoTasks), routineDates);
     }

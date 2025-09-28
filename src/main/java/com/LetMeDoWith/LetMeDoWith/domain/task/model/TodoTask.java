@@ -11,7 +11,6 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
-import java.util.stream.Collectors;
 import lombok.*;
 
 /**
@@ -78,37 +77,6 @@ public class TodoTask extends BaseAuditEntity {
     }
 
     /**
-     * 루틴을 포함한 TodoTask 생성 메서드
-     *
-     * @param memberId       회원 ID
-     * @param taskCategoryId 작업 카테고리 ID
-     * @param title          제목
-     * @param date           날짜
-     * @param startTime      시작 시간
-     * @param routine        루틴
-     * @return 생성된 TodoTask 객체
-     */
-    public static TodoTask of(
-            String memberId,
-            Long taskCategoryId,
-            String title,
-            LocalDate date,
-            LocalTime startTime,
-            TodoTaskRoutine routine) {
-        TodoTask newTodoTask = TodoTask.builder()
-                .memberId(memberId)
-                .taskCategoryId(taskCategoryId)
-                .title(title)
-                .status(TodoTaskStatus.WAIT)
-                .date(date)
-                .startTime(startTime)
-                .routine(routine)
-                .build();
-        newTodoTask.validate();
-        return newTodoTask;
-    }
-
-    /**
      * 루틴을 포함한 TodoTask 리스트 생성 메서드
      *
      * @param memberId       회원 ID
@@ -118,57 +86,75 @@ public class TodoTask extends BaseAuditEntity {
      * @param routineDates   루틴 날짜 세트
      * @return 생성된 TodoTask 리스트
      */
-    public static List<TodoTask> ofWithRoutine(
+    public static TodoTask ofWithRoutine(
             String memberId,
             Long taskCategoryId,
             String title,
+            LocalDate date,
             LocalTime startTime,
-            Set<LocalDate> routineDates,
+            LocalDate rangeStartDate,
+            LocalDate rangeEndDate,
             TaskRoutineCycle cycle,
             Set<Integer> pattern,
             boolean isExcludeHolidays) {
 
+        TodoTaskRoutine routine = TodoTaskRoutine.of(rangeStartDate, rangeEndDate, cycle, pattern, isExcludeHolidays);
+
+        TodoTask newTodoTask = TodoTask.builder()
+                .memberId(memberId)
+                .taskCategoryId(taskCategoryId)
+                .title(title)
+                .status(TodoTaskStatus.WAIT)
+                .routine(routine)
+                .date(date)
+                .startTime(startTime)
+                .build();
+
+        newTodoTask.validate();
+
+        return newTodoTask;
+    }
+
+    /**
+     * 루틴을 포함한 TodoTask 리스트 생성 메서드
+     *
+     * @param todoTask       기존 TodoTask
+     * @param routineDates   루틴 날짜 세트
+     * @return 생성된 TodoTask 리스트
+     */
+    public static List<TodoTask> of(TodoTask todoTask, Set<LocalDate> routineDates) {
         List<TodoTask> result = new ArrayList<>();
-        Set<LocalDate> targetDateSet = new TreeSet<>(routineDates);
+        routineDates.remove(todoTask.getDate());
 
-        TodoTaskRoutine routine = TodoTaskRoutine.of(targetDateSet, cycle, pattern, isExcludeHolidays);
-        targetDateSet.stream().sorted().toList().forEach(e -> {
-            TodoTask newTodoTask = TodoTask.builder()
-                    .memberId(memberId)
-                    .taskCategoryId(taskCategoryId)
-                    .title(title)
-                    .status(TodoTaskStatus.WAIT)
-                    .routine(routine)
-                    .date(e)
-                    .startTime(startTime)
-                    .build();
-            newTodoTask.validate();
-            result.add(newTodoTask);
-        });
-
+        routineDates.forEach(date -> result.add(TodoTask.builder()
+                .memberId(todoTask.getMemberId())
+                .taskCategoryId(todoTask.getTaskCategoryId())
+                .title(todoTask.getTitle())
+                .status(TodoTaskStatus.WAIT)
+                .date(date)
+                .startTime(todoTask.getStartTime())
+                .routine(todoTask.getRoutine())
+                .build()));
         return result;
     }
 
     /**
      * TodoTask 루틴 생성
      *
-     * @param routineDates 루틴 날짜 세트
+     * @param rangeStartDate 루틴 시작 날짜
+     * @param rangeEndDate 루틴 종료 날짜
+     * @param cycle 루틴 반복 주기
+     * @param pattern 루틴 반복 패턴
+     * @param isExcludeHolidays 루틴 반복 주기에 공휴일 제외 여부
      * @return 생성된 TodoTask 리스트
      */
-    public List<TodoTask> createRoutine(
-            Set<LocalDate> routineDates, TaskRoutineCycle cycle, Set<Integer> pattern, boolean isExcludeHolidays) {
-        TodoTaskRoutine routine = TodoTaskRoutine.of(routineDates, cycle, pattern, isExcludeHolidays);
-        this.updateRoutine(routine);
-
-        List<TodoTask> result = new ArrayList<>();
-        result.add(this);
-        routineDates.stream()
-                .filter(date -> !date.isEqual(this.date))
-                .collect(Collectors.toSet())
-                .forEach(date -> result.add(
-                        TodoTask.of(this.memberId, this.taskCategoryId, this.title, date, this.startTime, routine)));
-
-        return result;
+    public void createRoutine(
+            LocalDate rangeStartDate,
+            LocalDate rangeEndDate,
+            TaskRoutineCycle cycle,
+            Set<Integer> pattern,
+            boolean isExcludeHolidays) {
+        this.routine = TodoTaskRoutine.of(rangeStartDate, rangeEndDate, cycle, pattern, isExcludeHolidays);
     }
 
     /**
@@ -188,32 +174,6 @@ public class TodoTask extends BaseAuditEntity {
     public Boolean isContentsEditable() {
 
         return Boolean.TRUE;
-    }
-
-    /**
-     * 루틴 날짜 조회
-     *
-     * @return 루틴 날짜 세트
-     */
-    public Set<LocalDate> getRoutineDates() {
-        if (isRoutine()) {
-            return this.routine.getRoutineDates().getDates();
-        } else {
-            return Set.of();
-        }
-    }
-
-    /**
-     * 수정 가능한 루틴 날짜 조회
-     *
-     * @return 수정 가능한 루틴 날짜 세트
-     */
-    public Set<LocalDate> getUpdateAvailableDates() {
-        if (isRoutine()) {
-            return this.routine.getDatesAfterAndEqual(this.date);
-        } else {
-            return Set.of();
-        }
     }
 
     /**
@@ -273,7 +233,6 @@ public class TodoTask extends BaseAuditEntity {
     public TodoTaskRoutine detachRoutine() {
         if (isRoutine()) {
             TodoTaskRoutine toDelete = this.routine;
-            this.routine.removeRoutineDate(this.date);
             this.routine = null;
             return toDelete;
         } else {
