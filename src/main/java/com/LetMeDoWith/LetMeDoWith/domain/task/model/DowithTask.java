@@ -60,6 +60,9 @@ public class DowithTask extends BaseAuditEntity {
     @OneToMany(mappedBy = "dowithTask", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<DowithTaskSuccess> successes;
 
+    @OneToMany(mappedBy = "dowithTask", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<DowithTaskLike> likes;
+
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "dowith_task_routine_id")
     private DowithTaskRoutine routine;
@@ -310,6 +313,16 @@ public class DowithTask extends BaseAuditEntity {
         return now.isAfter(taskStartDateTime.minusMinutes(1))
                 && now.isBefore(taskStartDateTime.plusHours(1).plusMinutes(1))
                 && status.equals(DowithTaskStatus.WAIT);
+    }
+
+    public void like(String memberId) {
+        for (DowithTaskLike like : likes) {
+            if (like.getMemberId().equals(memberId)) {
+                throw new RestApiException(INVALID_REQUEST);
+            }
+        }
+
+        likes.add(DowithTaskLike.of(memberId, this));
     }
 
     private void validateStartDateTime() {

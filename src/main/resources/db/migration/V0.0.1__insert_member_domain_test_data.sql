@@ -1,9 +1,10 @@
--- V0.1.1__insert_initial_data.sql
--- Flyway 마이그레이션: 초기 데이터 삽입 (String Member ID 체계 적용)
--- 주의: 이 스크립트는 Member ID가 자동 생성(TSID)되는 새 스키마에 맞춰 초기 데이터를 다시 삽입합니다.
--- Member ID 참조 시에는 주로 nickname을 사용하여 조회합니다.
+-- V0.0.1__insert_member_domain_test_data.sql
+-- Flyway 마이그레이션: 멤버 유관 테이블 테스트 데이터 삽입
+-- member_social_account, member_term_agree, member_alarm_setting 테이블에 테스트 데이터 추가
 
--- member 테이블 데이터 삽입
+-- member_social_account 테이블 데이터 삽입
+-- 멤버들에게 다양한 소셜 로그인 계정 할당
+
 INSERT INTO member (id, create_at, updated_at, created_by, updated_by, subject, status,
                     nickname, self_description,
                     type, profile_image_url)
@@ -43,33 +44,6 @@ VALUES ('01HXQ2X7Z7Q6XJX4X2X7Z7Q6XA', NOW(), NOW(), 'admin', 'admin', '181047349
        ('01HXQ2X7Z7Q6XJX4X2X7Z7Q6XL', NOW(), NOW(), 'admin', 'admin', '9310473493', 'NORMAL', 'a12', 'a12 자기소개',
         'USER',
         's3:://a12_profile_image');
-
-INSERT INTO task_summary (member_id, remained_dowith_task_count, remained_dowith_task_count_updated_at,
-                          last_attendance_date, task_complete_level)
-VALUES ((SELECT id FROM member WHERE nickname = 'a1'), 0, NOW(), NULL, '3'),
-       ((SELECT id FROM member WHERE nickname = 'a2'), 0, NOW(), NULL, '3'),
-       ((SELECT id FROM member WHERE nickname = 'a3'), 0, NOW(), NULL, '3'),
-       ((SELECT id FROM member WHERE nickname = 'a4'), 0, NOW(), NULL, '3'),
-       ((SELECT id FROM member WHERE nickname = 'a5'), 0, NOW(), NULL, '3'),
-       ((SELECT id FROM member WHERE nickname = 'a6'), 0, NOW(), NULL, '3'),
-       ((SELECT id FROM member WHERE nickname = 'a7'), 0, NOW(), NULL, '3'),
-       ((SELECT id FROM member WHERE nickname = 'a8'), 0, NOW(), NULL, '3'),
-       ((SELECT id FROM member WHERE nickname = 'a9'), 0, NOW(), NULL, '3'),
-       ((SELECT id FROM member WHERE nickname = 'a10'), 0, NOW(), NULL, '3'),
-       ((SELECT id FROM member WHERE nickname = 'a11'), 0, NOW(), NULL, '3'),
-       ((SELECT id FROM member WHERE nickname = 'a12'), 0, NOW(), NULL, '3');
-
--- task_category 테이블 데이터 삽입
-INSERT INTO task_category (create_at, updated_at, created_by, updated_by, title, active_yn,
-                           creation_type, emoji, category_holder_id)
-VALUES (NOW(), NOW(), 'admin', 'admin', '약속', 'Y', 'COMMON', '🙋‍♀️', 'SYSTEM'),
-       (NOW(), NOW(), 'admin', 'admin', '시험', 'Y', 'COMMON', '🗓️', 'SYSTEM'),
-       (NOW(), NOW(), 'admin', 'admin', '운동', 'Y', 'COMMON', '🦺', 'SYSTEM'),
-       (NOW(), NOW(), 'admin', 'admin', '일상', 'Y', 'COMMON', '🏙️', 'SYSTEM'),
-       (NOW(), NOW(), 'admin', 'admin', '공부', 'Y', 'COMMON', '📝', 'SYSTEM'),
-       (NOW(), NOW(), 'admin', 'admin', '독서', 'Y', 'COMMON', '📘', 'SYSTEM'),
-       (NOW(), NOW(), 'admin', 'admin', '작업', 'Y', 'COMMON', '👩‍💻', 'SYSTEM'),
-       (NOW(), NOW(), 'admin', 'admin', '기타', 'Y', 'COMMON', '⏰', 'SYSTEM');
 
 -- member_follow 테이블 데이터 삽입
 INSERT INTO member_follow (create_at, updated_at, created_by, updated_by, follower_id, following_id)
@@ -145,41 +119,124 @@ VALUES ((SELECT id FROM badge WHERE name = '뱃지1'), 'Y', (SELECT id FROM memb
         'admin', 'admin');
 
 
-INSERT INTO dowith_task (id, member_id, title, status, date, start_time)
-VALUES (1, 'test-member-id', '테스트 태스크', 'WAIT', CURRENT_DATE(),
-        DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 10 MINUTE), '%H:%i:%s'));
 
--- 2. 테스트용 피드백 템플릿 생성 (id=1)
-INSERT INTO task_feedback_template (id, emoji_url, title, description, is_active, create_at, updated_at, created_by,
-                                    updated_by)
-VALUES (1, 'http://test.emoji.url', '칭찬', '잘했어요!', 'Y', NOW(), NOW(), 'system', 'system');
+INSERT INTO member_social_account (member_id, provider, create_at, updated_at, created_by, updated_by)
+VALUES
+    -- a1: KAKAO 로그인
+    ('01HXQ2X7Z7Q6XJX4X2X7Z7Q6XA', 'KAKAO', NOW(), NOW(), 'admin', 'admin'),
 
--- 3. 테스트용 피드백 템플릿 메시지 생성 (id=1)
-INSERT INTO task_feedback_template_message (id, task_feedback_template_id, message, language, create_at, updated_at,
-                                            created_by, updated_by)
-VALUES (1, 1, '정말 잘했어요!', 'KR', NOW(), NOW(), 'system', 'system');
+    -- a2: GOOGLE 로그인  
+    ('01HXQ2X7Z7Q6XJX4X2X7Z7Q6XB', 'GOOGLE', NOW(), NOW(), 'admin', 'admin'),
 
-INSERT INTO notification_template (code,
-                                   title,
-                                   body,
-                                   app_deep_link,
-                                   create_at,
-                                   updated_at,
-                                   created_by,
-                                   updated_by)
-VALUES ('SIGN_UP_COMPLETE',
-        '👋 환영해요 {{userName}}님! 회원가입이 완료되었습니다.',
-        '프로필을 설정하고 서비스를 시작해 보세요!',
-        NULL,
-        NOW(),
-        NOW(),
-        'system',
-        'system'),
-       ('ENABLE_NOTIFICATION_REQUEST',
-        '🔔알림을 켜고 더 재미있게 사용해봐요!',
-        '알림이 있어야 두윗러로써의 삶을 제대로 경험할 수 있답니다.\n이제 알림을 켜고 시작해볼까요?',
-        NULL,
-        NOW(),
-        NOW(),
-        'system',
-        'system');
+    -- a3: APPLE 로그인
+    ('01HXQ2X7Z7Q6XJX4X2X7Z7Q6XC', 'APPLE', NOW(), NOW(), 'admin', 'admin'),
+
+    -- a4: KAKAO 로그인
+    ('01HXQ2X7Z7Q6XJX4X2X7Z7Q6XD', 'KAKAO', NOW(), NOW(), 'admin', 'admin'),
+
+    -- a5: GOOGLE 로그인
+    ('01HXQ2X7Z7Q6XJX4X2X7Z7Q6XE', 'GOOGLE', NOW(), NOW(), 'admin', 'admin'),
+
+    -- a6: APPLE 로그인
+    ('01HXQ2X7Z7Q6XJX4X2X7Z7Q6XF', 'APPLE', NOW(), NOW(), 'admin', 'admin'),
+
+    -- a7: KAKAO 로그인
+    ('01HXQ2X7Z7Q6XJX4X2X7Z7Q6XG', 'KAKAO', NOW(), NOW(), 'admin', 'admin'),
+
+    -- a8: GOOGLE 로그인
+    ('01HXQ2X7Z7Q6XJX4X2X7Z7Q6XH', 'GOOGLE', NOW(), NOW(), 'admin', 'admin'),
+
+    -- a9: APPLE 로그인
+    ('01HXQ2X7Z7Q6XJX4X2X7Z7Q6XI', 'APPLE', NOW(), NOW(), 'admin', 'admin'),
+
+    -- a10: KAKAO 로그인
+    ('01HXQ2X7Z7Q6XJX4X2X7Z7Q6XJ', 'KAKAO', NOW(), NOW(), 'admin', 'admin'),
+
+    -- a11: GOOGLE 로그인
+    ('01HXQ2X7Z7Q6XJX4X2X7Z7Q6XK', 'GOOGLE', NOW(), NOW(), 'admin', 'admin'),
+
+    -- a12: KAKAO + GOOGLE 복수 계정 (첫 번째)
+    ('01HXQ2X7Z7Q6XJX4X2X7Z7Q6XL', 'KAKAO', NOW(), NOW(), 'admin', 'admin'),
+    ('01HXQ2X7Z7Q6XJX4X2X7Z7Q6XL', 'GOOGLE', NOW(), NOW(), 'admin', 'admin');
+
+-- member_term_agree 테이블 데이터 삽입
+-- 다양한 약관 동의 패턴으로 테스트 케이스 생성
+INSERT INTO member_term_agree (member_id, terms_of_agree, privacy, advertisement, create_at, updated_at, created_by,
+                               updated_by)
+VALUES
+    -- a1: 모든 약관 동의
+    ('01HXQ2X7Z7Q6XJX4X2X7Z7Q6XA', 1, 1, 1, NOW(), NOW(), 'admin', 'admin'),
+
+    -- a2: 필수 약관만 동의 (광고 거부)
+    ('01HXQ2X7Z7Q6XJX4X2X7Z7Q6XB', 1, 1, 0, NOW(), NOW(), 'admin', 'admin'),
+
+    -- a3: 모든 약관 동의
+    ('01HXQ2X7Z7Q6XJX4X2X7Z7Q6XC', 1, 1, 1, NOW(), NOW(), 'admin', 'admin'),
+
+    -- a4: 필수 약관만 동의
+    ('01HXQ2X7Z7Q6XJX4X2X7Z7Q6XD', 1, 1, 0, NOW(), NOW(), 'admin', 'admin'),
+
+    -- a5: 모든 약관 동의
+    ('01HXQ2X7Z7Q6XJX4X2X7Z7Q6XE', 1, 1, 1, NOW(), NOW(), 'admin', 'admin'),
+
+    -- a6: 필수 약관만 동의
+    ('01HXQ2X7Z7Q6XJX4X2X7Z7Q6XF', 1, 1, 0, NOW(), NOW(), 'admin', 'admin'),
+
+    -- a7: 모든 약관 동의
+    ('01HXQ2X7Z7Q6XJX4X2X7Z7Q6XG', 1, 1, 1, NOW(), NOW(), 'admin', 'admin'),
+
+    -- a8: 필수 약관만 동의
+    ('01HXQ2X7Z7Q6XJX4X2X7Z7Q6XH', 1, 1, 0, NOW(), NOW(), 'admin', 'admin'),
+
+    -- a9: 모든 약관 동의
+    ('01HXQ2X7Z7Q6XJX4X2X7Z7Q6XI', 1, 1, 1, NOW(), NOW(), 'admin', 'admin'),
+
+    -- a10: 필수 약관만 동의
+    ('01HXQ2X7Z7Q6XJX4X2X7Z7Q6XJ', 1, 1, 0, NOW(), NOW(), 'admin', 'admin'),
+
+    -- a11: 모든 약관 동의
+    ('01HXQ2X7Z7Q6XJX4X2X7Z7Q6XK', 1, 1, 1, NOW(), NOW(), 'admin', 'admin'),
+
+    -- a12: 필수 약관만 동의
+    ('01HXQ2X7Z7Q6XJX4X2X7Z7Q6XL', 1, 1, 0, NOW(), NOW(), 'admin', 'admin');
+
+-- member_alarm_setting 테이블 데이터 삽입
+-- 다양한 알림 설정 패턴으로 테스트 케이스 생성
+INSERT INTO member_alarm_setting (member_id, base_alarm_yn, todo_bot_yn, feedback_yn, marketing_yn, create_at,
+                                  updated_at, created_by, updated_by)
+VALUES
+    -- a1: 모든 알림 활성화
+    ('01HXQ2X7Z7Q6XJX4X2X7Z7Q6XA', 1, 1, 1, 1, NOW(), NOW(), 'admin', 'admin'),
+
+    -- a2: 기본 알림만 활성화 (마케팅 비활성화)
+    ('01HXQ2X7Z7Q6XJX4X2X7Z7Q6XB', 1, 1, 1, 0, NOW(), NOW(), 'admin', 'admin'),
+
+    -- a3: 모든 알림 활성화
+    ('01HXQ2X7Z7Q6XJX4X2X7Z7Q6XC', 1, 1, 1, 1, NOW(), NOW(), 'admin', 'admin'),
+
+    -- a4: 최소 알림 (기본 + 투두봇만)
+    ('01HXQ2X7Z7Q6XJX4X2X7Z7Q6XD', 1, 1, 0, 0, NOW(), NOW(), 'admin', 'admin'),
+
+    -- a5: 모든 알림 활성화
+    ('01HXQ2X7Z7Q6XJX4X2X7Z7Q6XE', 1, 1, 1, 1, NOW(), NOW(), 'admin', 'admin'),
+
+    -- a6: 기본 + 피드백 알림만
+    ('01HXQ2X7Z7Q6XJX4X2X7Z7Q6XF', 1, 0, 1, 0, NOW(), NOW(), 'admin', 'admin'),
+
+    -- a7: 모든 알림 활성화
+    ('01HXQ2X7Z7Q6XJX4X2X7Z7Q6XG', 1, 1, 1, 1, NOW(), NOW(), 'admin', 'admin'),
+
+    -- a8: 모든 알림 비활성화 (기본만 유지)
+    ('01HXQ2X7Z7Q6XJX4X2X7Z7Q6XH', 1, 0, 0, 0, NOW(), NOW(), 'admin', 'admin'),
+
+    -- a9: 모든 알림 활성화
+    ('01HXQ2X7Z7Q6XJX4X2X7Z7Q6XI', 1, 1, 1, 1, NOW(), NOW(), 'admin', 'admin'),
+
+    -- a10: 투두봇 + 피드백만 활성화
+    ('01HXQ2X7Z7Q6XJX4X2X7Z7Q6XJ', 1, 1, 1, 0, NOW(), NOW(), 'admin', 'admin'),
+
+    -- a11: 모든 알림 활성화
+    ('01HXQ2X7Z7Q6XJX4X2X7Z7Q6XK', 1, 1, 1, 1, NOW(), NOW(), 'admin', 'admin'),
+
+    -- a12: 마케팅만 비활성화
+    ('01HXQ2X7Z7Q6XJX4X2X7Z7Q6XL', 1, 1, 1, 0, NOW(), NOW(), 'admin', 'admin'); 
