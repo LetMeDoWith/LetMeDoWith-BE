@@ -10,7 +10,12 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder(access = AccessLevel.PRIVATE)
-@Table(name = "notification_token")
+@Table(name = "notification_token",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_notification_token_1",
+                        columnNames = {"memberId", "token"})
+        })
 public class NotificationToken extends BaseAuditEntity {
 
     @Column(name = "expired_yn", nullable = false)
