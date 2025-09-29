@@ -1,6 +1,5 @@
 package com.LetMeDoWith.LetMeDoWith.application.task.dto;
 
-import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TaskRoutineCycle;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.dto.TodoTaskDetailQueryDto;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -27,21 +26,20 @@ public record RetrieveTodoTaskResult(
                 .status(dto.status())
                 .date(dto.date())
                 .startTime(dto.startTime())
-                .routine(TodoTaskRoutine.builder()
-                        .startDate(dto.startDate())
-                        .endDate(dto.endDate())
-                        .cycle(dto.cycle())
-                        .pattern(dto.pattern())
-                        .isExcludeHolidays(dto.isExcludeHolidays())
-                        .build())
+                .routine(
+                        dto.routineId() != null
+                                ? TodoTaskRoutine.builder()
+                                        .startDate(dto.startDate())
+                                        .endDate(dto.endDate())
+                                        .cycle(dto.cycle())
+                                        .pattern(dto.pattern())
+                                        .isExcludeHolidays(dto.isExcludeHolidays())
+                                        .build()
+                                : null)
                 .build();
     }
 
     @Builder
     public record TodoTaskRoutine(
-            LocalDate startDate,
-            LocalDate endDate,
-            TaskRoutineCycle cycle,
-            Set<Integer> pattern,
-            boolean isExcludeHolidays) {}
+            LocalDate startDate, LocalDate endDate, String cycle, Set<Integer> pattern, boolean isExcludeHolidays) {}
 }

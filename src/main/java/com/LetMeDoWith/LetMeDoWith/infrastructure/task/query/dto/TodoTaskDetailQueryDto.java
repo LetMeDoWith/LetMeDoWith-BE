@@ -15,9 +15,10 @@ public record TodoTaskDetailQueryDto(
         String status,
         LocalDate date,
         LocalTime startTime,
+        Long routineId,
         LocalDate startDate,
         LocalDate endDate,
-        TaskRoutineCycle cycle,
+        String cycle,
         Set<Integer> pattern,
         boolean isExcludeHolidays) {
 
@@ -29,6 +30,7 @@ public record TodoTaskDetailQueryDto(
             TodoTaskStatus status,
             LocalDate date,
             LocalTime startTime,
+            Long routineId,
             LocalDate startDate,
             LocalDate endDate,
             TaskRoutineCycle cycle,
@@ -42,9 +44,10 @@ public record TodoTaskDetailQueryDto(
                 status.code,
                 date,
                 startTime,
+                routineId,
                 startDate,
                 endDate,
-                cycle,
+                cycle != null ? cycle.getCode() : null,
                 pattern != null ? pattern.getPattern() : null,
                 isExcludeHolidays);
     }

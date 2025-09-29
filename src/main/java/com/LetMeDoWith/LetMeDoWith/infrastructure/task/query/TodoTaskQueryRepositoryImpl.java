@@ -58,6 +58,7 @@ public class TodoTaskQueryRepositoryImpl implements TodoTaskQueryRepository {
                         todoTask.status,
                         todoTask.date,
                         todoTask.startTime,
+                        todoTaskRoutine.id,
                         todoTaskRoutine.rangeStartDate,
                         todoTaskRoutine.rangeEndDate,
                         todoTaskRoutine.cycle,
