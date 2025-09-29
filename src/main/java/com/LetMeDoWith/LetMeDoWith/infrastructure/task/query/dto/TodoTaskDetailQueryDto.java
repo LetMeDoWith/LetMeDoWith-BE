@@ -1,6 +1,8 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.dto;
 
+import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TaskRoutineCycle;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TodoTaskStatus;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskRoutinePattern;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Set;
@@ -15,9 +17,10 @@ public record TodoTaskDetailQueryDto(
         LocalTime startTime,
         LocalDate startDate,
         LocalDate endDate,
-        String cycle,
-        Set<Integer> patterns,
+        TaskRoutineCycle cycle,
+        Set<Integer> pattern,
         boolean isExcludeHolidays) {
+
     public TodoTaskDetailQueryDto(
             Long id,
             Long taskCategoryId,
@@ -28,8 +31,8 @@ public record TodoTaskDetailQueryDto(
             LocalTime startTime,
             LocalDate startDate,
             LocalDate endDate,
-            String cycle,
-            Set<Integer> patterns,
+            TaskRoutineCycle cycle,
+            TaskRoutinePattern pattern,
             boolean isExcludeHolidays) {
         this(
                 id,
@@ -42,7 +45,7 @@ public record TodoTaskDetailQueryDto(
                 startDate,
                 endDate,
                 cycle,
-                patterns,
+                pattern != null ? pattern.getPattern() : null,
                 isExcludeHolidays);
     }
 }

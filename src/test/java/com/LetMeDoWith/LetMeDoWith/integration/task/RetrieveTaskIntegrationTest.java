@@ -6,23 +6,36 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.LetMeDoWith.LetMeDoWith.common.util.DateTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
+import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TaskRoutineCycle;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskCategory;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TodoTask;
+import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TodoTaskRoutineRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.DowithTaskJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.TaskCategoryJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.TodoTaskJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.integration.AbstractIntegrationTest;
-import java.time.*;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.RetrieveTasksResDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.RetrieveTasksResDto.TodoTaskDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.RetrieveTodoTaskResDto;
+import java.io.UnsupportedEncodingException;
+import java.time.Clock;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.web.MockHttpServletResponse;
 
 public class RetrieveTaskIntegrationTest extends AbstractIntegrationTest {
 
     static final String RETRIEVE_TASKS_URL = "/api/v1/tasks";
+    static final String RETRIEVE_SINGLE_TODO_URL = "/api/v1/tasks/todo";
 
     @Autowired
     DowithTaskJpaRepository dowithTaskJpaRepository;
@@ -31,10 +44,13 @@ public class RetrieveTaskIntegrationTest extends AbstractIntegrationTest {
     TodoTaskJpaRepository todoTaskJpaRepository;
 
     @Autowired
+    TodoTaskRoutineRepository todoTaskRoutineRepository;
+
+    @Autowired
     TaskCategoryJpaRepository taskCategoryJpaRepository;
 
     private TaskCategory taskCategory1, taskCategory2;
-    private TodoTask todoTask1, todoTask2;
+    private TodoTask todoTask1, todoTask2, todoTask3;
     private DowithTask dowithTask1, dowithTask2, dowithTask3;
 
     protected void deleteTestData() {
@@ -67,7 +83,20 @@ public class RetrieveTaskIntegrationTest extends AbstractIntegrationTest {
                 "test todo task 2",
                 LocalDate.of(2024, 3, 11),
                 LocalTime.of(11, 0));
-        todoTaskJpaRepository.saveAll(List.of(todoTask1, todoTask2));
+
+        todoTask3 = TodoTask.ofWithRoutine(
+                this.requestMember.getId(),
+                taskCategory1.getId(),
+                "test todo task 1",
+                LocalDate.of(2024, 3, 10),
+                LocalTime.of(10, 0),
+                LocalDate.of(2024, 3, 10),
+                LocalDate.of(2024, 3, 10),
+                TaskRoutineCycle.DAILY,
+                null,
+                false);
+
+        todoTaskJpaRepository.saveAll(List.of(todoTask1, todoTask2, todoTask3));
 
         // 2. DowithTask 2개
         dowithTask1 = DowithTask.of(
@@ -172,5 +201,43 @@ public class RetrieveTaskIntegrationTest extends AbstractIntegrationTest {
                         .value(Matchers.is(
                                 List.of("https://example.com/image1.jpg", "https://example.com/image2.jpg"))))
                 .andExpect(jsonPath("$.data.dowithTasks[2].isRoutine").value(false));
+    }
+
+    @Test
+    @DisplayName("[SUCCESS] TodoTask 단일조회")
+    void retrieveSingleTodoTaskTest() throws UnsupportedEncodingException {
+        // given
+        LocalDate startDate = LocalDate.of(2024, 3, 1);
+        LocalDate endDate = LocalDate.of(2024, 3, 31);
+
+        MockHttpServletResponse response = request(
+                        get(RETRIEVE_TASKS_URL).param("year", "2024").param("month", "3"))
+                .andReturn()
+                .getResponse();
+
+        response.setCharacterEncoding("UTF-8");
+
+        String contentAsString = response.getContentAsString();
+
+        RetrieveTasksResDto retrieveTasksResDto = this.readResponse(contentAsString, RetrieveTasksResDto.class);
+
+        TodoTaskDto todoTaskDto = retrieveTasksResDto.todoTasks().stream()
+                .filter(task -> task.isRoutine().equals(true))
+                .findFirst()
+                .get();
+
+        // when
+        MockHttpServletResponse singleRetrieveResponse = request(
+                        get(RETRIEVE_SINGLE_TODO_URL + "/" + todoTaskDto.id().toString()))
+                .andReturn()
+                .getResponse();
+        singleRetrieveResponse.setCharacterEncoding("UTF-8");
+
+        RetrieveTodoTaskResDto retrieveTodoTaskResDto =
+                this.readResponse(singleRetrieveResponse.getContentAsString(), RetrieveTodoTaskResDto.class);
+
+        // then
+        Assertions.assertEquals(retrieveTodoTaskResDto.id(), todoTaskDto.id());
+        Assertions.assertEquals(retrieveTodoTaskResDto.title(), todoTaskDto.title());
     }
 }
