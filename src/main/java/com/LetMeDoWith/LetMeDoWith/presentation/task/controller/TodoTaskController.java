@@ -1,8 +1,15 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.task.controller;
 
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.*;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.CreateTodoTaskCommand;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.CreateTodoTaskResult;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.RetrieveTodoTaskResult;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.TaskRoutineCondition;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateTodoTaskCommand;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateTodoTaskRoutineCommand;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateTodoTaskWithRoutineCommand;
 import com.LetMeDoWith.LetMeDoWith.application.task.service.DeleteTodoTaskService;
 import com.LetMeDoWith.LetMeDoWith.application.task.service.RegisterTodoTaskService;
+import com.LetMeDoWith.LetMeDoWith.application.task.service.RetrieveTaskService;
 import com.LetMeDoWith.LetMeDoWith.application.task.service.UpdateTodoTaskService;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiErrorResponse;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiErrorResponses;
@@ -13,6 +20,7 @@ import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TodoTask;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.CreateTodoTaskReqDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.RetrieveTodoTaskResDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.UpdateTodoTaskReqDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.UpdateTodoTaskRoutineReqDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.UpdateTodoTaskWithRoutineReqDto;
@@ -21,7 +29,15 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Todo Task", description = "투두모드 태스크")
 @RestController
@@ -32,6 +48,7 @@ public class TodoTaskController {
     private final RegisterTodoTaskService registerTodoTaskService;
     private final UpdateTodoTaskService updateTodoTaskService;
     private final DeleteTodoTaskService deleteTodoTaskService;
+    private final RetrieveTaskService retrieveTaskService;
 
     @Operation(
             summary = "투두모드 태스크 등록",
@@ -182,5 +199,14 @@ public class TodoTaskController {
 
         deleteTodoTaskService.deleteTodoTasksWithRoutine(memberId, todoTaskId);
         return ResponseUtil.createSuccessResponse();
+    }
+
+    @Operation(summary = "투두 태스크 단일 조회", description = "1개의 TodoTask 정보를 조회합니다.")
+    @ApiSuccessResponse(description = "1개의 TodoTask 정보 및 루틴 정보를 반환")
+    @GetMapping("/{todoTaskId}")
+    public ResponseEntity<ResponseDto<RetrieveTodoTaskResDto>> retrieveSingleTodoTask(@PathVariable Long todoTaskId) {
+        RetrieveTodoTaskResult result = retrieveTaskService.retrieveTodoTask(todoTaskId);
+
+        return ResponseUtil.createSuccessResponse(RetrieveTodoTaskResDto.from(result));
     }
 }
