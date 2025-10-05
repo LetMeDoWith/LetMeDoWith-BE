@@ -25,9 +25,6 @@ public class DowithTaskRoutine extends BaseAuditEntity {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    //    @Column(name = "dates", columnDefinition = "TEXT")
-    //    @Convert(converter = DowithTaskRoutineDatesConverter.class)
-    //    private DowithTaskRoutineDates routineDates;
     @Column(name = "range_start_date", nullable = false)
     private LocalDate rangeStartDate;
 

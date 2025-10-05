@@ -2,6 +2,7 @@ package com.LetMeDoWith.LetMeDoWith.application.task.service;
 
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.RetrieveDowithTaskResult;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.RetrieveTasksResult;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.RetrieveTodoTaskResult;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
@@ -9,6 +10,7 @@ import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.DowithTaskQueryRepo
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.TodoTaskQueryRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.dto.DowithTaskDetailQueryDto;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.dto.DowithTaskQueryDto;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.dto.TodoTaskDetailQueryDto;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.dto.TodoTaskQueryDto;
 import java.time.LocalDate;
 import java.time.Month;
@@ -46,9 +48,14 @@ public class RetrieveTaskService {
      * @param todoTaskId
      */
     @Transactional(readOnly = true)
-    public void retrieveTodoTask(Long todoTaskId) {
+    public RetrieveTodoTaskResult retrieveTodoTask(Long todoTaskId) {
         String memberId = AuthUtil.getMemberId();
-        // TODO - 선종 todo task 단일 조회 service 개발 필요 after TodoTaskRoutine 도메인 모델 수정 후
+
+        TodoTaskDetailQueryDto result = todoTaskQueryRepository
+                .getTodoTask(memberId, todoTaskId)
+                .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
+
+        return RetrieveTodoTaskResult.from(result);
     }
 
     @Transactional(readOnly = true)

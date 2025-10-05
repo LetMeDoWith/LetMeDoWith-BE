@@ -3,11 +3,13 @@ package com.LetMeDoWith.LetMeDoWith.infrastructure.task.query;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.QTaskCategory;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.QTodoTask;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.QTodoTaskRoutine;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.dto.TodoTaskDetailQueryDto;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.dto.TodoTaskQueryDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -43,26 +45,31 @@ public class TodoTaskQueryRepositoryImpl implements TodoTaskQueryRepository {
                 .fetch();
     }
 
-    // TODO - 선종 TodoTaskRoutine 도메인 모델부터 수정 필요
-    //    @Override
-    //    public TodoTaskDetailQueryDto getTodoTask(String memberId, Long todoTaskId) {
-    //        return queryFactory
-    //                .select(Projections.constructor(
-    //                        TodoTaskDetailQueryDto.class,
-    //                        todoTask.id,
-    //                        todoTask.taskCategoryId,
-    //                        taskCategory.title,
-    //                        todoTask.title,
-    //                        todoTask.status,
-    //                        todoTask.date,
-    //                        todoTask.startTime,
-    //                        todoTaskRoutine.))
-    //                .from(todoTask)
-    //                .leftJoin(taskCategory)
-    //                .on(todoTask.taskCategoryId.eq(taskCategory.id))
-    //                .leftJoin(todoTaskRoutine)
-    //                .on(todoTask.routine.id.eq(todoTaskRoutine.id))
-    //                .where(todoTask.memberId.eq(memberId).and(todoTask.id.eq(todoTaskId)))
-    //                .fetchOne();
-    //    }
+    @Override
+    public Optional<TodoTaskDetailQueryDto> getTodoTask(String memberId, Long todoTaskId) {
+
+        return Optional.ofNullable(queryFactory
+                .select(Projections.constructor(
+                        TodoTaskDetailQueryDto.class,
+                        todoTask.id,
+                        todoTask.taskCategoryId,
+                        taskCategory.title,
+                        todoTask.title,
+                        todoTask.status,
+                        todoTask.date,
+                        todoTask.startTime,
+                        todoTaskRoutine.id,
+                        todoTaskRoutine.rangeStartDate,
+                        todoTaskRoutine.rangeEndDate,
+                        todoTaskRoutine.cycle,
+                        todoTaskRoutine.pattern,
+                        todoTaskRoutine.isExcludeHolidays))
+                .from(todoTask)
+                .leftJoin(taskCategory)
+                .on(todoTask.taskCategoryId.eq(taskCategory.id))
+                .leftJoin(todoTaskRoutine)
+                .on(todoTask.routine.id.eq(todoTaskRoutine.id))
+                .where(todoTask.memberId.eq(memberId).and(todoTask.id.eq(todoTaskId)))
+                .fetchOne());
+    }
 }

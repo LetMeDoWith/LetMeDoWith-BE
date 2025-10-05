@@ -84,7 +84,6 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
         // given
         setFixedClock(FIXED_CLOCK_TIME);
 
-        LocalDateTime originalDateTime = LocalDateTime.of(ORIGINAL_DATE, ORIGINAL_START_TIME);
         TodoTask todoTask = todoTaskRepository.save(TodoTask.of(
                 this.requestMember.getId(), taskCategory.getId(), ORIGINAL_TITLE, ORIGINAL_DATE, ORIGINAL_START_TIME));
 
@@ -185,17 +184,19 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
         Set<LocalDate> routineDates = taskRoutineDateCalculator.computeRoutineDates(
                 TaskRoutineCycle.DAILY, ORIGINAL_DATE, ROUTINE_END_DATE, null);
 
-        List<TodoTask> todoTasks = TodoTask.ofWithRoutine(
+        TodoTask todoTask = TodoTask.ofWithRoutine(
                 this.requestMember.getId(),
                 taskCategory.getId(),
                 ORIGINAL_TITLE,
+                ORIGINAL_DATE,
                 ORIGINAL_START_TIME,
-                routineDates,
+                ORIGINAL_DATE,
+                ROUTINE_END_DATE,
                 TaskRoutineCycle.DAILY,
                 null,
                 false);
 
-        List<TodoTask> savedTodoTasks = todoTaskRepository.saveAll(todoTasks);
+        List<TodoTask> savedTodoTasks = todoTaskRepository.saveAll(TodoTask.of(todoTask, routineDates));
 
         // when
         LocalDateTime updateStartDateTime = LocalDateTime.of(
@@ -259,17 +260,19 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
         Set<LocalDate> routineDates = taskRoutineDateCalculator.computeRoutineDates(
                 TaskRoutineCycle.DAILY, ORIGINAL_DATE, ROUTINE_END_DATE, null);
 
-        List<TodoTask> todoTasks = TodoTask.ofWithRoutine(
+        TodoTask todoTask = TodoTask.ofWithRoutine(
                 this.requestMember.getId(),
                 taskCategory.getId(),
                 ORIGINAL_TITLE,
+                ORIGINAL_DATE,
                 ORIGINAL_START_TIME,
-                routineDates,
+                ORIGINAL_DATE,
+                ROUTINE_END_DATE,
                 TaskRoutineCycle.DAILY,
                 null,
                 false);
 
-        List<TodoTask> savedTodoTasks = todoTaskRepository.saveAll(todoTasks);
+        List<TodoTask> savedTodoTasks = todoTaskRepository.saveAll(TodoTask.of(todoTask, routineDates));
 
         // when
         LocalDateTime updatedStartDateTime = LocalDateTime.of(
@@ -337,21 +340,22 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
         Set<LocalDate> routineDates = taskRoutineDateCalculator.computeRoutineDates(
                 TaskRoutineCycle.DAILY, ORIGINAL_DATE, ROUTINE_END_DATE, null);
 
-        List<TodoTask> todoTasks = TodoTask.ofWithRoutine(
+        TodoTask todoTask = TodoTask.ofWithRoutine(
                 this.requestMember.getId(),
                 taskCategory.getId(),
                 ORIGINAL_TITLE,
+                ORIGINAL_DATE,
                 ORIGINAL_START_TIME,
-                routineDates,
+                ORIGINAL_DATE,
+                ROUTINE_END_DATE,
                 TaskRoutineCycle.DAILY,
                 null,
                 false);
 
-        List<TodoTask> savedTodoTasks = todoTaskRepository.saveAll(todoTasks);
+        List<TodoTask> savedTodoTasks = todoTaskRepository.saveAll(TodoTask.of(todoTask, routineDates));
 
         // when
         Set<Integer> updatedPattern = Set.of(20, 21, 22); // 20, 21, 22일로 변경
-        Integer updatedRoutineSize = updatedPattern.size();
 
         // ID가 필요하므로 Task를 가져옴
         TodoTask sample = savedTodoTasks.stream()
@@ -360,11 +364,8 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
                 .get();
 
         UpdateTodoTaskRoutineReqDto req = UpdateTodoTaskRoutineReqDto.of(
-                LocalDate.of(2024, 6, 3),
-                ROUTINE_END_DATE,
-                TaskRoutineCycle.MONTHLY,
-                updatedPattern, // 10, 20, 30일로 변경
-                false // 공휴일 제외 여부는 false로 유지
+                SAMPLE_DATE, ROUTINE_END_DATE, TaskRoutineCycle.MONTHLY, updatedPattern, false
+                // 공휴일 제외 여부는 false로 유지
                 );
 
         ResultActions resultActions = this.request(MockMvcRequestBuilders.put(URL + "/" + sample.getId() + "/routine")
@@ -398,7 +399,7 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
                         .filter(task -> task.date().isEqual(sample.getDate())
                                 || task.date().isAfter(sample.getDate()))
                         .count())
-                .isEqualTo(3 + 1);
+                .isEqualTo(3);
     }
 
     @Test
