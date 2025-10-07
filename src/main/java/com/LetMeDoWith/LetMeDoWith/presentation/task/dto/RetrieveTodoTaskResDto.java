@@ -29,13 +29,16 @@ public record RetrieveTodoTaskResDto(
                 .status(result.status())
                 .date(result.date())
                 .startTime(result.startTime())
-                .routine(TodoTaskRoutineDto.builder()
-                        .startDate(result.routine().startDate())
-                        .endDate(result.routine().endDate())
-                        .cycle(result.routine().cycle())
-                        .pattern(result.routine().pattern())
-                        .isExcludeHolidays(result.routine().isExcludeHolidays())
-                        .build())
+                .routine(
+                        result.routine() != null
+                                ? TodoTaskRoutineDto.builder()
+                                        .startDate(result.routine().startDate())
+                                        .endDate(result.routine().endDate())
+                                        .cycle(result.routine().cycle())
+                                        .pattern(result.routine().pattern())
+                                        .isExcludeHolidays(result.routine().isExcludeHolidays())
+                                        .build()
+                                : null)
                 .build();
     }
 

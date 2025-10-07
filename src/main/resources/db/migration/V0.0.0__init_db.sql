@@ -422,7 +422,8 @@ CREATE TABLE `todo_task_routine`
     `cycle`               varchar(20) NOT NULL,
     `is_exclude_holidays` bit(1)       DEFAULT NULL,
     `pattern`             text,
-    `dates`               text,
+    `range_end_date`      date        NOT NULL,
+    `range_start_date`    date        NOT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
