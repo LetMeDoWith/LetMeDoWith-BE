@@ -2,9 +2,13 @@ package com.LetMeDoWith.LetMeDoWith;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.servers.Server;
+import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
+@EnableScheduling
+@EnableBatchProcessing
 @OpenAPIDefinition(servers = {@Server(url = "/", description = "Default Server")})
 @SpringBootApplication
 // @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class,
