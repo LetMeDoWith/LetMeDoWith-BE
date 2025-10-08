@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class DowtihTaskJobScheduler {
+public class DowithTaskJobScheduler {
 
     private final JobLauncher jobLauncher;
     private final Job failDowithTaskJob;

@@ -169,5 +169,11 @@ logging:
         type:
           descriptor:
             sql: trace
+    springframework:
+      jdbc:
+        datasource:
+          init:
+            ScriptUtils: debug
+      batch: debug
     com.LetMeDoWith.LetMeDoWith: info
     root: info
