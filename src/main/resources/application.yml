@@ -54,6 +54,7 @@ logging:
   level:
     com.LetMeDoWith.LetMeDoWith: info
     root: info
+#    datasource-proxy: off
 
 
 ---
@@ -92,6 +93,7 @@ logging:
       LetMeDoWith.LetMeDoWith: info
       zaxxer.hikari: debug
     root: info
+    datasource-proxy: off
 
 server:
   tomcat:
@@ -161,19 +163,19 @@ spring:
     job:
       enabled: false
 
-#logging:
-#  level:
-#    org:
-#      hibernate:
-#        sql: debug
-#        type:
-#          descriptor:
-#            sql: trace
-#    springframework:
-#      jdbc:
-#        datasource:
-#          init:
-#            ScriptUtils: debug
-#      batch: debug
-#    com.LetMeDoWith.LetMeDoWith: info
-#    root: info
+logging:
+  level:
+    org:
+      hibernate:
+        sql: debug
+        type:
+          descriptor:
+            sql: trace
+    springframework:
+      jdbc:
+        datasource:
+          init:
+            ScriptUtils: debug
+      batch: debug
+    com.LetMeDoWith.LetMeDoWith: info
+    root: info

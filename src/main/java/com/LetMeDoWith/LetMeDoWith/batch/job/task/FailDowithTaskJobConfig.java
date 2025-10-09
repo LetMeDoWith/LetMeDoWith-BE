@@ -29,7 +29,6 @@ import org.springframework.batch.item.database.support.MySqlPagingQueryProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
@@ -102,24 +101,8 @@ public class FailDowithTaskJobConfig {
                 .pageSize(CHUNK_SIZE)
                 .queryProvider(queryProvider)
                 .parameterValues(parameterValues)
-                //                .rowMapper((rs, rowNum) -> {
-                //                    DowithTaskDto dto = new DowithTaskDto();
-                //                    dto.setId(rs.getLong("id"));
-                //                    dto.setMemberId(rs.getString("member_id"));
-                //                    dto.setTaskCategoryId(rs.getLong("task_category_id"));
-                //                    dto.setTitle(rs.getString("title"));
-                //                    dto.setStatus(rs.getString("status"));
-                //                    dto.setDate(rs.getDate("date").toLocalDate());
-                //                    dto.setStartTime(rs.getTime("start_time").toLocalTime());
-                //                    dto.setSuccessAt(rs.getTimestamp("success_at") != null
-                //                            ? rs.getTimestamp("success_at").toLocalDateTime()
-                //                            : null);
-                //                    dto.setCompleteAt(rs.getTimestamp("complete_at") != null
-                //                            ? rs.getTimestamp("complete_at").toLocalDateTime()
-                //                            : null);
-                //                    return dto;
-                //                })
-                .rowMapper(new BeanPropertyRowMapper<>(DowithTaskDto.class))
+                .rowMapper(new DowithTaskDto.RowMapper())
+                //                .rowMapper(new BeanPropertyRowMapper<>(DowithTaskDto.class))
                 .build();
     }
 
