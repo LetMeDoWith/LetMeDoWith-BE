@@ -1,4 +1,4 @@
--- V0.0.2__insert_task_domain_test_data.sql
+-- V0.0.4__insert_task_domain_test_data.sql
 -- Flyway 마이그레이션: 초기 데이터 삽입 (String Member ID 체계 적용)
 -- 주의: 이 스크립트는 Member ID가 자동 생성(TSID)되는 새 스키마에 맞춰 초기 데이터를 다시 삽입합니다.
 -- Member ID 참조 시에는 주로 nickname을 사용하여 조회합니다.

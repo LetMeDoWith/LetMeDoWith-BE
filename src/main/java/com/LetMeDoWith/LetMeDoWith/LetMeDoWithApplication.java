@@ -7,7 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @EnableScheduling
-// @EnableBatchProcessing
 @OpenAPIDefinition(servers = {@Server(url = "/", description = "Default Server")})
 @SpringBootApplication
 // @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class,

@@ -32,11 +32,11 @@ public class TodoTaskRoutine extends BaseAuditEntity {
     @Convert(converter = TaskRoutineCycleConverter.class)
     private TaskRoutineCycle cycle;
 
-    @Column(name = "pattern", columnDefinition = "TEXT")
+    @Column(name = "pattern", length = 255)
     @Convert(converter = TaskRoutinePatternConverter.class)
     private TaskRoutinePattern pattern;
 
-    @Column(name = "is_exclude_holidays")
+    @Column(name = "exclude_holidays_yn")
     private boolean isExcludeHolidays;
 
     public static TodoTaskRoutine of(

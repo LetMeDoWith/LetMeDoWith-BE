@@ -18,8 +18,9 @@ public class DowithTaskJobScheduler {
     private final JobLauncher jobLauncher;
     private final Job failDowithTaskJob;
 
-    @Scheduled(cron = "0 */5 0 * * *")
+    @Scheduled(cron = "0 */5 * * * *")
     public void runFailTaskJob() {
+        log.info("Starting failDowithTaskJob...");
         JobParameters jobParameters = new JobParametersBuilder()
                 .addLong("run.id", System.currentTimeMillis())
                 .addLocalDateTime("executionDateTime", SystemTimeUtil.now())
