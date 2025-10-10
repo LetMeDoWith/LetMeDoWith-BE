@@ -2,13 +2,6 @@ package com.LetMeDoWith.LetMeDoWith.batch.job.task;
 
 import com.LetMeDoWith.LetMeDoWith.batch.dto.DowithTaskDto;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
-import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.HashMap;
-import java.util.Map;
-import javax.sql.DataSource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
@@ -30,6 +23,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
+
+import javax.sql.DataSource;
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.HashMap;
+import java.util.Map;
 
 @Configuration
 @RequiredArgsConstructor
@@ -74,7 +75,6 @@ public class FailDowithTaskJobConfig {
     public JdbcPagingItemReader<DowithTaskDto> failDowithTaskReader(
             @Value("#{jobParameters['executionDateTime']}") LocalDateTime executionDateTime) {
 
-        log.info("FailDowithTaskJobConfig - executionDateTime: {}", executionDateTime);
         LocalDate standardDate = executionDateTime.toLocalDate();
         LocalTime standardTime = executionDateTime.toLocalTime().minusHours(1);
 
@@ -82,7 +82,6 @@ public class FailDowithTaskJobConfig {
         Map<String, Order> sortKeys = new HashMap<>();
         sortKeys.put("id", Order.ASCENDING);
 
-        // MySqlPagingQueryProvider 설정
         MySqlPagingQueryProvider queryProvider = new MySqlPagingQueryProvider();
         queryProvider.setSelectClause(
                 "id, member_id, task_category_id, title, status, date, start_time, success_at, complete_at");
@@ -110,8 +109,6 @@ public class FailDowithTaskJobConfig {
     @StepScope
     public ItemProcessor<DowithTaskDto, DowithTaskDto> failDowithTaskProcessor() {
         return dowithTaskDto -> {
-            // 처리 로직 구현 (예: 상태 변경, 알림 전송 등)
-            // 여기서는 단순히 로그 출력
             dowithTaskDto.setStatus(DowithTaskStatus.FAIL.code);
             return dowithTaskDto;
         };
@@ -127,7 +124,7 @@ public class FailDowithTaskJobConfig {
                 .itemPreparedStatementSetter((dto, ps) -> {
                     ps.setString(1, dto.getStatus());
                     ps.setTimestamp(2, Timestamp.valueOf(executionDateTime));
-                    ps.setString(3, "system"); // 시스템 작업자
+                    ps.setString(3, "system");
                     ps.setLong(4, dto.getId());
                 })
                 .build();
