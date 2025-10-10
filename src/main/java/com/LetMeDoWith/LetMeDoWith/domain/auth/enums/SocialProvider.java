@@ -17,7 +17,7 @@ import lombok.Getter;
 public enum SocialProvider implements BaseEnum {
     KAKAO("KAKAO", "카카오", "https://kauth.kakao.com"),
     GOOGLE("GOOGLE", "구글", "https://accounts.google.com"),
-    APPLE("APPLE", "애플", ""),
+    APPLE("APPLE", "애플", "https://appleid.apple.com"),
 
     DEV_KAKAO("DEV_KAKAO", "카카오 (개발서버)", "https://kauth.kakao.com");
 

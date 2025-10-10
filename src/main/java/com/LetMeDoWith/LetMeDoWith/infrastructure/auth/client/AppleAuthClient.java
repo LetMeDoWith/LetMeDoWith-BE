@@ -23,7 +23,7 @@ public class AppleAuthClient implements AuthClient {
     public Mono<OidcPublicKeyResDto> getPublicKeyList() {
         return webClient
                 .get()
-                .uri("TBD")
+                .uri("https://appleid.apple.com/auth/keys")
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono(OidcPublicKeyResDto.class);
