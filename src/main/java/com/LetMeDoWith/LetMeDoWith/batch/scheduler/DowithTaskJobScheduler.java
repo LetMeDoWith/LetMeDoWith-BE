@@ -18,9 +18,12 @@ public class DowithTaskJobScheduler {
     private final JobLauncher jobLauncher;
     private final Job failDowithTaskJob;
 
+    /**
+     * DowithTask 실패 처리 배치
+     * 00분부터 5분 간격으로 실행
+     */
     @Scheduled(cron = "0 */5 * * * *")
     public void runFailTaskJob() {
-        log.info("Starting failDowithTaskJob...");
         JobParameters jobParameters = new JobParametersBuilder()
                 .addLong("run.id", System.currentTimeMillis())
                 .addLocalDateTime("executionDateTime", SystemTimeUtil.now())
@@ -28,6 +31,7 @@ public class DowithTaskJobScheduler {
         try {
             jobLauncher.run(failDowithTaskJob, jobParameters);
         } catch (Exception e) {
+            e.printStackTrace(); // TODO - Batch Exception 공통 처리
             log.error("Failed to run failDowithTaskJob", e);
         }
     }
