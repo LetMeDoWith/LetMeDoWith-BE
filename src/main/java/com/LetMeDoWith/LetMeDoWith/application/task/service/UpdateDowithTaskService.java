@@ -1,8 +1,5 @@
 package com.LetMeDoWith.LetMeDoWith.application.task.service;
 
-import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.INVALID_PARAM_ERROR;
-import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.INVALID_REQUEST;
-
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.TaskRoutineCondition;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateDowithTaskContentsAndCreateRoutineCommand;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateDowithTaskContentsOnlyCommand;
@@ -15,15 +12,19 @@ import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.Holiday;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.*;
 import com.LetMeDoWith.LetMeDoWith.domain.task.service.TaskRoutineDateCalculator;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
+import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.INVALID_PARAM_ERROR;
+import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.INVALID_REQUEST;
 
 @Service
 @RequiredArgsConstructor
@@ -149,7 +150,7 @@ public class UpdateDowithTaskService {
      * @return
      */
     @Transactional
-    public DowithTask updateRoutine(UpdateDowithTaskRoutineCommand command) {
+    public void updateRoutine(UpdateDowithTaskRoutineCommand command) {
 
         String memberId = AuthUtil.getMemberId();
         final DowithTask dowithTask = dowithTaskRepository
@@ -211,6 +212,5 @@ public class UpdateDowithTaskService {
                 .filter(e -> routineDateToModify.toDeleteDates().contains(e.getDate()))
                 .toList());
 
-        return dowithTask;
     }
 }
