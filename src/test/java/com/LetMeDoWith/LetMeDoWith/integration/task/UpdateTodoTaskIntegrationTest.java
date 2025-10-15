@@ -95,8 +95,12 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
                 UPDATED_START_TIME.getHour(),
                 UPDATED_START_TIME.getMinute());
         Long updatedCategoryId = taskCategory2.getId();
-        UpdateTodoTaskReqDto updateReq =
-                new UpdateTodoTaskReqDto(UPDATED_TITLE, LocalTime.from(updateStartDateTime), updatedCategoryId, null);
+        UpdateTodoTaskReqDto updateReq = new UpdateTodoTaskReqDto(
+                UPDATED_TITLE,
+                updatedCategoryId,
+                updateStartDateTime.toLocalDate(),
+                updateStartDateTime.toLocalTime(),
+                null);
 
         ResultActions resultActions = this.request(
                 org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put(URL + "/" + todoTask.getId())
@@ -146,8 +150,9 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
         Long updatedCategoryId = taskCategory2.getId();
         UpdateTodoTaskReqDto updateReq = new UpdateTodoTaskReqDto(
                 UPDATED_TITLE,
-                LocalTime.from(updateStartDateTime),
                 updatedCategoryId,
+                updateStartDateTime.toLocalDate(),
+                updateStartDateTime.toLocalTime(),
                 UpdateTodoTaskRoutineReqDto.of(ORIGINAL_DATE, ROUTINE_END_DATE, TaskRoutineCycle.DAILY, null, false));
 
         long gap = ChronoUnit.DAYS.between(ORIGINAL_DATE, ROUTINE_END_DATE);
@@ -212,8 +217,12 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
                 .findFirst()
                 .get();
 
-        UpdateTodoTaskReqDto req =
-                new UpdateTodoTaskReqDto(UPDATED_TITLE, LocalTime.from(updateStartDateTime), updatedCategoryId, null);
+        UpdateTodoTaskReqDto req = new UpdateTodoTaskReqDto(
+                UPDATED_TITLE,
+                updatedCategoryId,
+                updateStartDateTime.toLocalDate(),
+                updateStartDateTime.toLocalTime(),
+                null);
 
         ResultActions resultActions = this.request(MockMvcRequestBuilders.put(URL + "/" + taskToModified.getId())
                 .content(this.writeRequestBodyAsString(req)));

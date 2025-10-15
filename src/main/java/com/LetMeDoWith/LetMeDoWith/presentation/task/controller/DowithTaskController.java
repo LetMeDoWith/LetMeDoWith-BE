@@ -48,7 +48,11 @@ public class DowithTaskController {
 
         String memberId = AuthUtil.getMemberId();
 
-        createDowithTaskService.createDowithTask(requestBody.toCommand());
+        if (requestBody.routineCondition() == null) {
+            createDowithTaskService.createDowithTask(requestBody.toCreateDowithTaskCommand());
+        } else {
+            createDowithTaskService.createDowithTaskWithRoutine(requestBody.toCreateDowithTaskWithRoutineCommand());
+        }
 
         return ResponseUtil.createSuccessResponse();
     }
