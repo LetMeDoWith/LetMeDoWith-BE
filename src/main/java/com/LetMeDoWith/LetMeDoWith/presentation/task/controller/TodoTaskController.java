@@ -106,7 +106,11 @@ public class TodoTaskController {
                 memberId,
                 todoTaskId,
                 UpdateTodoTaskCommand.of(
-                        request.title(), request.startTime(), request.taskCategoryId(), routineCondition));
+                        request.title(),
+                        request.date(),
+                        request.startTime(),
+                        request.taskCategoryId(),
+                        routineCondition));
 
         return ResponseUtil.createSuccessResponse();
     }
