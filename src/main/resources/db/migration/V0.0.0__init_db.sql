@@ -450,3 +450,37 @@ CREATE TABLE `todo_task`
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
+
+CREATE TABLE `notice`
+(
+    `id`                    bigint       NOT NULL AUTO_INCREMENT,
+    `create_at`             datetime(6)  DEFAULT NULL,
+    `created_by`            varchar(255) DEFAULT NULL,
+    `updated_at`            datetime(6)  DEFAULT NULL,
+    `updated_by`            varchar(255) DEFAULT NULL,
+    `notice_type`           varchar(255) NOT NULL,
+    `title`                 varchar(255) NOT NULL,
+    `main_text`             TEXT         NOT NULL,
+    `start_at`              datetime(6)  NOT NULL,
+    `end_at`                datetime(6)  NOT NULL,
+    `thumbnail_image_url`   varchar(255) NOT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_0900_ai_ci;
+
+CREATE TABLE `notice_body_image`
+(
+    `id`         bigint       NOT NULL AUTO_INCREMENT,
+    `create_at`  datetime(6)  DEFAULT NULL,
+    `created_by` varchar(255) DEFAULT NULL,
+    `updated_at` datetime(6)  DEFAULT NULL,
+    `updated_by` varchar(255) DEFAULT NULL,
+    `notice_id`  bigint       NOT NULL,
+    `image_url`  varchar(255) NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY `FK_notice_body_image_notice` (`notice_id`),
+    CONSTRAINT `FK_notice_body_image_notice` FOREIGN KEY (`notice_id`) REFERENCES `notice` (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_0900_ai_ci;
