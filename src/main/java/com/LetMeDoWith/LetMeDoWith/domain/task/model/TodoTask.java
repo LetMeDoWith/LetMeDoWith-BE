@@ -3,15 +3,29 @@ package com.LetMeDoWith.LetMeDoWith.domain.task.model;
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
-import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.AggregateRoot;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TaskRoutineCycle;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TodoTaskStatus;
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.*;
-import lombok.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /**
  * TodoTask 엔티티 클래스
@@ -77,14 +91,19 @@ public class TodoTask extends BaseAuditEntity {
     }
 
     /**
-     * 루틴을 포함한 TodoTask 리스트 생성 메서드
+     * 루틴을 포함한 투두 태스크 생성 메서드
      *
-     * @param memberId       회원 ID
-     * @param taskCategoryId 작업 카테고리 ID
-     * @param title          제목
-     * @param startTime      시작 시간
-     * @param routineDates   루틴 날짜 세트
-     * @return 생성된 TodoTask 리스트
+     * @param memberId
+     * @param taskCategoryId
+     * @param title
+     * @param date
+     * @param startTime
+     * @param rangeStartDate
+     * @param rangeEndDate
+     * @param cycle
+     * @param pattern
+     * @param isExcludeHolidays
+     * @return 루틴중 하나인 TodoTask
      */
     public static TodoTask ofWithRoutine(
             String memberId,
@@ -118,8 +137,8 @@ public class TodoTask extends BaseAuditEntity {
     /**
      * 루틴을 포함한 TodoTask 리스트 생성 메서드
      *
-     * @param todoTask       기존 TodoTask
-     * @param routineDates   루틴 날짜 세트
+     * @param todoTask     기존 TodoTask
+     * @param routineDates 루틴 날짜 세트
      * @return 생성된 TodoTask 리스트
      */
     public static List<TodoTask> of(TodoTask todoTask, Set<LocalDate> routineDates) {
@@ -141,10 +160,10 @@ public class TodoTask extends BaseAuditEntity {
     /**
      * TodoTask 루틴 생성
      *
-     * @param rangeStartDate 루틴 시작 날짜
-     * @param rangeEndDate 루틴 종료 날짜
-     * @param cycle 루틴 반복 주기
-     * @param pattern 루틴 반복 패턴
+     * @param rangeStartDate    루틴 시작 날짜
+     * @param rangeEndDate      루틴 종료 날짜
+     * @param cycle             루틴 반복 주기
+     * @param pattern           루틴 반복 패턴
      * @param isExcludeHolidays 루틴 반복 주기에 공휴일 제외 여부
      * @return 생성된 TodoTask 리스트
      */
@@ -262,25 +281,11 @@ public class TodoTask extends BaseAuditEntity {
      * 유효성 검사
      */
     private void validate() {
-        // if (LocalDate.now().isEqual(this.date) &&
-        // LocalTime.now().isAfter(this.startTime))
-        // {
-        // throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
-        // }
-        //
-        // if (date.isBefore(LocalDate.now())) {
-        // throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
-        // }
-
         if (this.title == null || this.title.isBlank()) {
             throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
         }
 
         if (this.date == null) {
-            throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
-        }
-
-        if (this.date.isBefore(SystemTimeUtil.nowDate())) {
             throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
         }
     }
