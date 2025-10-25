@@ -1,5 +1,8 @@
 package com.LetMeDoWith.LetMeDoWith.application.task.service;
 
+import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.INVALID_PARAM_ERROR;
+import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.INVALID_REQUEST;
+
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.TaskRoutineCondition;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateDowithTaskContentsAndCreateRoutineCommand;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateDowithTaskContentsOnlyCommand;
@@ -12,19 +15,15 @@ import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.Holiday;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.*;
 import com.LetMeDoWith.LetMeDoWith.domain.task.service.TaskRoutineDateCalculator;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.INVALID_PARAM_ERROR;
-import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.INVALID_REQUEST;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -65,7 +64,8 @@ public class UpdateDowithTaskService {
 
         if (dowithTask.isStarted()) {
             // dowithTask가 아미 시작된 경우, 날짜, 시작시간 수정 불가
-            if (!command.date().equals(dowithTask.getDate()) || !command.startTime().equals(dowithTask.getStartTime()))
+            if (!command.date().equals(dowithTask.getDate())
+                    || !command.startTime().equals(dowithTask.getStartTime()))
                 throw new RestApiException(INVALID_PARAM_ERROR);
         }
 
@@ -95,7 +95,6 @@ public class UpdateDowithTaskService {
             Set<LocalDate> routineDates = taskRoutineDateCalculator.calculateRoutineDates(dowithTask, holidaySet);
             dowithTaskRepository.saveDowithTasks(DowithTask.of(dowithTask, routineDates));
         }
-
     }
 
     /**
@@ -221,6 +220,5 @@ public class UpdateDowithTaskService {
         dowithTaskRepository.delete(dowithTasks.stream()
                 .filter(e -> routineDateToModify.toDeleteDates().contains(e.getDate()))
                 .toList());
-
     }
 }

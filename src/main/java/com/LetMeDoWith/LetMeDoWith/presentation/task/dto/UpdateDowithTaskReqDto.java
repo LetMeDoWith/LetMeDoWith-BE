@@ -9,11 +9,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
 import jakarta.validation.constraints.Size;
-import lombok.Builder;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Set;
+import lombok.Builder;
 
 @Builder
 public record UpdateDowithTaskReqDto(
@@ -21,7 +20,7 @@ public record UpdateDowithTaskReqDto(
         @Schema(description = "Task 카테고리 ID", defaultValue = "2") Long taskCategoryId,
         @Schema(description = "시작 일자", defaultValue = "2025-01-30") @NotNull LocalDate date,
         @Schema(description = "시작 시각", defaultValue = "11:30:00") LocalTime startTime,
-        @Schema(description = "루틴 반복 조건") UpdateDowithTaskRoutineCondition routineCondition) {
+        @Schema(description = "루틴 반복 조건") @Null UpdateDowithTaskRoutineCondition routineCondition) {
 
     public UpdateDowithTaskContentsAndCreateRoutineCommand toCommand(Long dowithTaskId) {
         return UpdateDowithTaskContentsAndCreateRoutineCommand.builder()
@@ -30,12 +29,15 @@ public record UpdateDowithTaskReqDto(
                 .taskCategoryId(this.taskCategoryId)
                 .date(this.date())
                 .startTime(this.startTime())
-                .taskRoutineCondition(TaskRoutineCondition.of(
-                        this.routineCondition.startDate,
-                        this.routineCondition.endDate,
-                        EnumUtil.getEnum(TaskRoutineCycle.class, this.routineCondition.cycle),
-                        this.routineCondition.pattern,
-                        this.routineCondition.isExcludeHolidays))
+                .taskRoutineCondition(
+                        routineCondition == null
+                                ? null
+                                : TaskRoutineCondition.of(
+                                        this.routineCondition.startDate,
+                                        this.routineCondition.endDate,
+                                        EnumUtil.getEnum(TaskRoutineCycle.class, this.routineCondition.cycle),
+                                        this.routineCondition.pattern,
+                                        this.routineCondition.isExcludeHolidays))
                 .build();
     }
 
@@ -44,6 +46,5 @@ public record UpdateDowithTaskReqDto(
             @Schema(description = "종료 일자", defaultValue = "2025-01-30") @NotNull LocalDate endDate,
             @Schema(description = "루틴 반복 주기", defaultValue = "DAILY") @NotNull String cycle,
             @Schema(description = "루틴 반복 패턴", defaultValue = "[1, 2, 3]") @Null Set<Integer> pattern,
-            @Schema(description = "루틴 반복 휴일 제외 여부", defaultValue = "false") @NotNull Boolean isExcludeHolidays) {
-    }
+            @Schema(description = "루틴 반복 휴일 제외 여부", defaultValue = "false") @NotNull Boolean isExcludeHolidays) {}
 }
