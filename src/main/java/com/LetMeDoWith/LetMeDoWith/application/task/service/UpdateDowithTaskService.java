@@ -53,39 +53,49 @@ public class UpdateDowithTaskService {
                 .getDowithTask(command.dowithTaskId(), memberId)
                 .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
 
-        if (!command.taskRoutineCondition().startDate().isEqual(dowithTask.getDate()))
-            throw new RestApiException(INVALID_PARAM_ERROR);
-
         if (command.taskCategoryId() != null)
             taskCategoryRepository
                     .getActiveTaskCategory(command.taskCategoryId(), memberId)
                     .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
 
+        // command에 루틴 조건이 null인데, dowithTask가 이미 루틴인 경우 예외 처리
+        // DowithTask 수정 시에 루틴을 삭제하는 기능은 없음
+        if (command.taskRoutineCondition() == null && dowithTask.isRoutine())
+            throw new RestApiException(INVALID_PARAM_ERROR);
+
         if (dowithTask.isStarted()) {
-            dowithTask.updateContents(command.title(), command.taskCategoryId(), command.date(), command.startTime());
-        } else {
-            dowithTask.updateContents(command.title(), command.taskCategoryId());
+            // dowithTask가 아미 시작된 경우, 날짜, 시작시간 수정 불가
+            if (!command.date().equals(dowithTask.getDate()) || !command.startTime().equals(dowithTask.getStartTime()))
+                throw new RestApiException(INVALID_PARAM_ERROR);
         }
 
-        Set<Holiday> holidaySet = new HashSet<>();
-        if (command.taskRoutineCondition().isExcludeHolidays()) {
-            holidaySet = holidayRepository.getHolidays(
-                    CountryCode.KR,
-                    command.taskRoutineCondition().startDate(),
-                    command.taskRoutineCondition().endDate());
-        }
-
-        TaskRoutineCondition taskRoutineCondition = command.taskRoutineCondition();
-        dowithTask.createRoutine(
-                taskRoutineCondition.startDate(),
-                taskRoutineCondition.endDate(),
-                taskRoutineCondition.cycle(),
-                taskRoutineCondition.pattern(),
-                taskRoutineCondition.isExcludeHolidays());
-        Set<LocalDate> routineDates = taskRoutineDateCalculator.calculateRoutineDates(dowithTask, holidaySet);
-
+        dowithTask.updateContents(command.title(), command.taskCategoryId(), command.date(), command.startTime());
         dowithTaskRepository.saveDowithTask(dowithTask);
-        dowithTaskRepository.saveDowithTasks(DowithTask.of(dowithTask, routineDates));
+
+        // 루틴 생성
+        if (command.taskRoutineCondition() != null) {
+            if (!command.taskRoutineCondition().startDate().isEqual(dowithTask.getDate()))
+                throw new RestApiException(INVALID_PARAM_ERROR);
+
+            Set<Holiday> holidaySet = new HashSet<>();
+            if (command.taskRoutineCondition().isExcludeHolidays()) {
+                holidaySet = holidayRepository.getHolidays(
+                        CountryCode.KR,
+                        command.taskRoutineCondition().startDate(),
+                        command.taskRoutineCondition().endDate());
+            }
+
+            TaskRoutineCondition taskRoutineCondition = command.taskRoutineCondition();
+            dowithTask.createRoutine(
+                    taskRoutineCondition.startDate(),
+                    taskRoutineCondition.endDate(),
+                    taskRoutineCondition.cycle(),
+                    taskRoutineCondition.pattern(),
+                    taskRoutineCondition.isExcludeHolidays());
+            Set<LocalDate> routineDates = taskRoutineDateCalculator.calculateRoutineDates(dowithTask, holidaySet);
+            dowithTaskRepository.saveDowithTasks(DowithTask.of(dowithTask, routineDates));
+        }
+
     }
 
     /**

@@ -1,8 +1,5 @@
 package com.LetMeDoWith.LetMeDoWith.integration.task;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.LetMeDoWith.LetMeDoWith.common.util.EnumUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TaskRoutineCycle;
@@ -14,6 +11,12 @@ import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository
 import com.LetMeDoWith.LetMeDoWith.integration.AbstractIntegrationTest;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.UpdateDowithTaskReqDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.UpdateDowithTaskRoutineReqDto;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -22,11 +25,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class UpdateDowithTaskIntegrationTest extends AbstractIntegrationTest {
 
@@ -131,16 +132,23 @@ public class UpdateDowithTaskIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @DisplayName("[SUCCESS] 두윗모드 테스크 수정 - 루틴 생성이 포함되지 않은 경우")
+    @DisplayName("[SUCCESS] 두윗모드 Task(루틴포함) 수정")
     void updateDowithTaskWithRoutine2() throws Exception {
         // given
         setFixedClock(LocalDateTime.of(2024, 3, 1, 0, 0));
-        DowithTask dowithTask = dowithTaskJpaRepository.save(DowithTask.of(
+        List<DowithTask> dowithTask = dowithTaskJpaRepository.saveAll(
+        );
+        DowithTask.of(
                 this.requestMember.getId(),
                 taskCategory.getId(),
                 "설거지 하기",
                 LocalDate.of(2024, 3, 3),
-                LocalTime.of(14, 0, 0)));
+                LocalTime.of(14, 0, 0),
+                LocalDate.of(2024, 3, 1),
+                LocalDate.of(2024, 3, 31),
+                TaskRoutineCycle.DAILY,
+                null,
+                false);
 
         String title = "청소하기";
         Long taskCategoryId = null;
