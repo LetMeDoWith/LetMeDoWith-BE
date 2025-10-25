@@ -34,17 +34,15 @@ public class Notice extends BaseAuditEntity {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "main_text", nullable = false, columnDefinition = "TEXT")
-    private String mainText;
+    @Column(name = "content", nullable = false, columnDefinition = "TEXT")
+    private String content;
 
-    @Column(name = "start_at", nullable = false)
-    private LocalDateTime startAt;
+    @Column(name = "start_date_time", nullable = false)
+    private LocalDateTime startDateTime;
 
-    @Column(name = "end_at", nullable = false)
-    private LocalDateTime endAt;
+    @Column(name = "end_date_time", nullable = false)
+    private LocalDateTime endDateTime;
 
     @Column(name = "thumbnail_image_url", nullable = false)
     private String thumbnailImageUrl;
-
-
 }
