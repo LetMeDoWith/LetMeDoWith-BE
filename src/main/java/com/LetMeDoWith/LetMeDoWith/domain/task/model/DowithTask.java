@@ -211,6 +211,22 @@ public class DowithTask extends BaseAuditEntity {
     }
 
     /**
+     * 컨텐츠 수정
+     *
+     * @param title
+     * @param taskCategoryId
+     * @param startTime
+     */
+    public void updateContents(String title, Long taskCategoryId, LocalTime startTime) {
+
+        this.title = title;
+        this.taskCategoryId = taskCategoryId;
+        this.startTime = startTime;
+
+        this.validateStartDateTime();
+    }
+
+    /**
      * 루틴 업데이트
      *
      * @param rangeStartDate

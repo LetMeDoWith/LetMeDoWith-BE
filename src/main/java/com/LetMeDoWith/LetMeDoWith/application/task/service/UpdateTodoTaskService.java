@@ -8,6 +8,7 @@ import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateTodoTaskCommand;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateTodoTaskRoutineCommand;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateTodoTaskWithRoutineCommand;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
+import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.CountryCode;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.Holiday;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskCategory;
@@ -95,14 +96,14 @@ public class UpdateTodoTaskService {
     /**
      * 루틴인 TodoTask를 업데이트한다. 루틴에 속한 모든 TodoTask에 적용 한다.
      *
-     * @param memberId   TodoTask를 업데이트할 사용자의 ID
-     * @param todoTaskId 업데이트할 TodoTask의 ID
-     * @param command    업데이트할 정보 (카테고리 ID, 제목, 시작시간, 전체적용 여부)
+     * @param command 업데이트할 정보 (카테고리 ID, 제목, 시작시간, 전체적용 여부)
      */
     @Transactional
-    public void updateTodoTaskWithRoutine(String memberId, Long todoTaskId, UpdateTodoTaskWithRoutineCommand command) {
+    public void updateTodoTaskWithRoutine(UpdateTodoTaskWithRoutineCommand command) {
+
+        String memberId = AuthUtil.getMemberId();
         TodoTask todoTask = todoTaskRepository
-                .getTodoTask(todoTaskId, memberId)
+                .getTodoTask(command.todoTaskId(), memberId)
                 .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
 
         if (!todoTask.isRoutine()) {

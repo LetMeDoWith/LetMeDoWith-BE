@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.LetMeDoWith.LetMeDoWith.common.util.EnumUtil;
+import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TaskRoutineCycle;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
@@ -14,6 +15,7 @@ import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository
 import com.LetMeDoWith.LetMeDoWith.integration.AbstractIntegrationTest;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.UpdateDowithTaskReqDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.UpdateDowithTaskRoutineReqDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.UpdateDowithTaskWithRoutineReqDto;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -31,6 +33,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 public class UpdateDowithTaskIntegrationTest extends AbstractIntegrationTest {
 
     static final String UPDATE_DOWITH_TASK_URL = "/api/v1/tasks/dowith";
+    static final String UPDATE_DOWTIH_TASK_WITH_ROUTINE_URL = UPDATE_DOWITH_TASK_URL + "/%d/with-routine";
     static final String UPDATE_DOWITH_TASK_ROUTINE_URL = UPDATE_DOWITH_TASK_URL + "/%d/routine";
 
     @Autowired
@@ -60,8 +63,8 @@ public class UpdateDowithTaskIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @DisplayName("[SUCCESS] 두윗모드 테스크 수정 - 루틴(DAILY) 생성이 포함된 경우")
-    void updateDowithTaskWithRoutine1() throws Exception {
+    @DisplayName("[SUCCESS] DowithTask 수정(/tasks/dowith/{dowithTaskId}) - 루틴(DAILY) 생성이 포함된 경우")
+    void updateDowithTask1() throws Exception {
         // given
         setFixedClock(LocalDateTime.of(2024, 3, 1, 0, 0));
         DowithTask dowithTask = dowithTaskJpaRepository.save(DowithTask.of(
@@ -122,7 +125,7 @@ public class UpdateDowithTaskIntegrationTest extends AbstractIntegrationTest {
             assertThat(routine.getRangeStartDate()).isEqualTo(routineStartDate);
             assertThat(routine.getRangeEndDate()).isEqualTo(routineEndDate);
             assertThat(routine.getCycle()).isEqualTo(EnumUtil.getEnum(TaskRoutineCycle.class, cycle));
-            assertThat(routine.getPattern()).isNull();
+            assertThat(routine.getPattern().getPattern()).isEmpty();
             assertThat(routine.isExcludeHolidays()).isEqualTo(isExcludeHolidays);
 
             allDateSet.remove(task.getDate());
@@ -131,8 +134,8 @@ public class UpdateDowithTaskIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @DisplayName("[SUCCESS] 두윗모드 테스크 수정 - 루틴 생성이 포함되지 않은 경우")
-    void updateDowithTaskWithRoutine2() throws Exception {
+    @DisplayName("[SUCCESS] DowithTask 수정(/tasks/dowith/{dowithTaskId}) - 루틴 생성하지 않고 내용만 수정하는 경우")
+    void updateDowithTask2() throws Exception {
         // given
         setFixedClock(LocalDateTime.of(2024, 3, 1, 0, 0));
         DowithTask dowithTask = dowithTaskJpaRepository.save(DowithTask.of(
@@ -172,8 +175,147 @@ public class UpdateDowithTaskIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @DisplayName("[SUCCESS] 두윗모드 테스크의 DAILY Routine -> 다른 형태의 DAILY Routine으로 수정")
-    void updateDowithTaskWithRoutine3() throws Exception {
+    @DisplayName("[FAIL] DowithTask 수정(/tasks/dowith/{dowithTaskId}) - 루틴이 있는 task 대상으로 routineCondition null 요청시")
+    void updateDowithTask3() throws Exception {
+        // given
+        setFixedClock(LocalDateTime.of(2024, 3, 1, 0, 0));
+        DowithTask dowithTask = dowithTaskJpaRepository.save(DowithTask.of(
+                this.requestMember.getId(),
+                taskCategory.getId(),
+                "설거지 하기",
+                LocalDate.of(2024, 3, 3),
+                LocalTime.of(14, 0, 0),
+                LocalDate.of(2024, 3, 4),
+                LocalDate.of(2024, 3, 10),
+                TaskRoutineCycle.DAILY,
+                null,
+                false));
+
+        String title = "청소하기";
+        Long taskCategoryId = null;
+        LocalDateTime startDateTime = LocalDateTime.of(2024, 3, 2, 13, 0);
+
+        // when
+        UpdateDowithTaskReqDto requestBody = UpdateDowithTaskReqDto.builder()
+                .title(title)
+                .taskCategoryId(taskCategoryId)
+                .date(startDateTime.toLocalDate())
+                .startTime(startDateTime.toLocalTime())
+                .routineCondition(null)
+                .build();
+        ResultActions resultActions =
+                request(MockMvcRequestBuilders.put(UPDATE_DOWITH_TASK_URL + "/" + dowithTask.getId())
+                        .content(this.writeRequestBodyAsString(requestBody)));
+
+        // then
+        resultActions.andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    @DisplayName("[SUCCESS] DowithTask 루틴과 함께 수정(/tasks/dowith/{dowithTaskId}/with-routine)")
+    void updateDowithTaskWithRoutine() throws Exception {
+        // given
+        // 기존 Dowith : 3/2일 등록 3/2일부터 3/14일까지 매일
+        setFixedClock(LocalDateTime.of(2024, 3, 1, 0, 0));
+        String title = "테스트";
+        LocalDate date = LocalDate.of(2024, 3, 1);
+        LocalTime startTime = LocalTime.of(13, 0, 0);
+        int plusDays = 13;
+        Set<LocalDate> routieDates = new HashSet<>();
+        for (int i = 1; i <= plusDays; i++) {
+            routieDates.add(date.plusDays(i));
+        }
+        DowithTask dowithTask = DowithTask.of(
+                this.requestMember.getId(),
+                taskCategory.getId(),
+                title,
+                date,
+                startTime,
+                date,
+                date.plusDays(plusDays),
+                TaskRoutineCycle.DAILY,
+                null,
+                false);
+        List<DowithTask> routineDowithTasks = DowithTask.of(dowithTask, routieDates);
+        List<DowithTask> dowithTasks =
+                dowithTaskJpaRepository.saveAll(Stream.concat(Stream.of(dowithTask), routineDowithTasks.stream())
+                        .toList());
+        dowithTaskJpaRepository.flush();
+
+        // when
+        // 요청 시간 10일 10:00로 10, 11, 12, 13, 14일이 수정 대상으로 분류되어야함
+        setFixedClock(LocalDateTime.of(2024, 3, 10, 10, 0));
+
+        String modifiedTitle = "수정된 제목";
+        LocalTime modifiedStartTime = LocalTime.of(14, 0);
+        UpdateDowithTaskWithRoutineReqDto requestBody = UpdateDowithTaskWithRoutineReqDto.builder()
+                .title(modifiedTitle)
+                .startTime(modifiedStartTime)
+                .taskCategoryId(null)
+                .build();
+        Long id = dowithTasks.stream()
+                .filter(e -> e.getDate().isEqual(SystemTimeUtil.nowDate()))
+                .findFirst()
+                .get()
+                .getId();
+        ResultActions resultActions =
+                this.request(MockMvcRequestBuilders.put(String.format(UPDATE_DOWTIH_TASK_WITH_ROUTINE_URL, id))
+                        .content(this.writeRequestBodyAsString(requestBody)));
+
+        // then
+        resultActions.andExpect(status().isOk());
+        // Request 일시 기준 시작일시가 과거인 DowithTask들의 내용 변화 없음 검증
+        Set<LocalDate> oldDowithTaskDates = new HashSet<>(List.of(
+                LocalDate.of(2024, 3, 1),
+                LocalDate.of(2024, 3, 2),
+                LocalDate.of(2024, 3, 3),
+                LocalDate.of(2024, 3, 4),
+                LocalDate.of(2024, 3, 5),
+                LocalDate.of(2024, 3, 6),
+                LocalDate.of(2024, 3, 7),
+                LocalDate.of(2024, 3, 8),
+                LocalDate.of(2024, 3, 9)));
+        List<DowithTask> oldDowithTasks = dowithTaskJpaRepository.findAllByDateIn(oldDowithTaskDates);
+        for (DowithTask task : oldDowithTasks) {
+            assertThat(task.getRoutine()).isNull();
+            assertThat(task.getDate()).isIn(oldDowithTaskDates);
+            assertThat(task.getTitle()).isEqualTo(title);
+            assertThat(task.getStartTime()).isEqualTo(startTime);
+            assertThat(task.getTaskCategoryId()).isEqualTo(taskCategory.getId());
+            oldDowithTaskDates.remove(task.getDate());
+        }
+        assertThat(oldDowithTaskDates).isEmpty();
+
+        // Request 일시 기준 시작일시가 미래인 DowithTask들의 내용 수정됨 검증
+        Set<LocalDate> newDowithTaskDates = new HashSet<>(List.of(
+                LocalDate.of(2024, 3, 10),
+                LocalDate.of(2024, 3, 11),
+                LocalDate.of(2024, 3, 12),
+                LocalDate.of(2024, 3, 13),
+                LocalDate.of(2024, 3, 14)));
+        Optional<DowithTask> opNewDowithTask = dowithTaskJpaRepository.findByDate(LocalDate.of(2024, 3, 10));
+        assertThat(opNewDowithTask).isPresent();
+        DowithTaskRoutine newDowithTaskRoutine = opNewDowithTask.get().getRoutine();
+        List<DowithTask> newDowithTasks = dowithTaskJpaRepository.findAllDowithTaskAggregates(newDowithTaskRoutine);
+        for (DowithTask task : newDowithTasks) {
+            assertThat(task.getDate()).isIn(newDowithTaskDates);
+            assertThat(task.getTitle()).isEqualTo(modifiedTitle);
+            assertThat(task.getStartTime()).isEqualTo(modifiedStartTime);
+            assertThat(task.getTaskCategoryId()).isEqualTo(null);
+            newDowithTaskDates.remove(task.getDate());
+        }
+        assertThat(newDowithTaskDates).isEmpty();
+        assertThat(newDowithTaskRoutine.getRangeStartDate()).isEqualTo(LocalDate.of(2024, 3, 10));
+        assertThat(newDowithTaskRoutine.getRangeEndDate()).isEqualTo(LocalDate.of(2024, 3, 14));
+        assertThat(newDowithTaskRoutine.getCycle().getCode()).isEqualTo(TaskRoutineCycle.DAILY.getCode());
+        assertThat(newDowithTaskRoutine.getPattern().getPattern()).isEmpty();
+        assertThat(newDowithTaskRoutine.isExcludeHolidays()).isEqualTo(false);
+    }
+
+    @Test
+    @DisplayName(
+            "[SUCCESS] DowithTask 루틴 수정(/tasks/dowith/{dowithTaskId}/routine) - 두윗모드 테스크의 DAILY Routine -> 다른 형태의 DAILY Routine으로 수정")
+    void updateDowithTaskRoutine() throws Exception {
         // given
         // 기존 Dowith : 3/2일 등록 3/2일부터 3/14일까지 매일
         setFixedClock(LocalDateTime.of(2024, 3, 1, 0, 0));
@@ -272,7 +414,7 @@ public class UpdateDowithTaskIntegrationTest extends AbstractIntegrationTest {
         assertThat(newDowithTaskRoutine.getRangeStartDate()).isEqualTo(startDate);
         assertThat(newDowithTaskRoutine.getRangeEndDate()).isEqualTo(endDate);
         assertThat(newDowithTaskRoutine.getCycle().getCode()).isEqualTo(cycle);
-        assertThat(newDowithTaskRoutine.getPattern()).isNull();
+        assertThat(newDowithTaskRoutine.getPattern().getPattern()).isEmpty();
         assertThat(newDowithTaskRoutine.isExcludeHolidays()).isEqualTo(isExcludeHolidays);
     }
 }

@@ -48,25 +48,11 @@ public class DowithTaskController {
 
         String memberId = AuthUtil.getMemberId();
 
-        createDowithTaskService.createDowithTask(requestBody.toCommand());
-
-        return ResponseUtil.createSuccessResponse();
-    }
-
-    @Operation(summary = "두윗모드 Task (루틴) 생성", description = "두윗모드 테스크를 생성합니다. RoutineCondition에 루틴 조건을 넣어줍니다.")
-    @ApiSuccessResponse(description = "두윗모드 Task (루틴) 생성 성공.")
-    @ApiErrorResponses({
-        @ApiErrorResponse(
-                status = FailResponseStatus.INVALID_PARAM_ERROR,
-                description =
-                        "Request Body의 title이 공백이거나, 40자 초과인경우 / date, startTime이 null인 경우 / routine의 startDate가 date와 일치하지 않는 경우"),
-        @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")
-    })
-    @PostMapping("/with-routine")
-    public ResponseEntity createDowithTaskWithRoutine(
-            @Valid @RequestBody CreateDowithTaskWithRoutineReqDto requestBody) {
-
-        createDowithTaskService.createDowithTaskWithRoutine(requestBody.toCommand());
+        if (requestBody.routineCondition() == null) {
+            createDowithTaskService.createDowithTask(requestBody.toCreateDowithTaskCommand());
+        } else {
+            createDowithTaskService.createDowithTaskWithRoutine(requestBody.toCreateDowithTaskWithRoutineCommand());
+        }
 
         return ResponseUtil.createSuccessResponse();
     }
@@ -87,13 +73,27 @@ public class DowithTaskController {
     public ResponseEntity updateDowithTask(
             @PathVariable Long dowithTaskId, @RequestBody UpdateDowithTaskReqDto requestBody) {
 
-        if (requestBody.routineCondition() == null) {
-            updateDowithTaskService.updateDowithTaskContentsOnly(requestBody.toUpdateContentsOnlyCommand(dowithTaskId));
-        } else {
-            updateDowithTaskService.updateDowithTaskContentsAndCreateRoutine(
-                    requestBody.toUpdateContentsAndCreateRoutineCommand(dowithTaskId));
-        }
+        updateDowithTaskService.updateDowithTask(requestBody.toCommand(dowithTaskId));
+        return ResponseUtil.createSuccessResponse();
+    }
 
+    @Operation(summary = "두윗모드 Task(루틴포함) 수정", description = "두윗모드 루틴의 모든 Task를 수정합니다.")
+    @ApiSuccessResponse(description = "두윗모드 Task 수정 성공")
+    @ApiErrorResponses({
+        @ApiErrorResponse(
+                status = FailResponseStatus.INVALID_PARAM_ERROR,
+                description =
+                        "Request Body의 title이 공백이거나, 40자 초과인경우 / date, startTime이 null인 경우 / routine의 startDate가 date와 일치하지 않는 경우"),
+        @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우"),
+        //        @ApiErrorResponse(
+        //                status = FailResponseStatus.DOWITH_TASK_CREATE_COUNT_EXCEED,
+        //                description = "일일 두윗모드 Task 등록 가능 개수를 초과한 경우")
+    })
+    @PutMapping("/{dowithTaskId}/with-routine")
+    public ResponseEntity updateDowithTaskWithRoutine(
+            @PathVariable Long dowithTaskId, @RequestBody UpdateDowithTaskWithRoutineReqDto requestBody) {
+
+        updateDowithTaskService.updateDowithTaskWithRoutine(requestBody.toCommand(dowithTaskId));
         return ResponseUtil.createSuccessResponse();
     }
 

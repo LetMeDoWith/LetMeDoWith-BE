@@ -11,7 +11,6 @@ import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.DowithTaskJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.integration.AbstractIntegrationTest;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.CreateDowithTaskReqDto;
-import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.CreateDowithTaskWithRoutineReqDto;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -47,7 +46,7 @@ public class CreateDowithTaskIntegrationTest extends AbstractIntegrationTest {
         setFixedClock(LocalDateTime.of(2024, 3, 1, 0, 0));
         LocalDateTime startDateTime = SystemTimeUtil.now();
         CreateDowithTaskReqDto requestBody =
-                new CreateDowithTaskReqDto(title, null, startDateTime.toLocalDate(), startDateTime.toLocalTime());
+                new CreateDowithTaskReqDto(title, null, startDateTime.toLocalDate(), startDateTime.toLocalTime(), null);
 
         // when
         ResultActions resultActions = this.request(MockMvcRequestBuilders.post(CREATE_DOWITH_TASK_URL)
@@ -87,14 +86,14 @@ public class CreateDowithTaskIntegrationTest extends AbstractIntegrationTest {
         }
 
         // when
-        CreateDowithTaskWithRoutineReqDto requestBody = new CreateDowithTaskWithRoutineReqDto(
+        CreateDowithTaskReqDto requestBody = new CreateDowithTaskReqDto(
                 title,
                 null,
                 startDateTime.toLocalDate(),
                 startDateTime.toLocalTime(),
-                new CreateDowithTaskWithRoutineReqDto.CreateDowithTaskRoutineCondition(
+                new CreateDowithTaskReqDto.CreateDowithTaskRoutineCondition(
                         routineStartDate, routineEndDate, cycle, null, isExcludeHolidays));
-        ResultActions resultActions = this.request(MockMvcRequestBuilders.post(CREATE_DOWITH_TASK_URL + "/with-routine")
+        ResultActions resultActions = this.request(MockMvcRequestBuilders.post(CREATE_DOWITH_TASK_URL)
                 .content(this.writeRequestBodyAsString(requestBody)));
         DowithTask dowithTask = dowithTaskJpaRepository
                 .findAllDowithTaskAggregates(requestMember.getId(), startDateTime.toLocalDate())
@@ -125,9 +124,9 @@ public class CreateDowithTaskIntegrationTest extends AbstractIntegrationTest {
     //        // given
     //        String title = "test";
     //        setFixedClock(LocalDateTime.of(2024, 3, 1, 0, 0));
-    //        LocalDateTime startDateTime = SystemTimeUtil.now();
-    //        LocalDate routineStartDate = startDateTime.toLocalDate();
-    //        LocalDate routineEndDate = startDateTime.plusDays(14).toLocalDate(); // 2주
+    //        LocalDateTime startTime = SystemTimeUtil.now();
+    //        LocalDate routineStartDate = startTime.toLocalDate();
+    //        LocalDate routineEndDate = startTime.plusDays(14).toLocalDate(); // 2주
     //        String cycle = "DAILY";
     //        boolean isExcludeHolidays = true;
     //
@@ -141,15 +140,15 @@ public class CreateDowithTaskIntegrationTest extends AbstractIntegrationTest {
     //        CreateDowithTaskWithRoutineReqDto requestBody = new CreateDowithTaskWithRoutineReqDto(
     //                title,
     //                null,
-    //                startDateTime.toLocalDate(),
-    //                startDateTime.toLocalTime(),
+    //                startTime.toLocalDate(),
+    //                startTime.toLocalTime(),
     //                new CreateDowithTaskWithRoutineReqDto.CreateDowithTaskRoutineCondition(
     //                        routineStartDate, routineEndDate, cycle, null, isExcludeHolidays));
     //        ResultActions resultActions = this.request(MockMvcRequestBuilders.post(CREATE_DOWITH_TASK_URL +
     // "/with-routine")
     //                .content(this.writeRequestBodyAsString(requestBody)));
     //        DowithTask dowithTask = dowithTaskJpaRepository
-    //                .findAllDowithTaskAggregates(requestMember.getId(), startDateTime.toLocalDate())
+    //                .findAllDowithTaskAggregates(requestMember.getId(), startTime.toLocalDate())
     //                .get(0);
     //        List<DowithTask> dowithTasks =
     // dowithTaskJpaRepository.findAllDowithTaskAggregates(dowithTask.getRoutine());
@@ -161,9 +160,9 @@ public class CreateDowithTaskIntegrationTest extends AbstractIntegrationTest {
     //            assertThat(task.getDate()).isIn(allDateSet);
     //            assertThat(task.getTitle()).isEqualTo(title);
     //            assertThat(task.getStartTime().getHour())
-    //                    .isEqualTo(startDateTime.toLocalTime().getHour());
+    //                    .isEqualTo(startTime.toLocalTime().getHour());
     //            assertThat(task.getStartTime().getMinute())
-    //                    .isEqualTo(startDateTime.toLocalTime().getMinute());
+    //                    .isEqualTo(startTime.toLocalTime().getMinute());
     //            assertThat(task.getRoutine()).isNotNull();
     //            assertThat(task.getStatus()).isEqualTo(DowithTaskStatus.WAIT);
     //            allDateSet.remove(task.getDate());
@@ -179,7 +178,7 @@ public class CreateDowithTaskIntegrationTest extends AbstractIntegrationTest {
 
         // when
         CreateDowithTaskReqDto requestBody =
-                new CreateDowithTaskReqDto("테스트", 100L, startDateTime.toLocalDate(), startDateTime.toLocalTime());
+                new CreateDowithTaskReqDto("테스트", 100L, startDateTime.toLocalDate(), startDateTime.toLocalTime(), null);
         ResultActions resultActions = this.request(MockMvcRequestBuilders.post(CREATE_DOWITH_TASK_URL)
                 .content(this.writeRequestBodyAsString(requestBody)));
 
@@ -202,7 +201,7 @@ public class CreateDowithTaskIntegrationTest extends AbstractIntegrationTest {
 
         // when
         CreateDowithTaskReqDto requestBody =
-                new CreateDowithTaskReqDto("테스트", null, startDateTime.toLocalDate(), startDateTime.toLocalTime());
+                new CreateDowithTaskReqDto("테스트", null, startDateTime.toLocalDate(), startDateTime.toLocalTime(), null);
         ResultActions resultActions = this.request(MockMvcRequestBuilders.post(CREATE_DOWITH_TASK_URL)
                 .content(this.writeRequestBodyAsString(requestBody)));
 
