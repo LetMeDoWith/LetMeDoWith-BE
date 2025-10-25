@@ -73,7 +73,7 @@ public class DowithTaskController {
     public ResponseEntity updateDowithTask(
             @PathVariable Long dowithTaskId, @RequestBody UpdateDowithTaskReqDto requestBody) {
 
-        updateDowithTaskService.updateDowithTaskContentsAndCreateRoutine(requestBody.toCommand(dowithTaskId));
+        updateDowithTaskService.updateDowithTask(requestBody.toCommand(dowithTaskId));
         return ResponseUtil.createSuccessResponse();
     }
 
@@ -93,7 +93,7 @@ public class DowithTaskController {
     public ResponseEntity updateDowithTaskWithRoutine(
             @PathVariable Long dowithTaskId, @RequestBody UpdateDowithTaskWithRoutineReqDto requestBody) {
 
-        updateDowithTaskService.updateDowithTaskContentsOnly(requestBody.toCommand(dowithTaskId));
+        updateDowithTaskService.updateDowithTaskWithRoutine(requestBody.toCommand(dowithTaskId));
         return ResponseUtil.createSuccessResponse();
     }
 

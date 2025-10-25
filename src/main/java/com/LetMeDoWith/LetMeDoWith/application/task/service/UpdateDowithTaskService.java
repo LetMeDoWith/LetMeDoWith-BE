@@ -5,21 +5,19 @@ import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseSt
 
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.TaskRoutineCondition;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateDowithTaskContentsAndCreateRoutineCommand;
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateDowithTaskContentsOnlyCommand;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateDowithTaskRoutineCommand;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateDowithTaskWithRoutineCommand;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.common.util.DateTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.CountryCode;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTaskRoutine;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.Holiday;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.*;
 import com.LetMeDoWith.LetMeDoWith.domain.task.service.TaskRoutineDateCalculator;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -40,12 +38,12 @@ public class UpdateDowithTaskService {
     private final HolidayRepository holidayRepository;
 
     /**
-     * 두윗모드Task 내용 수정 및 루틴 생성
+     * 두윗모드 Task 내용 수정 및 루틴 생성
      *
      * @param command
      */
     @Transactional
-    public void updateDowithTaskContentsAndCreateRoutine(UpdateDowithTaskContentsAndCreateRoutineCommand command) {
+    public void updateDowithTask(UpdateDowithTaskContentsAndCreateRoutineCommand command) {
 
         String memberId = AuthUtil.getMemberId();
         DowithTask dowithTask = dowithTaskRepository
@@ -104,12 +102,14 @@ public class UpdateDowithTaskService {
      * @return
      */
     @Transactional
-    public void updateDowithTaskContentsOnly(UpdateDowithTaskContentsOnlyCommand command) {
+    public void updateDowithTaskWithRoutine(UpdateDowithTaskWithRoutineCommand command) {
 
         String memberId = AuthUtil.getMemberId();
         DowithTask dowithTask = dowithTaskRepository
                 .getDowithTask(command.dowithTaskId(), memberId)
                 .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
+
+        if (!dowithTask.isRoutine()) throw new RestApiException(INVALID_REQUEST);
 
         if (command.taskCategoryId() != null)
             taskCategoryRepository
@@ -117,38 +117,42 @@ public class UpdateDowithTaskService {
                     .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
 
         if (dowithTask.isStarted()) {
-            // 시작 일시가 지난 Task인 경우
-            dowithTask.updateContents(command.title(), command.taskCategoryId());
+            // dowithTask가 아미 시작된 경우, 시작시간 수정 불가
+            if (!command.startTime().equals(dowithTask.getStartTime())) throw new RestApiException(INVALID_PARAM_ERROR);
 
-            if (dowithTask.isRoutine()) dowithTask.deleteRoutine();
+            // 내용 수정 후 루틴 삭제
+            dowithTask.updateContents(command.title(), command.taskCategoryId());
+            dowithTask.deleteRoutine();
 
         } else {
             // 시작 일시가 아직 지나지 않은 Task인 경우
-            dowithTask.updateContents(command.title(), command.taskCategoryId(), command.date(), command.startTime());
+            dowithTask.updateContents(command.title(), command.taskCategoryId(), command.startTime());
 
-            if (dowithTask.isRoutine()) {
-
-                Set<Holiday> holidaySet = new HashSet<>();
-                if (dowithTask.isRoutineExcludeHolidays()) {
-                    holidaySet = holidayRepository.getHolidays(
-                            CountryCode.KR,
-                            dowithTask.getRoutine().getRangeStartDate(),
-                            dowithTask.getRoutine().getRangeEndDate());
-                }
-
-                Set<LocalDate> toUpdateRoutineDates =
-                        taskRoutineDateCalculator.calculateEditableRoutineDates(dowithTask, holidaySet);
-
-                Map<Boolean, List<DowithTask>> partition =
-                        dowithTaskRepository.getDowithTasks(dowithTask.getRoutine()).stream()
-                                .collect(Collectors.partitioningBy(
-                                        task -> toUpdateRoutineDates.contains(task.getDate())));
-                partition.get(Boolean.FALSE).forEach(DowithTask::deleteRoutine);
-                partition
-                        .get(Boolean.TRUE)
-                        .forEach(task -> task.updateContents(
-                                command.title(), command.taskCategoryId(), command.date(), command.startTime()));
+            Set<Holiday> holidaySet = new HashSet<>();
+            if (dowithTask.isRoutineExcludeHolidays()) {
+                holidaySet = holidayRepository.getHolidays(
+                        CountryCode.KR,
+                        dowithTask.getRoutine().getRangeStartDate(),
+                        dowithTask.getRoutine().getRangeEndDate());
             }
+
+            Set<LocalDate> toUpdateRoutineDates =
+                    taskRoutineDateCalculator.calculateEditableRoutineDates(dowithTask, holidaySet);
+
+            Map<Boolean, List<DowithTask>> partition =
+                    dowithTaskRepository.getDowithTasks(dowithTask.getRoutine()).stream()
+                            .collect(Collectors.partitioningBy(task -> toUpdateRoutineDates.contains(task.getDate())));
+            partition.get(Boolean.FALSE).forEach(DowithTask::deleteRoutine);
+
+            List<DowithTask> toUpdateDowithTasks = partition.get(Boolean.TRUE).stream()
+                    .sorted(Comparator.comparing(DowithTask::getDate))
+                    .toList();
+            DowithTaskRoutine routine = toUpdateDowithTasks.get(0).getRoutine();
+            routine.updateDate(
+                    toUpdateDowithTasks.get(0).getDate(),
+                    toUpdateDowithTasks.get(toUpdateDowithTasks.size() - 1).getDate());
+            toUpdateDowithTasks.forEach(
+                    task -> task.updateContents(command.title(), command.taskCategoryId(), command.startTime()));
         }
     }
 

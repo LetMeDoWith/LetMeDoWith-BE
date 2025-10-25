@@ -18,8 +18,12 @@ import lombok.Builder;
 public record UpdateDowithTaskReqDto(
         @Schema(description = "제목", defaultValue = "저녁 먹기") @NotBlank @Size(max = 40) String title,
         @Schema(description = "Task 카테고리 ID", defaultValue = "2") Long taskCategoryId,
-        @Schema(description = "시작 일자", defaultValue = "2025-01-30") @NotNull LocalDate date,
-        @Schema(description = "시작 시각", defaultValue = "11:30:00") LocalTime startTime,
+        @Schema(description = "시작 일자 (DowithTask가 이미 시작되었는데, 해당 날짜 수정 시 INVALID_REQUEST)", defaultValue = "2025-01-30")
+                @NotNull
+                LocalDate date,
+        @Schema(description = "시작 시각 (DowithTask가 이미 시작되었는데, 해당 시각 수정 시 INVALID_REQUEST)", defaultValue = "11:30:00")
+                @NotNull
+                LocalTime startTime,
         @Schema(description = "루틴 반복 조건") @Null UpdateDowithTaskRoutineCondition routineCondition) {
 
     public UpdateDowithTaskContentsAndCreateRoutineCommand toCommand(Long dowithTaskId) {

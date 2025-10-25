@@ -124,9 +124,9 @@ public class CreateDowithTaskIntegrationTest extends AbstractIntegrationTest {
     //        // given
     //        String title = "test";
     //        setFixedClock(LocalDateTime.of(2024, 3, 1, 0, 0));
-    //        LocalDateTime startDateTime = SystemTimeUtil.now();
-    //        LocalDate routineStartDate = startDateTime.toLocalDate();
-    //        LocalDate routineEndDate = startDateTime.plusDays(14).toLocalDate(); // 2주
+    //        LocalDateTime startTime = SystemTimeUtil.now();
+    //        LocalDate routineStartDate = startTime.toLocalDate();
+    //        LocalDate routineEndDate = startTime.plusDays(14).toLocalDate(); // 2주
     //        String cycle = "DAILY";
     //        boolean isExcludeHolidays = true;
     //
@@ -140,15 +140,15 @@ public class CreateDowithTaskIntegrationTest extends AbstractIntegrationTest {
     //        CreateDowithTaskWithRoutineReqDto requestBody = new CreateDowithTaskWithRoutineReqDto(
     //                title,
     //                null,
-    //                startDateTime.toLocalDate(),
-    //                startDateTime.toLocalTime(),
+    //                startTime.toLocalDate(),
+    //                startTime.toLocalTime(),
     //                new CreateDowithTaskWithRoutineReqDto.CreateDowithTaskRoutineCondition(
     //                        routineStartDate, routineEndDate, cycle, null, isExcludeHolidays));
     //        ResultActions resultActions = this.request(MockMvcRequestBuilders.post(CREATE_DOWITH_TASK_URL +
     // "/with-routine")
     //                .content(this.writeRequestBodyAsString(requestBody)));
     //        DowithTask dowithTask = dowithTaskJpaRepository
-    //                .findAllDowithTaskAggregates(requestMember.getId(), startDateTime.toLocalDate())
+    //                .findAllDowithTaskAggregates(requestMember.getId(), startTime.toLocalDate())
     //                .get(0);
     //        List<DowithTask> dowithTasks =
     // dowithTaskJpaRepository.findAllDowithTaskAggregates(dowithTask.getRoutine());
@@ -160,9 +160,9 @@ public class CreateDowithTaskIntegrationTest extends AbstractIntegrationTest {
     //            assertThat(task.getDate()).isIn(allDateSet);
     //            assertThat(task.getTitle()).isEqualTo(title);
     //            assertThat(task.getStartTime().getHour())
-    //                    .isEqualTo(startDateTime.toLocalTime().getHour());
+    //                    .isEqualTo(startTime.toLocalTime().getHour());
     //            assertThat(task.getStartTime().getMinute())
-    //                    .isEqualTo(startDateTime.toLocalTime().getMinute());
+    //                    .isEqualTo(startTime.toLocalTime().getMinute());
     //            assertThat(task.getRoutine()).isNotNull();
     //            assertThat(task.getStatus()).isEqualTo(DowithTaskStatus.WAIT);
     //            allDateSet.remove(task.getDate());

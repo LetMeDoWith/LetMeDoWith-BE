@@ -297,8 +297,8 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
                 .findFirst()
                 .get();
 
-        UpdateTodoTaskWithRoutineReqDto req =
-                new UpdateTodoTaskWithRoutineReqDto(UPDATED_TITLE, updatedStartDateTime, taskCategory2.getId());
+        UpdateTodoTaskWithRoutineReqDto req = new UpdateTodoTaskWithRoutineReqDto(
+                UPDATED_TITLE, updatedStartDateTime.toLocalTime(), taskCategory2.getId());
 
         ResultActions resultActions =
                 this.request(MockMvcRequestBuilders.put(URL + "/" + taskToModified.getId() + "/with-routine")
