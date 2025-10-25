@@ -1,9 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.domain.notice;
 
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
-import com.LetMeDoWith.LetMeDoWith.common.enums.BaseEnum;
-import com.LetMeDoWith.LetMeDoWith.infrastructure.notice.converter.NoticeTypeConverter;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.LetMeDoWith.LetMeDoWith.common.enums.notice.NoticeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -48,15 +46,5 @@ public class Notice extends BaseAuditEntity {
     @Column(name = "thumbnail_image_url", nullable = false)
     private String thumbnailImageUrl;
 
-    @Getter
-    @AllArgsConstructor
-    @JsonDeserialize(using = NoticeTypeConverter.class)
-    public enum NoticeType implements BaseEnum {
-        NOTICE("NOTICE", "공지"),
-        EVENT("EVENT", "이벤트"),
-        ;
 
-        private final String code;
-        private final String description;
-    }
 }
