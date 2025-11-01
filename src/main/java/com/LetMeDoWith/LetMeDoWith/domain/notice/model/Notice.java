@@ -1,7 +1,10 @@
-package com.LetMeDoWith.LetMeDoWith.domain.notice;
+package com.LetMeDoWith.LetMeDoWith.domain.notice.model;
 
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
 import com.LetMeDoWith.LetMeDoWith.common.enums.notice.NoticeType;
+import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
+import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -14,7 +17,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -48,4 +53,42 @@ public class Notice extends BaseAuditEntity {
 
     @Column(name = "thumbnail_image_url", nullable = false)
     private String thumbnailImageUrl;
+
+    public static Notice of(
+        NoticeType type,
+        String title,
+        String content,
+        LocalDateTime startDateTime,
+        LocalDateTime endDateTime,
+        String thumbnailImageUrl
+    ) {
+        Notice notice = Notice.builder()
+            .noticeType(type)
+            .title(title)
+            .content(content)
+            .startDateTime(startDateTime)
+            .endDateTime(endDateTime)
+            .deleteYn(false)
+            .thumbnailImageUrl(thumbnailImageUrl)
+            .build();
+
+        // 추후에 HTML content로 간다면 XSS Sanitize 필요
+
+        notice.validate();
+
+        return notice;
+    }
+
+    public void validate() {
+        LocalDateTime nowDateTime = SystemTimeUtil.now();
+
+        if (startDateTime.isBefore(endDateTime)) {
+            throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
+        }
+
+        if (startDateTime.isBefore(nowDateTime) || endDateTime.isBefore(nowDateTime)) {
+            throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
+        }
+    }
+
 }
