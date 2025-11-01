@@ -43,6 +43,9 @@ public class Notice extends BaseAuditEntity {
     @Column(name = "end_date_time", nullable = false)
     private LocalDateTime endDateTime;
 
+    @Column(name = "delete_yn", nullable = false)
+    private Boolean deleteYn;
+
     @Column(name = "thumbnail_image_url", nullable = false)
     private String thumbnailImageUrl;
 }

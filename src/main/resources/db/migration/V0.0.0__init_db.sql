@@ -463,6 +463,7 @@ CREATE TABLE `notice`
     `content`             TEXT         NOT NULL,
     `start_date_time`     datetime(6)  NOT NULL,
     `end_date_time`       datetime(6)  NOT NULL,
+    `delete_yn`           bit(1)       NOT NULL,
     `thumbnail_image_url` varchar(255) NOT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
