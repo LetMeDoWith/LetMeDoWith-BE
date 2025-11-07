@@ -55,22 +55,21 @@ public class Notice extends BaseAuditEntity {
     private String thumbnailImageUrl;
 
     public static Notice of(
-        NoticeType type,
-        String title,
-        String content,
-        LocalDateTime startDateTime,
-        LocalDateTime endDateTime,
-        String thumbnailImageUrl
-    ) {
+            NoticeType type,
+            String title,
+            String content,
+            LocalDateTime startDateTime,
+            LocalDateTime endDateTime,
+            String thumbnailImageUrl) {
         Notice notice = Notice.builder()
-            .noticeType(type)
-            .title(title)
-            .content(content)
-            .startDateTime(startDateTime)
-            .endDateTime(endDateTime)
-            .deleteYn(false)
-            .thumbnailImageUrl(thumbnailImageUrl)
-            .build();
+                .noticeType(type)
+                .title(title)
+                .content(content)
+                .startDateTime(startDateTime)
+                .endDateTime(endDateTime)
+                .deleteYn(false)
+                .thumbnailImageUrl(thumbnailImageUrl)
+                .build();
 
         // 추후에 HTML content로 간다면 XSS Sanitize 필요
 
@@ -82,13 +81,16 @@ public class Notice extends BaseAuditEntity {
     public void validate() {
         LocalDateTime nowDateTime = SystemTimeUtil.now();
 
-        if (startDateTime.isBefore(endDateTime)) {
+        if (endDateTime.isBefore(startDateTime)) {
             throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
         }
 
         if (startDateTime.isBefore(nowDateTime) || endDateTime.isBefore(nowDateTime)) {
             throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
         }
-    }
 
+        if (content.isBlank() || title.isBlank()) {
+            throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
+        }
+    }
 }
