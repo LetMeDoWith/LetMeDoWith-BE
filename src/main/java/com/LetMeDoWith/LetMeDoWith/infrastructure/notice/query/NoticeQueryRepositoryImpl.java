@@ -20,27 +20,23 @@ public class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
 
     @Override
     public Long countNotices() {
-        return queryFactory
-            .select(Wildcard.count)
-            .from(notice)
-            .fetchOne();
+        return queryFactory.select(Wildcard.count).from(notice).fetchOne();
     }
 
     @Override
     public List<NoticeQueryDto> getNotices(NoticeType type, long offset, int size) {
         return queryFactory
-            .select(Projections.constructor(
-                NoticeQueryDto.class,
-                notice.id,
-                notice.title,
-                notice.noticeType,
-                notice.createdAt,
-                notice.thumbnailImageUrl
-            ))
-            .from(notice)
-            .where(notice.deleteYn.eq(false))
-            .offset(offset)
-            .limit(size)
-            .fetch();
+                .select(Projections.constructor(
+                        NoticeQueryDto.class,
+                        notice.id,
+                        notice.title,
+                        notice.noticeType,
+                        notice.createdAt,
+                        notice.thumbnailImageUrl))
+                .from(notice)
+                .where(notice.deleteYn.eq(false))
+                .offset(offset)
+                .limit(size)
+                .fetch();
     }
 }

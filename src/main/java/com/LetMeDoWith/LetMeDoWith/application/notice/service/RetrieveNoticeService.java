@@ -17,8 +17,8 @@ public class RetrieveNoticeService {
 
     public RetrieveNoticesResult retrieveNotices(NoticeType type, Pageable pageable) {
         Long totalCount = noticeQueryRepository.countNotices();
-        List<NoticeQueryDto> notices = noticeQueryRepository.getNotices(type, pageable.getOffset(),
-            pageable.getPageSize());
+        List<NoticeQueryDto> notices =
+                noticeQueryRepository.getNotices(type, pageable.getOffset(), pageable.getPageSize());
 
         return RetrieveNoticesResult.from(totalCount, notices);
     }

@@ -9,5 +9,4 @@ public interface NoticeQueryRepository {
     Long countNotices();
 
     List<NoticeQueryDto> getNotices(NoticeType type, long offset, int size);
-
 }

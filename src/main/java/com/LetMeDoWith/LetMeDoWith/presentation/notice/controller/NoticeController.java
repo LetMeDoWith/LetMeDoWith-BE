@@ -26,16 +26,13 @@ public class NoticeController {
 
     private final RetrieveNoticeService retrieveNoticeService;
 
-
     @Operation(summary = "공지사항/이벤트 목록 조회", description = "공지사항/이벤트 목록을 조회합니다. 페이징 가능")
     @ApiSuccessResponse(description = "공지 조회")
     @GetMapping("")
     public ResponseEntity<ResponsePageDto<RetrieveNoticesResDto>> retrieveNotices(
-        @RequestParam(required = false) NoticeType type,
-        @ParameterObject Pageable pageable) {
+            @RequestParam(required = false) NoticeType type, @ParameterObject Pageable pageable) {
 
-        RetrieveNoticesResult result = retrieveNoticeService.retrieveNotices(type,
-            pageable);
+        RetrieveNoticesResult result = retrieveNoticeService.retrieveNotices(type, pageable);
         RetrieveNoticesResDto res = RetrieveNoticesResDto.from(result);
 
         return ResponseUtil.createSuccessResponse(res, pageable, result.totalCount());
