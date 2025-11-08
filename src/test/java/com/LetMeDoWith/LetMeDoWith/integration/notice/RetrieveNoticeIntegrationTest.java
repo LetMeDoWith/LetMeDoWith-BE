@@ -37,7 +37,7 @@ public class RetrieveNoticeIntegrationTest extends AbstractIntegrationTest {
         setFixedClock(FIXED_CLOCK_TIME);
 
         Notice notice1 = Notice.of(
-                NoticeType.NOTICE,
+                NoticeType.EVENT,
                 TITLE,
                 CONTENT,
                 LocalDateTime.of(2024, 3, 2, 0, 0),
@@ -66,21 +66,32 @@ public class RetrieveNoticeIntegrationTest extends AbstractIntegrationTest {
     @Test
     @DisplayName("[SUCCESS] 성공 - 목록 조회")
     void retrieveNoticesTest() throws Exception {
+        // given
         int PAGE = 0;
-        int SIZE = 2;
+        int SIZE = 100;
         NoticeType notice = NoticeType.NOTICE;
 
+        // when
+
         String URL = RETRIEVE_API_URL + "?type=" + notice.getCode() + "&page=" + PAGE + "&size=" + SIZE;
+        String URLNoType = RETRIEVE_API_URL + "?page=" + PAGE + "&size=" + SIZE;
 
         MvcResult retrieveResult = this.request(MockMvcRequestBuilders.get(URL))
                 .andExpect(status().isOk())
                 .andReturn();
 
+        MvcResult retrieveNoTypeResult = this.request(MockMvcRequestBuilders.get(URLNoType))
+                .andExpect(status().isOk())
+                .andReturn();
+
         String content = retrieveResult.getResponse().getContentAsString();
+        String contentNoType = retrieveNoTypeResult.getResponse().getContentAsString();
 
         RetrieveNoticesResDto resDto = this.readPagingResponse(content, RetrieveNoticesResDto.class);
+        RetrieveNoticesResDto resDtoNoType = this.readPagingResponse(contentNoType, RetrieveNoticesResDto.class);
 
-        assertEquals(SIZE, resDto.notices().size());
+        assertEquals(2, resDto.notices().size());
+        assertEquals(3, resDtoNoType.notices().size());
     }
 
     @Test

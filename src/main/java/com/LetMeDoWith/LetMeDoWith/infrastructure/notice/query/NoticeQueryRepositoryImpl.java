@@ -5,6 +5,7 @@ import com.LetMeDoWith.LetMeDoWith.domain.notice.model.QNotice;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.notice.query.dto.NoticeDetailQueryDto;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.notice.query.dto.NoticeQueryDto;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
@@ -27,6 +28,8 @@ public class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
 
     @Override
     public List<NoticeQueryDto> getNotices(NoticeType type, long offset, int size) {
+        BooleanExpression eqNoticeType = type == null ? null : notice.noticeType.eq(type);
+
         return queryFactory
                 .select(Projections.constructor(
                         NoticeQueryDto.class,
@@ -36,7 +39,7 @@ public class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
                         notice.createdAt,
                         notice.thumbnailImageUrl))
                 .from(notice)
-                .where(notice.deleteYn.isFalse())
+                .where(notice.deleteYn.isFalse().and(eqNoticeType))
                 .offset(offset)
                 .limit(size)
                 .fetch();
