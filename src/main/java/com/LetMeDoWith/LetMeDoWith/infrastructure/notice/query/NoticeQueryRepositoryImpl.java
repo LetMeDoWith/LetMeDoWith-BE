@@ -2,11 +2,13 @@ package com.LetMeDoWith.LetMeDoWith.infrastructure.notice.query;
 
 import com.LetMeDoWith.LetMeDoWith.common.enums.notice.NoticeType;
 import com.LetMeDoWith.LetMeDoWith.domain.notice.model.QNotice;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.notice.query.dto.NoticeDetailQueryDto;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.notice.query.dto.NoticeQueryDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -34,9 +36,25 @@ public class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
                         notice.createdAt,
                         notice.thumbnailImageUrl))
                 .from(notice)
-                .where(notice.deleteYn.eq(false))
+                .where(notice.deleteYn.isFalse())
                 .offset(offset)
                 .limit(size)
                 .fetch();
+    }
+
+    @Override
+    public Optional<NoticeDetailQueryDto> getNoticeDetail(Long noticeId) {
+        return Optional.ofNullable(queryFactory
+                .select(Projections.constructor(
+                        NoticeDetailQueryDto.class,
+                        notice.id,
+                        notice.title,
+                        notice.content,
+                        notice.noticeType,
+                        notice.createdAt,
+                        notice.thumbnailImageUrl))
+                .from(notice)
+                .where(notice.id.eq(noticeId).and(notice.deleteYn.isFalse()))
+                .fetchOne());
     }
 }

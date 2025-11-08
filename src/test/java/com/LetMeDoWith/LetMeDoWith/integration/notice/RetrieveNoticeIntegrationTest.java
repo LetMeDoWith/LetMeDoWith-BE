@@ -7,6 +7,7 @@ import com.LetMeDoWith.LetMeDoWith.common.enums.notice.NoticeType;
 import com.LetMeDoWith.LetMeDoWith.domain.notice.model.Notice;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.notice.persistence.jpaRepository.NoticeJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.integration.AbstractIntegrationTest;
+import com.LetMeDoWith.LetMeDoWith.presentation.notice.dto.RetrieveNoticeDetailResDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.notice.dto.RetrieveNoticesResDto;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -80,5 +81,55 @@ public class RetrieveNoticeIntegrationTest extends AbstractIntegrationTest {
         RetrieveNoticesResDto resDto = this.readPagingResponse(content, RetrieveNoticesResDto.class);
 
         assertEquals(SIZE, resDto.notices().size());
+    }
+
+    @Test
+    @DisplayName("[SUCCESS] 성공 - 단일 상세 조회")
+    void retrieveNoticeDetailTest() throws Exception {
+        // given
+        int PAGE = 0;
+        int SIZE = 2;
+        NoticeType notice = NoticeType.NOTICE;
+
+        String LIST_URL = RETRIEVE_API_URL + "?type=" + notice.getCode() + "&page=" + PAGE + "&size=" + SIZE;
+
+        MvcResult retrieveResult = this.request(MockMvcRequestBuilders.get(LIST_URL))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String content = retrieveResult.getResponse().getContentAsString();
+
+        RetrieveNoticesResDto resDto = this.readPagingResponse(content, RetrieveNoticesResDto.class);
+
+        Long ID = resDto.notices().get(0).id();
+
+        // when
+        String DETAIL_URL = RETRIEVE_API_URL + "/" + ID;
+
+        MvcResult retrieveDetailResult = this.request(MockMvcRequestBuilders.get(DETAIL_URL))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String detailContent = retrieveDetailResult.getResponse().getContentAsString();
+
+        RetrieveNoticeDetailResDto detailResDto = this.readResponse(detailContent, RetrieveNoticeDetailResDto.class);
+
+        // then
+        assertEquals(ID, detailResDto.id());
+        assertEquals(TITLE, detailResDto.title());
+        assertEquals(CONTENT, detailResDto.content());
+    }
+
+    @Test
+    @DisplayName("[FAIL] 실패 - 존재하지 않는 id로 조회 요청")
+    void retrieveNoticeDetail_notExistingId() throws Exception {
+        // given
+        long WRONG_ID = Long.MAX_VALUE;
+
+        // when
+        String URL = RETRIEVE_API_URL + "/" + WRONG_ID;
+
+        // then
+        this.request(MockMvcRequestBuilders.get(URL)).andExpect(status().isNotFound());
     }
 }
