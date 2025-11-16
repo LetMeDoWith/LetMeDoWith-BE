@@ -15,7 +15,7 @@ public class WeeklyRoutineDateCalculateStrategy implements TaskRoutineDateCalcul
      *
      * @param startDate         루틴 시작 일자
      * @param endDate           루틴 종료 일자
-     * @param repetitionPattern 루틴 반복 패턴 (0: 일요일, 1: 월요일, ..., 6: 토요일)
+     * @param repetitionPattern 루틴 반복 패턴 (1: 일요일, 2: 월요일, ..., 7: 토요일)
      * @return 루틴을 수행하는 일자 목록
      */
     @Override
@@ -24,7 +24,7 @@ public class WeeklyRoutineDateCalculateStrategy implements TaskRoutineDateCalcul
 
         return startDate
                 .datesUntil(endDate.plusDays(1))
-                .filter(date -> validDays.contains(date.getDayOfWeek().getValue() - 1))
+                .filter(date -> validDays.contains(date.getDayOfWeek().getValue()))
                 .collect(Collectors.toCollection(TreeSet::new));
     }
 
