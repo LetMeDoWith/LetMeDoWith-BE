@@ -74,4 +74,9 @@ public class DowithTaskRoutine extends BaseAuditEntity {
         this.pattern = TaskRoutinePattern.from(pattern);
         this.isExcludeHolidays = isExcludeHolidays;
     }
+
+    public void updateDate(LocalDate rangeStartDate, LocalDate rangeEndDate) {
+        this.rangeStartDate = rangeStartDate;
+        this.rangeEndDate = rangeEndDate;
+    }
 }

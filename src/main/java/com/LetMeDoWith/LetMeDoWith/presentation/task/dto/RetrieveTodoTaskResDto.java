@@ -18,7 +18,7 @@ public record RetrieveTodoTaskResDto(
         @Schema(description = "상태", defaultValue = "WAIT") String status,
         @Schema(description = "시작 일자", defaultValue = "2025-01-30") LocalDate date,
         @Schema(description = "시작 시각", defaultValue = "11:30:00") LocalTime startTime,
-        @Schema(description = "루틴 반복 조건") TodoTaskRoutineDto routine) {
+        @Schema(description = "루틴 반복 조건") TodoTaskRoutineDto routineCondition) {
 
     public static RetrieveTodoTaskResDto from(RetrieveTodoTaskResult result) {
         return RetrieveTodoTaskResDto.builder()
@@ -29,7 +29,7 @@ public record RetrieveTodoTaskResDto(
                 .status(result.status())
                 .date(result.date())
                 .startTime(result.startTime())
-                .routine(
+                .routineCondition(
                         result.routine() != null
                                 ? TodoTaskRoutineDto.builder()
                                         .startDate(result.routine().startDate())

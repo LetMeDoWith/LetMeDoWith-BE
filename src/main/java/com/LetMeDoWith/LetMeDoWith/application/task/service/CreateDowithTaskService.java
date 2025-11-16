@@ -37,7 +37,6 @@ public class CreateDowithTaskService {
     /**
      * 두윗모드 Task 생성
      *
-     * @param memberId
      * @param command
      */
     @Transactional
@@ -65,7 +64,6 @@ public class CreateDowithTaskService {
     /**
      * 두윗모드 Task 생성 - 루틴이 있는 경우
      *
-     * @param memberId
      * @param command
      * @return
      */
