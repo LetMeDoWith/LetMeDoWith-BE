@@ -20,7 +20,7 @@ public record CreateDowithTaskReqDto(
         @Schema(description = "Task 카테고리 ID", defaultValue = "1") Long taskCategoryId,
         @Schema(description = "시작 일자", defaultValue = "2025-01-30") @NotNull LocalDate date,
         @Schema(description = "시작 시각", defaultValue = "11:30:00") LocalTime startTime,
-        @Schema(description = "루틴 반복 조건") @Null CreateDowithTaskRoutineCondition routineCondition) {
+        @Schema(description = "루틴 반복 조건") CreateDowithTaskRoutineCondition routineCondition) {
 
     public CreateDowithTaskCommand toCreateDowithTaskCommand() {
         return CreateDowithTaskCommand.builder()
