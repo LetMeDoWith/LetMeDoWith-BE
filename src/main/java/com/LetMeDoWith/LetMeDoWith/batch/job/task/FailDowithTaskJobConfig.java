@@ -1,6 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.batch.job.task;
 
 import com.LetMeDoWith.LetMeDoWith.batch.tasklet.UpdateFailDowithTaskTasklet;
+import javax.sql.DataSource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
@@ -13,8 +14,6 @@ import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
-
-import javax.sql.DataSource;
 
 @Configuration
 @RequiredArgsConstructor
@@ -51,77 +50,78 @@ public class FailDowithTaskJobConfig {
     }
 
     // 아래는 Tasklet 방식 대신 Chunk 기반으로 구현한 예시입니다.
-//    @Bean
-//    @JobScope
-//    public Step failDowithTaskStep(
-//            JdbcPagingItemReader<DowithTaskDto> failDowithTaskReader,
-//            ItemProcessor<DowithTaskDto, DowithTaskDto> failDowithTaskProcessor,
-//            JdbcBatchItemWriter<DowithTaskDto> failDowithTaskWriter) {
-//        return new StepBuilder("failDowithTaskStep", jobRepository)
-//                .<DowithTaskDto, DowithTaskDto>chunk(CHUNK_SIZE, platformTransactionManager)
-//                .reader(failDowithTaskReader)
-//                .processor(failDowithTaskProcessor)
-//                .writer(failDowithTaskWriter)
-//                .build();
-//    }
+    //    @Bean
+    //    @JobScope
+    //    public Step failDowithTaskStep(
+    //            JdbcPagingItemReader<DowithTaskDto> failDowithTaskReader,
+    //            ItemProcessor<DowithTaskDto, DowithTaskDto> failDowithTaskProcessor,
+    //            JdbcBatchItemWriter<DowithTaskDto> failDowithTaskWriter) {
+    //        return new StepBuilder("failDowithTaskStep", jobRepository)
+    //                .<DowithTaskDto, DowithTaskDto>chunk(CHUNK_SIZE, platformTransactionManager)
+    //                .reader(failDowithTaskReader)
+    //                .processor(failDowithTaskProcessor)
+    //                .writer(failDowithTaskWriter)
+    //                .build();
+    //    }
 
-//    @Bean
-//    @StepScope
-//    public JdbcPagingItemReader<DowithTaskDto> failDowithTaskReader(
-//            @Value("#{jobParameters['executionDateTime']}") LocalDateTime executionDateTime) {
-//
-//        LocalDate standardDate = executionDateTime.toLocalDate();
-//        LocalTime standardTime = executionDateTime.toLocalTime().minusHours(1);
-//
-//        // 절대로 order by 키가 있어야 함 (페이지네이션에서는 정렬 기준이 필수)
-//        Map<String, Order> sortKeys = new HashMap<>();
-//        sortKeys.put("id", Order.ASCENDING);
-//
-//        MySqlPagingQueryProvider queryProvider = new MySqlPagingQueryProvider();
-//        queryProvider.setSelectClause(
-//                "id, member_id, task_category_id, title, status, date, start_time, success_at, complete_at");
-//        queryProvider.setFromClause("dowith_task");
-//        queryProvider.setWhereClause("status = :status AND date <= :standardDate AND start_time <= :standardTime");
-//        queryProvider.setSortKeys(sortKeys);
-//
-//        Map<String, Object> parameterValues = new HashMap<>();
-//        parameterValues.put("status", DowithTaskStatus.WAIT.code);
-//        parameterValues.put("standardDate", standardDate);
-//        parameterValues.put("standardTime", standardTime);
-//
-//        return new JdbcPagingItemReaderBuilder<DowithTaskDto>()
-//                .name(READER_NAME)
-//                .dataSource(dataSource)
-//                .pageSize(CHUNK_SIZE)
-//                .queryProvider(queryProvider)
-//                .parameterValues(parameterValues)
-//                .rowMapper(new DowithTaskDto.RowMapper())
-//                //                .rowMapper(new BeanPropertyRowMapper<>(DowithTaskDto.class))
-//                .build();
-//    }
-//
-//    @Bean
-//    @StepScope
-//    public ItemProcessor<DowithTaskDto, DowithTaskDto> failDowithTaskProcessor() {
-//        return dowithTaskDto -> {
-//            dowithTaskDto.setStatus(DowithTaskStatus.FAIL.code);
-//            return dowithTaskDto;
-//        };
-//    }
-//
-//    @Bean
-//    @StepScope
-//    public JdbcBatchItemWriter<DowithTaskDto> failDowithTaskWriter(
-//            @Value("#{jobParameters['executionDateTime']}") LocalDateTime executionDateTime) {
-//        return new JdbcBatchItemWriterBuilder<DowithTaskDto>()
-//                .dataSource(dataSource)
-//                .sql("UPDATE dowith_task SET status = ?, updated_at = ?, updated_by = ? WHERE id = ?")
-//                .itemPreparedStatementSetter((dto, ps) -> {
-//                    ps.setString(1, dto.getStatus());
-//                    ps.setTimestamp(2, Timestamp.valueOf(executionDateTime));
-//                    ps.setString(3, "system");
-//                    ps.setLong(4, dto.getId());
-//                })
-//                .build();
-//    }
+    //    @Bean
+    //    @StepScope
+    //    public JdbcPagingItemReader<DowithTaskDto> failDowithTaskReader(
+    //            @Value("#{jobParameters['executionDateTime']}") LocalDateTime executionDateTime) {
+    //
+    //        LocalDate standardDate = executionDateTime.toLocalDate();
+    //        LocalTime standardTime = executionDateTime.toLocalTime().minusHours(1);
+    //
+    //        // 절대로 order by 키가 있어야 함 (페이지네이션에서는 정렬 기준이 필수)
+    //        Map<String, Order> sortKeys = new HashMap<>();
+    //        sortKeys.put("id", Order.ASCENDING);
+    //
+    //        MySqlPagingQueryProvider queryProvider = new MySqlPagingQueryProvider();
+    //        queryProvider.setSelectClause(
+    //                "id, member_id, task_category_id, title, status, date, start_time, success_at, complete_at");
+    //        queryProvider.setFromClause("dowith_task");
+    //        queryProvider.setWhereClause("status = :status AND date <= :standardDate AND start_time <=
+    // :standardTime");
+    //        queryProvider.setSortKeys(sortKeys);
+    //
+    //        Map<String, Object> parameterValues = new HashMap<>();
+    //        parameterValues.put("status", DowithTaskStatus.WAIT.code);
+    //        parameterValues.put("standardDate", standardDate);
+    //        parameterValues.put("standardTime", standardTime);
+    //
+    //        return new JdbcPagingItemReaderBuilder<DowithTaskDto>()
+    //                .name(READER_NAME)
+    //                .dataSource(dataSource)
+    //                .pageSize(CHUNK_SIZE)
+    //                .queryProvider(queryProvider)
+    //                .parameterValues(parameterValues)
+    //                .rowMapper(new DowithTaskDto.RowMapper())
+    //                //                .rowMapper(new BeanPropertyRowMapper<>(DowithTaskDto.class))
+    //                .build();
+    //    }
+    //
+    //    @Bean
+    //    @StepScope
+    //    public ItemProcessor<DowithTaskDto, DowithTaskDto> failDowithTaskProcessor() {
+    //        return dowithTaskDto -> {
+    //            dowithTaskDto.setStatus(DowithTaskStatus.FAIL.code);
+    //            return dowithTaskDto;
+    //        };
+    //    }
+    //
+    //    @Bean
+    //    @StepScope
+    //    public JdbcBatchItemWriter<DowithTaskDto> failDowithTaskWriter(
+    //            @Value("#{jobParameters['executionDateTime']}") LocalDateTime executionDateTime) {
+    //        return new JdbcBatchItemWriterBuilder<DowithTaskDto>()
+    //                .dataSource(dataSource)
+    //                .sql("UPDATE dowith_task SET status = ?, updated_at = ?, updated_by = ? WHERE id = ?")
+    //                .itemPreparedStatementSetter((dto, ps) -> {
+    //                    ps.setString(1, dto.getStatus());
+    //                    ps.setTimestamp(2, Timestamp.valueOf(executionDateTime));
+    //                    ps.setString(3, "system");
+    //                    ps.setLong(4, dto.getId());
+    //                })
+    //                .build();
+    //    }
 }
