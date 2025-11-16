@@ -1,4 +1,4 @@
--- V0.0.1__insert_member_domain_test_data.sql
+-- V0.0.2__insert_member_domain_test_data.sql
 -- Flyway 마이그레이션: 멤버 유관 테이블 테스트 데이터 삽입
 -- member_social_account, member_term_agree, member_alarm_setting 테이블에 테스트 데이터 추가
 

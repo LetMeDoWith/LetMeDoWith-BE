@@ -35,7 +35,7 @@ public class DowithTaskRoutine extends BaseAuditEntity {
     @Convert(converter = TaskRoutineCycleConverter.class)
     private TaskRoutineCycle cycle;
 
-    @Column(name = "pattern")
+    @Column(name = "pattern", length = 255)
     @Convert(converter = TaskRoutinePatternConverter.class)
     private TaskRoutinePattern pattern;
 
