@@ -1,5 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.notice.dto;
 
+import com.LetMeDoWith.LetMeDoWith.application.notice.dto.RetrieveNoticeDetailResult;
 import com.LetMeDoWith.LetMeDoWith.common.enums.notice.NoticeType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
@@ -16,5 +17,15 @@ public record RetrieveNoticeDetailResDto(
     public static RetrieveNoticeDetailResDto of(
             Long id, String title, String content, NoticeType type, LocalDateTime createdAt, String thumbnailImageUrl) {
         return new RetrieveNoticeDetailResDto(id, title, content, type, createdAt, thumbnailImageUrl);
+    }
+
+    public static RetrieveNoticeDetailResDto from(RetrieveNoticeDetailResult result) {
+        return new RetrieveNoticeDetailResDto(
+                result.id(),
+                result.title(),
+                result.content(),
+                result.type(),
+                result.createdAt(),
+                result.thumbnailImageUrl());
     }
 }

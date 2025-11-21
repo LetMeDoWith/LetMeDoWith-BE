@@ -141,6 +141,6 @@ public class RetrieveNoticeIntegrationTest extends AbstractIntegrationTest {
         String URL = RETRIEVE_API_URL + "/" + WRONG_ID;
 
         // then
-        this.request(MockMvcRequestBuilders.get(URL)).andExpect(status().isNotFound());
+        this.request(MockMvcRequestBuilders.get(URL)).andExpect(status().isBadRequest());
     }
 }

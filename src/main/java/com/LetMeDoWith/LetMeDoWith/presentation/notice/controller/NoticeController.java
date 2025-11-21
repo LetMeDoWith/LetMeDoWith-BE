@@ -35,10 +35,10 @@ public class NoticeController {
     @ApiSuccessResponse(description = "공지 조회")
     @GetMapping("")
     public ResponseEntity<ResponsePageDto<RetrieveNoticesResDto>> retrieveNotices(
-        @Schema(description = "조회 타입, 없을두 시 모두 조회", implementation = NoticeType.class)
-        @RequestParam(required = false)
-        NoticeType type,
-        @ParameterObject Pageable pageable) {
+            @Schema(description = "조회 타입, 없을두 시 모두 조회", implementation = NoticeType.class)
+                    @RequestParam(required = false)
+                    NoticeType type,
+            @ParameterObject Pageable pageable) {
 
         RetrieveNoticesResult result = retrieveNoticeService.retrieveNotices(type, pageable);
         RetrieveNoticesResDto res = RetrieveNoticesResDto.from(result);
@@ -49,16 +49,9 @@ public class NoticeController {
     @Operation(summary = "공지사항/이벤트 상세 조회", description = "공지사항/이벤트의 상세 내용을 조회합니다.")
     @ApiSuccessResponse(description = "공지 상세 조회")
     @GetMapping("/{noticeId}")
-    public ResponseEntity<ResponseDto<RetrieveNoticeDetailResDto>> retrieveNoticeDetail(
-        @PathVariable Long noticeId) {
+    public ResponseEntity<ResponseDto<RetrieveNoticeDetailResDto>> retrieveNoticeDetail(@PathVariable Long noticeId) {
         RetrieveNoticeDetailResult result = retrieveNoticeService.retrieveNoticeDetail(noticeId);
 
-        return ResponseUtil.createSuccessResponse(RetrieveNoticeDetailResDto.of(
-            result.id(),
-            result.title(),
-            result.content(),
-            result.type(),
-            result.createdAt(),
-            result.thumbnailImageUrl()));
+        return ResponseUtil.createSuccessResponse(RetrieveNoticeDetailResDto.from(result));
     }
 }

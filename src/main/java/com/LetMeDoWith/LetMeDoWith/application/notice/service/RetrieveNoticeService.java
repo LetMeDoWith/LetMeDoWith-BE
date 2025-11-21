@@ -30,14 +30,8 @@ public class RetrieveNoticeService {
     public RetrieveNoticeDetailResult retrieveNoticeDetail(Long noticeId) {
         NoticeDetailQueryDto noticeDetail = noticeQueryRepository
                 .getNoticeDetail(noticeId)
-                .orElseThrow(() -> new RestApiException(FailResponseStatus.NOT_FOUND));
+                .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
 
-        return RetrieveNoticeDetailResult.of(
-                noticeDetail.id(),
-                noticeDetail.title(),
-                noticeDetail.content(),
-                noticeDetail.type(),
-                noticeDetail.createdAt(),
-                noticeDetail.thumbnailImageUrl());
+        return RetrieveNoticeDetailResult.from(noticeDetail);
     }
 }
