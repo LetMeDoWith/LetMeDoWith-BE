@@ -53,7 +53,7 @@ public record DowithTaskDetailQueryDto(
                 startDate,
                 endDate,
                 cycle != null ? cycle.getCode() : null,
-                pattern != null ? pattern.getPattern() : null,
+                !pattern.getPattern().isEmpty() ? pattern.getPattern() : null,
                 isExcludeHolidays,
                 feedBackCount);
     }
