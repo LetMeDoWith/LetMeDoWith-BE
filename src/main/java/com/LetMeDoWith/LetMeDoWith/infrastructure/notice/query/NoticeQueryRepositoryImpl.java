@@ -1,5 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.notice.query;
 
+import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.common.enums.notice.NoticeType;
 import com.LetMeDoWith.LetMeDoWith.domain.notice.model.QNotice;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.notice.query.dto.NoticeDetailQueryDto;
@@ -23,11 +24,15 @@ public class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
 
     @Override
     public Long countNotices() {
-        return queryFactory.select(Wildcard.count).from(notice).fetchOne();
+        return queryFactory
+                .select(Wildcard.count)
+                .from(notice)
+                .where(notice.isDeleted.eq(Yn.FALSE))
+                .fetchOne();
     }
 
     @Override
-    public List<NoticeQueryDto> getNotices(NoticeType type, long offset, int size) {
+    public List<NoticeQueryDto> getNotices(NoticeType type, long offset, int limit) {
         BooleanExpression eqNoticeType = type == null ? null : notice.noticeType.eq(type);
 
         return queryFactory
@@ -39,9 +44,9 @@ public class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
                         notice.createdAt,
                         notice.thumbnailImageUrl))
                 .from(notice)
-                .where(notice.deleteYn.isFalse().and(eqNoticeType))
+                .where(notice.isDeleted.eq(Yn.FALSE).and(eqNoticeType))
                 .offset(offset)
-                .limit(size)
+                .limit(limit)
                 .fetch();
     }
 
@@ -57,7 +62,7 @@ public class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
                         notice.createdAt,
                         notice.thumbnailImageUrl))
                 .from(notice)
-                .where(notice.id.eq(noticeId).and(notice.deleteYn.isFalse()))
+                .where(notice.id.eq(noticeId).and(notice.isDeleted.eq(Yn.FALSE)))
                 .fetchOne());
     }
 }

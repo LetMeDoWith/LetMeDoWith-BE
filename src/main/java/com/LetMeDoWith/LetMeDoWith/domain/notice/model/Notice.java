@@ -1,6 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.domain.notice.model;
 
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
+import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.common.enums.notice.NoticeType;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
@@ -48,8 +49,8 @@ public class Notice extends BaseAuditEntity {
     @Column(name = "end_date_time", nullable = false)
     private LocalDateTime endDateTime;
 
-    @Column(name = "delete_yn", nullable = false)
-    private Boolean deleteYn;
+    @Column(name = "delete_yn", nullable = false, columnDefinition = "VARCHAR(1)")
+    private Yn isDeleted;
 
     @Column(name = "thumbnail_image_url", nullable = false)
     private String thumbnailImageUrl;
@@ -67,7 +68,7 @@ public class Notice extends BaseAuditEntity {
                 .content(content)
                 .startDateTime(startDateTime)
                 .endDateTime(endDateTime)
-                .deleteYn(false)
+                .isDeleted(Yn.FALSE)
                 .thumbnailImageUrl(thumbnailImageUrl)
                 .build();
 
@@ -78,7 +79,7 @@ public class Notice extends BaseAuditEntity {
         return notice;
     }
 
-    public void validate() {
+    private void validate() {
         LocalDateTime nowDateTime = SystemTimeUtil.now();
 
         if (endDateTime.isBefore(startDateTime)) {
