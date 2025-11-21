@@ -20,7 +20,7 @@ public record RetrieveDowithTaskResDto(
         @Schema(description = "시작 일자", defaultValue = "2025-01-30") LocalDate date,
         @Schema(description = "시작 시각", defaultValue = "11:30:00") LocalTime startTime,
         @Schema(description = "인증 사진", defaultValue = "[\"https:image\"]") List<String> successImageUrls,
-        @Schema(description = "루틴 반복 조건") RetrieveDowithTaskResDto.DowithTaskRoutine routine,
+        @Schema(description = "루틴 반복 조건") RetrieveDowithTaskResDto.DowithTaskRoutine routineCondition,
         @Schema(description = "잔소리 개수", defaultValue = "102") int feedBackCount) {
     public static RetrieveDowithTaskResDto from(RetrieveDowithTaskResult result) {
         return RetrieveDowithTaskResDto.builder()
@@ -32,7 +32,7 @@ public record RetrieveDowithTaskResDto(
                 .date(result.date())
                 .startTime(result.startTime())
                 .successImageUrls(result.successImageUrls())
-                .routine(
+                .routineCondition(
                         result.routine() != null
                                 ? RetrieveDowithTaskResDto.DowithTaskRoutine.builder()
                                         .startDate(result.routine().startDate())
