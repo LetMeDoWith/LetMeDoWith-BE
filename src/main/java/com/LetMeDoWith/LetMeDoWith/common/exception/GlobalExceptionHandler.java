@@ -21,7 +21,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({RestApiException.class})
     protected ResponseEntity<FailResponseDto> handleRestApiException(RestApiException ex) {
-        log.error("{}: {}", ex.getStatus().getStatusName(), ex.getMessage());
+        log.error("{}: {}", ex.getStatus().getStatusName(), ex.getMessage(), ex);
 
         FailResponseDto responseBody = FailResponseDto.builder()
                 .statusCode(ex.getStatus().getStatusCode())
@@ -32,7 +32,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({RestApiAuthException.class})
     protected ResponseEntity<FailResponseDto> handleRestApiAuthException(RestApiAuthException ex) {
-        log.error("{}: {}", ex.getStatus(), ex.getMessage());
+        log.error("{}: {}", ex.getStatus(), ex.getMessage(), ex);
 
         FailResponseDto responseBody = FailResponseDto.builder()
                 .statusCode(ex.getStatus().getStatusCode()) // TODO -
@@ -50,6 +50,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({MethodArgumentNotValidException.class})
     protected ResponseEntity<InvalidParamResponseDto> handleMethodArgumentNotValidException(
             MethodArgumentNotValidException ex) {
+        log.error("{}: {}", ex.getCause().getMessage(), ex.getMessage(), ex);
 
         Map<String, String> invalidParamMap = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
@@ -67,7 +68,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({Exception.class})
     protected ResponseEntity<FailResponseDto> handleException(Exception ex) {
-        log.error("{}: {}", ex.getCause().getMessage(), ex.getMessage());
+        log.error("{}: {}", ex.getCause().getMessage(), ex.getMessage(), ex);
 
         FailResponseDto responseBody = FailResponseDto.builder()
                 .statusCode(FailResponseStatus.INTERNAL_SERVER_ERROR.getStatusCode())
