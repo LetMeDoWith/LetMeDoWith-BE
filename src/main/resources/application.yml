@@ -41,14 +41,20 @@ spring:
     generate-ddl: true
   flyway:
     baseline-on-migrate: true
-    baseline-version: 1
+    baseline-version: 0
     enabled: true
     url: jdbc:mysql://localhost:3306/letmedowith_app
+  batch:
+    jdbc:
+      initialize-schema: always   # 운영은 보통 'never'로 두고 DDL 미리 반영
+    job:
+      enabled: false
 
 logging:
   level:
     com.LetMeDoWith.LetMeDoWith: info
     root: info
+#    datasource-proxy: off
 
 
 ---
@@ -75,6 +81,11 @@ spring:
     baseline-version: 1
     enabled: false
     url: jdbc:mysql://${DB_URL}:${DB_PORT}/${DB_SCHEMA}
+  batch:
+    jdbc:
+      initialize-schema: always   # 운영은 보통 'never'로 두고 DDL 미리 반영
+    job:
+      enabled: false
 
 logging:
   level:
@@ -82,6 +93,7 @@ logging:
       LetMeDoWith.LetMeDoWith: info
       zaxxer.hikari: debug
     root: info
+    datasource-proxy: off
 
 server:
   tomcat:
@@ -113,6 +125,11 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  batch:
+    jdbc:
+      initialize-schema: never   # 운영은 보통 'never'로 두고 DDL 미리 반영
+    job:
+      enabled: false
 
 ---
 spring:
@@ -140,6 +157,11 @@ spring:
     baseline-version: 1
     enabled: false
     url: jdbc:mysql://localhost:3306/letmedowith_app
+  batch:
+    jdbc:
+      initialize-schema: always   # 운영은 보통 'never'로 두고 DDL 미리 반영
+    job:
+      enabled: false
 
 logging:
   level:
@@ -149,5 +171,11 @@ logging:
         type:
           descriptor:
             sql: trace
+    springframework:
+      jdbc:
+        datasource:
+          init:
+            ScriptUtils: debug
+      batch: debug
     com.LetMeDoWith.LetMeDoWith: info
     root: info

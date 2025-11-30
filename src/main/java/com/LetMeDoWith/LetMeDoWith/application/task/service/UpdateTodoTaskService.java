@@ -11,7 +11,6 @@ import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.CountryCode;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.Holiday;
-import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskCategory;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TodoTask;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TaskCategoryRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TodoTaskRepository;
@@ -53,12 +52,14 @@ public class UpdateTodoTaskService {
                 .getTodoTask(todoTaskId, memberId)
                 .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
 
-        TaskCategory category = taskCategoryRepository
-                .getActiveTaskCategory(command.taskCategoryId(), memberId)
-                .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
+        if (command.taskCategoryId() != null) {
+            taskCategoryRepository
+                    .getActiveTaskCategory(command.taskCategoryId(), memberId)
+                    .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
+        }
 
         // 우선 컨텐츠를 업데이트
-        todoTask.updateContent(command.title(), category.getId(), command.date(), command.startTime());
+        todoTask.updateContent(command.title(), command.taskCategoryId(), command.date(), command.startTime());
 
         // 루틴에 포함되는 TodoTask의 경우, 루틴을 분리한다.
         if (todoTask.isRoutine()) {
@@ -112,16 +113,18 @@ public class UpdateTodoTaskService {
 
         List<TodoTask> todoTasksInRoutine = todoTaskRepository.getTodoTasks(todoTask.getRoutine());
 
-        TaskCategory category = taskCategoryRepository
-                .getActiveTaskCategory(command.taskCategoryId(), memberId)
-                .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
+        if (command.taskCategoryId() != null) {
+            taskCategoryRepository
+                    .getActiveTaskCategory(command.taskCategoryId(), memberId)
+                    .orElseThrow(() -> new RestApiException(INVALID_REQUEST));
+        }
 
         // 입력받은 TodoTask를 기준으로 루틴을 분리한다.
         TodoTaskRoutineSplitResult splitResult =
                 splitter.splitTodoTaskRoutine(todoTasksInRoutine, todoTask, todoTask.getRoutine());
 
         splitResult.getNewTodoTasks().forEach(task -> {
-            task.updateContent(command.title(), category.getId(), task.getDate(), command.startTime());
+            task.updateContent(command.title(), command.taskCategoryId(), task.getDate(), command.startTime());
         });
     }
 

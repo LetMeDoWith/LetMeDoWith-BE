@@ -96,11 +96,7 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
                 UPDATED_START_TIME.getMinute());
         Long updatedCategoryId = taskCategory2.getId();
         UpdateTodoTaskReqDto updateReq = new UpdateTodoTaskReqDto(
-                UPDATED_TITLE,
-                updatedCategoryId,
-                updateStartDateTime.toLocalDate(),
-                updateStartDateTime.toLocalTime(),
-                null);
+                UPDATED_TITLE, null, updateStartDateTime.toLocalDate(), updateStartDateTime.toLocalTime(), null);
 
         ResultActions resultActions = this.request(
                 org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put(URL + "/" + todoTask.getId())
@@ -127,7 +123,7 @@ public class UpdateTodoTaskIntegrationTest extends AbstractIntegrationTest {
                 .ifPresent(task -> {
                     assertThat(task.title()).isEqualTo(UPDATED_TITLE);
                     assertThat(task.startTime()).isEqualTo(UPDATED_START_TIME);
-                    assertThat(task.taskCategoryId()).isEqualTo(updatedCategoryId);
+                    assertThat(task.taskCategoryId()).isEqualTo(null);
                 });
     }
 

@@ -420,8 +420,8 @@ CREATE TABLE `todo_task_routine`
     `updated_at`          datetime(6)  DEFAULT NULL,
     `updated_by`          varchar(255) DEFAULT NULL,
     `cycle`               varchar(20) NOT NULL,
-    `is_exclude_holidays` bit(1)       DEFAULT NULL,
-    `pattern`             text,
+    `exclude_holidays_yn` bit(1)       DEFAULT NULL,
+    `pattern`             varchar(255) DEFAULT NULL,
     `range_end_date`      date        NOT NULL,
     `range_start_date`    date        NOT NULL,
     PRIMARY KEY (`id`)
