@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.domain.notice;
+package com.LetMeDoWith.LetMeDoWith.domain.notice.model;
 
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
 import jakarta.persistence.Column;
