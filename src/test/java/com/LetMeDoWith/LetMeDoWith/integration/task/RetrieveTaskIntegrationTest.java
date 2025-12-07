@@ -1,5 +1,9 @@
 package com.LetMeDoWith.LetMeDoWith.integration.task;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.LetMeDoWith.LetMeDoWith.common.util.DateTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TaskRoutineCycle;
@@ -14,6 +18,9 @@ import com.LetMeDoWith.LetMeDoWith.integration.AbstractIntegrationTest;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.RetrieveTasksResDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.RetrieveTasksResDto.TodoTaskDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.RetrieveTodoTaskResDto;
+import java.io.UnsupportedEncodingException;
+import java.time.*;
+import java.util.List;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -21,14 +28,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.ResultActions;
-
-import java.io.UnsupportedEncodingException;
-import java.time.*;
-import java.util.List;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class RetrieveTaskIntegrationTest extends AbstractIntegrationTest {
 
@@ -237,7 +236,6 @@ public class RetrieveTaskIntegrationTest extends AbstractIntegrationTest {
                         .value(dowithTask1.getRoutine().getCycle().getCode()))
                 .andExpect(jsonPath("$.data.routineCondition.pattern").doesNotExist())
                 .andExpect(jsonPath("$.data.routineCondition.isExcludeHolidays").value(false));
-
     }
 
     @Test
@@ -248,7 +246,7 @@ public class RetrieveTaskIntegrationTest extends AbstractIntegrationTest {
         LocalDate endDate = LocalDate.of(2024, 3, 31);
 
         MockHttpServletResponse response = request(
-                get(RETRIEVE_TASKS_URL).param("year", "2024").param("month", "3"))
+                        get(RETRIEVE_TASKS_URL).param("year", "2024").param("month", "3"))
                 .andReturn()
                 .getResponse();
 
@@ -265,7 +263,7 @@ public class RetrieveTaskIntegrationTest extends AbstractIntegrationTest {
 
         // when
         MockHttpServletResponse singleRetrieveResponse = request(
-                get(RETRIEVE_SINGLE_TODO_URL + "/" + todoTaskDto.id().toString()))
+                        get(RETRIEVE_SINGLE_TODO_URL + "/" + todoTaskDto.id().toString()))
                 .andReturn()
                 .getResponse();
         singleRetrieveResponse.setCharacterEncoding("UTF-8");

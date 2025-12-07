@@ -1,5 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.common.code;
 
+import com.LetMeDoWith.LetMeDoWith.common.cache.CacheName;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.Builder;
@@ -16,14 +17,12 @@ import reactor.core.publisher.Mono;
 @Slf4j
 @Repository
 @RequiredArgsConstructor
-@CacheConfig(cacheNames = "APPLE", cacheManager = "socialProviderPublicKeyCacheManager")
+@CacheConfig(cacheNames = CacheName.GOOGLE_PUBLIC_KEY)
 public class TestRepository {
 
+    private static final String testUrl = "https://jsonplaceholder.typicode.com/todos/1";
     private final WebClient webClient;
-
-    private static String testUrl = "https://jsonplaceholder.typicode.com/todos/1";
-
-    private Map<String, Object> store = new HashMap<>();
+    private final Map<String, Object> store = new HashMap<>();
 
     @Cacheable(key = "'publicKey-String'")
     public TestDto testObject() {
@@ -48,7 +47,7 @@ public class TestRepository {
     }
 
     @Builder
-    public static record TestDto(String val1, String val2) {}
+    public record TestDto(String val1, String val2) {}
 
     public record TestResponseDto(Long userId, Long id, String title, Boolean completed) {}
 }

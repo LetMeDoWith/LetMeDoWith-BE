@@ -1,6 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.config;
 
-import com.LetMeDoWith.LetMeDoWith.domain.auth.enums.SocialProvider;
+import com.LetMeDoWith.LetMeDoWith.common.cache.CacheName;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,9 +32,9 @@ public class CacheConfig {
 
         Map<String, RedisCacheConfiguration> individualConfiguration = new HashMap<>();
         // TODO - 각 Social Provider 마다 API Refresh Time 고려하여 TTL 설정 변경 필요
-        individualConfiguration.put(SocialProvider.APPLE.getCode(), defaultConfig.entryTtl(Duration.ofMinutes(1L)));
-        individualConfiguration.put(SocialProvider.GOOGLE.getCode(), defaultConfig.entryTtl(Duration.ofMinutes(1L)));
-        individualConfiguration.put(SocialProvider.KAKAO.getCode(), defaultConfig.entryTtl(Duration.ofMinutes(1L)));
+        individualConfiguration.put(CacheName.APPLE_PUBLIC_KEY, defaultConfig.entryTtl(Duration.ofMinutes(1L)));
+        individualConfiguration.put(CacheName.GOOGLE_PUBLIC_KEY, defaultConfig.entryTtl(Duration.ofMinutes(1L)));
+        individualConfiguration.put(CacheName.KAKAO_PUBLIC_KEY, defaultConfig.entryTtl(Duration.ofMinutes(1L)));
 
         return RedisCacheManager.RedisCacheManagerBuilder.fromConnectionFactory(cf)
                 .cacheDefaults(defaultConfig)
