@@ -250,6 +250,21 @@ public class DowithTask extends BaseAuditEntity {
         this.routine = routine;
     }
 
+    public void isRoutineModified(
+            LocalDate rangeStartDate,
+            LocalDate rangeEndDate,
+            TaskRoutineCycle taskRoutineCycle,
+            Set<Integer> taskRoutinePattern,
+            boolean isExcludeHolidays) {
+        if (!this.routine.getRangeStartDate().equals(rangeStartDate)
+                || !this.routine.getRangeEndDate().equals(rangeEndDate)
+                || !this.routine.getCycle().equals(taskRoutineCycle)
+                || !this.routine.getPattern().getPattern().equals(taskRoutinePattern)
+                || this.routine.isExcludeHolidays() != isExcludeHolidays) {
+            throw new RestApiException(INVALID_REQUEST);
+        }
+    }
+
     /**
      * 인증 이미지 키 생성
      *

@@ -1,7 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.task.dto;
 
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.TaskRoutineCondition;
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateDowithTaskContentsAndCreateRoutineCommand;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateDowithTaskCommand;
 import com.LetMeDoWith.LetMeDoWith.common.util.EnumUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TaskRoutineCycle;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -26,8 +26,8 @@ public record UpdateDowithTaskReqDto(
                 LocalTime startTime,
         @Schema(description = "루틴 반복 조건") @Null UpdateDowithTaskRoutineCondition routineCondition) {
 
-    public UpdateDowithTaskContentsAndCreateRoutineCommand toCommand(Long dowithTaskId) {
-        return UpdateDowithTaskContentsAndCreateRoutineCommand.builder()
+    public UpdateDowithTaskCommand toCommand(Long dowithTaskId) {
+        return UpdateDowithTaskCommand.builder()
                 .dowithTaskId(dowithTaskId)
                 .title(this.title)
                 .taskCategoryId(this.taskCategoryId)
