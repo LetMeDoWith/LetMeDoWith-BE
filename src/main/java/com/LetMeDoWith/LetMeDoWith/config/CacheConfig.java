@@ -1,6 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.config;
 
-import com.LetMeDoWith.LetMeDoWith.common.cache.CacheName;
+import com.LetMeDoWith.LetMeDoWith.common.cache.CachePolicy;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,22 +22,24 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 public class CacheConfig {
 
     @Bean
-    public CacheManager socialProviderPublicKeyCacheManager(RedisConnectionFactory cf) {
+    public CacheManager cacheManager(RedisConnectionFactory cf) {
         RedisCacheConfiguration defaultConfig = RedisCacheConfiguration.defaultCacheConfig()
                 .serializeKeysWith(
                         RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(
                         new GenericJackson2JsonRedisSerializer()))
-                .entryTtl(Duration.ofMinutes(1L)); // TODO - default TTL
+                .entryTtl(Duration.ofMinutes(1L));
 
         Map<String, RedisCacheConfiguration> individualConfiguration = new HashMap<>();
-        // TODO - 각 Social Provider 마다 API Refresh Time 고려하여 TTL 설정 변경 필요
-        individualConfiguration.put(CacheName.APPLE_PUBLIC_KEY, defaultConfig.entryTtl(Duration.ofMinutes(1L)));
-        individualConfiguration.put(CacheName.GOOGLE_PUBLIC_KEY, defaultConfig.entryTtl(Duration.ofMinutes(1L)));
-        individualConfiguration.put(CacheName.KAKAO_PUBLIC_KEY, defaultConfig.entryTtl(Duration.ofMinutes(1L)));
+        individualConfiguration.put(
+                CachePolicy.APPLE_PUBLIC_KEY.cacheName(), defaultConfig.entryTtl(CachePolicy.APPLE_PUBLIC_KEY.ttl()));
+        individualConfiguration.put(
+                CachePolicy.GOOGLE_PUBLIC_KEY.cacheName(), defaultConfig.entryTtl(CachePolicy.GOOGLE_PUBLIC_KEY.ttl()));
+        individualConfiguration.put(
+                CachePolicy.KAKAO_PUBLIC_KEY.cacheName(), defaultConfig.entryTtl(CachePolicy.KAKAO_PUBLIC_KEY.ttl()));
 
         return RedisCacheManager.RedisCacheManagerBuilder.fromConnectionFactory(cf)
-                .cacheDefaults(defaultConfig)
+                //                .cacheDefaults(defaultConfig)
                 .withInitialCacheConfigurations(individualConfiguration)
                 .build();
     }

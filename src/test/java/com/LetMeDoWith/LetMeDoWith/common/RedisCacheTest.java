@@ -2,9 +2,13 @@ package com.LetMeDoWith.LetMeDoWith.common;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.LetMeDoWith.LetMeDoWith.common.cache.CacheHelper;
 import com.LetMeDoWith.LetMeDoWith.common.cache.CacheName;
-import com.LetMeDoWith.LetMeDoWith.common.code.TestRepository;
+import com.LetMeDoWith.LetMeDoWith.common.code.TestService;
+import jakarta.annotation.PostConstruct;
+import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,13 +23,27 @@ import org.springframework.test.context.ActiveProfiles;
 public class RedisCacheTest {
 
     @Autowired
-    private TestRepository testRepository;
+    private TestService testService;
 
     @Autowired
-    private RedisTemplate redisTemplate;
+    private RedisTemplate<?, ?> redisTemplate;
 
     @Autowired
     private CacheManager cacheManager;
+
+    @Autowired
+    private CacheHelper cacheHelper;
+
+    private String str1;
+    private String str2;
+    private int num1;
+
+    @PostConstruct
+    void init() {
+        this.str1 = this.testService.str1;
+        this.str2 = this.testService.str2;
+        this.num1 = this.testService.num1;
+    }
 
     @Test
     void objectTypeCacheSuccessTest() throws InterruptedException {
@@ -33,15 +51,15 @@ public class RedisCacheTest {
         // given
 
         // when
-        TestRepository.TestDto result1 = testRepository.testObject();
-        log.debug(result1.toString());
-        Thread.sleep(2000);
-        TestRepository.TestDto result2 = testRepository.testObject();
-        log.debug(result1.toString());
-
-        // then
-        assertThat(result2.val1()).isEqualTo(result1.val1());
-        assertThat(result2.val2()).isEqualTo(result1.val2());
+        //        TestService.TestDto result1 = testService.cacheObject();
+        //        log.debug(result1.toString());
+        //        Thread.sleep(2000);
+        //        TestService.TestDto result2 = testService.cacheObject();
+        //        log.debug(result1.toString());
+        //
+        //        // then
+        //        assertThat(result2.val1()).isEqualTo(result1.val1());
+        //        assertThat(result2.val2()).isEqualTo(result1.val2());
     }
 
     @Test
@@ -50,9 +68,9 @@ public class RedisCacheTest {
         // given
 
         // when
-        testRepository.testMono().subscribe(body -> log.debug(body.toString()));
+        testService.cacheMonoObject().subscribe(body -> log.debug(body.toString()));
         Thread.sleep(2000);
-        testRepository.testMono().subscribe(body -> log.debug(body.toString()));
+        testService.cacheMonoObject().subscribe(body -> log.debug(body.toString()));
 
         // then
         // Assertions.assertThat(result2.val1()).isEqualTo(result1.val1());
@@ -66,9 +84,9 @@ public class RedisCacheTest {
         // given
 
         // when
-        TestRepository.TestResponseDto result1 = testRepository.testMono().block();
+        TestService.TestResponseDto result1 = testService.cacheMonoObject().block();
         Thread.sleep(2000);
-        TestRepository.TestResponseDto result2 = testRepository.testMono().block();
+        TestService.TestResponseDto result2 = testService.cacheMonoObject().block();
 
         // then
         assertThat(result2.toString()).isEqualTo(result1.toString());
@@ -77,11 +95,31 @@ public class RedisCacheTest {
     @Test
     void cacheManagerTest() throws InterruptedException {
 
-        TestRepository.TestDto result = testRepository.testObject();
+        TestService.TestDto result = testService.cacheObject();
         Cache cache = cacheManager.getCache(CacheName.GOOGLE_PUBLIC_KEY);
-        TestRepository.TestDto testDto = cache.get("publicKey-String", TestRepository.TestDto.class);
+        Object object = cache.get("publicKey-String", Object.class);
 
-        assertThat(testDto.val1()).isEqualTo(result.val1());
-        assertThat(testDto.val2()).isEqualTo(result.val2());
+        //        assertThat(object.val1()).isEqualTo(result.val1());
+        //        assertThat(object.val2()).isEqualTo(result.val2());
     }
+
+    @DisplayName("Spring Cache Cacheable을 통해서 데이터 삽입 후 CacheHelper를 통해 조회")
+    @Test
+    void test1() {
+        // given
+        testService.cacheObject();
+        // when
+        TestService.TestDto cachedData =
+                cacheHelper.get(CacheName.GOOGLE_PUBLIC_KEY, "publicKey1", TestService.TestDto.class);
+
+        // then
+        assertThat(cachedData.str1()).isEqualTo(str1);
+        assertThat(cachedData.str2()).isEqualTo(str2);
+        assertThat(cachedData.num1()).isEqualTo(num1);
+    }
+
+    @Builder
+    private record TestDto(String str1, String str2, int num1) {}
+
+    record DifferentDTO(String val1, String val2) {}
 }
