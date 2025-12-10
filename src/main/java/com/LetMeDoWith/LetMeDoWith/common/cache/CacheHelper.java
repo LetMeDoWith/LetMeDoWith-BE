@@ -1,12 +1,13 @@
 package com.LetMeDoWith.LetMeDoWith.common.cache;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
+
+import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
@@ -53,7 +54,6 @@ public class CacheHelper {
                         + value.getClass().getName() + ", but input parameter filedType: " + fieldType.getName());
             }
             return fieldType.cast(value);
-            //            return objectMapper.convertValue(value, fieldType);
         } else {
             throw new IllegalArgumentException("CachePolicy redisValueType is not HASH for cache name: " + cacheName);
         }

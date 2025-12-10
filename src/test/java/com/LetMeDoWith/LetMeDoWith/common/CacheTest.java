@@ -1,11 +1,8 @@
 package com.LetMeDoWith.LetMeDoWith.common;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import com.LetMeDoWith.LetMeDoWith.common.cache.CacheHelper;
 import com.LetMeDoWith.LetMeDoWith.common.cache.CacheName;
 import com.LetMeDoWith.LetMeDoWith.common.code.TestService;
-import java.util.UUID;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,6 +14,10 @@ import org.springframework.cache.CacheManager;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import java.util.UUID;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
 @SpringBootTest
@@ -51,7 +52,7 @@ public class CacheTest {
 
     @DisplayName("Spring Cache Cacheable을 통해서 데이터 삽입 후 CacheHelper를 통해 조회")
     @Test
-    void test1() {
+    void cacheRedisValueTypeString() {
         // given
         String keyString = UUID.randomUUID().toString();
         Long keyNumber = 123L;
@@ -69,7 +70,7 @@ public class CacheTest {
 
     @DisplayName("CacheHelper를 통해 Redis Value Type Hash로 삽입 후 조회")
     @Test
-    void test2() {
+    void cacheRedisValueTypeHash() {
         // given
         String dowithTaskId = UUID.randomUUID().toString();
         TestDto cacheTarget = TestDto.builder().str1(str1).str2(str2).num1(num1).build();
@@ -90,7 +91,9 @@ public class CacheTest {
     }
 
     @Builder
-    private record TestDto(String str1, String str2, int num1) {}
+    private record TestDto(String str1, String str2, int num1) {
+    }
 
-    record DifferentDTO(String val1, String val2) {}
+    record DifferentDTO(String val1, String val2) {
+    }
 }
