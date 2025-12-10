@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Slf4j
 @SpringBootTest
 @ActiveProfiles("test")
-public class RedisCacheTest {
+public class CacheTest {
 
     @Autowired
     private WebClient webClient;
@@ -72,13 +72,13 @@ public class RedisCacheTest {
     @Test
     void test2() {
         // given
-        String key = "test-hash-key";
+        String dowithTaskId = UUID.randomUUID().toString();
         TestDto cacheTarget = TestDto.builder().str1(str1).str2(str2).num1(num1).build();
 
         // when
-        cacheHelper.put(CacheName.DOWITH_TASK, key, cacheTarget);
-        String cachedStr1 = cacheHelper.get(CacheName.DOWITH_TASK, key, "str1", String.class);
-        int num1 = cacheHelper.get(CacheName.DOWITH_TASK, key, "num1", Integer.class);
+        cacheHelper.put(CacheName.DOWITH_TASK, dowithTaskId, cacheTarget);
+        String cachedStr1 = cacheHelper.get(CacheName.DOWITH_TASK, dowithTaskId, "str1", String.class);
+        int num1 = cacheHelper.get(CacheName.DOWITH_TASK, dowithTaskId, "num1", Integer.class);
 
         // then
         assertThat(cachedStr1).isEqualTo(this.str1);

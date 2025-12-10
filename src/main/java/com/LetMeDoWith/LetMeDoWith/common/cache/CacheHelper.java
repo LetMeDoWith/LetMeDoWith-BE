@@ -13,7 +13,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class CacheHelper {
 
-    private final RedisTemplate<Object, Object> redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
     private final CacheManager cacheManager;
 
     private final ObjectMapper objectMapper;
@@ -48,12 +48,14 @@ public class CacheHelper {
                 return null;
             }
 
-            if (fieldType.isInstance(value)) {
-                return fieldType.cast(value);
+            if (!fieldType.isInstance(value)) {
+                throw new IllegalArgumentException("Cached value type mismatch. Expected: "
+                        + value.getClass().getName() + ", but input parameter filedType: " + fieldType.getName());
             }
-            return objectMapper.convertValue(value, fieldType);
+            return fieldType.cast(value);
+            //            return objectMapper.convertValue(value, fieldType);
         } else {
-            throw new IllegalArgumentException("Cache type is not HASH for cache name: " + cacheName);
+            throw new IllegalArgumentException("CachePolicy redisValueType is not HASH for cache name: " + cacheName);
         }
     }
 
