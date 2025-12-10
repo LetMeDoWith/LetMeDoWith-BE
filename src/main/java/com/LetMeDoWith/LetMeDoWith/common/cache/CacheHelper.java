@@ -1,13 +1,12 @@
 package com.LetMeDoWith.LetMeDoWith.common.cache;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
-
-import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
@@ -23,7 +22,8 @@ public class CacheHelper {
         CachePolicy cachePolicy = CachePolicy.fromCacheName(cacheName);
 
         if (cachePolicy.redisValueType().equals(RedisValueType.HASH)) {
-            Map<Object, Object> entries = redisTemplate.opsForHash().entries(key);
+            String redisKey = this.buildRedisKey(cacheName, key);
+            Map<Object, Object> entries = redisTemplate.opsForHash().entries(redisKey);
             if (entries.isEmpty()) {
                 return null;
             }

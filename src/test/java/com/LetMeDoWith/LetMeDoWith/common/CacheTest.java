@@ -1,8 +1,11 @@
 package com.LetMeDoWith.LetMeDoWith.common;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.LetMeDoWith.LetMeDoWith.common.cache.CacheHelper;
 import com.LetMeDoWith.LetMeDoWith.common.cache.CacheName;
 import com.LetMeDoWith.LetMeDoWith.common.code.TestService;
+import java.util.UUID;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,10 +17,6 @@ import org.springframework.cache.CacheManager;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.reactive.function.client.WebClient;
-
-import java.util.UUID;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
 @SpringBootTest
@@ -80,15 +79,18 @@ public class CacheTest {
         String cachedStr1 = cacheHelper.get(CacheName.DOWITH_TASK, dowithTaskId, "str1", String.class);
         int num1 = cacheHelper.get(CacheName.DOWITH_TASK, dowithTaskId, "num1", Integer.class);
 
+        TestDto cachedTarget = cacheHelper.get(CacheName.DOWITH_TASK, dowithTaskId, TestDto.class);
+
         // then
         assertThat(cachedStr1).isEqualTo(this.str1);
         assertThat(num1).isEqualTo(this.num1);
+        assertThat(cachedTarget.str1()).isEqualTo(this.str1);
+        assertThat(cachedTarget.str2()).isEqualTo(this.str2);
+        assertThat(cachedTarget.num1()).isEqualTo(this.num1);
     }
 
     @Builder
-    private record TestDto(String str1, String str2, int num1) {
-    }
+    private record TestDto(String str1, String str2, int num1) {}
 
-    record DifferentDTO(String val1, String val2) {
-    }
+    record DifferentDTO(String val1, String val2) {}
 }
