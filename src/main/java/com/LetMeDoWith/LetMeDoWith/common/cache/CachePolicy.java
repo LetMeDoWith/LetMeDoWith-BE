@@ -5,9 +5,9 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public enum CachePolicy {
-    APPLE_PUBLIC_KEY(CacheName.APPLE_PUBLIC_KEY, RedisValueType.STRING, Duration.ofMinutes(1L)),
-    GOOGLE_PUBLIC_KEY(CacheName.GOOGLE_PUBLIC_KEY, RedisValueType.STRING, Duration.ofMinutes(1L)),
-    KAKAO_PUBLIC_KEY(CacheName.KAKAO_PUBLIC_KEY, RedisValueType.STRING, Duration.ofMinutes(1L)),
+    APPLE_PUBLIC_KEY(CacheName.APPLE_PUBLIC_KEY, RedisValueType.STRING, Duration.ofDays(7)),
+    GOOGLE_PUBLIC_KEY(CacheName.GOOGLE_PUBLIC_KEY, RedisValueType.STRING, Duration.ofDays(7)),
+    KAKAO_PUBLIC_KEY(CacheName.KAKAO_PUBLIC_KEY, RedisValueType.STRING, Duration.ofDays(7)),
 
     DOWITH_TASK(CacheName.DOWITH_TASK, RedisValueType.HASH, Duration.ofDays(14));
 

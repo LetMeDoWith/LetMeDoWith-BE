@@ -4,6 +4,7 @@ import com.LetMeDoWith.LetMeDoWith.common.cache.CacheName;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
@@ -15,6 +16,7 @@ import reactor.core.publisher.Mono;
 
 @Slf4j
 @Service
+@Getter
 @RequiredArgsConstructor
 public class TestService {
 
@@ -22,12 +24,12 @@ public class TestService {
     private final WebClient webClient;
     private final Map<String, Object> store = new HashMap<>();
 
-    public String str1 = "value1";
-    public String str2 = "value2";
-    public int num1 = 100;
+    private final String str1 = "value1";
+    private final String str2 = "value2";
+    private final int num1 = 100;
 
-    @Cacheable(cacheNames = CacheName.GOOGLE_PUBLIC_KEY, key = "'publicKey1'")
-    public TestDto cacheObject() {
+    @Cacheable(cacheNames = CacheName.GOOGLE_PUBLIC_KEY, key = "#keyString + '::' + #keyNumber")
+    public TestDto cacheObject(String keyString, Long keyNumber) {
         log.debug(">>>Test Method executed");
         TestDto testDto = TestDto.builder()
                 .str1(this.str1)

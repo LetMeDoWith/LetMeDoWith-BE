@@ -1,12 +1,13 @@
 package com.LetMeDoWith.LetMeDoWith.common.cache;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
+
+import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
@@ -16,14 +17,6 @@ public class CacheHelper {
     private final CacheManager cacheManager;
 
     private final ObjectMapper objectMapper;
-
-    // 필요사항
-    //// 캐시 name 기반으로 캐시 넣기
-    //// 캐시 name 별로 Redis에 캐시하고 있는 자료구조가 다름
-    //////// ex. Dowith 같은 경우, Hash 구조로 되어있음
-    //// Hash 구조에서 key 기반으로 value 가져오기
-    //// Hash 구조에서 key 기반으로 value 삭제하기
-    //// 과정에서
 
     public <T> T get(String cacheName, String key, Class<T> type) {
 
@@ -38,26 +31,27 @@ public class CacheHelper {
         } else {
             Cache cache = cacheManager.getCache(cacheName);
             if (cache == null) {
-                return null;
+                throw new IllegalStateException("No Cache found for cache name: " + cacheName);
             }
             return cache.get(key, type);
         }
     }
 
-    public <T> T get(String cacheName, String key, String field, Class<T> type) {
+    public <T> T get(String cacheName, String key, String field, Class<T> fieldType) {
 
         CachePolicy cachePolicy = CachePolicy.fromCacheName(cacheName);
+        String cacheKey = this.buildRedisKey(cacheName, key);
 
         if (cachePolicy.redisValueType().equals(RedisValueType.HASH)) {
-            Object value = redisTemplate.opsForHash().get(key, field);
+            Object value = redisTemplate.opsForHash().get(cacheKey, field);
             if (value == null) {
                 return null;
             }
 
-            if (type.isInstance(value)) {
-                return type.cast(value);
+            if (fieldType.isInstance(value)) {
+                return fieldType.cast(value);
             }
-            return objectMapper.convertValue(value, type);
+            return objectMapper.convertValue(value, fieldType);
         } else {
             throw new IllegalArgumentException("Cache type is not HASH for cache name: " + cacheName);
         }
@@ -76,9 +70,10 @@ public class CacheHelper {
                 mapValue = objectMapper.convertValue(value, Map.class);
             }
             redisTemplate.opsForHash().putAll(redisKey, mapValue);
+            redisTemplate.expire(redisKey, cachePolicy.ttl());
         } else {
             Cache cache = cacheManager.getCache(cacheName);
-            if (cache == null) throw new IllegalArgumentException("No Cache found for cache name: " + cacheName);
+            if (cache == null) throw new IllegalStateException("No Cache found for cache name: " + cacheName);
             cache.put(key, value);
         }
     }
