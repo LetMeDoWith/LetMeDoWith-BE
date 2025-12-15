@@ -31,13 +31,9 @@ public class CacheConfig {
                 .entryTtl(Duration.ofMinutes(1L));
 
         Map<String, RedisCacheConfiguration> individualConfiguration = new HashMap<>();
-        individualConfiguration.put(
-                CachePolicy.APPLE_PUBLIC_KEY.cacheName(), defaultConfig.entryTtl(CachePolicy.APPLE_PUBLIC_KEY.ttl()));
-        individualConfiguration.put(
-                CachePolicy.GOOGLE_PUBLIC_KEY.cacheName(), defaultConfig.entryTtl(CachePolicy.GOOGLE_PUBLIC_KEY.ttl()));
-        individualConfiguration.put(
-                CachePolicy.KAKAO_PUBLIC_KEY.cacheName(), defaultConfig.entryTtl(CachePolicy.KAKAO_PUBLIC_KEY.ttl()));
-
+        for (CachePolicy policy : CachePolicy.values()) {
+            individualConfiguration.put(policy.cacheName(), defaultConfig.entryTtl(policy.ttl()));
+        }
         return RedisCacheManager.RedisCacheManagerBuilder.fromConnectionFactory(cf)
                 //                .cacheDefaults(defaultConfig)
                 .withInitialCacheConfigurations(individualConfiguration)
