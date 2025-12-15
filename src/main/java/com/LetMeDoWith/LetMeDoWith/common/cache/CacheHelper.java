@@ -1,12 +1,13 @@
 package com.LetMeDoWith.LetMeDoWith.common.cache;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
+
+import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
@@ -30,9 +31,7 @@ public class CacheHelper {
             return objectMapper.convertValue(entries, type);
         } else {
             Cache cache = cacheManager.getCache(cacheName);
-            if (cache == null) {
-                throw new IllegalStateException("No Cache found for cache name: " + cacheName);
-            }
+            assert cache != null;
             return cache.get(key, type);
         }
     }
@@ -74,7 +73,7 @@ public class CacheHelper {
             redisTemplate.expire(redisKey, cachePolicy.ttl());
         } else {
             Cache cache = cacheManager.getCache(cacheName);
-            if (cache == null) throw new IllegalStateException("No Cache found for cache name: " + cacheName);
+            assert cache != null;
             cache.put(key, value);
         }
     }
