@@ -21,7 +21,7 @@ public class CacheFeedbackAvailableDowithAndLazyDowithMemberJobScheduler {
     /**
      * 레이지 두윗러 & 잔소리 대상 두윗 캐시 적재 배치. 매시 0분, 30분 마다 실행
      */
-    @Scheduled(cron = "0 */5 * * * *")
+    @Scheduled(cron = "0 */30 * * * *")
     public void runCacheFeedbackAvailableDowithAndLazyDowithMemberJob() {
         JobParameters jobParameters = new JobParametersBuilder()
             .addLong("run.id", System.currentTimeMillis())
