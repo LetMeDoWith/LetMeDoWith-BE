@@ -332,14 +332,14 @@ CREATE TABLE `ranking`
     `updated_at`       datetime(6)  DEFAULT NULL,
     `updated_by`       varchar(255) DEFAULT NULL,
     `current_rank`     bigint      NOT NULL,
-    `entity_id`        varchar(26) NOT NULL,
+    `member_id`        varchar(26) NOT NULL,
     `previous_rank`    bigint       DEFAULT NULL,
-    `year`             int          DEFAULT NULL,
-    `month`            int          DEFAULT NULL,
-    `week`             int          DEFAULT NULL,
+    `year`             int         NOT NULL,
+    `month`            int         NOT NULL,
+    `week`             int         NOT NULL,
     `ranking_topic_id` bigint      NOT NULL,
     PRIMARY KEY (`id`),
-    UNIQUE KEY `uk_ranking_1` (`ranking_topic_id`, `entity_id`),
+    UNIQUE KEY `uk_ranking_1` (`ranking_topic_id`, `member_id`),
     CONSTRAINT `FKggr9gbi0wjxwekbl0mpnrhm99` FOREIGN KEY (`ranking_topic_id`) REFERENCES `ranking_topic` (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4

@@ -22,12 +22,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(
-        name = "ranking",
-        uniqueConstraints = {
-            @UniqueConstraint(
-                    name = "uk_ranking_1",
-                    columnNames = {"ranking_topic_id", "entity_id"})
-        })
+    name = "ranking",
+    uniqueConstraints = {
+        @UniqueConstraint(
+            name = "uk_ranking_1",
+            columnNames = {"ranking_topic_id", "member_id"})
+    })
 public class Ranking extends BaseAuditEntity {
 
     @Id
@@ -39,17 +39,17 @@ public class Ranking extends BaseAuditEntity {
     @JoinColumn(name = "ranking_topic_id", nullable = false)
     private RankingTopic rankingTopic;
 
-    @Column(name = "year", nullable = true)
+    @Column(name = "year", nullable = false)
     private Integer year;
 
-    @Column(name = "month", nullable = true)
+    @Column(name = "month", nullable = false)
     private Integer month;
 
-    @Column(name = "week", nullable = true)
+    @Column(name = "week", nullable = false)
     private Integer week;
 
-    @Column(name = "entity_id", nullable = false, length = 26)
-    private String entityId;
+    @Column(name = "member_id", nullable = false, length = 26)
+    private String memberId;
 
     @Column(name = "current_rank", nullable = false)
     private Long currentRank;

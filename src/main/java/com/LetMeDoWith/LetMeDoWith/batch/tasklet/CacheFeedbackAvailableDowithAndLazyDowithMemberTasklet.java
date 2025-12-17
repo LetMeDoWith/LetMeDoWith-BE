@@ -2,13 +2,9 @@ package com.LetMeDoWith.LetMeDoWith.batch.tasklet;
 
 import com.LetMeDoWith.LetMeDoWith.batch.dto.DowithTaskWithFeedbackCountDto;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
-import java.sql.PreparedStatement;
-import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -18,8 +14,6 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -39,7 +33,6 @@ public class CacheFeedbackAvailableDowithAndLazyDowithMemberTasklet implements T
             rs.getLong("feedbackCount"));
     });
 
-    private static final String STATUS_WAIT = "WAIT";
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -51,11 +44,12 @@ public class CacheFeedbackAvailableDowithAndLazyDowithMemberTasklet implements T
         throws Exception {
 
         LocalDateTime targetDateTime = executionDateTime;
-        LocalDate standardDate = executionDateTime.toLocalDate();
 
         if (executionDateTime == null) {
             targetDateTime = LocalDateTime.now();
         }
+
+        LocalDate standardDate = targetDateTime.toLocalDate();
 
         // 잔소리 대상 두윗 조회
         String selectFeedbackAvailableDowithListQuery =
@@ -98,54 +92,13 @@ public class CacheFeedbackAvailableDowithAndLazyDowithMemberTasklet implements T
 
         List<DowithTaskWithFeedbackCountDto> dowithTaskList = jdbcTemplate.query(
             selectFeedbackAvailableDowithListQuery, mapper, DowithTaskStatus.WAIT.code,
-            targetDateTime);
+            standardDate);
+
         // 레이지 두윗러 목록 계산
         List<Long> lazyDowithIdList = dowithTaskList.stream()
             .map(DowithTaskWithFeedbackCountDto::id)
             .limit(15)
             .toList();
-
-        // 레이지 두윗러 랭킹 토픽 생성
-        String insertRankingTopicQuery =
-            """
-                INSERT INTO ranking_topic (create_at, created_by, updated_at, updated_by, description, title)
-                VALUES (now(), 'SYSTEM', now(), 'SYSTEM', ?, ?)
-                """;
-        KeyHolder rankingTopicKeyHolder = new GeneratedKeyHolder();
-
-        String topicName = "LAZY_DOWITH_" + executionDateTime.toString();
-        String topicDesc = "Lazy dowith ids at " + executionDateTime;
-
-        jdbcTemplate.update(
-            con -> {
-                PreparedStatement ps =
-                    con.prepareStatement(insertRankingTopicQuery, Statement.RETURN_GENERATED_KEYS);
-
-                ps.setString(1, topicDesc);
-                ps.setString(2, topicName);
-
-                return ps;
-            },
-            rankingTopicKeyHolder);
-
-        String insertRankingValues = lazyDowithIdList.stream()
-            .map(id -> """
-                (now(), 'SYSTEM', now(), 'SYSTEM', ?, ?, ?)
-                """)
-            .collect(Collectors.joining(", "));
-
-        ArrayList<Object> insertRankingParams = new ArrayList<>();
-
-        for (int i = 1; i <= lazyDowithIdList.size(); i++) {
-            insertRankingParams.add(i);
-            insertRankingParams.add(lazyDowithIdList.get(i - 1));
-            insertRankingParams.add(rankingTopicKeyHolder.getKeyAs(Integer.class));
-        }
-
-        jdbcTemplate.update(
-            "INSERT INTO ranking (create_at, created_by, updated_at, updated_by, current_rank, entity_id, ranking_topic_id) VALUES "
-                + insertRankingValues,
-            insertRankingParams.toArray());
 
         // 레이지 두윗러 및 잔소리 대상 두윗 캐시 적재
 
