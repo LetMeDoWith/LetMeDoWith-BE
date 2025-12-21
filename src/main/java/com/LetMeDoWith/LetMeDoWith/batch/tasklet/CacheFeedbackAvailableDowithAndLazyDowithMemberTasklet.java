@@ -85,7 +85,7 @@ public class CacheFeedbackAvailableDowithAndLazyDowithMemberTasklet implements T
                 WHERE t.status = ?
                   AND t.date = ?
                   AND TIMESTAMP(t.date, t.start_time) <= NOW()
-                  AND NOW() < TIMESTAMP(t.date, t.start_time) + INTERVAL 1 HOUR
+                  AND NOW() < TIMESTAMP(t.date, t.start_time) + INTERVAL 59 MINUTE
                 
                 ORDER BY TIMESTAMP(t.date, t.start_time) desc
                 """;
