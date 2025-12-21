@@ -32,6 +32,9 @@ public class CacheConfig {
 
         Map<String, RedisCacheConfiguration> individualConfiguration = new HashMap<>();
         for (CachePolicy policy : CachePolicy.values()) {
+            if (policy.ttl() == null) {
+                continue;
+            }
             individualConfiguration.put(policy.cacheName(), defaultConfig.entryTtl(policy.ttl()));
         }
         return RedisCacheManager.RedisCacheManagerBuilder.fromConnectionFactory(cf)

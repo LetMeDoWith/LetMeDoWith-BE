@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.LetMeDoWith.LetMeDoWith.common.cache.CacheHelper;
 import com.LetMeDoWith.LetMeDoWith.common.cache.CacheName;
 import com.LetMeDoWith.LetMeDoWith.common.code.TestService;
+import java.util.List;
 import java.util.UUID;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
@@ -42,11 +43,18 @@ public class CacheTest {
     private String str2;
     private int num1;
 
+    private String str3;
+    private String str4;
+    private int num2;
+
     @BeforeEach
     void init() {
         this.str1 = this.testService.getStr1();
         this.str2 = this.testService.getStr2();
         this.num1 = this.testService.getNum1();
+        this.str3 = "anotherValue1";
+        this.str4 = "anotherValue2";
+        this.num2 = 200;
     }
 
     @DisplayName("Spring Cache Cacheable을 통해서 데이터 삽입 후 CacheHelper를 통해 조회")
@@ -87,6 +95,40 @@ public class CacheTest {
         assertThat(cachedTarget.str1()).isEqualTo(this.str1);
         assertThat(cachedTarget.str2()).isEqualTo(this.str2);
         assertThat(cachedTarget.num1()).isEqualTo(this.num1);
+    }
+
+    @DisplayName("CacheHelper를 통해 Redis Value Type List로 삽입 후 조회")
+    @Test
+    void cacheRedisValueTypeList() {
+        // given
+        String listKey = UUID.randomUUID().toString();
+        TestDto cacheTarget = new TestDto(str1, str2, num1);
+
+        // when
+        cacheHelper.push(CacheName.LAZY_DOWITH_TASK, listKey, cacheTarget);
+        List<TestDto> cachedTarget = cacheHelper.getByRange(CacheName.LAZY_DOWITH_TASK, listKey, 0, -1, TestDto.class);
+
+        // then
+        assertThat(cachedTarget.get(0)).isEqualTo(cacheTarget);
+    }
+
+    @DisplayName("CacheHelper를 통해 Redis Value Type List로 삽입 후 삭제")
+    @Test
+    void cacheRedisValueTypeListRemove() {
+        // given
+        String listKey = UUID.randomUUID().toString();
+        TestDto cacheTarget1 = new TestDto(str1, str2, num1);
+        TestDto cacheTarget2 = new TestDto(str3, str4, num2);
+
+        // when
+        cacheHelper.push(CacheName.LAZY_DOWITH_TASK, listKey, cacheTarget1);
+        cacheHelper.push(CacheName.LAZY_DOWITH_TASK, listKey, cacheTarget2);
+        cacheHelper.remove(CacheName.LAZY_DOWITH_TASK, listKey, cacheTarget1);
+        List<TestDto> cachedTarget = cacheHelper.getByRange(CacheName.LAZY_DOWITH_TASK, listKey, 0, -1, TestDto.class);
+
+        // then
+        assertThat(cachedTarget.size()).isEqualTo(1);
+        assertThat(cachedTarget.get(0)).isEqualTo(cacheTarget2);
     }
 
     @Builder

@@ -1,13 +1,15 @@
 package com.LetMeDoWith.LetMeDoWith.common.cache;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
-
-import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
@@ -57,6 +59,26 @@ public class CacheHelper {
         }
     }
 
+    public <T> List<T> getByRange(String cacheName, String key, long start, long end, Class<T> elementType) {
+        CachePolicy cachePolicy = CachePolicy.fromCacheName(cacheName);
+        String redisKey = this.buildRedisKey(cacheName, key);
+
+        if (cachePolicy.redisValueType().equals(RedisValueType.LIST)) {
+            List<Object> rawList = redisTemplate.opsForList().range(redisKey, start, end);
+            if (rawList == null) {
+                return Collections.emptyList();
+            }
+            List<T> resultList = new ArrayList<>();
+            for (Object item : rawList) {
+                T element = objectMapper.convertValue(item, elementType);
+                resultList.add(element);
+            }
+            return resultList;
+        } else {
+            throw new IllegalArgumentException("CachePolicy redisValueType is not LIST for cache name: " + cacheName);
+        }
+    }
+
     public void put(String cacheName, String key, Object value) {
 
         CachePolicy cachePolicy = CachePolicy.fromCacheName(cacheName);
@@ -78,7 +100,50 @@ public class CacheHelper {
         }
     }
 
+    public void push(String cacheName, String key, Object element) {
+        CachePolicy cachePolicy = CachePolicy.fromCacheName(cacheName);
+        String redisKey = this.buildRedisKey(cacheName, key);
+
+        if (cachePolicy.redisValueType().equals(RedisValueType.LIST)) {
+            redisTemplate.opsForList().rightPush(redisKey, element);
+            if (cachePolicy.ttl() != null) {
+                redisTemplate.expire(redisKey, cachePolicy.ttl());
+            }
+        } else {
+            throw new IllegalArgumentException("CachePolicy redisValueType is not LIST for cache name: " + cacheName);
+        }
+    }
+
+    public void remove(String cacheName, String key) {
+        CachePolicy cachePolicy = CachePolicy.fromCacheName(cacheName);
+
+        if (cachePolicy.redisValueType().equals(RedisValueType.HASH)
+                || cachePolicy.redisValueType().equals(RedisValueType.LIST)) {
+            String redisKey = this.buildRedisKey(cacheName, key);
+            redisTemplate.delete(redisKey);
+        } else {
+            Cache cache = cacheManager.getCache(cacheName);
+            assert cache != null;
+            cache.evict(key);
+        }
+    }
+
+    public <T> void remove(String cacheName, String key, T element) {
+        CachePolicy cachePolicy = CachePolicy.fromCacheName(cacheName);
+
+        if (!cachePolicy.redisValueType().equals(RedisValueType.LIST)) {
+            throw new IllegalArgumentException("CachePolicy redisValueType is not LIST for cache name: " + cacheName);
+        }
+
+        String cacheKey = this.buildRedisKey(cacheName, key);
+
+        redisTemplate.opsForList().remove(cacheKey, 0, element);
+    }
+
     private String buildRedisKey(String cacheName, String key) {
+        if (key == null || key.isEmpty()) {
+            return cacheName;
+        }
         return cacheName + "::" + key;
     }
 }
