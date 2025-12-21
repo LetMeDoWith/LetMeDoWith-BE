@@ -1,0 +1,32 @@
+spring:
+  config:
+    activate:
+      on-profile: dev-confidential
+  datasource:
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  flyway:
+    user: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    enabled: true
+
+
+auth:
+  jwt:
+    issuer: ${JWT_ISSUER}
+    secret: ${JWT_SECRET}
+    signup-duration-min: ${JWT_SIGNUP_DURATION_MIN}
+    atk-duration-min: ${JWT_ATK_DURATION_MIN} # 개발 및 테스트 용으로 180분 설정
+    rtk-duration-day: ${JWT_RTK_DURATION_DAY} # 개발 및 테스트 용으로 1일 설정
+
+  oidc:
+    aud:
+      kakao: ${KAKAO_CLIENT_ID}
+      google: ${GOOGLE_CLIENT_ID}
+      apple: ${APPLE_CLIENT_ID}
+
+cloud:
+  aws:
+    region: ${AWS_REGION}
+    s3:
+      bucketName: ${AWS_S3_BUCKET_NAME}
