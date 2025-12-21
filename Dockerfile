@@ -28,10 +28,6 @@ ENV TZ=Asia/Seoul
 ENV JAVA_TOOL_OPTIONS="\
  -Duser.timezone=Asia/Seoul \
  -XX:+UseContainerSupport \
- -XX:MaxRAMPercentage=60 -XX:InitialRAMPercentage=30 \
- -Xlog:gc*:file=/var/logs/gc/gc-%t.log:time,level,tags,uptime:filecount=5,filesize=20m \
- -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/var/logs/heap/heap.hprof \
- -XX:StartFlightRecording=filename=/var/logs/jfr/app.jfr,settings=profile,maxage=2d,maxsize=256m,dumponexit=true \
 "
 
 # 빌드 스테이지에서 생성된 JAR 파일 복사
