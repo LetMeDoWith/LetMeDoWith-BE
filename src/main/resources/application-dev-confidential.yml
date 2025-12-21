@@ -8,7 +8,7 @@ spring:
   flyway:
     user: ${DB_USERNAME}
     password: ${DB_PASSWORD}
-    enabled: true
+    enabled: false
 
 
 auth:
