@@ -33,9 +33,13 @@
       <appender-ref ref="CONSOLE"/>
     </logger>
 
+    <!-- 우리 애플리케이션 패키지 로그는 DEBUG로 설정 -->
+    <logger name="com.LetMeDoWith" level="DEBUG"/>
+
     <logger level="OFF" name="org.hibernate.SQL"/>
     <logger level="OFF" name="org.hibernate.orm.jdbc.bind"/>
 
+    <!-- 전체 시스템 로그는 INFO로 설정 (너무 많은 로그 방지) -->
     <root level="INFO">
       <appender-ref ref="CONSOLE"/>
     </root>
