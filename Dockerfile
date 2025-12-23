@@ -28,7 +28,7 @@ ENV TZ=Asia/Seoul
 ENV JAVA_TOOL_OPTIONS="\
  -Duser.timezone=Asia/Seoul \
  -XX:+UseContainerSupport \
- -Xmx768m \
+ -Xmx512m \
 "
 
 # 빌드 스테이지에서 생성된 JAR 파일 복사
