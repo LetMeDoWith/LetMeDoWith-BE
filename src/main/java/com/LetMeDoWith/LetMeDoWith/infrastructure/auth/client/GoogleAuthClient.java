@@ -2,6 +2,7 @@ package com.LetMeDoWith.LetMeDoWith.infrastructure.auth.client;
 
 import com.LetMeDoWith.LetMeDoWith.application.auth.client.AuthClient;
 import com.LetMeDoWith.LetMeDoWith.application.auth.dto.OidcPublicKeyResDto;
+import com.LetMeDoWith.LetMeDoWith.common.cache.CacheName;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
@@ -14,7 +15,7 @@ import reactor.core.publisher.Mono;
 @Component
 @RequiredArgsConstructor
 @Profile("!dev")
-@CacheConfig(cacheNames = "GOOGLE", cacheManager = "socialProviderPublicKeyCacheManager")
+@CacheConfig(cacheNames = CacheName.GOOGLE_PUBLIC_KEY)
 public class GoogleAuthClient implements AuthClient {
 
     private final WebClient webClient;

@@ -4,7 +4,7 @@ import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseSt
 import static com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus.INVALID_REQUEST;
 
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.TaskRoutineCondition;
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateDowithTaskContentsAndCreateRoutineCommand;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateDowithTaskCommand;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateDowithTaskRoutineCommand;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.UpdateDowithTaskWithRoutineCommand;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
@@ -43,7 +43,7 @@ public class UpdateDowithTaskService {
      * @param command
      */
     @Transactional
-    public void updateDowithTask(UpdateDowithTaskContentsAndCreateRoutineCommand command) {
+    public void updateDowithTask(UpdateDowithTaskCommand command) {
 
         String memberId = AuthUtil.getMemberId();
         DowithTask dowithTask = dowithTaskRepository
@@ -67,11 +67,23 @@ public class UpdateDowithTaskService {
                 throw new RestApiException(INVALID_PARAM_ERROR);
         }
 
+        // 루틴이 있는 경우 기존 루틴과 input의 루틴 컨디션이 같은지 비교 필요
+        if (dowithTask.isRoutine()) {
+            if (command.taskRoutineCondition() == null) throw new RestApiException(INVALID_PARAM_ERROR);
+            TaskRoutineCondition inputRoutineCondition = command.taskRoutineCondition();
+            dowithTask.isRoutineModified(
+                    inputRoutineCondition.startDate(),
+                    inputRoutineCondition.endDate(),
+                    inputRoutineCondition.cycle(),
+                    inputRoutineCondition.pattern(),
+                    inputRoutineCondition.isExcludeHolidays());
+        }
+
         dowithTask.updateContents(command.title(), command.taskCategoryId(), command.date(), command.startTime());
         dowithTaskRepository.saveDowithTask(dowithTask);
 
         // 루틴 생성
-        if (command.taskRoutineCondition() != null) {
+        if (command.taskRoutineCondition() != null && !dowithTask.isRoutine()) {
             if (!command.taskRoutineCondition().startDate().isEqual(dowithTask.getDate()))
                 throw new RestApiException(INVALID_PARAM_ERROR);
 

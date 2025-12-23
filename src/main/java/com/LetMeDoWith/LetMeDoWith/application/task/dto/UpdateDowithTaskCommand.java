@@ -5,7 +5,7 @@ import java.time.LocalTime;
 import lombok.Builder;
 
 @Builder
-public record UpdateDowithTaskContentsAndCreateRoutineCommand(
+public record UpdateDowithTaskCommand(
         Long dowithTaskId,
         String title,
         Long taskCategoryId,
