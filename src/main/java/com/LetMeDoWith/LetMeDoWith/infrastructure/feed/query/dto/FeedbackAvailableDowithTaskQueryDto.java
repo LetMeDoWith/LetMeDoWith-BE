@@ -1,8 +1,8 @@
-package com.LetMeDoWith.LetMeDoWith.batch.dto;
+package com.LetMeDoWith.LetMeDoWith.infrastructure.feed.query.dto;
 
 import java.time.LocalTime;
 
-public record DowithTaskWithFeedbackCountDto(
+public record FeedbackAvailableDowithTaskQueryDto(
         Long id,
         String memberId,
         String nickname,
