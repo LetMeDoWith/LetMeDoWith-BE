@@ -33,8 +33,8 @@ public class FirebaseConfig {
         }
 
         FirebaseOptions options = FirebaseOptions.builder()
-            .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-            .build();
+                .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                .build();
 
         // FirebaseApp 중복 초기화 방지
         if (FirebaseApp.getApps().isEmpty()) {
