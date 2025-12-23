@@ -24,18 +24,18 @@ public class StoreFeedbackAvailableDowithAndLazyDowithMemberJobConfig {
 
     @Bean
     public Job storeFeedbackAvailableDowithAndLazyDowithMemberJob(
-        Step storeFeedbackAvailableDowithAndLazyDowithMemberStep) {
+            Step storeFeedbackAvailableDowithAndLazyDowithMemberStep) {
         return new JobBuilder(JOB_NAME, jobRepository)
-            .start(storeFeedbackAvailableDowithAndLazyDowithMemberStep)
-            .build();
+                .start(storeFeedbackAvailableDowithAndLazyDowithMemberStep)
+                .build();
     }
 
     @Bean
     @JobScope
     public Step storeFeedbackAvailableDowithAndLazyDowithMemberStep(
-        StoreFeedbackAvailableDowithAndLazyDowithMemberTasklet tasklet) {
+            StoreFeedbackAvailableDowithAndLazyDowithMemberTasklet tasklet) {
         return new StepBuilder(STEP_NAME, jobRepository)
-            .tasklet(tasklet, platformTransactionManager)
-            .build();
+                .tasklet(tasklet, platformTransactionManager)
+                .build();
     }
 }

@@ -24,9 +24,9 @@ public class StoreFeedbackAvailableDowithAndLazyDowithMemberJobScheduler {
     @Scheduled(cron = "0 */30 * * * *")
     public void runStoreFeedbackAvailableDowithAndLazyDowithMemberJob() {
         JobParameters jobParameters = new JobParametersBuilder()
-            .addLong("run.id", System.currentTimeMillis())
-            .addLocalDateTime("executionDateTime", SystemTimeUtil.now())
-            .toJobParameters();
+                .addLong("run.id", System.currentTimeMillis())
+                .addLocalDateTime("executionDateTime", SystemTimeUtil.now())
+                .toJobParameters();
 
         try {
             jobLauncher.run(storeFeedbackAvailableDowithAndLazyDowithMemberJob, jobParameters);
