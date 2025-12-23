@@ -1,6 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.batch.job.task;
 
-import com.LetMeDoWith.LetMeDoWith.batch.tasklet.CacheFeedbackAvailableDowithAndLazyDowithMemberTasklet;
+import com.LetMeDoWith.LetMeDoWith.batch.tasklet.StoreFeedbackAvailableDowithAndLazyDowithMemberTasklet;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -14,26 +14,26 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
 @RequiredArgsConstructor
-public class CacheFeedbackAvailableDowithAndLazyDowithMemberJobConfig {
+public class StoreFeedbackAvailableDowithAndLazyDowithMemberJobConfig {
 
-    private final String JOB_NAME = "cacheFeedbackAvailableDowithAndLazyDowithMemberJob";
-    private final String STEP_NAME = "cacheFeedbackAvailableDowithAndLazyDowithMemberStep";
+    private final String JOB_NAME = "storeFeedbackAvailableDowithAndLazyDowithMemberJob";
+    private final String STEP_NAME = "storeFeedbackAvailableDowithAndLazyDowithMemberStep";
 
     private final JobRepository jobRepository;
     private final PlatformTransactionManager platformTransactionManager;
 
     @Bean
-    public Job cacheFeedbackAvailableDowithAndLazyDowithMemberJob(
-        Step cacheFeedbackAvailableDowithAndLazyDowithMemberStep) {
+    public Job storeFeedbackAvailableDowithAndLazyDowithMemberJob(
+        Step storeFeedbackAvailableDowithAndLazyDowithMemberStep) {
         return new JobBuilder(JOB_NAME, jobRepository)
-            .start(cacheFeedbackAvailableDowithAndLazyDowithMemberStep)
+            .start(storeFeedbackAvailableDowithAndLazyDowithMemberStep)
             .build();
     }
 
     @Bean
     @JobScope
-    public Step cacheFeedbackAvailableDowithAndLazyDowithMemberStep(
-        CacheFeedbackAvailableDowithAndLazyDowithMemberTasklet tasklet) {
+    public Step storeFeedbackAvailableDowithAndLazyDowithMemberStep(
+        StoreFeedbackAvailableDowithAndLazyDowithMemberTasklet tasklet) {
         return new StepBuilder(STEP_NAME, jobRepository)
             .tasklet(tasklet, platformTransactionManager)
             .build();

@@ -13,23 +13,23 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class CacheFeedbackAvailableDowithAndLazyDowithMemberJobScheduler {
+public class StoreFeedbackAvailableDowithAndLazyDowithMemberJobScheduler {
 
     private final JobLauncher jobLauncher;
-    private final Job cacheFeedbackAvailableDowithAndLazyDowithMemberJob;
+    private final Job storeFeedbackAvailableDowithAndLazyDowithMemberJob;
 
     /**
-     * 레이지 두윗러 & 잔소리 대상 두윗 캐시 적재 배치. 매시 0분, 30분 마다 실행
+     * 레이지 두윗러 & 잔소리 대상 두윗 Redis 적재 배치. 매시 0분, 30분 마다 실행
      */
     @Scheduled(cron = "0 */30 * * * *")
-    public void runCacheFeedbackAvailableDowithAndLazyDowithMemberJob() {
+    public void runStoreFeedbackAvailableDowithAndLazyDowithMemberJob() {
         JobParameters jobParameters = new JobParametersBuilder()
             .addLong("run.id", System.currentTimeMillis())
             .addLocalDateTime("executionDateTime", SystemTimeUtil.now())
             .toJobParameters();
 
         try {
-            jobLauncher.run(cacheFeedbackAvailableDowithAndLazyDowithMemberJob, jobParameters);
+            jobLauncher.run(storeFeedbackAvailableDowithAndLazyDowithMemberJob, jobParameters);
         } catch (Exception e) {
             e.printStackTrace(); // TODO - Batch Exception 공통 처리
             log.error("Failed to run failDowithTaskJob", e);

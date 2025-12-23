@@ -1,6 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.batch.tasklet;
 
 import com.LetMeDoWith.LetMeDoWith.batch.dto.DowithTaskWithFeedbackCountDto;
+import com.LetMeDoWith.LetMeDoWith.common.cache.CacheHelper;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -19,7 +20,7 @@ import org.springframework.stereotype.Component;
 @Component
 @StepScope
 @RequiredArgsConstructor
-public class CacheFeedbackAvailableDowithAndLazyDowithMemberTasklet implements Tasklet {
+public class StoreFeedbackAvailableDowithAndLazyDowithMemberTasklet implements Tasklet {
 
     private static final RowMapper<DowithTaskWithFeedbackCountDto> mapper = ((rs, rowNum) -> {
         return new DowithTaskWithFeedbackCountDto(
@@ -33,8 +34,8 @@ public class CacheFeedbackAvailableDowithAndLazyDowithMemberTasklet implements T
             rs.getLong("feedbackCount"));
     });
 
-
     private final JdbcTemplate jdbcTemplate;
+    private final CacheHelper cacheHelper;
 
     @Value("#{jobParameters['executionDateTime']}")
     private LocalDateTime executionDateTime;
@@ -101,6 +102,7 @@ public class CacheFeedbackAvailableDowithAndLazyDowithMemberTasklet implements T
             .toList();
 
         // 레이지 두윗러 및 잔소리 대상 두윗 캐시 적재
+        // cacheHelper.push();
 
         return RepeatStatus.FINISHED;
     }
