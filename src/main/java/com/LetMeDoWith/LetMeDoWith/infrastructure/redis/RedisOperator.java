@@ -66,7 +66,7 @@ public class RedisOperator {
     // Value Ops (String/Object)
     // ==================================================================================
 
-    public void set(CachePolicySpec policy, String key, Object value) {
+    public <T> void set(CachePolicySpec policy, String key, T value) {
         validatePolicy(policy, RedisValueType.STRING);
         String fullKey = buildKey(policy, key);
 
@@ -89,14 +89,14 @@ public class RedisOperator {
     // List Ops
     // ==================================================================================
 
-    public void pushRightAll(CachePolicySpec policy, String key, List<Object> list) {
+    public <T> void pushRightAll(CachePolicySpec policy, String key, List<T> list) {
         validatePolicy(policy, RedisValueType.LIST);
         if (list == null || list.isEmpty()) {
             return;
         }
         String fullKey = buildKey(policy, key);
 
-        redisTemplate.opsForList().rightPushAll(fullKey, list);
+        redisTemplate.opsForList().rightPushAll(fullKey, (List<Object>) list);
         applyTtl(fullKey, policy);
     }
 
@@ -114,7 +114,7 @@ public class RedisOperator {
                 .collect(Collectors.toList());
     }
 
-    public void removeList(CachePolicySpec policy, String key, Object value) {
+    public <T> void removeList(CachePolicySpec policy, String key, T value) {
         validatePolicy(policy, RedisValueType.LIST);
         String fullKey = buildKey(policy, key);
 
@@ -127,7 +127,7 @@ public class RedisOperator {
     // ZSet Ops
     // ==================================================================================
 
-    public void zAdd(CachePolicySpec policy, String key, Object value, double score) {
+    public <T> void zAdd(CachePolicySpec policy, String key, T value, double score) {
         validatePolicy(policy, RedisValueType.ZSET);
         String fullKey = buildKey(policy, key);
 
@@ -203,7 +203,7 @@ public class RedisOperator {
         });
     }
 
-    public void putHashField(CachePolicySpec policy, String key, String field, Object value) {
+    public <T> void putHashField(CachePolicySpec policy, String key, String field, T value) {
         validatePolicy(policy, RedisValueType.HASH);
         String fullKey = buildKey(policy, key);
 
