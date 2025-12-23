@@ -6,6 +6,6 @@ public final class CacheName {
     public static final String APPLE_PUBLIC_KEY = "apple-public-key";
     public static final String GOOGLE_PUBLIC_KEY = "google-public-key";
     public static final String KAKAO_PUBLIC_KEY = "kakao-public-key";
-    public static final String DOWITH_TASK = "dowith";
-    public static final String LAZY_DOWITH_TASK = "lazy-dowith";
+    public static final String DOWITH_TASK = "dowithTask";
+    public static final String LAZY_DOWITH_TASK_MEMBERS = "feed:dowithTask:lazy";
 }

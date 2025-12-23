@@ -10,7 +10,7 @@ public enum CachePolicy {
     KAKAO_PUBLIC_KEY(CacheName.KAKAO_PUBLIC_KEY, RedisValueType.STRING, Duration.ofDays(7)),
 
     DOWITH_TASK(CacheName.DOWITH_TASK, RedisValueType.HASH, Duration.ofDays(14)),
-    LAZY_DOWTIH_TASK(CacheName.LAZY_DOWITH_TASK, RedisValueType.LIST, null);
+    LAZY_DOWITH_TASK_MEMBERS(CacheName.LAZY_DOWITH_TASK_MEMBERS, RedisValueType.LIST, null);
 
     private final String cacheName;
     private final RedisValueType redisValueType;
