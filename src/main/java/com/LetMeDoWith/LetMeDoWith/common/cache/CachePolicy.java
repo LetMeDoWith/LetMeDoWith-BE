@@ -4,7 +4,7 @@ import java.time.Duration;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public enum CachePolicy {
+public enum CachePolicy implements CachePolicySpec {
     APPLE_PUBLIC_KEY(CacheName.APPLE_PUBLIC_KEY, RedisValueType.STRING, Duration.ofDays(7)),
     GOOGLE_PUBLIC_KEY(CacheName.GOOGLE_PUBLIC_KEY, RedisValueType.STRING, Duration.ofDays(7)),
     KAKAO_PUBLIC_KEY(CacheName.KAKAO_PUBLIC_KEY, RedisValueType.STRING, Duration.ofDays(7)),
