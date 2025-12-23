@@ -67,8 +67,7 @@ public class CacheTest {
         String key = keyString + "::" + keyNumber;
 
         // when
-        TestService.TestDto cachedData = cacheHelper.get(CacheName.GOOGLE_PUBLIC_KEY, key,
-            TestService.TestDto.class);
+        TestService.TestDto cachedData = cacheHelper.get(CacheName.GOOGLE_PUBLIC_KEY, key, TestService.TestDto.class);
 
         // then
         assertThat(cachedData.str1()).isEqualTo(str1);
@@ -85,8 +84,7 @@ public class CacheTest {
 
         // when
         cacheHelper.put(CacheName.DOWITH_TASK, dowithTaskId, cacheTarget);
-        String cachedStr1 = cacheHelper.get(CacheName.DOWITH_TASK, dowithTaskId, "str1",
-            String.class);
+        String cachedStr1 = cacheHelper.get(CacheName.DOWITH_TASK, dowithTaskId, "str1", String.class);
         int num1 = cacheHelper.get(CacheName.DOWITH_TASK, dowithTaskId, "num1", Integer.class);
 
         TestDto cachedTarget = cacheHelper.get(CacheName.DOWITH_TASK, dowithTaskId, TestDto.class);
@@ -108,8 +106,8 @@ public class CacheTest {
 
         // when
         cacheHelper.push(CacheName.LAZY_DOWITH_TASK_MEMBERS, listKey, cacheTarget);
-        List<TestDto> cachedTarget = cacheHelper.getByRange(CacheName.LAZY_DOWITH_TASK_MEMBERS,
-            listKey, 0, -1, TestDto.class);
+        List<TestDto> cachedTarget =
+                cacheHelper.getByRange(CacheName.LAZY_DOWITH_TASK_MEMBERS, listKey, 0, -1, TestDto.class);
 
         // then
         assertThat(cachedTarget.get(0)).isEqualTo(cacheTarget);
@@ -127,8 +125,8 @@ public class CacheTest {
         cacheHelper.push(CacheName.LAZY_DOWITH_TASK_MEMBERS, listKey, cacheTarget1);
         cacheHelper.push(CacheName.LAZY_DOWITH_TASK_MEMBERS, listKey, cacheTarget2);
         cacheHelper.remove(CacheName.LAZY_DOWITH_TASK_MEMBERS, listKey, cacheTarget1);
-        List<TestDto> cachedTarget = cacheHelper.getByRange(CacheName.LAZY_DOWITH_TASK_MEMBERS,
-            listKey, 0, -1, TestDto.class);
+        List<TestDto> cachedTarget =
+                cacheHelper.getByRange(CacheName.LAZY_DOWITH_TASK_MEMBERS, listKey, 0, -1, TestDto.class);
 
         // then
         assertThat(cachedTarget.size()).isEqualTo(1);
@@ -136,11 +134,7 @@ public class CacheTest {
     }
 
     @Builder
-    private record TestDto(String str1, String str2, int num1) {
+    private record TestDto(String str1, String str2, int num1) {}
 
-    }
-
-    record DifferentDTO(String val1, String val2) {
-
-    }
+    record DifferentDTO(String val1, String val2) {}
 }
