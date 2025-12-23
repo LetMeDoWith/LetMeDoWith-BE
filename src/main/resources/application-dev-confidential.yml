@@ -30,3 +30,6 @@ cloud:
     region: ${AWS_REGION}
     s3:
       bucketName: ${AWS_S3_BUCKET_NAME}
+
+firebase:
+  config-base64: ${FIREBASE_CONFIG_BASE64}
