@@ -1,6 +1,6 @@
-package com.LetMeDoWith.LetMeDoWith.application.auth.provider;
+package com.LetMeDoWith.LetMeDoWith.common.auth.provider;
 
-import com.LetMeDoWith.LetMeDoWith.application.auth.util.JwtUtil;
+import com.LetMeDoWith.LetMeDoWith.common.auth.util.JwtUtil;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiAuthException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.auth.enums.TokenType;
@@ -36,11 +36,8 @@ public class AccessTokenProvider {
     @Value("${auth.jwt.issuer}")
     private String issuer;
 
-    // private final long refreshExpireTime = 1 * 60 * 1000L * 60 * 24 * 14; // 14일
-
     @Autowired
     public AccessTokenProvider(@Value("${auth.jwt.secret}") String secret) {
-
         // plain secret Base64로 인코딩
         String keyBase64Encoded = Base64.getEncoder().encodeToString(secret.getBytes());
 
@@ -48,22 +45,12 @@ public class AccessTokenProvider {
         this.secretKey = Keys.hmacShaKeyFor(keyBase64Encoded.getBytes());
     }
 
-    /**
-     * 서버 Access Token 생성
-     *
-     * @param memberId
-     * @return
-     */
+    /** 서버 Access Token 생성 */
     public AccessToken generateToken(String memberId) {
         return AccessToken.of(memberId, issuer, atkDurationMin, secretKey);
     }
 
-    /**
-     * Token 검증 없이, payload의 memberId 추출
-     *
-     * @param token
-     * @return
-     */
+    /** Token 검증 없이, payload의 memberId 추출 */
     public String getMemberIdWithoutVerify(final String token) {
 
         String[] parts = token.split("\\.");
@@ -85,12 +72,7 @@ public class AccessTokenProvider {
         return map.get("memberId");
     }
 
-    /**
-     * Access Token 검증 및 memberId 추출
-     *
-     * @param token
-     * @return
-     */
+    /** Access Token 검증 및 memberId 추출 */
     public String validateToken(final String token) {
         final Jws<Claims> claims = JwtUtil.parseTokenToJws(token, secretKey);
 

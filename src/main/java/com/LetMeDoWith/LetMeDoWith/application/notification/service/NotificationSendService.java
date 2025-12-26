@@ -1,8 +1,8 @@
 package com.LetMeDoWith.LetMeDoWith.application.notification.service;
 
-import com.LetMeDoWith.LetMeDoWith.application.notification.client.MessageServerClient;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.domain.notification.client.MessageServerClient;
 import com.LetMeDoWith.LetMeDoWith.domain.notification.model.Notification;
 import com.LetMeDoWith.LetMeDoWith.domain.notification.model.NotificationTemplate;
 import com.LetMeDoWith.LetMeDoWith.domain.notification.model.NotificationToken;

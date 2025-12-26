@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.application.auth.repository;
+package com.LetMeDoWith.LetMeDoWith.domain.auth.repository;
 
 import com.LetMeDoWith.LetMeDoWith.domain.auth.model.RefreshToken;
 import java.util.Optional;

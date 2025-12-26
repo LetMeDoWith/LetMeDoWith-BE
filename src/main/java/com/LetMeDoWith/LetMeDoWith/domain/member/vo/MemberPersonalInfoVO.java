@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.application.member.dto;
+package com.LetMeDoWith.LetMeDoWith.domain.member.vo;
 
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.Gender;
 import java.time.LocalDate;

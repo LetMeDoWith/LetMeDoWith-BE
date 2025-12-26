@@ -1,7 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.domain.member.model;
 
-import com.LetMeDoWith.LetMeDoWith.application.member.dto.MemberAlarmSettingVO;
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
+import com.LetMeDoWith.LetMeDoWith.domain.member.vo.MemberAlarmSettingVO;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

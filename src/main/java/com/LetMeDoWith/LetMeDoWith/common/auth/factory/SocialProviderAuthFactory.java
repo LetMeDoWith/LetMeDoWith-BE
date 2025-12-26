@@ -1,6 +1,6 @@
-package com.LetMeDoWith.LetMeDoWith.application.auth.factory;
+package com.LetMeDoWith.LetMeDoWith.common.auth.factory;
 
-import com.LetMeDoWith.LetMeDoWith.application.auth.client.AuthClient;
+import com.LetMeDoWith.LetMeDoWith.common.auth.client.AuthClient;
 import com.LetMeDoWith.LetMeDoWith.domain.auth.enums.SocialProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;

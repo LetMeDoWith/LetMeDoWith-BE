@@ -1,11 +1,11 @@
-package com.LetMeDoWith.LetMeDoWith.application.auth.provider;
+package com.LetMeDoWith.LetMeDoWith.common.auth.provider;
 
-import com.LetMeDoWith.LetMeDoWith.application.auth.client.AuthClient;
-import com.LetMeDoWith.LetMeDoWith.application.auth.dto.OidcPublicKeyResDto;
-import com.LetMeDoWith.LetMeDoWith.application.auth.dto.OidcPublicKeyResDto.OidcPublicKeyVO;
-import com.LetMeDoWith.LetMeDoWith.application.auth.factory.SocialProviderAuthFactory;
-import com.LetMeDoWith.LetMeDoWith.application.auth.util.EncryptUtil;
-import com.LetMeDoWith.LetMeDoWith.application.auth.util.JwtUtil;
+import com.LetMeDoWith.LetMeDoWith.common.auth.client.AuthClient;
+import com.LetMeDoWith.LetMeDoWith.common.auth.dto.OidcPublicKeyResDto;
+import com.LetMeDoWith.LetMeDoWith.common.auth.dto.OidcPublicKeyResDto.OidcPublicKeyVO;
+import com.LetMeDoWith.LetMeDoWith.common.auth.factory.SocialProviderAuthFactory;
+import com.LetMeDoWith.LetMeDoWith.common.auth.util.EncryptUtil;
+import com.LetMeDoWith.LetMeDoWith.common.auth.util.JwtUtil;
 import com.LetMeDoWith.LetMeDoWith.common.exception.OidcIdTokenPublicKeyNotFoundException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiAuthException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;

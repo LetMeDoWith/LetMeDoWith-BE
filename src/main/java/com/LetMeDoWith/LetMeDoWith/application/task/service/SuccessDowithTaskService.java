@@ -1,8 +1,8 @@
 package com.LetMeDoWith.LetMeDoWith.application.task.service;
 
-import com.LetMeDoWith.LetMeDoWith.application.task.client.FileClient;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.domain.task.client.FileClient;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskRepository;
 import java.time.Duration;

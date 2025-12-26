@@ -1,7 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.auth.repository;
 
-import com.LetMeDoWith.LetMeDoWith.application.auth.repository.RefreshTokenRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.auth.model.RefreshToken;
+import com.LetMeDoWith.LetMeDoWith.domain.auth.repository.RefreshTokenRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.auth.redisRepository.RefreshTokenRedisRepository;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;

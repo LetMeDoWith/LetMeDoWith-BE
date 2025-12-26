@@ -1,10 +1,10 @@
 package com.LetMeDoWith.LetMeDoWith.domain.member.model;
 
-import com.LetMeDoWith.LetMeDoWith.application.member.dto.MemberPersonalInfoVO;
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.Gender;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
+import com.LetMeDoWith.LetMeDoWith.domain.member.vo.MemberPersonalInfoVO;
 import io.hypersistence.utils.hibernate.id.Tsid;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

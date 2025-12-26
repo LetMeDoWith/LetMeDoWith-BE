@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.application.auth.util;
+package com.LetMeDoWith.LetMeDoWith.common.auth.util;
 
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiAuthException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;

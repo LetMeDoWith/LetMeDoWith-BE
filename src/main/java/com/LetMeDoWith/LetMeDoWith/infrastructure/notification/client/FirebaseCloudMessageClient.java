@@ -1,8 +1,8 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.notification.client;
 
-import com.LetMeDoWith.LetMeDoWith.application.notification.client.MessageServerClient;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.domain.notification.client.MessageServerClient;
 import com.google.firebase.messaging.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

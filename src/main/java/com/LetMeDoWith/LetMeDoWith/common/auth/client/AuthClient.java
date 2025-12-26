@@ -1,6 +1,6 @@
-package com.LetMeDoWith.LetMeDoWith.application.auth.client;
+package com.LetMeDoWith.LetMeDoWith.common.auth.client;
 
-import com.LetMeDoWith.LetMeDoWith.application.auth.dto.OidcPublicKeyResDto;
+import com.LetMeDoWith.LetMeDoWith.common.auth.dto.OidcPublicKeyResDto;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiAuthException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import reactor.core.publisher.Mono;

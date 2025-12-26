@@ -2,11 +2,11 @@ package com.LetMeDoWith.LetMeDoWith.presentation.auth.controller;
 
 import com.LetMeDoWith.LetMeDoWith.application.auth.dto.CreateRefreshTokenResult;
 import com.LetMeDoWith.LetMeDoWith.application.auth.dto.CreateTokenResult;
-import com.LetMeDoWith.LetMeDoWith.application.auth.provider.AccessTokenProvider;
 import com.LetMeDoWith.LetMeDoWith.application.auth.service.CreateTokenService;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiErrorResponse;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiErrorResponses;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiSuccessResponse;
+import com.LetMeDoWith.LetMeDoWith.common.auth.provider.AccessTokenProvider;
 import com.LetMeDoWith.LetMeDoWith.common.dto.ResponseDto;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;

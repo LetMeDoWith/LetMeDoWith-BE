@@ -1,6 +1,5 @@
 package com.LetMeDoWith.LetMeDoWith.application.member.service;
 
-import com.LetMeDoWith.LetMeDoWith.application.member.dto.MemberAlarmSettingVO;
 import com.LetMeDoWith.LetMeDoWith.application.member.dto.UpdateMemberAlarmSettingCommand;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
@@ -10,6 +9,7 @@ import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.MemberAlarmSetting;
 import com.LetMeDoWith.LetMeDoWith.domain.member.repository.MemberRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.member.repository.MemberSettingRepository;
+import com.LetMeDoWith.LetMeDoWith.domain.member.vo.MemberAlarmSettingVO;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,6 +34,11 @@ public class MemberSettingService {
 
         MemberAlarmSetting alarmSetting = member.getAlarmSetting();
 
-        memberSettingRepository.save(alarmSetting.update(MemberAlarmSettingVO.fromCommand(command)));
+        memberSettingRepository.save(alarmSetting.update(MemberAlarmSettingVO.builder()
+                .baseAlarmYn(command.baseAlarmYn())
+                .todoBotYn(command.todoBotYn())
+                .feedbackYn(command.feedbackYn())
+                .marketingYn(command.marketingYn())
+                .build()));
     }
 }

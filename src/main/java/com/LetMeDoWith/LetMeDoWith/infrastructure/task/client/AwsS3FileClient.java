@@ -1,6 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.task.client;
 
-import com.LetMeDoWith.LetMeDoWith.application.task.client.FileClient;
+import com.LetMeDoWith.LetMeDoWith.domain.task.client.FileClient;
 import java.time.Duration;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

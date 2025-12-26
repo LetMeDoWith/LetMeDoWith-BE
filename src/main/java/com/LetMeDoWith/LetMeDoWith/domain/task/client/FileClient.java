@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.application.task.client;
+package com.LetMeDoWith.LetMeDoWith.domain.task.client;
 
 import java.time.Duration;
 

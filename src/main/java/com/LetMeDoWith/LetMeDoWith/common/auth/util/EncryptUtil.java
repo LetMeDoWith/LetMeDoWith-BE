@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.application.auth.util;
+package com.LetMeDoWith.LetMeDoWith.common.auth.util;
 
 import java.math.BigInteger;
 import java.security.Key;

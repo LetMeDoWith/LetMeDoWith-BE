@@ -1,7 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.common.interceptor;
 
-import com.LetMeDoWith.LetMeDoWith.application.auth.provider.AccessTokenProvider;
-import com.LetMeDoWith.LetMeDoWith.application.auth.provider.SignupTokenProvider;
+import com.LetMeDoWith.LetMeDoWith.common.auth.provider.AccessTokenProvider;
+import com.LetMeDoWith.LetMeDoWith.common.auth.provider.SignupTokenProvider;
 import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

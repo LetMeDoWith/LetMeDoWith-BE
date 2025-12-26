@@ -59,7 +59,6 @@ ext {
     awsRegion = System.getenv("AWS_REGION")
     deployPlatform = System.getenv("DEPLOY_PLATFORM")
 }
-
 repositories {
     mavenCentral()
 }
@@ -211,3 +210,6 @@ compileJava {
     dependsOn spotlessApply
     options.compilerArgs += ['-parameters']
 }
+
+
+

@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.application.auth.dto;
+package com.LetMeDoWith.LetMeDoWith.common.auth.dto;
 
 import java.util.List;
 import lombok.Builder;

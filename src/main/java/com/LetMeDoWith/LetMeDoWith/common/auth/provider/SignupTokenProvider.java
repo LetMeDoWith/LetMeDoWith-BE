@@ -1,6 +1,6 @@
-package com.LetMeDoWith.LetMeDoWith.application.auth.provider;
+package com.LetMeDoWith.LetMeDoWith.common.auth.provider;
 
-import com.LetMeDoWith.LetMeDoWith.application.auth.util.JwtUtil;
+import com.LetMeDoWith.LetMeDoWith.common.auth.util.JwtUtil;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiAuthException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.auth.enums.TokenType;
@@ -29,7 +29,6 @@ public class SignupTokenProvider {
 
     @Autowired
     public SignupTokenProvider(@Value("${auth.jwt.secret}") String secret) {
-
         // plain secret Base64로 인코딩
         String keyBase64Encoded = Base64.getEncoder().encodeToString(secret.getBytes());
 
@@ -43,7 +42,6 @@ public class SignupTokenProvider {
      * <p>이후 회원가입 완료 시점에 본 메서드의 JWT를 포함하여 요청하여 회원가입 요청을 인증한다.
      *
      * @param memberId 회원가입을 계속해서 진행할 member의 dowithTaskId.
-     * @return
      */
     public SignupToken generateToken(String memberId) {
         return SignupToken.of(memberId, issuer, signupDurationMin, secretKey);

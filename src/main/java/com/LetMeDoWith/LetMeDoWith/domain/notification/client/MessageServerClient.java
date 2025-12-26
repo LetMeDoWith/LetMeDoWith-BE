@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.application.notification.client;
+package com.LetMeDoWith.LetMeDoWith.domain.notification.client;
 
 public interface MessageServerClient {
     void sendMessage(
