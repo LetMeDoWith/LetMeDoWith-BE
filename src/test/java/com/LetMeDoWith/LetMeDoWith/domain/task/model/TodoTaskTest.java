@@ -1,3 +1,5 @@
+package com.LetMeDoWith.LetMeDoWith.domain.task.model;
+
 // package com.LetMeDoWith.LetMeDoWith.domain.task.model;
 //
 // import static org.assertj.core.api.Assertions.assertThat;

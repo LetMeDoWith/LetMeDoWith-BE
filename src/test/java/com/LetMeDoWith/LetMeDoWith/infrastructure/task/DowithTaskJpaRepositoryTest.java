@@ -1,3 +1,5 @@
+package com.LetMeDoWith.LetMeDoWith.infrastructure.task;
+
 // package com.LetMeDoWith.LetMeDoWith.infrastructure.task;
 //
 // import static org.assertj.core.api.AssertionsForClassTypes.assertThat;

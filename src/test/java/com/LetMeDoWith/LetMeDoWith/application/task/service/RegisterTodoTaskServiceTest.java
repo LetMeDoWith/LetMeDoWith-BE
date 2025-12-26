@@ -1,3 +1,5 @@
+package com.LetMeDoWith.LetMeDoWith.application.task.service;
+
 // package com.LetMeDoWith.LetMeDoWith.application.task.service;
 //
 // import static org.assertj.core.api.Assertions.assertThat;
