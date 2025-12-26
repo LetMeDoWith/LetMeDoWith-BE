@@ -1,8 +1,7 @@
-package com.LetMeDoWith.LetMeDoWith.application.auth.service;
+package com.LetMeDoWith.LetMeDoWith.common.auth.provider;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.LetMeDoWith.LetMeDoWith.application.auth.provider.AccessTokenProvider;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.auth.redisRepository.RefreshTokenRedisRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,7 +9,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith({MockitoExtension.class})
-public class AccessTokenProviderTest {
+public class AccessTokenProviderWithoutVerifyTest {
 
     @Mock
     RefreshTokenRedisRepository refreshTokenRedisRepository;
@@ -28,6 +27,6 @@ public class AccessTokenProviderTest {
         String memberIdWithoutVerify = accessTokenProvider.getMemberIdWithoutVerify(token);
 
         // then
-        assertThat(memberIdWithoutVerify).isEqualTo(158);
+        assertThat(memberIdWithoutVerify).isEqualTo("158");
     }
 }

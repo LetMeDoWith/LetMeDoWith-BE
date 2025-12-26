@@ -1,9 +1,9 @@
 package com.LetMeDoWith.LetMeDoWith.application.auth.service;
 
-import com.LetMeDoWith.LetMeDoWith.application.auth.provider.AccessTokenProvider;
-import com.LetMeDoWith.LetMeDoWith.application.auth.provider.OidcIdTokenProvider;
-import com.LetMeDoWith.LetMeDoWith.application.auth.repository.RefreshTokenRepository;
 import com.LetMeDoWith.LetMeDoWith.application.member.service.MemberService;
+import com.LetMeDoWith.LetMeDoWith.common.auth.provider.AccessTokenProvider;
+import com.LetMeDoWith.LetMeDoWith.common.auth.provider.OidcIdTokenProvider;
+import com.LetMeDoWith.LetMeDoWith.domain.auth.repository.RefreshTokenRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

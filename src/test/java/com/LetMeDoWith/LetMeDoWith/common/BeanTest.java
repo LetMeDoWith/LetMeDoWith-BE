@@ -1,7 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.common;
 
-import com.LetMeDoWith.LetMeDoWith.application.auth.factory.SocialProviderAuthFactory;
 import com.LetMeDoWith.LetMeDoWith.application.auth.service.CreateTokenService;
+import com.LetMeDoWith.LetMeDoWith.common.auth.factory.SocialProviderAuthFactory;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

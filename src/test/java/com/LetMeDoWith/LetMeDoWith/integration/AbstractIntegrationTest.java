@@ -1,7 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.integration;
 
-import com.LetMeDoWith.LetMeDoWith.application.auth.provider.AccessTokenProvider;
-import com.LetMeDoWith.LetMeDoWith.application.auth.provider.RefreshTokenProvider;
+import com.LetMeDoWith.LetMeDoWith.common.auth.provider.AccessTokenProvider;
+import com.LetMeDoWith.LetMeDoWith.common.auth.provider.RefreshTokenProvider;
 import com.LetMeDoWith.LetMeDoWith.common.dto.ResponseDto;
 import com.LetMeDoWith.LetMeDoWith.common.dto.ResponsePageDto;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.Gender;

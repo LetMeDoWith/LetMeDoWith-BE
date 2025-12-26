@@ -2,9 +2,9 @@ package com.LetMeDoWith.LetMeDoWith.integration.auth;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.LetMeDoWith.LetMeDoWith.application.auth.provider.AccessTokenProvider;
-import com.LetMeDoWith.LetMeDoWith.application.auth.provider.RefreshTokenProvider;
 import com.LetMeDoWith.LetMeDoWith.application.auth.service.CreateTokenService;
+import com.LetMeDoWith.LetMeDoWith.common.auth.provider.AccessTokenProvider;
+import com.LetMeDoWith.LetMeDoWith.common.auth.provider.RefreshTokenProvider;
 import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.integration.AbstractIntegrationTest;
 import com.LetMeDoWith.LetMeDoWith.presentation.auth.dto.CreateTokenRefreshReqDto;

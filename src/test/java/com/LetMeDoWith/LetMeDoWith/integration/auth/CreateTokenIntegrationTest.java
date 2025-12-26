@@ -8,14 +8,14 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.LetMeDoWith.LetMeDoWith.application.auth.dto.OidcPublicKeyResDto;
-import com.LetMeDoWith.LetMeDoWith.application.auth.dto.OidcPublicKeyResDto.OidcPublicKeyVO;
-import com.LetMeDoWith.LetMeDoWith.application.auth.provider.OidcIdTokenProvider;
-import com.LetMeDoWith.LetMeDoWith.application.auth.repository.RefreshTokenRepository;
+import com.LetMeDoWith.LetMeDoWith.common.auth.dto.OidcPublicKeyResDto;
+import com.LetMeDoWith.LetMeDoWith.common.auth.dto.OidcPublicKeyResDto.OidcPublicKeyVO;
+import com.LetMeDoWith.LetMeDoWith.common.auth.provider.OidcIdTokenProvider;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.auth.enums.SocialProvider;
+import com.LetMeDoWith.LetMeDoWith.domain.auth.repository.RefreshTokenRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.MemberSocialAccount;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.auth.client.KakaoAuthClient;

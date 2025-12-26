@@ -6,7 +6,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.LetMeDoWith.LetMeDoWith.application.auth.provider.AccessTokenProvider;
+import com.LetMeDoWith.LetMeDoWith.common.auth.provider.AccessTokenProvider;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.BadgeStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.Gender;

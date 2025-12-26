@@ -1,10 +1,10 @@
-package com.LetMeDoWith.LetMeDoWith.application.auth.provider;
+package com.LetMeDoWith.LetMeDoWith.common.auth.provider;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import com.LetMeDoWith.LetMeDoWith.application.auth.util.EncryptUtil;
-import com.LetMeDoWith.LetMeDoWith.application.auth.util.JwtUtil;
+import com.LetMeDoWith.LetMeDoWith.common.auth.util.EncryptUtil;
+import com.LetMeDoWith.LetMeDoWith.common.auth.util.JwtUtil;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiAuthException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.auth.model.AccessToken;
