@@ -1,8 +1,5 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.auth;
 
-import org.springframework.boot.test.context.SpringBootTest;
-
-@SpringBootTest()
 public class RedisTemplateTest {
 
     // @Autowired

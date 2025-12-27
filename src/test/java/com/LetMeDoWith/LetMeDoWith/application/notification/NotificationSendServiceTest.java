@@ -16,6 +16,7 @@ import com.LetMeDoWith.LetMeDoWith.infrastructure.member.persistence.jpaReposito
 import com.LetMeDoWith.LetMeDoWith.infrastructure.notification.persistence.jpaRepository.NotificationJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.notification.persistence.jpaRepository.NotificationTemplateJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.notification.persistence.jpaRepository.NotificationTokenJpaRepository;
+import com.LetMeDoWith.LetMeDoWith.support.ApiIntegrationTest;
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.Optional;
@@ -24,9 +25,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+@ApiIntegrationTest
 public class NotificationSendServiceTest {
 
     // TODO - 테스트 FCM 토큰 generator에서 발급 받은 토큰 세팅

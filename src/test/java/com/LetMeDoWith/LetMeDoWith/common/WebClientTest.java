@@ -1,15 +1,15 @@
 package com.LetMeDoWith.LetMeDoWith.common;
 
+import com.LetMeDoWith.LetMeDoWith.support.ApiIntegrationTest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
 
-@SpringBootTest
+@ApiIntegrationTest
 public class WebClientTest {
 
     @Autowired

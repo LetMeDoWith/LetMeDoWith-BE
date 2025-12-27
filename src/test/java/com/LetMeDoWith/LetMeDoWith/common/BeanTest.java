@@ -2,15 +2,15 @@ package com.LetMeDoWith.LetMeDoWith.common;
 
 import com.LetMeDoWith.LetMeDoWith.application.auth.service.CreateTokenService;
 import com.LetMeDoWith.LetMeDoWith.common.auth.factory.SocialProviderAuthFactory;
+import com.LetMeDoWith.LetMeDoWith.support.ApiIntegrationTest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 
-@SpringBootTest
+@ApiIntegrationTest
 public class BeanTest {
 
     @Autowired

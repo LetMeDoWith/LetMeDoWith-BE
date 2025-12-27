@@ -145,6 +145,7 @@ dependencies {
 
 import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
 import com.bmuschko.gradle.docker.tasks.image.DockerTagImage
+import org.springframework.boot.gradle.tasks.run.BootRun
 
 task buildDockerImage(type: DockerBuildImage) {
     group = "docker"
@@ -211,5 +212,28 @@ compileJava {
     options.compilerArgs += ['-parameters']
 }
 
+springBoot {
+    // bootJar/bootRun의 기본 main class는 API로 둔다.
+    mainClass = 'com.LetMeDoWith.LetMeDoWith.LetMeDoWithApiApplication'
+}
+
+tasks.named('bootRun', BootRun) {
+    mainClass.set('com.LetMeDoWith.LetMeDoWith.LetMeDoWithApiApplication')
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+tasks.register('bootRunApi', BootRun) {
+    group = 'application'
+    description = 'Run API application (port 8080)'
+    mainClass.set('com.LetMeDoWith.LetMeDoWith.LetMeDoWithApiApplication')
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+tasks.register('bootRunBatch', BootRun) {
+    group = 'application'
+    description = 'Run Batch application (port 8081, scheduling enabled)'
+    mainClass.set('com.LetMeDoWith.LetMeDoWith.LetMeDoWithBatchApplication')
+    classpath = sourceSets.main.runtimeClasspath
+}
 
 

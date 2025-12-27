@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.LetMeDoWith.LetMeDoWith.common.cache.CacheHelper;
 import com.LetMeDoWith.LetMeDoWith.common.cache.CacheName;
 import com.LetMeDoWith.LetMeDoWith.common.code.TestService;
+import com.LetMeDoWith.LetMeDoWith.support.ApiIntegrationTest;
 import java.util.List;
 import java.util.UUID;
 import lombok.Builder;
@@ -13,14 +14,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.CacheManager;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Slf4j
-@SpringBootTest
+@ApiIntegrationTest
 @ActiveProfiles("test")
 public class CacheTest {
 

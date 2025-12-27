@@ -8,6 +8,7 @@ import com.LetMeDoWith.LetMeDoWith.common.auth.util.JwtUtil;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiAuthException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.auth.model.AccessToken;
+import com.LetMeDoWith.LetMeDoWith.support.ApiIntegrationTest;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import java.math.BigInteger;
@@ -23,11 +24,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 @Slf4j
 // @ExtendWith(MockitoExtension.class)
-@SpringBootTest
+@ApiIntegrationTest
 class AccessTokenProviderTest {
 
     /*

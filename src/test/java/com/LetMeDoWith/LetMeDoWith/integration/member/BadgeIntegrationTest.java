@@ -20,6 +20,7 @@ import com.LetMeDoWith.LetMeDoWith.infrastructure.member.persistence.jpaReposito
 import com.LetMeDoWith.LetMeDoWith.infrastructure.member.persistence.jpaRepository.MemberBadgeJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.member.persistence.jpaRepository.MemberJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.UpdateMainBadgeReqDto;
+import com.LetMeDoWith.LetMeDoWith.support.ApiIntegrationTest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
@@ -30,7 +31,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
@@ -41,7 +41,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 @Slf4j
-@SpringBootTest
+@ApiIntegrationTest
 @ActiveProfiles("local")
 @AutoConfigureMockMvc
 public class BadgeIntegrationTest {
