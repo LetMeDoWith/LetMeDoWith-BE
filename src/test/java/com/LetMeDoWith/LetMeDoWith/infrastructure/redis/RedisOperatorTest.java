@@ -20,6 +20,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.QueryTimeoutException;
 import org.springframework.data.redis.core.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -93,10 +94,11 @@ class RedisOperatorTest {
         when(valueOperations.get(expectedFullKey)).thenReturn(expectedValue);
 
         // When
-        String result = redisOperator.get(policy, key, String.class);
+        Optional<String> result = redisOperator.get(policy, key, String.class);
 
         // Then
-        assertEquals(expectedValue, result);
+        assertTrue(result.isPresent());
+        assertEquals(expectedValue, result.get());
     }
 
     @Test
@@ -264,6 +266,53 @@ class RedisOperatorTest {
         assertEquals(expectedSet.size(), result.size());
         assertTrue(result.contains("value1"));
         assertTrue(result.contains("value2"));
+    }
+
+    @Test
+    @DisplayName("execute(Supplier) - 성공 케이스")
+    void testExecuteSupplier_Success() {
+        // Given
+        String expectedValue = "success";
+
+        // When
+        Optional<String> result = redisOperator.execute(() -> expectedValue);
+
+        // Then
+        assertTrue(result.isPresent());
+        assertEquals(expectedValue, result.get());
+    }
+
+    @Test
+    @DisplayName("execute(Supplier) - 예외 발생 시 Optional.empty() 반환")
+    void testExecuteSupplier_Exception() {
+        // Given
+        // When
+        Optional<String> result = redisOperator.execute(() -> {
+            throw new QueryTimeoutException("Redis Error");
+        });
+
+        // Then
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    @DisplayName("execute(Runnable) - 성공 케이스")
+    void testExecuteRunnable_Success() {
+        // Given
+        // When & Then
+        assertDoesNotThrow(() -> redisOperator.execute(() -> {
+            // do nothing
+        }));
+    }
+
+    @Test
+    @DisplayName("execute(Runnable) - 예외 발생 시 예외 무시")
+    void testExecuteRunnable_Exception() {
+        // Given
+        // When & Then
+        assertDoesNotThrow(() -> redisOperator.execute((Runnable) () -> {
+            throw new QueryTimeoutException("Redis Error");
+        }));
     }
 
     // 테스트용 DTO
