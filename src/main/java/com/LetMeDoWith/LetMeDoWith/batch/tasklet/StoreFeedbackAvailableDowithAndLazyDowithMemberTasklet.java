@@ -40,14 +40,13 @@ public class StoreFeedbackAvailableDowithAndLazyDowithMemberTasklet implements T
         List<FeedbackAvailableDowithTaskQueryDto> dowithTaskList =
                 feedQueryRepository.getFeedbackAvailableDowithTasks(targetDateTime);
 
-        // 레이지 두윗러 목록 계산
-        List<Long> lazyDowithIdList = dowithTaskList.stream()
+        // 두윗 id 인덱스 계산
+        List<Long> dowithIdList = dowithTaskList.stream()
                 .map(FeedbackAvailableDowithTaskQueryDto::id)
-                .limit(15)
                 .toList();
 
-        // 레이지 두윗러 및 잔소리 대상 두윗 Redis 적재
-        redisOperator.pushRightAll(CachePolicy.LAZY_DOWITH_TASK_MEMBERS, "", lazyDowithIdList);
+        // 잔소리 대상 두윗 및 id 인덱스 Redis 적재
+        redisOperator.pushRightAll(CachePolicy.DOWITH_TASK_IDS, "", dowithIdList);
         redisOperator.putHashes(CachePolicy.DOWITH_TASK, dowithTaskList, dto -> String.valueOf(dto.id()));
 
         return RepeatStatus.FINISHED;

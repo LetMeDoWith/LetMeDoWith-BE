@@ -140,12 +140,12 @@ public class RedisOperator {
         });
     }
 
-    public <T> List<T> getList(CachePolicySpec policy, String key, Class<T> clazz) {
+    public <T> List<T> getList(CachePolicySpec policy, String key, long start, long end, Class<T> clazz) {
         validatePolicy(policy, RedisValueType.LIST);
         String fullKey = buildKey(policy, key);
 
         return execute(() -> {
-                    List<Object> rawList = redisTemplate.opsForList().range(fullKey, 0, -1);
+                    List<Object> rawList = redisTemplate.opsForList().range(fullKey, start, end);
                     if (rawList == null || rawList.isEmpty()) {
                         return Collections.<T>emptyList();
                     }
