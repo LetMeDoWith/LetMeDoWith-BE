@@ -265,33 +265,33 @@ public class RedisOperator {
      * @param keys   조회할 Key 식별자 목록
      * @param clazz  DTO 타입
      * @param <T>    DTO 타입
-     * @return 조회된 DTO 리스트 (중간에 실패하거나 없는 경우 해당 항목 제외, 전체 실패 시 Empty Optional)
+     * @return 조회된 DTO 리스트 (중간에 실패하거나 없는 경우 해당 항목 제외, 전체 실패 시 Empty List)
      */
-    public <T> Optional<List<T>> getHashes(CachePolicySpec policy, List<String> keys, Class<T> clazz) {
+    public <T> List<T> getHashes(CachePolicySpec policy, List<String> keys, Class<T> clazz) {
         validatePolicy(policy, RedisValueType.HASH);
         if (keys == null || keys.isEmpty()) {
-            return Optional.of(Collections.emptyList());
+            return Collections.emptyList();
         }
 
         return execute(() -> {
-            List<Object> results = redisTemplate.executePipelined(new SessionCallback<Object>() {
-                @Override
-                public <K, V> Object execute(RedisOperations<K, V> operations) throws DataAccessException {
-                    RedisTemplate<String, Object> template = (RedisTemplate<String, Object>) operations;
-                    for (String key : keys) {
-                        template.opsForHash().entries(buildKey(policy, key));
-                    }
-                    return null;
-                }
-            });
+                    List<Object> results = redisTemplate.executePipelined(new SessionCallback<Object>() {
+                        @Override
+                        public <K, V> Object execute(RedisOperations<K, V> operations) throws DataAccessException {
+                            RedisTemplate<String, Object> template = (RedisTemplate<String, Object>) operations;
+                            for (String key : keys) {
+                                template.opsForHash().entries(buildKey(policy, key));
+                            }
+                            return null;
+                        }
+                    });
 
-            // executePipelined는 항상 List를 반환하지만, 만약의 경우를 대비해 null 체크를 제거하고
-            // Stream 연산에서 타입 체크를 강화함
-            return results.stream()
-                    .filter(obj -> obj instanceof Map && !((Map<?, ?>) obj).isEmpty())
-                    .map(obj -> objectMapper.convertValue(obj, clazz))
-                    .collect(Collectors.toList());
-        });
+                    // executePipelined는 항상 List를 반환
+                    return results.stream()
+                            .filter(obj -> obj instanceof Map && !((Map<?, ?>) obj).isEmpty())
+                            .map(obj -> objectMapper.convertValue(obj, clazz))
+                            .collect(Collectors.toList());
+                })
+                .orElseGet(Collections::emptyList);
     }
 
     public <T> void putHashField(CachePolicySpec policy, String key, String field, T value) {
