@@ -169,6 +169,34 @@ class RedisOperatorTest {
     }
 
     @Test
+    @DisplayName("Hash Ops - GetHashes (Pipeline) 성공")
+    void testGetHashes_Pipeline_Success() {
+        // Given
+        CachePolicy policy = CachePolicy.DOWITH_TASK;
+        List<String> keys = Arrays.asList("user1", "user2");
+        Map<String, Object> map1 = new HashMap<>();
+        map1.put("name", "user1");
+        map1.put("age", 10);
+        Map<String, Object> map2 = new HashMap<>();
+        map2.put("name", "user2");
+        map2.put("age", 20);
+
+        List<Object> pipelineResults = Arrays.asList(map1, map2);
+
+        when(redisTemplate.executePipelined(any(RedisCallback.class))).thenReturn(pipelineResults);
+
+        // When
+        Optional<List<TestDto>> result = redisOperator.getHashes(policy, keys, TestDto.class);
+
+        // Then
+        assertTrue(result.isPresent());
+        assertEquals(2, result.get().size());
+        assertEquals("user1", result.get().get(0).getName());
+        assertEquals("user2", result.get().get(1).getName());
+        verify(redisTemplate).executePipelined(any(RedisCallback.class));
+    }
+
+    @Test
     @DisplayName("Hash Ops - PutHashField 성공")
     void testPutHashField_Success() {
         // Given
