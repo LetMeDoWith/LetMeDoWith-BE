@@ -9,8 +9,8 @@ public enum CachePolicy implements CachePolicySpec {
     GOOGLE_PUBLIC_KEY(CacheName.GOOGLE_PUBLIC_KEY, RedisValueType.STRING, Duration.ofDays(7)),
     KAKAO_PUBLIC_KEY(CacheName.KAKAO_PUBLIC_KEY, RedisValueType.STRING, Duration.ofDays(7)),
 
-    DOWITH_TASK(CacheName.DOWITH_TASK, RedisValueType.HASH, Duration.ofDays(14)),
-    LAZY_DOWITH_TASK_MEMBERS(CacheName.LAZY_DOWITH_TASK_MEMBERS, RedisValueType.LIST, null);
+    DOWITH_TASK(CacheName.DOWITH_TASK, RedisValueType.HASH, Duration.ofHours(1)),
+    DOWITH_TASK_IDS(CacheName.DOWITH_TASK_IDS, RedisValueType.LIST, Duration.ofHours(1));
 
     private final String cacheName;
     private final RedisValueType redisValueType;

@@ -1,15 +1,32 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.redis;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import com.LetMeDoWith.LetMeDoWith.common.cache.CachePolicy;
 import com.LetMeDoWith.LetMeDoWith.common.cache.CachePolicySpec;
 import com.LetMeDoWith.LetMeDoWith.common.cache.RedisValueType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Duration;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,7 +38,12 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.QueryTimeoutException;
-import org.springframework.data.redis.core.*;
+import org.springframework.data.redis.core.HashOperations;
+import org.springframework.data.redis.core.ListOperations;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.SessionCallback;
+import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.data.redis.core.ZSetOperations;
 
 @ExtendWith(MockitoExtension.class)
 class RedisOperatorTest {
@@ -118,7 +140,7 @@ class RedisOperatorTest {
     @DisplayName("List Ops - PushRightAll 성공")
     void testPushRightAll_Success() {
         // Given
-        CachePolicy policy = CachePolicy.LAZY_DOWITH_TASK_MEMBERS; // LIST type
+        CachePolicy policy = CachePolicy.DOWITH_TASK_IDS; // LIST type
         String key = "listKey";
         List<Object> list = Arrays.asList("item1", "item2");
         String expectedFullKey = policy.cacheName() + "::" + key;
@@ -345,6 +367,7 @@ class RedisOperatorTest {
 
     // 테스트용 DTO
     static class TestDto {
+
         private String name;
         private int age;
 
