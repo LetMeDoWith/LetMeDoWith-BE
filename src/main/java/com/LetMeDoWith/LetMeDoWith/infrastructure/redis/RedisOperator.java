@@ -16,8 +16,9 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
-import org.springframework.data.redis.core.RedisCallback;
+import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.SessionCallback;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -236,19 +237,24 @@ public class RedisOperator {
             return;
         }
 
-        execute(() -> redisTemplate.executePipelined((RedisCallback<Object>) connection -> {
-            for (T dto : dtoList) {
-                String key = keyMapper.apply(dto);
-                String fullKey = buildKey(policy, key);
+        execute(() -> redisTemplate.executePipelined(new SessionCallback<Object>() {
+            @Override
+            public <K, V> Object execute(RedisOperations<K, V> operations) throws DataAccessException {
+                RedisTemplate<String, Object> template = (RedisTemplate<String, Object>) operations;
+                for (T dto : dtoList) {
+                    String key = keyMapper.apply(dto);
+                    String fullKey = buildKey(policy, key);
 
-                Map<String, Object> map = objectMapper.convertValue(dto, new TypeReference<Map<String, Object>>() {});
-                redisTemplate.opsForHash().putAll(fullKey, map);
+                    Map<String, Object> map =
+                            objectMapper.convertValue(dto, new TypeReference<Map<String, Object>>() {});
+                    template.opsForHash().putAll(fullKey, map);
 
-                if (policy.ttl() != null) {
-                    redisTemplate.expire(fullKey, policy.ttl().toMillis(), TimeUnit.MILLISECONDS);
+                    if (policy.ttl() != null) {
+                        template.expire(fullKey, policy.ttl().toMillis(), TimeUnit.MILLISECONDS);
+                    }
                 }
+                return null;
             }
-            return null;
         }));
     }
 
@@ -268,20 +274,21 @@ public class RedisOperator {
         }
 
         return execute(() -> {
-            List<Object> results = redisTemplate.executePipelined((RedisCallback<Object>) connection -> {
-                for (String key : keys) {
-                    String fullKey = buildKey(policy, key);
-                    connection.hGetAll(fullKey.getBytes());
+            List<Object> results = redisTemplate.executePipelined(new SessionCallback<Object>() {
+                @Override
+                public <K, V> Object execute(RedisOperations<K, V> operations) throws DataAccessException {
+                    RedisTemplate<String, Object> template = (RedisTemplate<String, Object>) operations;
+                    for (String key : keys) {
+                        template.opsForHash().entries(buildKey(policy, key));
+                    }
+                    return null;
                 }
-                return null;
             });
 
-            if (results == null) {
-                return Collections.emptyList();
-            }
-
+            // executePipelined는 항상 List를 반환하지만, 만약의 경우를 대비해 null 체크를 제거하고
+            // Stream 연산에서 타입 체크를 강화함
             return results.stream()
-                    .filter(obj -> obj != null && !((Map<?, ?>) obj).isEmpty())
+                    .filter(obj -> obj instanceof Map && !((Map<?, ?>) obj).isEmpty())
                     .map(obj -> objectMapper.convertValue(obj, clazz))
                     .collect(Collectors.toList());
         });
