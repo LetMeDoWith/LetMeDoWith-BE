@@ -165,7 +165,8 @@ class RedisOperatorTest {
         redisOperator.putHashes(policy, dtoList, keyMapper);
 
         // Then
-        verify(redisTemplate).executePipelined(any(RedisCallback.class));
+        // SessionCallback을 사용하도록 변경되었으므로 검증 대상 변경
+        verify(redisTemplate).executePipelined(any(SessionCallback.class));
     }
 
     @Test
@@ -183,7 +184,8 @@ class RedisOperatorTest {
 
         List<Object> pipelineResults = Arrays.asList(map1, map2);
 
-        when(redisTemplate.executePipelined(any(RedisCallback.class))).thenReturn(pipelineResults);
+        // SessionCallback을 사용하는 executePipelined 호출 시 mock 리턴 설정
+        when(redisTemplate.executePipelined(any(SessionCallback.class))).thenReturn(pipelineResults);
 
         // When
         Optional<List<TestDto>> result = redisOperator.getHashes(policy, keys, TestDto.class);
@@ -193,7 +195,7 @@ class RedisOperatorTest {
         assertEquals(2, result.get().size());
         assertEquals("user1", result.get().get(0).getName());
         assertEquals("user2", result.get().get(1).getName());
-        verify(redisTemplate).executePipelined(any(RedisCallback.class));
+        verify(redisTemplate).executePipelined(any(SessionCallback.class));
     }
 
     @Test
