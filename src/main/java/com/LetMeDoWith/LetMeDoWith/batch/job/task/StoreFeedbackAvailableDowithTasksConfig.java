@@ -1,6 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.batch.job.task;
 
-import com.LetMeDoWith.LetMeDoWith.batch.tasklet.StoreFeedbackAvailableDowithAndLazyDowithMemberTasklet;
+import com.LetMeDoWith.LetMeDoWith.batch.tasklet.StoreFeedbackAvailableDowithTasksTasklet;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -14,26 +14,24 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
 @RequiredArgsConstructor
-public class StoreFeedbackAvailableDowithAndLazyDowithMemberJobConfig {
+public class StoreFeedbackAvailableDowithTasksConfig {
 
-    private final String JOB_NAME = "storeFeedbackAvailableDowithAndLazyDowithMemberJob";
-    private final String STEP_NAME = "storeFeedbackAvailableDowithAndLazyDowithMemberStep";
+    private final String JOB_NAME = "storeFeedbackAvailableDowithTasksJob";
+    private final String STEP_NAME = "storeFeedbackAvailableDowithTasksStep";
 
     private final JobRepository jobRepository;
     private final PlatformTransactionManager platformTransactionManager;
 
     @Bean
-    public Job storeFeedbackAvailableDowithAndLazyDowithMemberJob(
-            Step storeFeedbackAvailableDowithAndLazyDowithMemberStep) {
+    public Job storeFeedbackAvailableDowithTasksJob(Step storeFeedbackAvailableDowithTasksStep) {
         return new JobBuilder(JOB_NAME, jobRepository)
-                .start(storeFeedbackAvailableDowithAndLazyDowithMemberStep)
+                .start(storeFeedbackAvailableDowithTasksStep)
                 .build();
     }
 
     @Bean
     @JobScope
-    public Step storeFeedbackAvailableDowithAndLazyDowithMemberStep(
-            StoreFeedbackAvailableDowithAndLazyDowithMemberTasklet tasklet) {
+    public Step storeFeedbackAvailableDowithTasksStep(StoreFeedbackAvailableDowithTasksTasklet tasklet) {
         return new StepBuilder(STEP_NAME, jobRepository)
                 .tasklet(tasklet, platformTransactionManager)
                 .build();

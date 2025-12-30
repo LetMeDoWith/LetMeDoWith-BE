@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 @Component
 @StepScope
 @RequiredArgsConstructor
-public class StoreFeedbackAvailableDowithAndLazyDowithMemberTasklet implements Tasklet {
+public class StoreFeedbackAvailableDowithTasksTasklet implements Tasklet {
 
     private final FeedQueryRepository feedQueryRepository;
     private final RedisOperator redisOperator;
