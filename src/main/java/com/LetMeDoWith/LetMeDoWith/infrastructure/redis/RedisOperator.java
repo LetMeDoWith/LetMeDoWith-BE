@@ -252,6 +252,41 @@ public class RedisOperator {
         }));
     }
 
+    /**
+     * 다건의 DTO를 각각 별도의 Redis Key(Hash)에서 일괄 조회 (Pipelining 적용)
+     *
+     * @param policy CachePolicySpec
+     * @param keys   조회할 Key 식별자 목록
+     * @param clazz  DTO 타입
+     * @param <T>    DTO 타입
+     * @return 조회된 DTO 리스트 (중간에 실패하거나 없는 경우 해당 항목 제외, 전체 실패 시 Empty Optional)
+     */
+    public <T> Optional<List<T>> getHashes(CachePolicySpec policy, List<String> keys, Class<T> clazz) {
+        validatePolicy(policy, RedisValueType.HASH);
+        if (keys == null || keys.isEmpty()) {
+            return Optional.of(Collections.emptyList());
+        }
+
+        return execute(() -> {
+            List<Object> results = redisTemplate.executePipelined((RedisCallback<Object>) connection -> {
+                for (String key : keys) {
+                    String fullKey = buildKey(policy, key);
+                    connection.hGetAll(fullKey.getBytes());
+                }
+                return null;
+            });
+
+            if (results == null) {
+                return Collections.emptyList();
+            }
+
+            return results.stream()
+                    .filter(obj -> obj != null && !((Map<?, ?>) obj).isEmpty())
+                    .map(obj -> objectMapper.convertValue(obj, clazz))
+                    .collect(Collectors.toList());
+        });
+    }
+
     public <T> void putHashField(CachePolicySpec policy, String key, String field, T value) {
         validatePolicy(policy, RedisValueType.HASH);
         String fullKey = buildKey(policy, key);
