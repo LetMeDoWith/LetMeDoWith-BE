@@ -7,12 +7,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
@@ -62,6 +65,36 @@ public class RedisOperator {
         }
     }
 
+    /**
+     * Redis 작업을 수행하되, 실패하거나 값이 없으면 빈 Optional을 반환한다. (예외를 로그로 남기고 안전하게 무시함)
+     *
+     * @param operation Redis 수행 로직 (Lambda)
+     * @param <T>       반환 타입
+     * @return Redis 값 또는 Optional.empty()
+     */
+    public <T> Optional<T> execute(Supplier<T> operation) {
+        try {
+            T result = operation.get();
+            return Optional.ofNullable(result);
+        } catch (DataAccessException e) {
+            log.warn("Redis Operation Failed. Cause: {}", e.getMessage());
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * 반환값이 없는(void) Redis 작업(저장/삭제)을 안전하게 수행한다. 실패 시 로그만 남기고 진행 (Fire and Forget)
+     *
+     * @param operation Redis 수행 로직 (Lambda)
+     */
+    public void execute(Runnable operation) {
+        try {
+            operation.run();
+        } catch (DataAccessException e) {
+            log.warn("Redis Write/Delete Operation Failed. Cause: {}", e.getMessage());
+        }
+    }
+
     // ==================================================================================
     // Value Ops (String/Object)
     // ==================================================================================
@@ -70,19 +103,23 @@ public class RedisOperator {
         validatePolicy(policy, RedisValueType.STRING);
         String fullKey = buildKey(policy, key);
 
-        redisTemplate.opsForValue().set(fullKey, value);
-        applyTtl(fullKey, policy);
+        execute(() -> {
+            redisTemplate.opsForValue().set(fullKey, value);
+            applyTtl(fullKey, policy);
+        });
     }
 
-    public <T> T get(CachePolicySpec policy, String key, Class<T> clazz) {
+    public <T> Optional<T> get(CachePolicySpec policy, String key, Class<T> clazz) {
         validatePolicy(policy, RedisValueType.STRING);
         String fullKey = buildKey(policy, key);
 
-        Object value = redisTemplate.opsForValue().get(fullKey);
-        if (value == null) {
-            return null;
-        }
-        return objectMapper.convertValue(value, clazz);
+        return execute(() -> {
+            Object value = redisTemplate.opsForValue().get(fullKey);
+            if (value == null) {
+                return null;
+            }
+            return objectMapper.convertValue(value, clazz);
+        });
     }
 
     // ==================================================================================
@@ -96,31 +133,34 @@ public class RedisOperator {
         }
         String fullKey = buildKey(policy, key);
 
-        redisTemplate.opsForList().rightPushAll(fullKey, (List<Object>) list);
-        applyTtl(fullKey, policy);
+        execute(() -> {
+            redisTemplate.opsForList().rightPushAll(fullKey, (List<Object>) list);
+            applyTtl(fullKey, policy);
+        });
     }
 
     public <T> List<T> getList(CachePolicySpec policy, String key, Class<T> clazz) {
         validatePolicy(policy, RedisValueType.LIST);
         String fullKey = buildKey(policy, key);
 
-        List<Object> rawList = redisTemplate.opsForList().range(fullKey, 0, -1);
-        if (rawList == null || rawList.isEmpty()) {
-            return Collections.emptyList();
-        }
+        return execute(() -> {
+                    List<Object> rawList = redisTemplate.opsForList().range(fullKey, 0, -1);
+                    if (rawList == null || rawList.isEmpty()) {
+                        return Collections.<T>emptyList();
+                    }
 
-        return rawList.stream()
-                .map(item -> objectMapper.convertValue(item, clazz))
-                .collect(Collectors.toList());
+                    return rawList.stream()
+                            .map(item -> objectMapper.convertValue(item, clazz))
+                            .collect(Collectors.toList());
+                })
+                .orElseGet(Collections::emptyList);
     }
 
     public <T> void removeList(CachePolicySpec policy, String key, T value) {
         validatePolicy(policy, RedisValueType.LIST);
         String fullKey = buildKey(policy, key);
 
-        // count > 0: 처음부터 count개 만큼 삭제, count < 0: 끝에서부터, count = 0: 모든 value 삭제
-        // 여기서는 1개만 지우는 것으로 가정 (필요시 파라미터화 가능하지만 일단 1로 고정)
-        redisTemplate.opsForList().remove(fullKey, 1, value);
+        execute(() -> redisTemplate.opsForList().remove(fullKey, 1, value));
     }
 
     // ==================================================================================
@@ -131,22 +171,27 @@ public class RedisOperator {
         validatePolicy(policy, RedisValueType.ZSET);
         String fullKey = buildKey(policy, key);
 
-        redisTemplate.opsForZSet().add(fullKey, value, score);
-        applyTtl(fullKey, policy);
+        execute(() -> {
+            redisTemplate.opsForZSet().add(fullKey, value, score);
+            applyTtl(fullKey, policy);
+        });
     }
 
     public <T> Set<T> zRange(CachePolicySpec policy, String key, long start, long end, Class<T> clazz) {
         validatePolicy(policy, RedisValueType.ZSET);
         String fullKey = buildKey(policy, key);
 
-        Set<Object> rawSet = redisTemplate.opsForZSet().range(fullKey, start, end);
-        if (rawSet == null || rawSet.isEmpty()) {
-            return Collections.emptySet();
-        }
+        return execute(() -> {
+                    Set<Object> rawSet = redisTemplate.opsForZSet().range(fullKey, start, end);
+                    if (rawSet == null || rawSet.isEmpty()) {
+                        return Collections.<T>emptySet();
+                    }
 
-        return rawSet.stream()
-                .map(item -> objectMapper.convertValue(item, clazz))
-                .collect(Collectors.toSet());
+                    return rawSet.stream()
+                            .map(item -> objectMapper.convertValue(item, clazz))
+                            .collect(Collectors.toSet());
+                })
+                .orElseGet(Collections::emptySet);
     }
 
     // ==================================================================================
@@ -157,20 +202,24 @@ public class RedisOperator {
         validatePolicy(policy, RedisValueType.HASH);
         String fullKey = buildKey(policy, key);
 
-        Map<String, Object> map = objectMapper.convertValue(dto, new TypeReference<Map<String, Object>>() {});
-        redisTemplate.opsForHash().putAll(fullKey, map);
-        applyTtl(fullKey, policy);
+        execute(() -> {
+            Map<String, Object> map = objectMapper.convertValue(dto, new TypeReference<Map<String, Object>>() {});
+            redisTemplate.opsForHash().putAll(fullKey, map);
+            applyTtl(fullKey, policy);
+        });
     }
 
-    public <T> T getHash(CachePolicySpec policy, String key, Class<T> clazz) {
+    public <T> Optional<T> getHash(CachePolicySpec policy, String key, Class<T> clazz) {
         validatePolicy(policy, RedisValueType.HASH);
         String fullKey = buildKey(policy, key);
 
-        Map<Object, Object> entries = redisTemplate.opsForHash().entries(fullKey);
-        if (entries.isEmpty()) {
-            return null;
-        }
-        return objectMapper.convertValue(entries, clazz);
+        return execute(() -> {
+            Map<Object, Object> entries = redisTemplate.opsForHash().entries(fullKey);
+            if (entries.isEmpty()) {
+                return null;
+            }
+            return objectMapper.convertValue(entries, clazz);
+        });
     }
 
     /**
@@ -187,7 +236,7 @@ public class RedisOperator {
             return;
         }
 
-        redisTemplate.executePipelined((RedisCallback<Object>) connection -> {
+        execute(() -> redisTemplate.executePipelined((RedisCallback<Object>) connection -> {
             for (T dto : dtoList) {
                 String key = keyMapper.apply(dto);
                 String fullKey = buildKey(policy, key);
@@ -200,32 +249,36 @@ public class RedisOperator {
                 }
             }
             return null;
-        });
+        }));
     }
 
     public <T> void putHashField(CachePolicySpec policy, String key, String field, T value) {
         validatePolicy(policy, RedisValueType.HASH);
         String fullKey = buildKey(policy, key);
 
-        redisTemplate.opsForHash().put(fullKey, field, value);
-        applyTtl(fullKey, policy);
+        execute(() -> {
+            redisTemplate.opsForHash().put(fullKey, field, value);
+            applyTtl(fullKey, policy);
+        });
     }
 
-    public <T> T getHashField(CachePolicySpec policy, String key, String field, Class<T> clazz) {
+    public <T> Optional<T> getHashField(CachePolicySpec policy, String key, String field, Class<T> clazz) {
         validatePolicy(policy, RedisValueType.HASH);
         String fullKey = buildKey(policy, key);
 
-        Object value = redisTemplate.opsForHash().get(fullKey, field);
-        if (value == null) {
-            return null;
-        }
-        return objectMapper.convertValue(value, clazz);
+        return execute(() -> {
+            Object value = redisTemplate.opsForHash().get(fullKey, field);
+            if (value == null) {
+                return null;
+            }
+            return objectMapper.convertValue(value, clazz);
+        });
     }
 
     public void deleteHashField(CachePolicySpec policy, String key, String field) {
         validatePolicy(policy, RedisValueType.HASH);
         String fullKey = buildKey(policy, key);
 
-        redisTemplate.opsForHash().delete(fullKey, field);
+        execute(() -> redisTemplate.opsForHash().delete(fullKey, field));
     }
 }
