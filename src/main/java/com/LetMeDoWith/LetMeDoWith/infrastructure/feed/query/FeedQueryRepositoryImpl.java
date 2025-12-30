@@ -12,6 +12,7 @@ import com.LetMeDoWith.LetMeDoWith.infrastructure.feed.query.dto.FeedbackAvailab
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -33,7 +34,8 @@ public class FeedQueryRepositoryImpl implements FeedQueryRepository {
     private final QBadge badge = QBadge.badge;
 
     @Override
-    public List<FeedbackAvailableDowithTaskQueryDto> getFeedbackAvailableDowithTasks(LocalDateTime referenceDateTime) {
+    public List<FeedbackAvailableDowithTaskQueryDto> getFeedbackAvailableDowithTasks(
+            LocalDateTime referenceDateTime, Long limit) {
 
         LocalDateTime now = referenceDateTime != null ? referenceDateTime : SystemTimeUtil.now();
 
@@ -60,7 +62,7 @@ public class FeedQueryRepositoryImpl implements FeedQueryRepository {
                     .or(dowithTask.date.eq(today).and(dowithTask.startTime.loe(nowTime))));
         }
 
-        return queryFactory
+        JPAQuery<FeedbackAvailableDowithTaskQueryDto> query = queryFactory
                 .select(Projections.constructor(
                         FeedbackAvailableDowithTaskQueryDto.class,
                         dowithTask.id,
@@ -81,7 +83,17 @@ public class FeedQueryRepositoryImpl implements FeedQueryRepository {
                 .leftJoin(badge)
                 .on(badge.id.eq(memberBadge.badge.id))
                 .where(condition)
-                .orderBy(dowithTask.date.desc(), dowithTask.startTime.desc())
-                .fetch();
+                .orderBy(dowithTask.date.desc(), dowithTask.startTime.desc());
+
+        if (limit != null) {
+            query.limit(limit);
+        }
+
+        return query.fetch();
+    }
+
+    @Override
+    public List<FeedbackAvailableDowithTaskQueryDto> getFeedbackAvailableDowithTasks(LocalDateTime referenceDateTime) {
+        return getFeedbackAvailableDowithTasks(referenceDateTime, null);
     }
 }

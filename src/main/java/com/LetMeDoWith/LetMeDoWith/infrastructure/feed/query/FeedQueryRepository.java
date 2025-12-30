@@ -6,5 +6,8 @@ import java.util.List;
 
 public interface FeedQueryRepository {
 
+    List<FeedbackAvailableDowithTaskQueryDto> getFeedbackAvailableDowithTasks(
+            LocalDateTime referenceDateTime, Long limit);
+
     List<FeedbackAvailableDowithTaskQueryDto> getFeedbackAvailableDowithTasks(LocalDateTime referenceDateTime);
 }
