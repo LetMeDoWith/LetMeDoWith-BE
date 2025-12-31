@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import java.time.LocalTime;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,10 +20,11 @@ public class JacksonConfig {
 
         // Timestamp로 출력하지 않고 ISO 8601 문자열로 출력
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        // null 필드는 JSON에서 생략함
-        //        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
+        // LocalTime Serializer/Deserializer 등록 (DateTimeUtil 포맷터 사용)
         module.addDeserializer(LocalTime.class, new LocalTimeDeserializer(DateTimeUtil.getLocalTimeFormatter()));
+        module.addSerializer(LocalTime.class, new LocalTimeSerializer(DateTimeUtil.getLocalTimeFormatter()));
+
         // Java 8 시간 모듈 등록
         mapper.registerModule(module);
 

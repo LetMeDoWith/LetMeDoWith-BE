@@ -23,22 +23,21 @@ public class FeedService {
      * @return 잔소리 대상 두윗
      */
     public RetrieveFeedbackAvailableDowithTasksResult retreiveFeedbackAvailableDowithTasks() {
-        List<String> dowithTaskIds = redisOperator.getList(CachePolicy.DOWITH_TASK_IDS, "", 0, -1,
-            String.class);
+        List<String> dowithTaskIds = redisOperator.getList(CachePolicy.DOWITH_TASK_IDS, "", 0, -1, String.class);
 
         // fallback
         if (dowithTaskIds.isEmpty()) {
             return RetrieveFeedbackAvailableDowithTasksResult.from(
-                feedQueryRepository.getFeedbackAvailableDowithTasks(SystemTimeUtil.now()));
+                    feedQueryRepository.getFeedbackAvailableDowithTasks(SystemTimeUtil.now()));
         }
 
         List<FeedbackAvailableDowithTaskQueryDto> feedbackAvailableDowithTasks = redisOperator.getHashes(
-            CachePolicy.DOWITH_TASK, dowithTaskIds, FeedbackAvailableDowithTaskQueryDto.class);
+                CachePolicy.DOWITH_TASK, dowithTaskIds, FeedbackAvailableDowithTaskQueryDto.class);
 
         // fallback
         if (feedbackAvailableDowithTasks.isEmpty()) {
             return RetrieveFeedbackAvailableDowithTasksResult.from(
-                feedQueryRepository.getFeedbackAvailableDowithTasks(SystemTimeUtil.now()));
+                    feedQueryRepository.getFeedbackAvailableDowithTasks(SystemTimeUtil.now()));
         }
 
         return RetrieveFeedbackAvailableDowithTasksResult.from(feedbackAvailableDowithTasks);
