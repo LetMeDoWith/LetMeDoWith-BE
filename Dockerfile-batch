@@ -1,0 +1,25 @@
+# Base image
+FROM bellsoft/liberica-openjdk-alpine:17
+
+
+# JAR 파일 복사
+ARG JAR_FILE=./build/libs/*-batch.jar
+COPY ${JAR_FILE} LetMeDoWith-batch.jar
+
+# 타임존 & JVM 옵션 (GC 로그, 힙덤프, JFR)
+ENV TZ=Asia/Seoul
+ENV JAVA_TOOL_OPTIONS="\
+ -Duser.timezone=Asia/Seoul \
+ -XX:+UseContainerSupport \
+ -XX:MaxRAMPercentage=60 -XX:InitialRAMPercentage=30 \
+ -Xlog:gc*:file=/var/logs/gc/gc-%t.log:time,level,tags,uptime:filecount=5,filesize=20m \
+ -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/var/logs/heap/heap.hprof \
+ -XX:StartFlightRecording=filename=/var/logs/jfr/app.jfr,settings=profile,maxage=2d,maxsize=256m,dumponexit=true \
+"
+
+# 포트 오픈 (Batch는 Web 포트가 필수적인지 확인 필요하지만, 모니터링이나 트리거용으로 열어둘 수 있음. 기본 8081 가정)
+EXPOSE 8081
+
+# 실행
+ENTRYPOINT ["java", "-jar", "LetMeDoWith-batch.jar"]
+
