@@ -63,8 +63,8 @@ public class RedisOperator {
     private void validatePolicy(CachePolicySpec policy, RedisValueType expectedType) {
         if (policy.redisValueType() != expectedType) {
             throw new IllegalArgumentException(String.format(
-                "Invalid CachePolicy. Expected: %s, Actual: %s, Policy: %s",
-                expectedType, policy.redisValueType(), policy.name()));
+                    "Invalid CachePolicy. Expected: %s, Actual: %s, Policy: %s",
+                    expectedType, policy.redisValueType(), policy.name()));
         }
     }
 
@@ -142,22 +142,21 @@ public class RedisOperator {
         });
     }
 
-    public <T> List<T> getList(CachePolicySpec policy, String key, long start, long end,
-        Class<T> clazz) {
+    public <T> List<T> getList(CachePolicySpec policy, String key, long start, long end, Class<T> clazz) {
         validatePolicy(policy, RedisValueType.LIST);
         String fullKey = buildKey(policy, key);
 
         return execute(() -> {
-            List<Object> rawList = redisTemplate.opsForList().range(fullKey, start, end);
-            if (rawList == null || rawList.isEmpty()) {
-                return Collections.<T>emptyList();
-            }
+                    List<Object> rawList = redisTemplate.opsForList().range(fullKey, start, end);
+                    if (rawList == null || rawList.isEmpty()) {
+                        return Collections.<T>emptyList();
+                    }
 
-            return rawList.stream()
-                .map(item -> objectMapper.convertValue(item, clazz))
-                .collect(Collectors.toList());
-        })
-            .orElseGet(Collections::emptyList);
+                    return rawList.stream()
+                            .map(item -> objectMapper.convertValue(item, clazz))
+                            .collect(Collectors.toList());
+                })
+                .orElseGet(Collections::emptyList);
     }
 
     public <T> void removeList(CachePolicySpec policy, String key, T value) {
@@ -181,22 +180,21 @@ public class RedisOperator {
         });
     }
 
-    public <T> Set<T> zRange(CachePolicySpec policy, String key, long start, long end,
-        Class<T> clazz) {
+    public <T> Set<T> zRange(CachePolicySpec policy, String key, long start, long end, Class<T> clazz) {
         validatePolicy(policy, RedisValueType.ZSET);
         String fullKey = buildKey(policy, key);
 
         return execute(() -> {
-            Set<Object> rawSet = redisTemplate.opsForZSet().range(fullKey, start, end);
-            if (rawSet == null || rawSet.isEmpty()) {
-                return Collections.<T>emptySet();
-            }
+                    Set<Object> rawSet = redisTemplate.opsForZSet().range(fullKey, start, end);
+                    if (rawSet == null || rawSet.isEmpty()) {
+                        return Collections.<T>emptySet();
+                    }
 
-            return rawSet.stream()
-                .map(item -> objectMapper.convertValue(item, clazz))
-                .collect(Collectors.toSet());
-        })
-            .orElseGet(Collections::emptySet);
+                    return rawSet.stream()
+                            .map(item -> objectMapper.convertValue(item, clazz))
+                            .collect(Collectors.toSet());
+                })
+                .orElseGet(Collections::emptySet);
     }
 
     // ==================================================================================
@@ -208,9 +206,7 @@ public class RedisOperator {
         String fullKey = buildKey(policy, key);
 
         execute(() -> {
-            Map<String, Object> map = objectMapper.convertValue(dto,
-                new TypeReference<Map<String, Object>>() {
-                });
+            Map<String, Object> map = objectMapper.convertValue(dto, new TypeReference<Map<String, Object>>() {});
             redisTemplate.opsForHash().putAll(fullKey, map);
             applyTtl(fullKey, policy);
         });
@@ -237,8 +233,7 @@ public class RedisOperator {
      * @param keyMapper DTO에서 Key 식별자를 추출하는 함수
      * @param <T>       DTO 타입
      */
-    public <T> void putHashes(CachePolicySpec policy, List<T> dtoList,
-        Function<T, String> keyMapper) {
+    public <T> void putHashes(CachePolicySpec policy, List<T> dtoList, Function<T, String> keyMapper) {
         validatePolicy(policy, RedisValueType.HASH);
         if (dtoList == null || dtoList.isEmpty()) {
             return;
@@ -246,16 +241,14 @@ public class RedisOperator {
 
         execute(() -> redisTemplate.executePipelined(new SessionCallback<Object>() {
             @Override
-            public <K, V> Object execute(RedisOperations<K, V> operations)
-                throws DataAccessException {
+            public <K, V> Object execute(RedisOperations<K, V> operations) throws DataAccessException {
                 RedisTemplate<String, Object> template = (RedisTemplate<String, Object>) operations;
                 for (T dto : dtoList) {
                     String key = keyMapper.apply(dto);
                     String fullKey = buildKey(policy, key);
 
                     Map<String, Object> map =
-                        objectMapper.convertValue(dto, new TypeReference<Map<String, Object>>() {
-                        });
+                            objectMapper.convertValue(dto, new TypeReference<Map<String, Object>>() {});
                     template.opsForHash().putAll(fullKey, map);
 
                     if (policy.ttl() != null) {
@@ -283,25 +276,24 @@ public class RedisOperator {
         }
 
         return execute(() -> {
-            List<Object> results = redisTemplate.executePipelined(new SessionCallback<Object>() {
-                @Override
-                public <K, V> Object execute(RedisOperations<K, V> operations)
-                    throws DataAccessException {
-                    RedisTemplate<String, Object> template = (RedisTemplate<String, Object>) operations;
-                    for (String key : keys) {
-                        template.opsForHash().entries(buildKey(policy, key));
-                    }
-                    return null;
-                }
-            });
+                    List<Object> results = redisTemplate.executePipelined(new SessionCallback<Object>() {
+                        @Override
+                        public <K, V> Object execute(RedisOperations<K, V> operations) throws DataAccessException {
+                            RedisTemplate<String, Object> template = (RedisTemplate<String, Object>) operations;
+                            for (String key : keys) {
+                                template.opsForHash().entries(buildKey(policy, key));
+                            }
+                            return null;
+                        }
+                    });
 
-            // executePipelined는 항상 List를 반환
-            return results.stream()
-                .filter(obj -> obj instanceof Map && !((Map<?, ?>) obj).isEmpty())
-                .map(obj -> objectMapper.convertValue(obj, clazz))
-                .collect(Collectors.toList());
-        })
-            .orElseGet(Collections::emptyList);
+                    // executePipelined는 항상 List를 반환
+                    return results.stream()
+                            .filter(obj -> obj instanceof Map && !((Map<?, ?>) obj).isEmpty())
+                            .map(obj -> objectMapper.convertValue(obj, clazz))
+                            .collect(Collectors.toList());
+                })
+                .orElseGet(Collections::emptyList);
     }
 
     public <T> void putHashField(CachePolicySpec policy, String key, String field, T value) {
@@ -314,8 +306,7 @@ public class RedisOperator {
         });
     }
 
-    public <T> Optional<T> getHashField(CachePolicySpec policy, String key, String field,
-        Class<T> clazz) {
+    public <T> Optional<T> getHashField(CachePolicySpec policy, String key, String field, Class<T> clazz) {
         validatePolicy(policy, RedisValueType.HASH);
         String fullKey = buildKey(policy, key);
 
