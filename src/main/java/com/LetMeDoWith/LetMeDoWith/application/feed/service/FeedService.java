@@ -21,7 +21,7 @@ public class FeedService {
      *
      * @return 잔소리 대상 두윗
      */
-    public RetrieveFeedbackAvailableDowithTasksResult retreiveFeedbackAvailableDowithTasks() {
+    public RetrieveFeedbackAvailableDowithTasksResult retrieveFeedbackAvailableDowithTasks() {
         List<Long> dowithTaskIds = feedCacheRepository.getFeedbackAvailableDowithTaskIds();
 
         // fallback
