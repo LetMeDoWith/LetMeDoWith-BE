@@ -26,10 +26,9 @@ public class FeedController {
     @ApiSuccessResponse(description = "잔소리 대상 두윗 목록 조회 성공")
     @GetMapping("/tasks/dowith")
     public ResponseEntity<ResponseDto<RetrieveFeedbackAvailableDowithTasksResDto>>
-    retrieveFeedbackAvailableDowithTasks() {
+            retrieveFeedbackAvailableDowithTasks() {
         RetrieveFeedbackAvailableDowithTasksResult result = feedService.retreiveFeedbackAvailableDowithTasks();
 
-        return ResponseUtil.createSuccessResponse(
-            RetrieveFeedbackAvailableDowithTasksResDto.from(result));
+        return ResponseUtil.createSuccessResponse(RetrieveFeedbackAvailableDowithTasksResDto.from(result));
     }
 }
