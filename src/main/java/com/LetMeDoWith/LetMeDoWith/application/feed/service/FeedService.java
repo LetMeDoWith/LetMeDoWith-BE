@@ -27,16 +27,16 @@ public class FeedService {
         // fallback
         if (dowithTaskIds.isEmpty()) {
             return RetrieveFeedbackAvailableDowithTasksResult.from(
-                feedQueryRepository.getFeedbackAvailableDowithTasks(SystemTimeUtil.now()));
+                    feedQueryRepository.getFeedbackAvailableDowithTasks(SystemTimeUtil.now()));
         }
 
         List<FeedbackAvailableDowithTaskQueryDto> feedbackAvailableDowithTasks =
-            feedCacheRepository.getFeedbackAvailableDowithTasks(dowithTaskIds);
+                feedCacheRepository.getFeedbackAvailableDowithTasks(dowithTaskIds);
 
         // fallback
         if (feedbackAvailableDowithTasks.isEmpty()) {
             return RetrieveFeedbackAvailableDowithTasksResult.from(
-                feedQueryRepository.getFeedbackAvailableDowithTasks(SystemTimeUtil.now()));
+                    feedQueryRepository.getFeedbackAvailableDowithTasks(SystemTimeUtil.now()));
         }
 
         return RetrieveFeedbackAvailableDowithTasksResult.from(feedbackAvailableDowithTasks);

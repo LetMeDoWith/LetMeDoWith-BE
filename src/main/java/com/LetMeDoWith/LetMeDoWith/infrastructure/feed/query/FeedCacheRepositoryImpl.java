@@ -21,11 +21,10 @@ public class FeedCacheRepositoryImpl implements FeedCacheRepository {
     }
 
     @Override
-    public List<FeedbackAvailableDowithTaskQueryDto> getFeedbackAvailableDowithTasks(
-        List<Long> ids) {
+    public List<FeedbackAvailableDowithTaskQueryDto> getFeedbackAvailableDowithTasks(List<Long> ids) {
         return redisOperator.getHashes(
-            CachePolicy.DOWITH_TASK,
-            ids.stream().map(String::valueOf).toList(),
-            FeedbackAvailableDowithTaskQueryDto.class);
+                CachePolicy.DOWITH_TASK,
+                ids.stream().map(String::valueOf).toList(),
+                FeedbackAvailableDowithTaskQueryDto.class);
     }
 }

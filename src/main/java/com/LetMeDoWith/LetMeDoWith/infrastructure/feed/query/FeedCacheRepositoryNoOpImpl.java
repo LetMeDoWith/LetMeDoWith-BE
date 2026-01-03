@@ -20,8 +20,7 @@ public class FeedCacheRepositoryNoOpImpl implements FeedCacheRepository {
     }
 
     @Override
-    public List<FeedbackAvailableDowithTaskQueryDto> getFeedbackAvailableDowithTasks(
-        List<Long> ids) {
+    public List<FeedbackAvailableDowithTaskQueryDto> getFeedbackAvailableDowithTasks(List<Long> ids) {
         return List.of();
     }
 }
