@@ -145,40 +145,120 @@ dependencies {
 
 import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
 import com.bmuschko.gradle.docker.tasks.image.DockerTagImage
+import org.springframework.boot.gradle.tasks.bundling.BootJar
 import org.springframework.boot.gradle.tasks.run.BootRun
 
-task buildDockerImage(type: DockerBuildImage) {
-    group = "docker"
+// .env 파일 로드 함수
+def loadEnv(String fileName) {
+    def props = new Properties()
+    def file = file(fileName)
+    if (file.exists()) {
+        file.withInputStream { stream ->
+            props.load(stream)
+        }
+    }
+    return props
+}
+
+// === API Docker Tasks ===
+def apiEnv = loadEnv("docker-api.env")
+
+tasks.register('buildApiDockerImage', DockerBuildImage) {
+    group = "docker-api"
+    dependsOn 'bootJarApi'
     inputDir = file(".")
-    images.add(dockerImageName + ":" + dockerImageTag)
-    platform = deployPlatform
+    dockerFile = file("Dockerfile-api")
+    // env 파일이 없으면 기본값 혹은 null (빌드 실패 가능성 있음)
+    def imageName = apiEnv.getProperty('DOCKER_IMAGE_NAME', 'letmedowith/api')
+    def imageTag = apiEnv.getProperty('DOCKER_IMAGE_TAG', 'api-latest')
+    def platformVal = apiEnv.getProperty('DEPLOY_PLATFORM', 'linux/amd64')
+
+    images.add(imageName + ":" + imageTag)
+    platform = platformVal
 }
 
-task tagDockerImage(type: DockerTagImage) {
-    group = "docker"
-    dependsOn buildDockerImage
-    imageId = dockerImageName + ":" + dockerImageTag
-    repository = ecrRepository
-    tag = dockerImageTag
+tasks.register('tagApiDockerImage', DockerTagImage) {
+    group = "docker-api"
+    dependsOn buildApiDockerImage
+    def imageName = apiEnv.getProperty('DOCKER_IMAGE_NAME', 'letmedowith/api')
+    def imageTag = apiEnv.getProperty('DOCKER_IMAGE_TAG', 'api-latest')
+    def repo = apiEnv.getProperty('ECR_REPOSITORY', '')
+
+    imageId = imageName + ":" + imageTag
+    repository = repo
+    tag = imageTag
 }
 
-// AWS ECR 로그인 작업
-task ecrLogin {
-    group = "docker"
-    // AWS-CLI Configure letmedowith profile에 IAM 계정 세팅 필요
+tasks.register('pushApiDockerImage') {
+    group = "docker-api"
+    dependsOn tagApiDockerImage
     doLast {
-        def loginCommand = "aws ecr get-login-password --profile " + awsCliProfile + " --region " + awsRegion + " | docker login --username AWS --password-stdin " + ecrRepository
+        def repo = apiEnv.getProperty('ECR_REPOSITORY')
+        def tag = apiEnv.getProperty('DOCKER_IMAGE_TAG')
+        def profile = apiEnv.getProperty('AWS_CLI_PROFILE')
+        def region = apiEnv.getProperty('AWS_REGION')
+
+        // ECR Login
+        def loginCommand = "aws ecr get-login-password --profile " + profile + " --region " + region + " | docker login --username AWS --password-stdin " + repo
         exec {
             commandLine 'sh', '-c', loginCommand
+        }
+
+        // Push
+        def pushCommand = "docker push " + repo + ":" + tag
+        exec {
+            commandLine 'sh', '-c', pushCommand
         }
     }
 }
 
-task buildAndPushDockerImage {
-    group = "docker"
-    dependsOn ecrLogin, tagDockerImage
+
+// === Batch Docker Tasks ===
+def batchEnv = loadEnv("docker-batch.env")
+
+tasks.register('buildBatchDockerImage', DockerBuildImage) {
+    group = "docker-batch"
+    dependsOn 'bootJarBatch'
+    inputDir = file(".")
+    dockerFile = file("Dockerfile-batch")
+
+    def imageName = batchEnv.getProperty('DOCKER_IMAGE_NAME', 'letmedowith/batch')
+    def imageTag = batchEnv.getProperty('DOCKER_IMAGE_TAG', 'batch-latest')
+    def platformVal = batchEnv.getProperty('DEPLOY_PLATFORM', 'linux/amd64')
+
+    images.add(imageName + ":" + imageTag)
+    platform = platformVal
+}
+
+tasks.register('tagBatchDockerImage', DockerTagImage) {
+    group = "docker-batch"
+    dependsOn buildBatchDockerImage
+    def imageName = batchEnv.getProperty('DOCKER_IMAGE_NAME', 'letmedowith/batch')
+    def imageTag = batchEnv.getProperty('DOCKER_IMAGE_TAG', 'batch-latest')
+    def repo = batchEnv.getProperty('ECR_REPOSITORY', '')
+
+    imageId = imageName + ":" + imageTag
+    repository = repo
+    tag = imageTag
+}
+
+tasks.register('pushBatchDockerImage') {
+    group = "docker-batch"
+    dependsOn tagBatchDockerImage
     doLast {
-        def pushCommand = "docker push " + ecrRepository + ":" + dockerImageTag
+        def repo = batchEnv.getProperty('ECR_REPOSITORY')
+        def tag = batchEnv.getProperty('DOCKER_IMAGE_TAG')
+        def profile = batchEnv.getProperty('AWS_CLI_PROFILE')
+        def region = batchEnv.getProperty('AWS_REGION')
+
+        // ECR Login
+        def loginCommand = "aws ecr get-login-password --profile " + profile + " --region " + region + " | docker login --username AWS --password-stdin " + repo
+        exec {
+            commandLine 'sh', '-c', loginCommand
+        }
+
+        // Push
+        def pushCommand = "docker push " + repo + ":" + tag
         exec {
             commandLine 'sh', '-c', pushCommand
         }
@@ -236,4 +316,24 @@ tasks.register('bootRunBatch', BootRun) {
     classpath = sourceSets.main.runtimeClasspath
 }
 
+tasks.named("bootJar") {
+    enabled = false
+}
 
+tasks.register('bootJarApi', BootJar) {
+    group = 'build'
+    description = 'Builds the API executable JAR'
+    mainClass = 'com.LetMeDoWith.LetMeDoWith.LetMeDoWithApiApplication'
+    archiveClassifier = 'api'
+    classpath = sourceSets.main.runtimeClasspath
+    targetJavaVersion = java.sourceCompatibility
+}
+
+tasks.register('bootJarBatch', BootJar) {
+    group = 'build'
+    description = 'Builds the Batch executable JAR'
+    mainClass = 'com.LetMeDoWith.LetMeDoWith.LetMeDoWithBatchApplication'
+    archiveClassifier = 'batch'
+    classpath = sourceSets.main.runtimeClasspath
+    targetJavaVersion = java.sourceCompatibility
+}
