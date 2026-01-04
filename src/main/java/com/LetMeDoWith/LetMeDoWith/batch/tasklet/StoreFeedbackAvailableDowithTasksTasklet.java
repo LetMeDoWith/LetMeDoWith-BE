@@ -1,10 +1,9 @@
 package com.LetMeDoWith.LetMeDoWith.batch.tasklet;
 
-import com.LetMeDoWith.LetMeDoWith.common.cache.CachePolicy;
 import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.feed.cache.FeedCacheCommandRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.feed.query.FeedQueryRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.feed.query.dto.FeedbackAvailableDowithTaskQueryDto;
-import com.LetMeDoWith.LetMeDoWith.infrastructure.redis.RedisOperator;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +21,7 @@ import org.springframework.stereotype.Component;
 public class StoreFeedbackAvailableDowithTasksTasklet implements Tasklet {
 
     private final FeedQueryRepository feedQueryRepository;
-    private final RedisOperator redisOperator;
+    private final FeedCacheCommandRepository feedCacheCommandRepository;
 
     @Value("#{jobParameters['executionDateTime']}")
     private LocalDateTime executionDateTime;
@@ -37,17 +36,11 @@ public class StoreFeedbackAvailableDowithTasksTasklet implements Tasklet {
         }
 
         // 잔소리 대상 두윗 조회 (QueryDSL)
-        List<FeedbackAvailableDowithTaskQueryDto> dowithTaskList =
+        List<FeedbackAvailableDowithTaskQueryDto> dowithTasks =
                 feedQueryRepository.getFeedbackAvailableDowithTasks(targetDateTime);
 
-        // 두윗 id 인덱스 계산
-        List<Long> dowithIdList = dowithTaskList.stream()
-                .map(FeedbackAvailableDowithTaskQueryDto::id)
-                .toList();
-
-        // 잔소리 대상 두윗 및 id 인덱스 Redis 적재
-        redisOperator.pushRightAll(CachePolicy.DOWITH_TASK_IDS, "", dowithIdList);
-        redisOperator.putHashes(CachePolicy.DOWITH_TASK, dowithTaskList, dto -> String.valueOf(dto.id()));
+        // 잔소리 대상 두윗 상세 정보 Redis 적재
+        feedCacheCommandRepository.refreshFeedbackAvailableDowithTasks(dowithTasks);
 
         return RepeatStatus.FINISHED;
     }
