@@ -97,6 +97,27 @@ public class RedisOperator {
     }
 
     // ==================================================================================
+    // Key Ops
+    // ==================================================================================
+
+    public void delete(CachePolicySpec policy, String key) {
+        String fullKey = buildKey(policy, key);
+        execute(() -> redisTemplate.delete(fullKey));
+    }
+
+    public void rename(CachePolicySpec policy, String oldKey, String newKey) {
+        String fullOldKey = buildKey(policy, oldKey);
+        String fullNewKey = buildKey(policy, newKey);
+
+        execute(() -> {
+            if (redisTemplate.hasKey(fullOldKey)) {
+                redisTemplate.rename(fullOldKey, fullNewKey);
+                applyTtl(fullNewKey, policy);
+            }
+        });
+    }
+
+    // ==================================================================================
     // Value Ops (String/Object)
     // ==================================================================================
 
