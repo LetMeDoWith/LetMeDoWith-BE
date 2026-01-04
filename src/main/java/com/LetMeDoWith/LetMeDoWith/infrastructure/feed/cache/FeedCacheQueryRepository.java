@@ -5,7 +5,5 @@ import java.util.List;
 
 public interface FeedCacheQueryRepository {
 
-    List<Long> getFeedbackAvailableDowithTaskIds();
-
-    List<FeedbackAvailableDowithTaskQueryDto> getFeedbackAvailableDowithTasks(List<Long> ids);
+    List<FeedbackAvailableDowithTaskQueryDto> getFeedbackAvailableDowithTasks();
 }

@@ -22,21 +22,13 @@ public class FeedService {
      * @return 잔소리 대상 두윗
      */
     public RetrieveFeedbackAvailableDowithTasksResult retrieveFeedbackAvailableDowithTasks() {
-        List<Long> dowithTaskIds = feedCacheQueryRepository.getFeedbackAvailableDowithTaskIds();
-
-        // fallback
-        if (dowithTaskIds.isEmpty()) {
-            return RetrieveFeedbackAvailableDowithTasksResult.from(
-                feedQueryRepository.getFeedbackAvailableDowithTasks(SystemTimeUtil.now()));
-        }
-
         List<FeedbackAvailableDowithTaskQueryDto> feedbackAvailableDowithTasks =
-            feedCacheQueryRepository.getFeedbackAvailableDowithTasks(dowithTaskIds);
+                feedCacheQueryRepository.getFeedbackAvailableDowithTasks();
 
         // fallback
         if (feedbackAvailableDowithTasks.isEmpty()) {
             return RetrieveFeedbackAvailableDowithTasksResult.from(
-                feedQueryRepository.getFeedbackAvailableDowithTasks(SystemTimeUtil.now()));
+                    feedQueryRepository.getFeedbackAvailableDowithTasks(SystemTimeUtil.now()));
         }
 
         return RetrieveFeedbackAvailableDowithTasksResult.from(feedbackAvailableDowithTasks);

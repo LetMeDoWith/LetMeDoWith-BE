@@ -15,13 +15,7 @@ import org.springframework.stereotype.Repository;
 public class FeedCacheQueryRepositoryNoOpImpl implements FeedCacheQueryRepository {
 
     @Override
-    public List<Long> getFeedbackAvailableDowithTaskIds() {
-        return List.of();
-    }
-
-    @Override
-    public List<FeedbackAvailableDowithTaskQueryDto> getFeedbackAvailableDowithTasks(
-        List<Long> ids) {
+    public List<FeedbackAvailableDowithTaskQueryDto> getFeedbackAvailableDowithTasks() {
         return List.of();
     }
 }

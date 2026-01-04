@@ -16,16 +16,9 @@ public class FeedCacheQueryRepositoryImpl implements FeedCacheQueryRepository {
     private final RedisOperator redisOperator;
 
     @Override
-    public List<Long> getFeedbackAvailableDowithTaskIds() {
-        return redisOperator.getList(CachePolicy.DOWITH_TASK_IDS, "", 0, -1, Long.class);
-    }
+    public List<FeedbackAvailableDowithTaskQueryDto> getFeedbackAvailableDowithTasks() {
+        List<String> ids = redisOperator.getList(CachePolicy.DOWITH_TASK_IDS, "", 0, -1, String.class);
 
-    @Override
-    public List<FeedbackAvailableDowithTaskQueryDto> getFeedbackAvailableDowithTasks(
-        List<Long> ids) {
-        return redisOperator.getHashes(
-            CachePolicy.DOWITH_TASK,
-            ids.stream().map(String::valueOf).toList(),
-            FeedbackAvailableDowithTaskQueryDto.class);
+        return redisOperator.getHashes(CachePolicy.DOWITH_TASK, ids, FeedbackAvailableDowithTaskQueryDto.class);
     }
 }
