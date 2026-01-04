@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.infrastructure.feed.query;
+package com.LetMeDoWith.LetMeDoWith.infrastructure.feed.cache;
 
 import com.LetMeDoWith.LetMeDoWith.common.cache.CachePolicy;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.feed.query.dto.FeedbackAvailableDowithTaskQueryDto;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 @RequiredArgsConstructor
 @Profile("!dev")
-public class FeedCacheRepositoryImpl implements FeedCacheRepository {
+public class FeedCacheQueryRepositoryImpl implements FeedCacheQueryRepository {
 
     private final RedisOperator redisOperator;
 
@@ -21,10 +21,11 @@ public class FeedCacheRepositoryImpl implements FeedCacheRepository {
     }
 
     @Override
-    public List<FeedbackAvailableDowithTaskQueryDto> getFeedbackAvailableDowithTasks(List<Long> ids) {
+    public List<FeedbackAvailableDowithTaskQueryDto> getFeedbackAvailableDowithTasks(
+        List<Long> ids) {
         return redisOperator.getHashes(
-                CachePolicy.DOWITH_TASK,
-                ids.stream().map(String::valueOf).toList(),
-                FeedbackAvailableDowithTaskQueryDto.class);
+            CachePolicy.DOWITH_TASK,
+            ids.stream().map(String::valueOf).toList(),
+            FeedbackAvailableDowithTaskQueryDto.class);
     }
 }

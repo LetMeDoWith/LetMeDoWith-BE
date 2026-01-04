@@ -1,9 +1,9 @@
-package com.LetMeDoWith.LetMeDoWith.infrastructure.feed.query;
+package com.LetMeDoWith.LetMeDoWith.infrastructure.feed.cache;
 
 import com.LetMeDoWith.LetMeDoWith.infrastructure.feed.query.dto.FeedbackAvailableDowithTaskQueryDto;
 import java.util.List;
 
-public interface FeedCacheRepository {
+public interface FeedCacheQueryRepository {
 
     List<Long> getFeedbackAvailableDowithTaskIds();
 

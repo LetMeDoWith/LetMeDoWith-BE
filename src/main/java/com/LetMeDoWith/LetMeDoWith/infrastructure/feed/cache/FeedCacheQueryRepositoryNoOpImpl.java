@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.infrastructure.feed.query;
+package com.LetMeDoWith.LetMeDoWith.infrastructure.feed.cache;
 
 import com.LetMeDoWith.LetMeDoWith.infrastructure.feed.query.dto.FeedbackAvailableDowithTaskQueryDto;
 import java.util.List;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 @Profile("dev")
-public class FeedCacheRepositoryNoOpImpl implements FeedCacheRepository {
+public class FeedCacheQueryRepositoryNoOpImpl implements FeedCacheQueryRepository {
 
     @Override
     public List<Long> getFeedbackAvailableDowithTaskIds() {
@@ -20,7 +20,8 @@ public class FeedCacheRepositoryNoOpImpl implements FeedCacheRepository {
     }
 
     @Override
-    public List<FeedbackAvailableDowithTaskQueryDto> getFeedbackAvailableDowithTasks(List<Long> ids) {
+    public List<FeedbackAvailableDowithTaskQueryDto> getFeedbackAvailableDowithTasks(
+        List<Long> ids) {
         return List.of();
     }
 }
