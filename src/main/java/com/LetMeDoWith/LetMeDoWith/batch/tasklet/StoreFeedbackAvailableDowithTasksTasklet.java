@@ -45,9 +45,20 @@ public class StoreFeedbackAvailableDowithTasksTasklet implements Tasklet {
                 .map(FeedbackAvailableDowithTaskQueryDto::id)
                 .toList();
 
-        // 잔소리 대상 두윗 및 id 인덱스 Redis 적재
-        redisOperator.pushRightAll(CachePolicy.DOWITH_TASK_IDS, "", dowithIdList);
+        // 잔소리 대상 두윗 상세 정보 Redis 적재
         redisOperator.putHashes(CachePolicy.DOWITH_TASK, dowithTaskList, dto -> String.valueOf(dto.id()));
+
+        // 잔소리 대상 두윗 ID 목록 Redis 적재 (List - Atomic Rename)
+        if (dowithIdList.isEmpty()) {
+            redisOperator.delete(CachePolicy.DOWITH_TASK_IDS, "");
+        } else {
+            // 충돌 방지를 위한 유니크한 임시 키 생성
+            String tempKeySuffix = "temp_" + executionDateTime;
+            // 임시 키에 데이터 적재
+            redisOperator.pushRightAll(CachePolicy.DOWITH_TASK_IDS, tempKeySuffix, dowithIdList);
+            // 임시 키를 원본 키로 Atomic Rename
+            redisOperator.rename(CachePolicy.DOWITH_TASK_IDS, tempKeySuffix, "");
+        }
 
         return RepeatStatus.FINISHED;
     }
