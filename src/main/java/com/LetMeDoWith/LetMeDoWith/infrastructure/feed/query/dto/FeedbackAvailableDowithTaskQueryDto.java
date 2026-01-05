@@ -1,5 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.feed.query.dto;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 public record FeedbackAvailableDowithTaskQueryDto(
@@ -9,5 +10,6 @@ public record FeedbackAvailableDowithTaskQueryDto(
         String badgeImageUrl,
         String title,
         String status,
+        LocalDate date,
         LocalTime startTime,
         Long feedbackCount) {}
