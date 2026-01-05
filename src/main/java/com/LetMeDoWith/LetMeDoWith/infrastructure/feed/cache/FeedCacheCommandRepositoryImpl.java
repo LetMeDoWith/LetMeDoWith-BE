@@ -6,10 +6,12 @@ import com.LetMeDoWith.LetMeDoWith.infrastructure.feed.query.dto.FeedbackAvailab
 import com.LetMeDoWith.LetMeDoWith.infrastructure.redis.RedisOperator;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
+@Profile("!dev")
 public class FeedCacheCommandRepositoryImpl implements FeedCacheCommandRepository {
 
     private final RedisOperator redisOperator;

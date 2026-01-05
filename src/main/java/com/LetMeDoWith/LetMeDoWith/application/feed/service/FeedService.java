@@ -24,19 +24,19 @@ public class FeedService {
      */
     public RetrieveFeedbackAvailableDowithTasksResult retrieveFeedbackAvailableDowithTasks() {
         List<FeedbackAvailableDowithTaskQueryDto> feedbackAvailableDowithTasks =
-            feedCacheQueryRepository.getFeedbackAvailableDowithTasks().stream()
-                .filter(dto -> {
-                    // dto 가 아직 잔소리 가능한 대상인지 (시작 시각 + 1시간이 현재보다 미래) 확인
-                    return LocalDateTime.of(dto.date(), dto.startTime())
-                        .plusHours(1)
-                        .isAfter(SystemTimeUtil.now());
-                })
-                .toList();
+                feedCacheQueryRepository.getFeedbackAvailableDowithTasks().stream()
+                        .filter(dto -> {
+                            // dto 가 아직 잔소리 가능한 대상인지 (시작 시각 + 1시간이 현재보다 미래) 확인
+                            return LocalDateTime.of(dto.date(), dto.startTime())
+                                    .plusHours(1)
+                                    .isAfter(SystemTimeUtil.now());
+                        })
+                        .toList();
 
         // fallback
         if (feedbackAvailableDowithTasks.isEmpty()) {
             return RetrieveFeedbackAvailableDowithTasksResult.from(
-                feedQueryRepository.getFeedbackAvailableDowithTasks(SystemTimeUtil.now()));
+                    feedQueryRepository.getFeedbackAvailableDowithTasks(SystemTimeUtil.now()));
         }
 
         return RetrieveFeedbackAvailableDowithTasksResult.from(feedbackAvailableDowithTasks);
