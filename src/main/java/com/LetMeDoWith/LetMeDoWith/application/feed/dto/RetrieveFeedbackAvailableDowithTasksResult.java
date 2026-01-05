@@ -1,6 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.application.feed.dto;
 
 import com.LetMeDoWith.LetMeDoWith.infrastructure.feed.query.dto.FeedbackAvailableDowithTaskQueryDto;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -19,6 +20,7 @@ public record RetrieveFeedbackAvailableDowithTasksResult(List<RetrieveFeedbackAv
             String badgeImageUrl,
             String title,
             String status,
+            LocalDate date,
             LocalTime startTime,
             Long feedbackCount) {
 
@@ -30,6 +32,7 @@ public record RetrieveFeedbackAvailableDowithTasksResult(List<RetrieveFeedbackAv
                     queryDto.badgeImageUrl(),
                     queryDto.title(),
                     queryDto.status(),
+                    queryDto.date(),
                     queryDto.startTime(),
                     queryDto.feedbackCount());
         }

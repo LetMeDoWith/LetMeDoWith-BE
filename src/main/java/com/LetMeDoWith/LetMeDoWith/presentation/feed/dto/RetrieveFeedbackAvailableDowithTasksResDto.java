@@ -3,6 +3,7 @@ package com.LetMeDoWith.LetMeDoWith.presentation.feed.dto;
 import com.LetMeDoWith.LetMeDoWith.application.feed.dto.RetrieveFeedbackAvailableDowithTasksResult;
 import com.LetMeDoWith.LetMeDoWith.application.feed.dto.RetrieveFeedbackAvailableDowithTasksResult.RetrieveFeedbackAvailableDowithTaskResult;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -24,6 +25,7 @@ public record RetrieveFeedbackAvailableDowithTasksResDto(
             @Schema(description = "뱃지 이미지 URL", example = "badge_url") String badgeImageUrl,
             @Schema(description = "태스크 제목", example = "title") String title,
             @Schema(description = "상태", example = "WAIT") String status,
+            @Schema(description = "시작 일자", example = "2024-01-01") LocalDate date,
             @Schema(description = "시작 시간", example = "12:00:00") LocalTime startTime,
             @Schema(description = "잔소리 횟수", example = "0") Long feedbackCount) {
 
@@ -35,6 +37,7 @@ public record RetrieveFeedbackAvailableDowithTasksResDto(
                     result.badgeImageUrl(),
                     result.title(),
                     result.status(),
+                    result.date(),
                     result.startTime(),
                     result.feedbackCount());
         }

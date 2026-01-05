@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.LetMeDoWith.LetMeDoWith.common.cache.CachePolicy;
+import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.feed.query.dto.FeedbackAvailableDowithTaskQueryDto;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.redis.RedisOperator;
@@ -11,7 +12,6 @@ import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository
 import com.LetMeDoWith.LetMeDoWith.integration.AbstractIntegrationTest;
 import com.LetMeDoWith.LetMeDoWith.presentation.feed.dto.RetrieveFeedbackAvailableDowithTasksResDto;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
@@ -44,7 +44,7 @@ public class FeedIntegrationTest extends AbstractIntegrationTest {
 
     private void deleteRedisKey(String keyPattern) {
         Set<String> keys = redisTemplate.keys(keyPattern + "*");
-        if (keys != null && !keys.isEmpty()) {
+        if (!keys.isEmpty()) {
             redisTemplate.delete(keys);
         }
     }
@@ -57,25 +57,41 @@ public class FeedIntegrationTest extends AbstractIntegrationTest {
     @Test
     @DisplayName("Redis에 데이터가 존재할 경우 Redis 데이터를 반환한다 (Cache Hit)")
     void should_return_data_from_redis_when_exists() throws Exception {
+
+        LocalDateTime testDateTime = LocalDateTime.of(2024, 1, 2, 0, 0, 0);
+        setFixedClock(testDateTime);
+
         // Given
         Long taskId = 1L;
         String title = "Redis Task Title";
+        LocalDateTime requestDateTime = SystemTimeUtil.now().minusMinutes(30);
         FeedbackAvailableDowithTaskQueryDto dto = new FeedbackAvailableDowithTaskQueryDto(
-                taskId, "test_member_id", "nickname", "badge_url", title, "WAIT", LocalTime.now(), 0L);
+            taskId,
+            "test_member_id",
+            "nickname",
+            "badge_url",
+            title,
+            "WAIT",
+            requestDateTime.toLocalDate(),
+            requestDateTime.toLocalTime(),
+            0L);
 
         // Redis 적재 - List (ID 목록)
-        redisOperator.pushRightAll(CachePolicy.DOWITH_TASK_IDS, "", List.of(String.valueOf(taskId)));
+        redisOperator.pushRightAll(CachePolicy.DOWITH_TASK_IDS, "",
+            List.of(String.valueOf(taskId)));
 
         // Redis 적재 - Hash (객체 정보)
         redisOperator.putHash(CachePolicy.DOWITH_TASK, String.valueOf(taskId), dto);
 
         // When
-        ResultActions resultActions = request(MockMvcRequestBuilders.get("/api/v1/feeds/tasks/dowith"));
+        ResultActions resultActions = request(
+            MockMvcRequestBuilders.get("/api/v1/feeds/tasks/dowith"));
 
         // Then
         MvcResult mvcResult = resultActions.andExpect(status().isOk()).andReturn();
         RetrieveFeedbackAvailableDowithTasksResDto response = readResponse(
-                mvcResult.getResponse().getContentAsString(), RetrieveFeedbackAvailableDowithTasksResDto.class);
+            mvcResult.getResponse().getContentAsString(),
+            RetrieveFeedbackAvailableDowithTasksResDto.class);
 
         assertThat(response.dowithTasks()).hasSize(1);
         assertThat(response.dowithTasks().get(0).id()).isEqualTo(taskId);
@@ -95,30 +111,30 @@ public class FeedIntegrationTest extends AbstractIntegrationTest {
         // 2. 데이터 생성 (07:00 시점 기준)
         // Target Task: 시작 시간 11:30 (현재 07:00 기준 미래 -> 생성 가능)
         DowithTask targetTask = DowithTask.of(
-                requestMember.getId(),
-                1L,
-                "Target Task",
-                testReferenceTime.toLocalDate(),
-                testReferenceTime.toLocalTime().minusMinutes(30) // 11:30
-                );
+            requestMember.getId(),
+            1L,
+            "Target Task",
+            testReferenceTime.toLocalDate(),
+            testReferenceTime.toLocalTime().minusMinutes(30) // 11:30
+        );
 
         // Expired Task: 시작 시간 10:00 (현재 07:00 기준 미래 -> 생성 가능)
         DowithTask expiredTask = DowithTask.of(
-                requestMember.getId(),
-                1L,
-                "Expired Task",
-                testReferenceTime.toLocalDate(),
-                testReferenceTime.toLocalTime().minusHours(2) // 10:00
-                );
+            requestMember.getId(),
+            1L,
+            "Expired Task",
+            testReferenceTime.toLocalDate(),
+            testReferenceTime.toLocalTime().minusHours(2) // 10:00
+        );
 
         // Future Task: 시작 시간 12:10 (현재 07:00 기준 미래 -> 생성 가능)
         DowithTask futureTask = DowithTask.of(
-                requestMember.getId(),
-                1L,
-                "Future Task",
-                testReferenceTime.toLocalDate(),
-                testReferenceTime.toLocalTime().plusMinutes(10) // 12:10
-                );
+            requestMember.getId(),
+            1L,
+            "Future Task",
+            testReferenceTime.toLocalDate(),
+            testReferenceTime.toLocalTime().plusMinutes(10) // 12:10
+        );
 
         dowithTaskJpaRepository.saveAll(List.of(targetTask, expiredTask, futureTask));
 
@@ -130,12 +146,14 @@ public class FeedIntegrationTest extends AbstractIntegrationTest {
         setFixedClock(testReferenceTime);
 
         // When
-        ResultActions resultActions = request(MockMvcRequestBuilders.get("/api/v1/feeds/tasks/dowith"));
+        ResultActions resultActions = request(
+            MockMvcRequestBuilders.get("/api/v1/feeds/tasks/dowith"));
 
         // Then
         MvcResult mvcResult = resultActions.andExpect(status().isOk()).andReturn();
         RetrieveFeedbackAvailableDowithTasksResDto response = readResponse(
-                mvcResult.getResponse().getContentAsString(), RetrieveFeedbackAvailableDowithTasksResDto.class);
+            mvcResult.getResponse().getContentAsString(),
+            RetrieveFeedbackAvailableDowithTasksResDto.class);
 
         assertThat(response.dowithTasks()).hasSize(1);
         assertThat(response.dowithTasks().get(0).title()).isEqualTo("Target Task");

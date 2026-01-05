@@ -5,6 +5,7 @@ import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.feed.cache.FeedCacheQueryRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.feed.query.FeedQueryRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.feed.query.dto.FeedbackAvailableDowithTaskQueryDto;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,12 +24,19 @@ public class FeedService {
      */
     public RetrieveFeedbackAvailableDowithTasksResult retrieveFeedbackAvailableDowithTasks() {
         List<FeedbackAvailableDowithTaskQueryDto> feedbackAvailableDowithTasks =
-                feedCacheQueryRepository.getFeedbackAvailableDowithTasks();
+            feedCacheQueryRepository.getFeedbackAvailableDowithTasks().stream()
+                .filter(dto -> {
+                    // dto 가 아직 잔소리 가능한 대상인지 (시작 시각 + 1시간이 현재보다 미래) 확인
+                    return LocalDateTime.of(dto.date(), dto.startTime())
+                        .plusHours(1)
+                        .isAfter(SystemTimeUtil.now());
+                })
+                .toList();
 
         // fallback
         if (feedbackAvailableDowithTasks.isEmpty()) {
             return RetrieveFeedbackAvailableDowithTasksResult.from(
-                    feedQueryRepository.getFeedbackAvailableDowithTasks(SystemTimeUtil.now()));
+                feedQueryRepository.getFeedbackAvailableDowithTasks(SystemTimeUtil.now()));
         }
 
         return RetrieveFeedbackAvailableDowithTasksResult.from(feedbackAvailableDowithTasks);
