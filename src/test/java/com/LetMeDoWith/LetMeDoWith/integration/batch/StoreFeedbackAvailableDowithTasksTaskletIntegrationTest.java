@@ -14,6 +14,7 @@ import com.LetMeDoWith.LetMeDoWith.infrastructure.feed.query.FeedQueryRepository
 import com.LetMeDoWith.LetMeDoWith.infrastructure.feed.query.dto.FeedbackAvailableDowithTaskQueryDto;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.redis.RedisOperator;
 import com.LetMeDoWith.LetMeDoWith.integration.AbstractIntegrationTest;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
@@ -58,9 +59,25 @@ class StoreFeedbackAvailableDowithTasksTaskletIntegrationTest extends AbstractIn
         ReflectionTestUtils.setField(tasklet, "executionDateTime", fixedTime);
 
         FeedbackAvailableDowithTaskQueryDto dto1 = new FeedbackAvailableDowithTaskQueryDto(
-                1L, "user1", "nick1", "http://img1", "Title1", "WAITING", LocalTime.of(9, 0), 0L);
+                1L,
+                "user1",
+                "nick1",
+                "http://img1",
+                "Title1",
+                "WAITING",
+                LocalDate.of(2025, 1, 1),
+                LocalTime.of(9, 0),
+                0L);
         FeedbackAvailableDowithTaskQueryDto dto2 = new FeedbackAvailableDowithTaskQueryDto(
-                2L, "user2", "nick2", "http://img2", "Title2", "WAITING", LocalTime.of(10, 0), 1L);
+                2L,
+                "user2",
+                "nick2",
+                "http://img2",
+                "Title2",
+                "WAITING",
+                LocalDate.of(2025, 1, 1),
+                LocalTime.of(10, 0),
+                1L);
         List<FeedbackAvailableDowithTaskQueryDto> tasks = List.of(dto1, dto2);
 
         given(feedQueryRepository.getFeedbackAvailableDowithTasks(any())).willReturn(tasks);

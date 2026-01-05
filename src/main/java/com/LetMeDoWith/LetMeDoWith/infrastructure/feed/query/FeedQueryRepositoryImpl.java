@@ -71,6 +71,7 @@ public class FeedQueryRepositoryImpl implements FeedQueryRepository {
                         badge.imageUrl,
                         dowithTask.title,
                         dowithTask.status.stringValue(),
+                        dowithTask.date,
                         dowithTask.startTime,
                         JPAExpressions.select(dowithTaskFeedback.count())
                                 .from(dowithTaskFeedback)
