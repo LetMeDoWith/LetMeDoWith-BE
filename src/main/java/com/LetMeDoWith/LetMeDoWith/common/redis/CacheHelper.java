@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.common.cache;
+package com.LetMeDoWith.LetMeDoWith.common.redis;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
@@ -51,15 +51,18 @@ public class CacheHelper {
 
             if (!fieldType.isInstance(value)) {
                 throw new IllegalArgumentException("Cached value type mismatch. Expected: "
-                        + value.getClass().getName() + ", but input parameter filedType: " + fieldType.getName());
+                    + value.getClass().getName() + ", but input parameter filedType: "
+                    + fieldType.getName());
             }
             return fieldType.cast(value);
         } else {
-            throw new IllegalArgumentException("CachePolicy redisValueType is not HASH for cache name: " + cacheName);
+            throw new IllegalArgumentException(
+                "CachePolicy redisValueType is not HASH for cache name: " + cacheName);
         }
     }
 
-    public <T> List<T> getByRange(String cacheName, String key, long start, long end, Class<T> elementType) {
+    public <T> List<T> getByRange(String cacheName, String key, long start, long end,
+        Class<T> elementType) {
         CachePolicy cachePolicy = CachePolicy.fromCacheName(cacheName);
         String redisKey = this.buildRedisKey(cacheName, key);
 
@@ -75,7 +78,8 @@ public class CacheHelper {
             }
             return resultList;
         } else {
-            throw new IllegalArgumentException("CachePolicy redisValueType is not LIST for cache name: " + cacheName);
+            throw new IllegalArgumentException(
+                "CachePolicy redisValueType is not LIST for cache name: " + cacheName);
         }
     }
 
@@ -110,7 +114,8 @@ public class CacheHelper {
                 redisTemplate.expire(redisKey, cachePolicy.ttl());
             }
         } else {
-            throw new IllegalArgumentException("CachePolicy redisValueType is not LIST for cache name: " + cacheName);
+            throw new IllegalArgumentException(
+                "CachePolicy redisValueType is not LIST for cache name: " + cacheName);
         }
     }
 
@@ -118,7 +123,7 @@ public class CacheHelper {
         CachePolicy cachePolicy = CachePolicy.fromCacheName(cacheName);
 
         if (cachePolicy.redisValueType().equals(RedisValueType.HASH)
-                || cachePolicy.redisValueType().equals(RedisValueType.LIST)) {
+            || cachePolicy.redisValueType().equals(RedisValueType.LIST)) {
             String redisKey = this.buildRedisKey(cacheName, key);
             redisTemplate.delete(redisKey);
         } else {
@@ -132,7 +137,8 @@ public class CacheHelper {
         CachePolicy cachePolicy = CachePolicy.fromCacheName(cacheName);
 
         if (!cachePolicy.redisValueType().equals(RedisValueType.LIST)) {
-            throw new IllegalArgumentException("CachePolicy redisValueType is not LIST for cache name: " + cacheName);
+            throw new IllegalArgumentException(
+                "CachePolicy redisValueType is not LIST for cache name: " + cacheName);
         }
 
         String cacheKey = this.buildRedisKey(cacheName, key);

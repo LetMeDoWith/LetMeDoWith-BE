@@ -2,7 +2,7 @@ package com.LetMeDoWith.LetMeDoWith.infrastructure.auth.client;
 
 import com.LetMeDoWith.LetMeDoWith.application.auth.client.AuthClient;
 import com.LetMeDoWith.LetMeDoWith.application.auth.dto.OidcPublicKeyResDto;
-import com.LetMeDoWith.LetMeDoWith.common.cache.CacheName;
+import com.LetMeDoWith.LetMeDoWith.common.redis.CacheName;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
@@ -22,10 +22,10 @@ public class KakaoAuthClient implements AuthClient {
     @Cacheable(key = "'AuthPublicKey-Kakao'")
     public Mono<OidcPublicKeyResDto> getPublicKeyList() {
         return webClient
-                .get()
-                .uri("https://kauth.kakao.com/.well-known/jwks.json")
-                .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .bodyToMono(OidcPublicKeyResDto.class);
+            .get()
+            .uri("https://kauth.kakao.com/.well-known/jwks.json")
+            .accept(MediaType.APPLICATION_JSON)
+            .retrieve()
+            .bodyToMono(OidcPublicKeyResDto.class);
     }
 }

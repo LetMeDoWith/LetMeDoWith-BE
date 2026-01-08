@@ -15,9 +15,9 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.LetMeDoWith.LetMeDoWith.common.cache.CachePolicy;
-import com.LetMeDoWith.LetMeDoWith.common.cache.CachePolicySpec;
-import com.LetMeDoWith.LetMeDoWith.common.cache.RedisValueType;
+import com.LetMeDoWith.LetMeDoWith.common.redis.CachePolicy;
+import com.LetMeDoWith.LetMeDoWith.common.redis.CachePolicySpec;
+import com.LetMeDoWith.LetMeDoWith.common.redis.RedisValueType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Duration;
 import java.util.Arrays;
@@ -205,7 +205,8 @@ class RedisOperatorTest {
 
         List<Object> pipelineResults = Arrays.asList(map1, map2);
 
-        when(redisTemplate.executePipelined(any(SessionCallback.class))).thenReturn(pipelineResults);
+        when(redisTemplate.executePipelined(any(SessionCallback.class))).thenReturn(
+            pipelineResults);
 
         // When
         List<TestDto> result = redisOperator.getHashes(policy, keys, TestDto.class);
@@ -371,7 +372,8 @@ class RedisOperatorTest {
         private String name;
         private int age;
 
-        public TestDto() {}
+        public TestDto() {
+        }
 
         public TestDto(String name, int age) {
             this.name = name;

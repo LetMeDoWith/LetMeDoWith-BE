@@ -1,6 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.config;
 
-import com.LetMeDoWith.LetMeDoWith.common.cache.CachePolicy;
+import com.LetMeDoWith.LetMeDoWith.common.redis.CachePolicy;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,11 +24,12 @@ public class CacheConfig {
     @Bean
     public CacheManager cacheManager(RedisConnectionFactory cf) {
         RedisCacheConfiguration defaultConfig = RedisCacheConfiguration.defaultCacheConfig()
-                .serializeKeysWith(
-                        RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
-                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(
-                        new GenericJackson2JsonRedisSerializer()))
-                .entryTtl(Duration.ofMinutes(1L));
+            .serializeKeysWith(
+                RedisSerializationContext.SerializationPair.fromSerializer(
+                    new StringRedisSerializer()))
+            .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(
+                new GenericJackson2JsonRedisSerializer()))
+            .entryTtl(Duration.ofMinutes(1L));
 
         Map<String, RedisCacheConfiguration> individualConfiguration = new HashMap<>();
         for (CachePolicy policy : CachePolicy.values()) {
@@ -38,8 +39,8 @@ public class CacheConfig {
             individualConfiguration.put(policy.cacheName(), defaultConfig.entryTtl(policy.ttl()));
         }
         return RedisCacheManager.RedisCacheManagerBuilder.fromConnectionFactory(cf)
-                //                .cacheDefaults(defaultConfig)
-                .withInitialCacheConfigurations(individualConfiguration)
-                .build();
+            //                .cacheDefaults(defaultConfig)
+            .withInitialCacheConfigurations(individualConfiguration)
+            .build();
     }
 }

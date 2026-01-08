@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.common.cache;
+package com.LetMeDoWith.LetMeDoWith.common.redis;
 
 import java.time.Duration;
 import lombok.AllArgsConstructor;

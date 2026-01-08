@@ -1,6 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.feed.cache;
 
-import com.LetMeDoWith.LetMeDoWith.common.cache.CachePolicy;
+import com.LetMeDoWith.LetMeDoWith.common.redis.CachePolicy;
 import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.feed.query.dto.FeedbackAvailableDowithTaskQueryDto;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.redis.RedisOperator;
@@ -15,14 +15,15 @@ public class FeedCacheCommandRepositoryImpl implements FeedCacheCommandRepositor
     private final RedisOperator redisOperator;
 
     @Override
-    public void refreshFeedbackAvailableDowithTasks(List<FeedbackAvailableDowithTaskQueryDto> dowithTasks) {
+    public void refreshFeedbackAvailableDowithTasks(
+        List<FeedbackAvailableDowithTaskQueryDto> dowithTasks) {
         List<Long> ids = dowithTasks.stream()
-                .map(FeedbackAvailableDowithTaskQueryDto::id)
-                .toList();
+            .map(FeedbackAvailableDowithTaskQueryDto::id)
+            .toList();
 
         // 잔소리 대상 두윗 상세 정보 Redis 적재
         redisOperator.putHashes(
-                CachePolicy.DOWITH_TASK, dowithTasks, dto -> dto.id().toString());
+            CachePolicy.DOWITH_TASK, dowithTasks, dto -> dto.id().toString());
 
         // 잔소리 대상 두윗 ID 목록 Redis 적재
         if (ids.isEmpty()) {
