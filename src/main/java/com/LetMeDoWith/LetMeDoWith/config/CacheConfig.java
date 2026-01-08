@@ -24,12 +24,11 @@ public class CacheConfig {
     @Bean
     public CacheManager cacheManager(RedisConnectionFactory cf) {
         RedisCacheConfiguration defaultConfig = RedisCacheConfiguration.defaultCacheConfig()
-            .serializeKeysWith(
-                RedisSerializationContext.SerializationPair.fromSerializer(
-                    new StringRedisSerializer()))
-            .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(
-                new GenericJackson2JsonRedisSerializer()))
-            .entryTtl(Duration.ofMinutes(1L));
+                .serializeKeysWith(
+                        RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(
+                        new GenericJackson2JsonRedisSerializer()))
+                .entryTtl(Duration.ofMinutes(1L));
 
         Map<String, RedisCacheConfiguration> individualConfiguration = new HashMap<>();
         for (CachePolicy policy : CachePolicy.values()) {
@@ -39,8 +38,8 @@ public class CacheConfig {
             individualConfiguration.put(policy.keyName(), defaultConfig.entryTtl(policy.ttl()));
         }
         return RedisCacheManager.RedisCacheManagerBuilder.fromConnectionFactory(cf)
-            //                .cacheDefaults(defaultConfig)
-            .withInitialCacheConfigurations(individualConfiguration)
-            .build();
+                //                .cacheDefaults(defaultConfig)
+                .withInitialCacheConfigurations(individualConfiguration)
+                .build();
     }
 }

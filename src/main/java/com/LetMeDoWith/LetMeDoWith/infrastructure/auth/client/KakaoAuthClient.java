@@ -22,10 +22,10 @@ public class KakaoAuthClient implements AuthClient {
     @Cacheable(key = "'AuthPublicKey-Kakao'")
     public Mono<OidcPublicKeyResDto> getPublicKeyList() {
         return webClient
-            .get()
-            .uri("https://kauth.kakao.com/.well-known/jwks.json")
-            .accept(MediaType.APPLICATION_JSON)
-            .retrieve()
-            .bodyToMono(OidcPublicKeyResDto.class);
+                .get()
+                .uri("https://kauth.kakao.com/.well-known/jwks.json")
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(OidcPublicKeyResDto.class);
     }
 }

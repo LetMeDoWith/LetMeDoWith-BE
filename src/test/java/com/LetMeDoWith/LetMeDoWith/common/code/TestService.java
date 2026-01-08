@@ -32,10 +32,10 @@ public class TestService {
     public TestDto cacheObject(String keyString, Long keyNumber) {
         log.debug(">>>Test Method executed");
         TestDto testDto = TestDto.builder()
-            .str1(this.str1)
-            .str2(this.str2)
-            .num1(this.num1)
-            .build();
+                .str1(this.str1)
+                .str2(this.str2)
+                .num1(this.num1)
+                .build();
         store.put("testData", testDto);
         return testDto;
     }
@@ -44,22 +44,18 @@ public class TestService {
     public Mono<TestResponseDto> cacheMonoObject() {
         log.debug(">>>TestMono Method executed");
         return webClient
-            .get()
-            .uri(testUrl)
-            .accept(MediaType.APPLICATION_JSON)
-            .retrieve()
-            .onStatus(HttpStatusCode::isError, clientResponse -> clientResponse
-                .bodyToMono(String.class)
-                .map(body -> new Exception()))
-            .bodyToMono(TestResponseDto.class);
+                .get()
+                .uri(testUrl)
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, clientResponse -> clientResponse
+                        .bodyToMono(String.class)
+                        .map(body -> new Exception()))
+                .bodyToMono(TestResponseDto.class);
     }
 
     @Builder
-    public record TestDto(String str1, String str2, int num1) {
+    public record TestDto(String str1, String str2, int num1) {}
 
-    }
-
-    public record TestResponseDto(Long userId, Long id, String title, Boolean completed) {
-
-    }
+    public record TestResponseDto(Long userId, Long id, String title, Boolean completed) {}
 }

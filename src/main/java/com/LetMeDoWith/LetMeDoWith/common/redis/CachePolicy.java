@@ -7,10 +7,7 @@ import lombok.AllArgsConstructor;
 public enum CachePolicy implements RedisPolicySpec {
     APPLE_PUBLIC_KEY(CacheName.APPLE_PUBLIC_KEY, RedisValueType.STRING, Duration.ofDays(7)),
     GOOGLE_PUBLIC_KEY(CacheName.GOOGLE_PUBLIC_KEY, RedisValueType.STRING, Duration.ofDays(7)),
-    KAKAO_PUBLIC_KEY(CacheName.KAKAO_PUBLIC_KEY, RedisValueType.STRING, Duration.ofDays(7)),
-
-    DOWITH_TASK(CacheName.DOWITH_TASK, RedisValueType.HASH, Duration.ofHours(1)),
-    DOWITH_TASK_IDS(CacheName.DOWITH_TASK_IDS, RedisValueType.LIST, Duration.ofHours(1));
+    KAKAO_PUBLIC_KEY(CacheName.KAKAO_PUBLIC_KEY, RedisValueType.STRING, Duration.ofDays(7));
 
     private final String keyName;
     private final RedisValueType redisValueType;
