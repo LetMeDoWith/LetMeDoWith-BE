@@ -128,7 +128,7 @@ class RedisOperatorTest {
     @DisplayName("Policy Type Mismatch 예외 발생")
     void testValidatePolicy_Fail() {
         // Given
-        StorePolicy policy = StorePolicy.DOWITH_TASK; // HASH type
+        StorePolicy policy = StorePolicy.FEEDBACK_AVAILABLE_DOWITH_TASKS; // HASH type
 
         // When & Then
         // String 연산인 set을 HASH 타입 정책으로 호출하면 예외 발생해야 함
@@ -141,7 +141,7 @@ class RedisOperatorTest {
     @DisplayName("List Ops - PushRightAll 성공")
     void testPushRightAll_Success() {
         // Given
-        StorePolicy policy = StorePolicy.DOWITH_TASK_IDS; // LIST type
+        StorePolicy policy = StorePolicy.LAZY_DOWITH_TASK_IDS; // LIST type
         String key = "listKey";
         List<Object> list = Arrays.asList("item1", "item2");
         String expectedFullKey = policy.keyName() + "::" + key;
@@ -163,7 +163,7 @@ class RedisOperatorTest {
     @DisplayName("Hash Ops - PutHash (Single DTO) 성공")
     void testPutHash_Success() {
         // Given
-        StorePolicy policy = StorePolicy.DOWITH_TASK; // HASH type
+        StorePolicy policy = StorePolicy.FEEDBACK_AVAILABLE_DOWITH_TASKS; // HASH type
         String key = "hashKey";
         String expectedFullKey = policy.keyName() + "::" + key;
         TestDto dto = new TestDto("name", 123);
@@ -180,7 +180,7 @@ class RedisOperatorTest {
     @DisplayName("Hash Ops - PutHashes (Pipeline) 성공")
     void testPutHashes_Pipeline_Success() {
         // Given
-        StorePolicy policy = StorePolicy.DOWITH_TASK;
+        StorePolicy policy = StorePolicy.FEEDBACK_AVAILABLE_DOWITH_TASKS;
         List<TestDto> dtoList = Arrays.asList(new TestDto("user1", 10), new TestDto("user2", 20));
         Function<TestDto, String> keyMapper = TestDto::getName;
 
@@ -195,7 +195,7 @@ class RedisOperatorTest {
     @DisplayName("Hash Ops - GetHashes (Pipeline) 성공")
     void testGetHashes_Pipeline_Success() {
         // Given
-        StorePolicy policy = StorePolicy.DOWITH_TASK;
+        StorePolicy policy = StorePolicy.FEEDBACK_AVAILABLE_DOWITH_TASKS;
         List<String> keys = Arrays.asList("user1", "user2");
         Map<String, Object> map1 = new HashMap<>();
         map1.put("name", "user1");
@@ -206,7 +206,8 @@ class RedisOperatorTest {
 
         List<Object> pipelineResults = Arrays.asList(map1, map2);
 
-        when(redisTemplate.executePipelined(any(SessionCallback.class))).thenReturn(pipelineResults);
+        when(redisTemplate.executePipelined(any(SessionCallback.class))).thenReturn(
+            pipelineResults);
 
         // When
         List<TestDto> result = redisOperator.getHashes(policy, keys, TestDto.class);
@@ -223,7 +224,7 @@ class RedisOperatorTest {
     @DisplayName("Hash Ops - PutHashField 성공")
     void testPutHashField_Success() {
         // Given
-        StorePolicy policy = StorePolicy.DOWITH_TASK;
+        StorePolicy policy = StorePolicy.FEEDBACK_AVAILABLE_DOWITH_TASKS;
         String key = "hashKey";
         String field = "fieldName";
         String value = "fieldValue";
@@ -372,7 +373,8 @@ class RedisOperatorTest {
         private String name;
         private int age;
 
-        public TestDto() {}
+        public TestDto() {
+        }
 
         public TestDto(String name, int age) {
             this.name = name;

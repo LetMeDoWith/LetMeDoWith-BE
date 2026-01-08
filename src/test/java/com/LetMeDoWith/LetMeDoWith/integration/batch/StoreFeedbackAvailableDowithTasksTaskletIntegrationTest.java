@@ -59,43 +59,46 @@ class StoreFeedbackAvailableDowithTasksTaskletIntegrationTest extends AbstractIn
         ReflectionTestUtils.setField(tasklet, "executionDateTime", fixedTime);
 
         FeedbackAvailableDowithTaskQueryDto dto1 = new FeedbackAvailableDowithTaskQueryDto(
-                1L,
-                "user1",
-                "nick1",
-                "http://img1",
-                "Title1",
-                "WAITING",
-                LocalDate.of(2025, 1, 1),
-                LocalTime.of(9, 0),
-                0L);
+            1L,
+            "user1",
+            "nick1",
+            "http://img1",
+            "Title1",
+            "WAITING",
+            LocalDate.of(2025, 1, 1),
+            LocalTime.of(9, 0),
+            0L);
         FeedbackAvailableDowithTaskQueryDto dto2 = new FeedbackAvailableDowithTaskQueryDto(
-                2L,
-                "user2",
-                "nick2",
-                "http://img2",
-                "Title2",
-                "WAITING",
-                LocalDate.of(2025, 1, 1),
-                LocalTime.of(10, 0),
-                1L);
+            2L,
+            "user2",
+            "nick2",
+            "http://img2",
+            "Title2",
+            "WAITING",
+            LocalDate.of(2025, 1, 1),
+            LocalTime.of(10, 0),
+            1L);
         List<FeedbackAvailableDowithTaskQueryDto> tasks = List.of(dto1, dto2);
 
         given(feedQueryRepository.getFeedbackAvailableDowithTasks(any())).willReturn(tasks);
 
         // When
         StepExecution stepExecution = MetaDataInstanceFactory.createStepExecution();
-        RepeatStatus status = StepScopeTestUtils.doInStepScope(stepExecution, () -> tasklet.execute(null, null));
+        RepeatStatus status = StepScopeTestUtils.doInStepScope(stepExecution,
+            () -> tasklet.execute(null, null));
 
         // Then
         assertEquals(RepeatStatus.FINISHED, status);
 
         // RedisOperator 호출 검증 (상호작용 테스트)
         // 1. 상세 정보 저장 호출 확인
-        verify(redisOperator).putHashes(eq(StorePolicy.DOWITH_TASK), eq(tasks), any());
+        verify(redisOperator).putHashes(eq(StorePolicy.FEEDBACK_AVAILABLE_DOWITH_TASKS), eq(tasks),
+            any());
 
         // 2. ID 목록 저장 호출 확인 (Atomic Rename 로직 검증)
         // pushRightAll -> rename 순서로 호출되었는지 확인
-        verify(redisOperator).pushRightAll(eq(StorePolicy.DOWITH_TASK_IDS), anyString(), anyList());
-        verify(redisOperator).rename(eq(StorePolicy.DOWITH_TASK_IDS), anyString(), eq(""));
+        verify(redisOperator).pushRightAll(eq(StorePolicy.LAZY_DOWITH_TASK_IDS), anyString(),
+            anyList());
+        verify(redisOperator).rename(eq(StorePolicy.LAZY_DOWITH_TASK_IDS), anyString(), eq(""));
     }
 }
