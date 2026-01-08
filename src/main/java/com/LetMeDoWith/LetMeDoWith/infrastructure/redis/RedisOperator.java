@@ -1,6 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.redis;
 
-import com.LetMeDoWith.LetMeDoWith.common.redis.CachePolicySpec;
+import com.LetMeDoWith.LetMeDoWith.common.redis.RedisPolicySpec;
 import com.LetMeDoWith.LetMeDoWith.common.redis.RedisValueType;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,11 +36,11 @@ public class RedisOperator {
      * @param key    식별자 (없을 경우 빈 문자열)
      * @return prefix::key 형태의 full key
      */
-    private String buildKey(CachePolicySpec policy, String key) {
+    private String buildKey(RedisPolicySpec policy, String key) {
         if (key == null || key.isBlank()) {
-            return policy.cacheName();
+            return policy.keyName();
         }
-        return policy.cacheName() + "::" + key;
+        return policy.keyName() + "::" + key;
     }
 
     /**
@@ -49,7 +49,7 @@ public class RedisOperator {
      * @param fullKey Redis Full Key
      * @param policy  CachePolicySpec
      */
-    private void applyTtl(String fullKey, CachePolicySpec policy) {
+    private void applyTtl(String fullKey, RedisPolicySpec policy) {
         if (policy.ttl() != null) {
             redisTemplate.expire(fullKey, policy.ttl().toMillis(), TimeUnit.MILLISECONDS);
         }
@@ -58,7 +58,7 @@ public class RedisOperator {
     /**
      * CachePolicy의 RedisValueType 검증
      */
-    private void validatePolicy(CachePolicySpec policy, RedisValueType expectedType) {
+    private void validatePolicy(RedisPolicySpec policy, RedisValueType expectedType) {
         if (policy.redisValueType() != expectedType) {
             throw new IllegalArgumentException(String.format(
                 "Invalid CachePolicy. Expected: %s, Actual: %s, Policy: %s",
@@ -100,12 +100,12 @@ public class RedisOperator {
     // Key Ops
     // ==================================================================================
 
-    public void delete(CachePolicySpec policy, String key) {
+    public void delete(RedisPolicySpec policy, String key) {
         String fullKey = buildKey(policy, key);
         execute(() -> redisTemplate.delete(fullKey));
     }
 
-    public void rename(CachePolicySpec policy, String oldKey, String newKey) {
+    public void rename(RedisPolicySpec policy, String oldKey, String newKey) {
         String fullOldKey = buildKey(policy, oldKey);
         String fullNewKey = buildKey(policy, newKey);
 
@@ -121,7 +121,7 @@ public class RedisOperator {
     // Value Ops (String/Object)
     // ==================================================================================
 
-    public <T> void set(CachePolicySpec policy, String key, T value) {
+    public <T> void set(RedisPolicySpec policy, String key, T value) {
         validatePolicy(policy, RedisValueType.STRING);
         String fullKey = buildKey(policy, key);
 
@@ -131,7 +131,7 @@ public class RedisOperator {
         });
     }
 
-    public <T> Optional<T> get(CachePolicySpec policy, String key, Class<T> clazz) {
+    public <T> Optional<T> get(RedisPolicySpec policy, String key, Class<T> clazz) {
         validatePolicy(policy, RedisValueType.STRING);
         String fullKey = buildKey(policy, key);
 
@@ -148,7 +148,7 @@ public class RedisOperator {
     // List Ops
     // ==================================================================================
 
-    public <T> void pushRightAll(CachePolicySpec policy, String key, List<T> list) {
+    public <T> void pushRightAll(RedisPolicySpec policy, String key, List<T> list) {
         validatePolicy(policy, RedisValueType.LIST);
         if (list == null || list.isEmpty()) {
             return;
@@ -161,7 +161,7 @@ public class RedisOperator {
         });
     }
 
-    public <T> List<T> getList(CachePolicySpec policy, String key, long start, long end,
+    public <T> List<T> getList(RedisPolicySpec policy, String key, long start, long end,
         Class<T> clazz) {
         validatePolicy(policy, RedisValueType.LIST);
         String fullKey = buildKey(policy, key);
@@ -179,7 +179,7 @@ public class RedisOperator {
             .orElseGet(Collections::emptyList);
     }
 
-    public <T> void removeList(CachePolicySpec policy, String key, T value) {
+    public <T> void removeList(RedisPolicySpec policy, String key, T value) {
         validatePolicy(policy, RedisValueType.LIST);
         String fullKey = buildKey(policy, key);
 
@@ -190,7 +190,7 @@ public class RedisOperator {
     // ZSet Ops
     // ==================================================================================
 
-    public <T> void zAdd(CachePolicySpec policy, String key, T value, double score) {
+    public <T> void zAdd(RedisPolicySpec policy, String key, T value, double score) {
         validatePolicy(policy, RedisValueType.ZSET);
         String fullKey = buildKey(policy, key);
 
@@ -200,7 +200,7 @@ public class RedisOperator {
         });
     }
 
-    public <T> Set<T> zRange(CachePolicySpec policy, String key, long start, long end,
+    public <T> Set<T> zRange(RedisPolicySpec policy, String key, long start, long end,
         Class<T> clazz) {
         validatePolicy(policy, RedisValueType.ZSET);
         String fullKey = buildKey(policy, key);
@@ -222,7 +222,7 @@ public class RedisOperator {
     // Hash Ops
     // ==================================================================================
 
-    public void putHash(CachePolicySpec policy, String key, Object dto) {
+    public void putHash(RedisPolicySpec policy, String key, Object dto) {
         validatePolicy(policy, RedisValueType.HASH);
         String fullKey = buildKey(policy, key);
 
@@ -235,7 +235,7 @@ public class RedisOperator {
         });
     }
 
-    public <T> Optional<T> getHash(CachePolicySpec policy, String key, Class<T> clazz) {
+    public <T> Optional<T> getHash(RedisPolicySpec policy, String key, Class<T> clazz) {
         validatePolicy(policy, RedisValueType.HASH);
         String fullKey = buildKey(policy, key);
 
@@ -256,7 +256,7 @@ public class RedisOperator {
      * @param keyMapper DTO에서 Key 식별자를 추출하는 함수
      * @param <T>       DTO 타입
      */
-    public <T> void putHashes(CachePolicySpec policy, List<T> dtoList,
+    public <T> void putHashes(RedisPolicySpec policy, List<T> dtoList,
         Function<T, String> keyMapper) {
         validatePolicy(policy, RedisValueType.HASH);
         if (dtoList == null || dtoList.isEmpty()) {
@@ -295,7 +295,7 @@ public class RedisOperator {
      * @param <T>    DTO 타입
      * @return 조회된 DTO 리스트 (중간에 실패하거나 없는 경우 해당 항목 제외, 전체 실패 시 Empty List)
      */
-    public <T> List<T> getHashes(CachePolicySpec policy, List<String> keys, Class<T> clazz) {
+    public <T> List<T> getHashes(RedisPolicySpec policy, List<String> keys, Class<T> clazz) {
         validatePolicy(policy, RedisValueType.HASH);
         if (keys == null || keys.isEmpty()) {
             return Collections.emptyList();
@@ -323,7 +323,7 @@ public class RedisOperator {
             .orElseGet(Collections::emptyList);
     }
 
-    public <T> void putHashField(CachePolicySpec policy, String key, String field, T value) {
+    public <T> void putHashField(RedisPolicySpec policy, String key, String field, T value) {
         validatePolicy(policy, RedisValueType.HASH);
         String fullKey = buildKey(policy, key);
 
@@ -333,7 +333,7 @@ public class RedisOperator {
         });
     }
 
-    public <T> Optional<T> getHashField(CachePolicySpec policy, String key, String field,
+    public <T> Optional<T> getHashField(RedisPolicySpec policy, String key, String field,
         Class<T> clazz) {
         validatePolicy(policy, RedisValueType.HASH);
         String fullKey = buildKey(policy, key);
@@ -347,7 +347,7 @@ public class RedisOperator {
         });
     }
 
-    public void deleteHashField(CachePolicySpec policy, String key, String field) {
+    public void deleteHashField(RedisPolicySpec policy, String key, String field) {
         validatePolicy(policy, RedisValueType.HASH);
         String fullKey = buildKey(policy, key);
 

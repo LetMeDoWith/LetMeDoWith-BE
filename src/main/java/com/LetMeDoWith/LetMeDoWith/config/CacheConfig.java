@@ -36,7 +36,7 @@ public class CacheConfig {
             if (policy.ttl() == null) {
                 continue;
             }
-            individualConfiguration.put(policy.cacheName(), defaultConfig.entryTtl(policy.ttl()));
+            individualConfiguration.put(policy.keyName(), defaultConfig.entryTtl(policy.ttl()));
         }
         return RedisCacheManager.RedisCacheManagerBuilder.fromConnectionFactory(cf)
             //                .cacheDefaults(defaultConfig)

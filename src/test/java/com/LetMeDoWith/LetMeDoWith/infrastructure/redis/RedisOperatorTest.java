@@ -16,7 +16,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.LetMeDoWith.LetMeDoWith.common.redis.CachePolicy;
-import com.LetMeDoWith.LetMeDoWith.common.redis.CachePolicySpec;
+import com.LetMeDoWith.LetMeDoWith.common.redis.RedisPolicySpec;
 import com.LetMeDoWith.LetMeDoWith.common.redis.RedisValueType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Duration;
@@ -94,7 +94,7 @@ class RedisOperatorTest {
         CachePolicy policy = CachePolicy.APPLE_PUBLIC_KEY; // STRING type
         String key = "testKey";
         String value = "testValue";
-        String expectedFullKey = policy.cacheName() + "::" + key;
+        String expectedFullKey = policy.keyName() + "::" + key;
 
         // When
         redisOperator.set(policy, key, value);
@@ -110,7 +110,7 @@ class RedisOperatorTest {
         // Given
         CachePolicy policy = CachePolicy.APPLE_PUBLIC_KEY;
         String key = "testKey";
-        String expectedFullKey = policy.cacheName() + "::" + key;
+        String expectedFullKey = policy.keyName() + "::" + key;
         String expectedValue = "testValue";
 
         when(valueOperations.get(expectedFullKey)).thenReturn(expectedValue);
@@ -143,7 +143,7 @@ class RedisOperatorTest {
         CachePolicy policy = CachePolicy.DOWITH_TASK_IDS; // LIST type
         String key = "listKey";
         List<Object> list = Arrays.asList("item1", "item2");
-        String expectedFullKey = policy.cacheName() + "::" + key;
+        String expectedFullKey = policy.keyName() + "::" + key;
 
         // When
         redisOperator.pushRightAll(policy, key, list);
@@ -164,7 +164,7 @@ class RedisOperatorTest {
         // Given
         CachePolicy policy = CachePolicy.DOWITH_TASK; // HASH type
         String key = "hashKey";
-        String expectedFullKey = policy.cacheName() + "::" + key;
+        String expectedFullKey = policy.keyName() + "::" + key;
         TestDto dto = new TestDto("name", 123);
 
         // When
@@ -227,7 +227,7 @@ class RedisOperatorTest {
         String key = "hashKey";
         String field = "fieldName";
         String value = "fieldValue";
-        String expectedFullKey = policy.cacheName() + "::" + key;
+        String expectedFullKey = policy.keyName() + "::" + key;
 
         // When
         redisOperator.putHashField(policy, key, field, value);
@@ -241,9 +241,9 @@ class RedisOperatorTest {
     @DisplayName("ZSet Ops - ZAdd 성공")
     void testZAdd_Success() {
         // Given
-        CachePolicySpec policy = new CachePolicySpec() {
+        RedisPolicySpec policy = new RedisPolicySpec() {
             @Override
-            public String cacheName() {
+            public String keyName() {
                 return "test:zset";
             }
 
@@ -266,7 +266,7 @@ class RedisOperatorTest {
         String key = "zsetKey";
         String value = "zsetValue";
         double score = 1.0;
-        String expectedFullKey = policy.cacheName() + "::" + key;
+        String expectedFullKey = policy.keyName() + "::" + key;
 
         // When
         redisOperator.zAdd(policy, key, value, score);
@@ -280,9 +280,9 @@ class RedisOperatorTest {
     @DisplayName("ZSet Ops - ZRange 성공")
     void testZRange_Success() {
         // Given
-        CachePolicySpec policy = new CachePolicySpec() {
+        RedisPolicySpec policy = new RedisPolicySpec() {
             @Override
-            public String cacheName() {
+            public String keyName() {
                 return "test:zset";
             }
 
@@ -305,7 +305,7 @@ class RedisOperatorTest {
         String key = "zsetKey";
         long start = 0;
         long end = -1;
-        String expectedFullKey = policy.cacheName() + "::" + key;
+        String expectedFullKey = policy.keyName() + "::" + key;
         Set<Object> expectedSet = new HashSet<>(Arrays.asList("value1", "value2"));
 
         when(zSetOperations.range(expectedFullKey, start, end)).thenReturn(expectedSet);

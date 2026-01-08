@@ -2,9 +2,9 @@ package com.LetMeDoWith.LetMeDoWith.common.redis;
 
 import java.time.Duration;
 
-public interface CachePolicySpec {
+public interface RedisPolicySpec {
 
-    String cacheName();
+    String keyName();
 
     RedisValueType redisValueType();
 
