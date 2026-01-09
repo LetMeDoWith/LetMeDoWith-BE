@@ -33,7 +33,8 @@ public class FeedQueryRepositoryImpl implements FeedQueryRepository {
     private final QBadge badge = QBadge.badge;
 
     @Override
-    public List<FeedbackAvailableDowithTaskQueryDto> getFeedbackAvailableDowithTasks(LocalDateTime referenceDateTime) {
+    public List<FeedbackAvailableDowithTaskQueryDto> getFeedbackAvailableDowithTasks(
+        LocalDateTime referenceDateTime) {
 
         LocalDateTime now = referenceDateTime != null ? referenceDateTime : SystemTimeUtil.now();
 
@@ -50,39 +51,39 @@ public class FeedQueryRepositoryImpl implements FeedQueryRepository {
         if (today.equals(startRangeDate)) {
             // Case 1: 범위 시작과 끝이 같은 날짜인 경우
             condition.and(dowithTask
-                    .date
-                    .eq(today)
-                    .and(dowithTask.startTime.gt(startRangeTime))
-                    .and(dowithTask.startTime.loe(nowTime)));
+                .date
+                .eq(today)
+                .and(dowithTask.startTime.gt(startRangeTime))
+                .and(dowithTask.startTime.loe(nowTime)));
         } else {
             // Case 2: 날짜가 걸쳐있는 경우 (자정 직후)
-            condition.and((dowithTask.date.eq(startRangeDate).and(dowithTask.startTime.gt(startRangeTime)))
+            condition.and(
+                (dowithTask.date.eq(startRangeDate).and(dowithTask.startTime.gt(startRangeTime)))
                     .or(dowithTask.date.eq(today).and(dowithTask.startTime.loe(nowTime))));
         }
 
         return queryFactory
-                .select(Projections.constructor(
-                        FeedbackAvailableDowithTaskQueryDto.class,
-                        dowithTask.id,
-                        dowithTask.memberId,
-                        member.nickname,
-                        badge.imageUrl,
-                        dowithTask.title,
-                        dowithTask.status.stringValue(),
-                        dowithTask.date,
-                        dowithTask.startTime,
-                        JPAExpressions.select(dowithTaskFeedback.count())
-                                .from(dowithTaskFeedback)
-                                .where(dowithTaskFeedback.dowithTaskId.eq(dowithTask.id))))
-                .from(dowithTask)
-                .leftJoin(member)
-                .on(member.id.eq(dowithTask.memberId))
-                .leftJoin(memberBadge)
-                .on(memberBadge.memberId.eq(member.id).and(memberBadge.isMain.eq(Yn.TRUE)))
-                .leftJoin(badge)
-                .on(badge.id.eq(memberBadge.badge.id))
-                .where(condition)
-                .orderBy(dowithTask.date.desc(), dowithTask.startTime.desc())
-                .fetch();
+            .select(Projections.constructor(
+                FeedbackAvailableDowithTaskQueryDto.class,
+                dowithTask.id,
+                dowithTask.memberId,
+                member.nickname,
+                badge.imageUrl,
+                dowithTask.title,
+                dowithTask.status.stringValue(),
+                dowithTask.date,
+                dowithTask.startTime,
+                JPAExpressions.select(dowithTaskFeedback.count())
+                    .from(dowithTaskFeedback)
+                    .where(dowithTaskFeedback.dowithTaskId.eq(dowithTask.id))))
+            .from(dowithTask)
+            .leftJoin(member)
+            .on(member.id.eq(dowithTask.memberId))
+            .leftJoin(memberBadge)
+            .on(memberBadge.memberId.eq(member.id).and(memberBadge.isMain.eq(Yn.TRUE)))
+            .leftJoin(badge)
+            .on(badge.id.eq(memberBadge.badge.id))
+            .where(condition)
+            .fetch();
     }
 }
