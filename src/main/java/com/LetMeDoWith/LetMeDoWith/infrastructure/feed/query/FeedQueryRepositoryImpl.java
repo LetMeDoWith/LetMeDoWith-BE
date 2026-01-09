@@ -8,7 +8,7 @@ import com.LetMeDoWith.LetMeDoWith.domain.member.model.QMember;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.QMemberBadge;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.QDowithTask;
-import com.LetMeDoWith.LetMeDoWith.infrastructure.feed.query.dto.FeedbackAvailableDowithTaskQueryDto;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.feed.query.dto.FeedDowithTaskQueryDto;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPAExpressions;
@@ -33,7 +33,7 @@ public class FeedQueryRepositoryImpl implements FeedQueryRepository {
     private final QBadge badge = QBadge.badge;
 
     @Override
-    public List<FeedbackAvailableDowithTaskQueryDto> getFeedbackAvailableDowithTasks(
+    public List<FeedDowithTaskQueryDto> getFeedbackAvailableDowithTasks(
         LocalDateTime referenceDateTime) {
 
         LocalDateTime now = referenceDateTime != null ? referenceDateTime : SystemTimeUtil.now();
@@ -64,7 +64,7 @@ public class FeedQueryRepositoryImpl implements FeedQueryRepository {
 
         return queryFactory
             .select(Projections.constructor(
-                FeedbackAvailableDowithTaskQueryDto.class,
+                FeedDowithTaskQueryDto.class,
                 dowithTask.id,
                 dowithTask.memberId,
                 member.nickname,

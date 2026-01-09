@@ -3,7 +3,7 @@ package com.LetMeDoWith.LetMeDoWith.batch.tasklet;
 import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.feed.cache.FeedCacheCommandRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.feed.query.FeedQueryRepository;
-import com.LetMeDoWith.LetMeDoWith.infrastructure.feed.query.dto.FeedbackAvailableDowithTaskQueryDto;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.feed.query.dto.FeedDowithTaskQueryDto;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -36,8 +36,8 @@ public class StoreFeedbackAvailableDowithTasksTasklet implements Tasklet {
         }
 
         // 잔소리 대상 두윗 조회 (QueryDSL)
-        List<FeedbackAvailableDowithTaskQueryDto> dowithTasks =
-                feedQueryRepository.getFeedbackAvailableDowithTasks(targetDateTime);
+        List<FeedDowithTaskQueryDto> dowithTasks =
+            feedQueryRepository.getFeedbackAvailableDowithTasks(targetDateTime);
 
         // 잔소리 대상 두윗 상세 정보 Redis 적재
         feedCacheCommandRepository.refreshFeedbackAvailableDowithTasks(dowithTasks);

@@ -1,10 +1,10 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.feed.query;
 
-import com.LetMeDoWith.LetMeDoWith.infrastructure.feed.query.dto.FeedbackAvailableDowithTaskQueryDto;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.feed.query.dto.FeedDowithTaskQueryDto;
 import java.time.LocalDateTime;
 import java.util.List;
 
 public interface FeedQueryRepository {
 
-    List<FeedbackAvailableDowithTaskQueryDto> getFeedbackAvailableDowithTasks(LocalDateTime referenceDateTime);
+    List<FeedDowithTaskQueryDto> getFeedbackAvailableDowithTasks(LocalDateTime referenceDateTime);
 }

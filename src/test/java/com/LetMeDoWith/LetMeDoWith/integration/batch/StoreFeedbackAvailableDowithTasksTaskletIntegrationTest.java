@@ -11,7 +11,7 @@ import static org.mockito.Mockito.verify;
 import com.LetMeDoWith.LetMeDoWith.batch.tasklet.StoreFeedbackAvailableDowithTasksTasklet;
 import com.LetMeDoWith.LetMeDoWith.common.redis.StorePolicy;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.feed.query.FeedQueryRepository;
-import com.LetMeDoWith.LetMeDoWith.infrastructure.feed.query.dto.FeedbackAvailableDowithTaskQueryDto;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.feed.query.dto.FeedDowithTaskQueryDto;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.redis.RedisOperator;
 import com.LetMeDoWith.LetMeDoWith.integration.AbstractIntegrationTest;
 import java.time.LocalDate;
@@ -58,7 +58,7 @@ class StoreFeedbackAvailableDowithTasksTaskletIntegrationTest extends AbstractIn
         LocalDateTime fixedTime = LocalDateTime.of(2024, 1, 1, 0, 0);
         ReflectionTestUtils.setField(tasklet, "executionDateTime", fixedTime);
 
-        FeedbackAvailableDowithTaskQueryDto dto1 = new FeedbackAvailableDowithTaskQueryDto(
+        FeedDowithTaskQueryDto dto1 = new FeedDowithTaskQueryDto(
             1L,
             "user1",
             "nick1",
@@ -68,7 +68,7 @@ class StoreFeedbackAvailableDowithTasksTaskletIntegrationTest extends AbstractIn
             LocalDate.of(2025, 1, 1),
             LocalTime.of(9, 0),
             0L);
-        FeedbackAvailableDowithTaskQueryDto dto2 = new FeedbackAvailableDowithTaskQueryDto(
+        FeedDowithTaskQueryDto dto2 = new FeedDowithTaskQueryDto(
             2L,
             "user2",
             "nick2",
@@ -78,7 +78,7 @@ class StoreFeedbackAvailableDowithTasksTaskletIntegrationTest extends AbstractIn
             LocalDate.of(2025, 1, 1),
             LocalTime.of(10, 0),
             1L);
-        List<FeedbackAvailableDowithTaskQueryDto> tasks = List.of(dto1, dto2);
+        List<FeedDowithTaskQueryDto> tasks = List.of(dto1, dto2);
 
         given(feedQueryRepository.getFeedbackAvailableDowithTasks(any())).willReturn(tasks);
 

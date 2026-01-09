@@ -2,7 +2,7 @@ package com.LetMeDoWith.LetMeDoWith.infrastructure.feed.cache;
 
 import com.LetMeDoWith.LetMeDoWith.common.redis.StorePolicy;
 import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
-import com.LetMeDoWith.LetMeDoWith.infrastructure.feed.query.dto.FeedbackAvailableDowithTaskQueryDto;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.feed.query.dto.FeedDowithTaskQueryDto;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.redis.RedisOperator;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -16,9 +16,9 @@ public class FeedCacheCommandRepositoryImpl implements FeedCacheCommandRepositor
 
     @Override
     public void refreshFeedbackAvailableDowithTasks(
-        List<FeedbackAvailableDowithTaskQueryDto> dowithTasks) {
+        List<FeedDowithTaskQueryDto> dowithTasks) {
         List<Long> ids = dowithTasks.stream()
-            .map(FeedbackAvailableDowithTaskQueryDto::id)
+            .map(FeedDowithTaskQueryDto::id)
             .toList();
 
         // 잔소리 대상 두윗 상세 정보 Redis 적재
