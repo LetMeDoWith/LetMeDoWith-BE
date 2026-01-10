@@ -15,15 +15,12 @@ public class FeedCacheCommandRepositoryImpl implements FeedCacheCommandRepositor
     private final RedisOperator redisOperator;
 
     @Override
-    public void refreshFeedbackAvailableDowithTasks(
-        List<FeedDowithTaskQueryDto> dowithTasks) {
-        List<Long> ids = dowithTasks.stream()
-            .map(FeedDowithTaskQueryDto::id)
-            .toList();
+    public void refreshFeedbackAvailableDowithTasks(List<FeedDowithTaskQueryDto> dowithTasks) {
+        List<Long> ids = dowithTasks.stream().map(FeedDowithTaskQueryDto::id).toList();
 
         // 잔소리 대상 두윗 상세 정보 Redis 적재
-        redisOperator.putHashes(
-            StorePolicy.FEEDBACK_AVAILABLE_DOWITH_TASKS, dowithTasks, dto -> dto.id().toString());
+        redisOperator.putHashes(StorePolicy.FEEDBACK_AVAILABLE_DOWITH_TASKS, dowithTasks, dto -> dto.id()
+                .toString());
 
         // 잔소리 대상 두윗 ID 목록 Redis 적재
         if (ids.isEmpty()) {

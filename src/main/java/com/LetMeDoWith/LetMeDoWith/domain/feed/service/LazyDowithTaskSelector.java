@@ -8,12 +8,11 @@ import java.util.List;
 @DomainService
 public class LazyDowithTaskSelector {
 
-    public List<FeedDowithTask> selectLazyDowithTasks(List<FeedDowithTask> dowithTasks,
-        Integer size) {
+    public List<FeedDowithTask> selectLazyDowithTasks(List<FeedDowithTask> dowithTasks, Integer size) {
         return dowithTasks.stream()
-            .sorted(Comparator.comparing(FeedDowithTask::getStartDateTime)
-                .thenComparing(FeedDowithTask::getFeedbackCount, Comparator.reverseOrder()))
-            .limit(size)
-            .toList();
+                .sorted(Comparator.comparing(FeedDowithTask::startDateTime)
+                        .thenComparing(FeedDowithTask::feedbackCount, Comparator.reverseOrder()))
+                .limit(size)
+                .toList();
     }
 }

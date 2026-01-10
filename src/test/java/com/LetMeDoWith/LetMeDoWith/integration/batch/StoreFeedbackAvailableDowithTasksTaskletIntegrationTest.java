@@ -10,6 +10,7 @@ import static org.mockito.Mockito.verify;
 
 import com.LetMeDoWith.LetMeDoWith.batch.tasklet.StoreFeedbackAvailableDowithTasksTasklet;
 import com.LetMeDoWith.LetMeDoWith.common.redis.StorePolicy;
+import com.LetMeDoWith.LetMeDoWith.domain.feed.model.FeedDowithTask;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.feed.query.FeedQueryRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.feed.query.dto.FeedDowithTaskQueryDto;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.redis.RedisOperator;
@@ -59,46 +60,65 @@ class StoreFeedbackAvailableDowithTasksTaskletIntegrationTest extends AbstractIn
         ReflectionTestUtils.setField(tasklet, "executionDateTime", fixedTime);
 
         FeedDowithTaskQueryDto dto1 = new FeedDowithTaskQueryDto(
-            1L,
-            "user1",
-            "nick1",
-            "http://img1",
-            "Title1",
-            "WAITING",
-            LocalDate.of(2025, 1, 1),
-            LocalTime.of(9, 0),
-            0L);
+                1L,
+                "user1",
+                "nick1",
+                "http://img1",
+                "Title1",
+                "WAITING",
+                LocalDate.of(2025, 1, 1),
+                LocalTime.of(9, 0),
+                0L);
         FeedDowithTaskQueryDto dto2 = new FeedDowithTaskQueryDto(
-            2L,
-            "user2",
-            "nick2",
-            "http://img2",
-            "Title2",
-            "WAITING",
-            LocalDate.of(2025, 1, 1),
-            LocalTime.of(10, 0),
-            1L);
-        List<FeedDowithTaskQueryDto> tasks = List.of(dto1, dto2);
+                2L,
+                "user2",
+                "nick2",
+                "http://img2",
+                "Title2",
+                "WAITING",
+                LocalDate.of(2025, 1, 1),
+                LocalTime.of(10, 0),
+                1L);
+        List<FeedDowithTaskQueryDto> queryDtos = List.of(dto1, dto2);
 
-        given(feedQueryRepository.getFeedbackAvailableDowithTasks(any())).willReturn(tasks);
+        FeedDowithTask task1 = FeedDowithTask.of(
+                1L,
+                "user1",
+                "nick1",
+                "http://img1",
+                "Title1",
+                "WAITING",
+                LocalDate.of(2025, 1, 1),
+                LocalTime.of(9, 0),
+                0L);
+        FeedDowithTask task2 = FeedDowithTask.of(
+                2L,
+                "user2",
+                "nick2",
+                "http://img2",
+                "Title2",
+                "WAITING",
+                LocalDate.of(2025, 1, 1),
+                LocalTime.of(10, 0),
+                1L);
+        List<FeedDowithTask> tasks = List.of(task1, task2);
+
+        given(feedQueryRepository.getFeedbackAvailableDowithTasks(any())).willReturn(queryDtos);
 
         // When
         StepExecution stepExecution = MetaDataInstanceFactory.createStepExecution();
-        RepeatStatus status = StepScopeTestUtils.doInStepScope(stepExecution,
-            () -> tasklet.execute(null, null));
+        RepeatStatus status = StepScopeTestUtils.doInStepScope(stepExecution, () -> tasklet.execute(null, null));
 
         // Then
         assertEquals(RepeatStatus.FINISHED, status);
 
         // RedisOperator 호출 검증 (상호작용 테스트)
         // 1. 상세 정보 저장 호출 확인
-        verify(redisOperator).putHashes(eq(StorePolicy.FEEDBACK_AVAILABLE_DOWITH_TASKS), eq(tasks),
-            any());
+        verify(redisOperator).putHashes(eq(StorePolicy.FEEDBACK_AVAILABLE_DOWITH_TASKS), eq(tasks), any());
 
         // 2. ID 목록 저장 호출 확인 (Atomic Rename 로직 검증)
         // pushRightAll -> rename 순서로 호출되었는지 확인
-        verify(redisOperator).pushRightAll(eq(StorePolicy.LAZY_DOWITH_TASK_IDS), anyString(),
-            anyList());
+        verify(redisOperator).pushRightAll(eq(StorePolicy.LAZY_DOWITH_TASK_IDS), anyString(), anyList());
         verify(redisOperator).rename(eq(StorePolicy.LAZY_DOWITH_TASK_IDS), anyString(), eq(""));
     }
 }

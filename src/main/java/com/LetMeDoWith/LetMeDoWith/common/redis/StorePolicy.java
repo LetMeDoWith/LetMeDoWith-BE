@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public enum StorePolicy implements RedisPolicySpec {
-    FEEDBACK_AVAILABLE_DOWITH_TASKS(CacheName.FEEDBACK_AVAILABLE_DOWITH_TASKS, RedisValueType.HASH,
-        Duration.ofHours(1)),
+    FEEDBACK_AVAILABLE_DOWITH_TASKS(
+            CacheName.FEEDBACK_AVAILABLE_DOWITH_TASKS, RedisValueType.HASH, Duration.ofHours(1)),
     LAZY_DOWITH_TASK_IDS(CacheName.LAZY_DOWITH_TASK_IDS, RedisValueType.LIST, Duration.ofHours(1));
 
     private final String keyName;
