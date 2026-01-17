@@ -8,11 +8,13 @@ import java.util.List;
 @DomainService
 public class LazyDowithTaskSelector {
 
-    public List<FeedDowithTask> selectLazyDowithTasks(List<FeedDowithTask> dowithTasks, Integer size) {
+    public List<FeedDowithTask> selectLazyDowithTasks(List<FeedDowithTask> dowithTasks) {
+        final int LAZY_COUNT = 5;
+
         return dowithTasks.stream()
                 .sorted(Comparator.comparing(FeedDowithTask::startDateTime)
                         .thenComparing(FeedDowithTask::feedbackCount, Comparator.reverseOrder()))
-                .limit(size)
+                .limit(LAZY_COUNT)
                 .toList();
     }
 }

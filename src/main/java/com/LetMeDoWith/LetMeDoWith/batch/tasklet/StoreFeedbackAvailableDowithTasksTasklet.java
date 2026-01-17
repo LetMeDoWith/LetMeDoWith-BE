@@ -60,8 +60,7 @@ public class StoreFeedbackAvailableDowithTasksTasklet implements Tasklet {
                 })
                 .toList();
 
-        List<FeedDowithTask> lazyDowithTasks =
-                lazyDowithTaskSelector.selectLazyDowithTasks(feedDowithTasks, LAZY_DOWITH_COUNT);
+        List<FeedDowithTask> lazyDowithTasks = lazyDowithTaskSelector.selectLazyDowithTasks(feedDowithTasks);
         List<String> lazyDowithTaskIds =
                 lazyDowithTasks.stream().map(dowith -> dowith.id().toString()).toList();
 
