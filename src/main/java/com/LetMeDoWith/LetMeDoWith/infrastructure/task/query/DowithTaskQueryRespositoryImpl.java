@@ -10,12 +10,11 @@ import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.DowithTaskQueryDto
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
@@ -47,7 +46,7 @@ public class DowithTaskQueryRespositoryImpl implements DowithTaskQueryRepository
                         // FeedBack
                         // 개발시
                         // 추가
-                ))
+                        ))
                 .from(dowithTask)
                 .leftJoin(taskCategory)
                 .on(dowithTask.taskCategoryId.eq(taskCategory.id))
@@ -83,7 +82,7 @@ public class DowithTaskQueryRespositoryImpl implements DowithTaskQueryRepository
                         // FeedBack
                         // 개발시
                         // 추가
-                ))
+                        ))
                 .from(dowithTask)
                 .leftJoin(taskCategory)
                 .on(dowithTask.taskCategoryId.eq(taskCategory.id))

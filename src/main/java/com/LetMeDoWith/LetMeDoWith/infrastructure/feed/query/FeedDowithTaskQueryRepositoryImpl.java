@@ -10,14 +10,13 @@ import com.LetMeDoWith.LetMeDoWith.domain.task.model.QDowithTaskSuccess;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
@@ -31,7 +30,17 @@ public class FeedDowithTaskQueryRepositoryImpl implements FeedDowithTaskQueryRep
     private final QMember member = QMember.member;
 
     @Override
-    public List<DowithTaskSuccessImageQueryDto> getDowithTaskSuccessImages(String requestMemberId, int offset, int limit) {
+    public Long countDowithTaskSuccessImages() {
+        return queryFactory
+                .select(dowithTask.count())
+                .from(dowithTask)
+                .where(dowithTask.status.eq(DowithTaskStatus.SUCCESS))
+                .fetchOne();
+    }
+
+    @Override
+    public List<DowithTaskSuccessImageQueryDto> getDowithTaskSuccessImages(
+            String requestMemberId, int offset, int limit) {
         return queryFactory
                 .select(Projections.constructor(
                         DowithTaskSuccessImageQueryDto.class,
@@ -40,14 +49,12 @@ public class FeedDowithTaskQueryRepositoryImpl implements FeedDowithTaskQueryRep
                         member.nickname,
                         member.profileImageUrl,
                         dowithTaskSuccess.imageUrl,
-                        JPAExpressions
-                                .selectOne()
+                        JPAExpressions.selectOne()
                                 .from(dowithTaskLike)
-                                .where(dowithTaskLike.dowithTask.eq(dowithTask),
+                                .where(
+                                        dowithTaskLike.dowithTask.eq(dowithTask),
                                         dowithTaskLike.memberId.eq(requestMemberId))
-                                .exists()
-
-                ))
+                                .exists()))
                 .from(dowithTask)
                 .fetchJoin()
                 .leftJoin(member)
@@ -64,18 +71,14 @@ public class FeedDowithTaskQueryRepositoryImpl implements FeedDowithTaskQueryRep
     @Override
     public Map<Long, Long> countDowithTaskLikes(Set<Long> dowithTaskIds) {
         return queryFactory
-                .select(dowithTask.id,
-                        dowithTaskLike.count())
+                .select(dowithTask.id, dowithTaskLike.count())
                 .from(dowithTaskLike)
                 .where(dowithTaskLike.dowithTask.id.in(dowithTaskIds))
                 .groupBy(dowithTaskLike.dowithTask.id)
                 .fetch()
                 .stream()
-                .collect(
-                        Collectors.toMap(
-                                tuple -> tuple.get(dowithTask.id),
-                                tuple -> Optional.ofNullable(tuple.get(dowithTaskLike.count())).orElse(0L)
-                        )
-                );
+                .collect(Collectors.toMap(tuple -> tuple.get(dowithTask.id), tuple -> Optional.ofNullable(
+                                tuple.get(dowithTaskLike.count()))
+                        .orElse(0L)));
     }
 }

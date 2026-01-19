@@ -6,6 +6,4 @@ public record DowithTaskSuccessImageQueryDto(
         String memberNickname,
         String memberProfileImageUrl,
         String successImageUrl,
-        Boolean isLiked
-) {
-}
+        Boolean isLiked) {}

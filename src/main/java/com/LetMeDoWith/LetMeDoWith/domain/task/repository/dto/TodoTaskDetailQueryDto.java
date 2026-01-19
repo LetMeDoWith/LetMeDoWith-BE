@@ -3,7 +3,6 @@ package com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TaskRoutineCycle;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TodoTaskStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskRoutinePattern;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Set;

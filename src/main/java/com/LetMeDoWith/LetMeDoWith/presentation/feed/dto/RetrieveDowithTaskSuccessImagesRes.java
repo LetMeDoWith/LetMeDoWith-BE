@@ -1,14 +1,11 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.feed.dto;
 
 import com.LetMeDoWith.LetMeDoWith.application.feed.dto.RetrieveDowithTaskSuccessImagesResult;
-
 import java.util.List;
 
-public record RetrieveDowithTaskSuccessImagesRes(
-        List<SuccessImage> successImages
-) {
+public record RetrieveDowithTaskSuccessImagesRes(List<SuccessImage> successImages) {
 
-    static public RetrieveDowithTaskSuccessImagesRes from(RetrieveDowithTaskSuccessImagesResult result) {
+    public static RetrieveDowithTaskSuccessImagesRes from(RetrieveDowithTaskSuccessImagesResult result) {
         List<SuccessImage> successImages = result.successImages().stream()
                 .map(image -> new SuccessImage(
                         image.dowithTaskId(),
@@ -17,8 +14,7 @@ public record RetrieveDowithTaskSuccessImagesRes(
                         image.memberProfileImageUrl(),
                         image.successImageUrl(),
                         image.isLiked(),
-                        image.likeCount()
-                ))
+                        image.likeCount()))
                 .toList();
         return new RetrieveDowithTaskSuccessImagesRes(successImages);
     }
@@ -30,7 +26,5 @@ public record RetrieveDowithTaskSuccessImagesRes(
             String memberProfileImageUrl,
             String successImageUrl,
             Boolean isLiked,
-            Long likeCount
-    ) {
-    }
+            Long likeCount) {}
 }

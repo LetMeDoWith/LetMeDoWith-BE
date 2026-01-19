@@ -1,8 +1,8 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.feed.controller;
 
-import com.LetMeDoWith.LetMeDoWith.application.feed.dto.RetrieveDowithTaskSuccessImagesResult;
 import com.LetMeDoWith.LetMeDoWith.application.feed.service.FeedTaskService;
 import com.LetMeDoWith.LetMeDoWith.common.dto.ResponsePageDto;
+import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
 import com.LetMeDoWith.LetMeDoWith.presentation.feed.dto.RetrieveDowithTaskSuccessImagesRes;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,15 +25,12 @@ public class FeedController {
 
     @Operation(summary = "Dowith Task 인증 사진 조회")
     @GetMapping("/tasks/dowith/success-images")
-    public ResponseEntity<ResponsePageDto<RetrieveDowithTaskSuccessImagesRes>> retrieveDowithTaskSuccessImages(@ParameterObject Pageable pageable) {
+    public ResponseEntity<ResponsePageDto<RetrieveDowithTaskSuccessImagesRes>> retrieveDowithTaskSuccessImages(
+            @ParameterObject Pageable pageable) {
 
-        RetrieveDowithTaskSuccessImagesResult result = this.feedTaskService.retrieveDowithTaskSuccessImages(pageable);
-
+        String requestMemberId = AuthUtil.getMemberId();
+        var result = this.feedTaskService.retrieveDowithTaskSuccessImages(requestMemberId, pageable);
         return ResponseUtil.createSuccessResponse(
-                RetrieveDowithTaskSuccessImagesRes.from(result),
-                pageable,
-                result.totalCount()
-        );
+                RetrieveDowithTaskSuccessImagesRes.from(result), pageable, result.totalCount());
     }
-
 }

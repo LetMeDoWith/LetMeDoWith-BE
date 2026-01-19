@@ -1,11 +1,10 @@
 package com.LetMeDoWith.LetMeDoWith.application.task.dto;
 
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.TodoTaskDetailQueryDto;
-import lombok.Builder;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Set;
+import lombok.Builder;
 
 @Builder
 public record RetrieveTodoTaskResult(
@@ -30,18 +29,17 @@ public record RetrieveTodoTaskResult(
                 .routine(
                         dto.routineId() != null
                                 ? TodoTaskRoutine.builder()
-                                .startDate(dto.startDate())
-                                .endDate(dto.endDate())
-                                .cycle(dto.cycle())
-                                .pattern(dto.pattern())
-                                .isExcludeHolidays(dto.isExcludeHolidays())
-                                .build()
+                                        .startDate(dto.startDate())
+                                        .endDate(dto.endDate())
+                                        .cycle(dto.cycle())
+                                        .pattern(dto.pattern())
+                                        .isExcludeHolidays(dto.isExcludeHolidays())
+                                        .build()
                                 : null)
                 .build();
     }
 
     @Builder
     public record TodoTaskRoutine(
-            LocalDate startDate, LocalDate endDate, String cycle, Set<Integer> pattern, boolean isExcludeHolidays) {
-    }
+            LocalDate startDate, LocalDate endDate, String cycle, Set<Integer> pattern, boolean isExcludeHolidays) {}
 }
