@@ -1,7 +1,8 @@
-package com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.dto;
+package com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto;
 
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TodoTaskStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TodoTaskRoutine;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 

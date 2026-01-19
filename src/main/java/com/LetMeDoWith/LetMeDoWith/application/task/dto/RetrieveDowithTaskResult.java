@@ -1,14 +1,15 @@
 package com.LetMeDoWith.LetMeDoWith.application.task.dto;
 
-import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.dto.DowithTaskDetailQueryDto;
+import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.DowithTaskDetailQueryDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
+import lombok.Builder;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Set;
-import lombok.Builder;
 
 @Builder
 public record RetrieveDowithTaskResult(
@@ -35,12 +36,12 @@ public record RetrieveDowithTaskResult(
                 .routine(
                         dto.routineId() != null
                                 ? DowithTaskRoutine.builder()
-                                        .startDate(dto.startDate())
-                                        .endDate(dto.endDate())
-                                        .cycle(dto.cycle())
-                                        .pattern(dto.patterns())
-                                        .isExcludeHolidays(dto.isExcludeHolidays())
-                                        .build()
+                                .startDate(dto.startDate())
+                                .endDate(dto.endDate())
+                                .cycle(dto.cycle())
+                                .pattern(dto.patterns())
+                                .isExcludeHolidays(dto.isExcludeHolidays())
+                                .build()
                                 : null)
                 .feedBackCount(dto.feedBackCount())
                 .build();
@@ -52,5 +53,6 @@ public record RetrieveDowithTaskResult(
             @Schema(description = "종료 일자", defaultValue = "2025-01-30") @NotNull LocalDate endDate,
             @Schema(description = "루틴 반복 주기", defaultValue = "DAILY") @NotNull String cycle,
             @Schema(description = "루틴 반복 패턴", defaultValue = "[1, 2, 3]") @Null Set<Integer> pattern,
-            @Schema(description = "루틴 반복 휴일 제외 여부", defaultValue = "false") @NotNull Boolean isExcludeHolidays) {}
+            @Schema(description = "루틴 반복 휴일 제외 여부", defaultValue = "false") @NotNull Boolean isExcludeHolidays) {
+    }
 }

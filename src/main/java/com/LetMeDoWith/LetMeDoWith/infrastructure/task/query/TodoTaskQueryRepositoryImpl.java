@@ -3,15 +3,17 @@ package com.LetMeDoWith.LetMeDoWith.infrastructure.task.query;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.QTaskCategory;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.QTodoTask;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.QTodoTaskRoutine;
-import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.dto.TodoTaskDetailQueryDto;
-import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.dto.TodoTaskQueryDto;
+import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TodoTaskQueryRepository;
+import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.TodoTaskDetailQueryDto;
+import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.TodoTaskQueryDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor

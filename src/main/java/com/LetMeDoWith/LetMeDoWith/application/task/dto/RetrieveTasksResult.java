@@ -1,14 +1,15 @@
 package com.LetMeDoWith.LetMeDoWith.application.task.dto;
 
-import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.dto.DowithTaskQueryDto;
-import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.dto.TodoTaskQueryDto;
+import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.DowithTaskQueryDto;
+import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.TodoTaskQueryDto;
+import lombok.Builder;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import lombok.Builder;
 
 public record RetrieveTasksResult(List<TodoTaskDto> todoTasks, List<DowithTaskDto> dowithTasks) {
 
@@ -61,7 +62,8 @@ public record RetrieveTasksResult(List<TodoTaskDto> todoTasks, List<DowithTaskDt
             String status,
             LocalDate date,
             LocalTime startTime,
-            boolean isRoutine) {}
+            boolean isRoutine) {
+    }
 
     public record DowithTaskDto(
             Long id,
@@ -73,5 +75,6 @@ public record RetrieveTasksResult(List<TodoTaskDto> todoTasks, List<DowithTaskDt
             LocalTime startTime,
             List<String> successImageUrls,
             boolean isRoutine,
-            int feedBackCount) {}
+            int feedBackCount) {
+    }
 }
