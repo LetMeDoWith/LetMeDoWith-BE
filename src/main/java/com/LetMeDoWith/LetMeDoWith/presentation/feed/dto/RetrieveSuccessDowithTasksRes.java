@@ -1,12 +1,12 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.feed.dto;
 
-import com.LetMeDoWith.LetMeDoWith.application.feed.dto.RetrieveDowithTaskSuccessImagesResult;
+import com.LetMeDoWith.LetMeDoWith.application.feed.dto.RetrieveSuccessDowithTasksResult;
 import java.util.List;
 
-public record RetrieveDowithTaskSuccessImagesRes(List<SuccessImage> successImages) {
+public record RetrieveSuccessDowithTasksRes(List<SuccessImage> successImages) {
 
-    public static RetrieveDowithTaskSuccessImagesRes from(RetrieveDowithTaskSuccessImagesResult result) {
-        List<SuccessImage> successImages = result.successImages().stream()
+    public static RetrieveSuccessDowithTasksRes from(RetrieveSuccessDowithTasksResult result) {
+        List<SuccessImage> successImages = result.successDowithTasks().stream()
                 .map(image -> new SuccessImage(
                         image.dowithTaskId(),
                         image.title(),
@@ -16,7 +16,7 @@ public record RetrieveDowithTaskSuccessImagesRes(List<SuccessImage> successImage
                         image.isLiked(),
                         image.likeCount()))
                 .toList();
-        return new RetrieveDowithTaskSuccessImagesRes(successImages);
+        return new RetrieveSuccessDowithTasksRes(successImages);
     }
 
     public record SuccessImage(

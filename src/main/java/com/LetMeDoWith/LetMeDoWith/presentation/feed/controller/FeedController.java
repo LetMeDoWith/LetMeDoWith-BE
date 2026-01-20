@@ -1,10 +1,10 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.feed.controller;
 
-import com.LetMeDoWith.LetMeDoWith.application.feed.service.FeedTaskService;
+import com.LetMeDoWith.LetMeDoWith.application.feed.service.FeedDowithTaskService;
 import com.LetMeDoWith.LetMeDoWith.common.dto.ResponsePageDto;
 import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
-import com.LetMeDoWith.LetMeDoWith.presentation.feed.dto.RetrieveDowithTaskSuccessImagesRes;
+import com.LetMeDoWith.LetMeDoWith.presentation.feed.dto.RetrieveSuccessDowithTasksRes;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -21,16 +21,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class FeedController {
 
-    private final FeedTaskService feedTaskService;
+    private final FeedDowithTaskService feedDowithTaskService;
 
-    @Operation(summary = "Dowith Task 인증 사진 조회")
-    @GetMapping("/tasks/dowith/success-images")
-    public ResponseEntity<ResponsePageDto<RetrieveDowithTaskSuccessImagesRes>> retrieveDowithTaskSuccessImages(
+    @Operation(summary = "성공 Dowith Task 조회 (인증 사진 조회)")
+    @GetMapping("/tasks/dowith/success")
+    public ResponseEntity<ResponsePageDto<RetrieveSuccessDowithTasksRes>> retrieveSuccessDowithTasks(
             @ParameterObject Pageable pageable) {
 
         String requestMemberId = AuthUtil.getMemberId();
-        var result = this.feedTaskService.retrieveDowithTaskSuccessImages(requestMemberId, pageable);
+        var result = this.feedDowithTaskService.retrieveSuccessDowithTasks(requestMemberId, pageable);
         return ResponseUtil.createSuccessResponse(
-                RetrieveDowithTaskSuccessImagesRes.from(result), pageable, result.totalCount());
+                RetrieveSuccessDowithTasksRes.from(result), pageable, result.totalCount());
     }
 }

@@ -1,7 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.feed.query;
 
 import com.LetMeDoWith.LetMeDoWith.application.feed.repository.FeedDowithTaskQueryRepository;
-import com.LetMeDoWith.LetMeDoWith.application.feed.repository.dto.DowithTaskSuccessImageQueryDto;
+import com.LetMeDoWith.LetMeDoWith.application.feed.repository.dto.SuccessDowithTaskQueryDto;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.QMember;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.QDowithTask;
@@ -30,7 +30,7 @@ public class FeedDowithTaskQueryRepositoryImpl implements FeedDowithTaskQueryRep
     private final QMember member = QMember.member;
 
     @Override
-    public Long countDowithTaskSuccessImages() {
+    public Long countSuccessDowithTasks() {
         return queryFactory
                 .select(dowithTask.count())
                 .from(dowithTask)
@@ -39,11 +39,10 @@ public class FeedDowithTaskQueryRepositoryImpl implements FeedDowithTaskQueryRep
     }
 
     @Override
-    public List<DowithTaskSuccessImageQueryDto> getDowithTaskSuccessImages(
-            String requestMemberId, int offset, int limit) {
+    public List<SuccessDowithTaskQueryDto> getSuccessDowithTasks(String requestMemberId, int offset, int limit) {
         return queryFactory
                 .select(Projections.constructor(
-                        DowithTaskSuccessImageQueryDto.class,
+                        SuccessDowithTaskQueryDto.class,
                         dowithTask.id,
                         dowithTask.title,
                         member.nickname,
@@ -56,7 +55,6 @@ public class FeedDowithTaskQueryRepositoryImpl implements FeedDowithTaskQueryRep
                                         dowithTaskLike.memberId.eq(requestMemberId))
                                 .exists()))
                 .from(dowithTask)
-                .fetchJoin()
                 .leftJoin(member)
                 .on(dowithTask.memberId.eq(member.id))
                 .join(dowithTaskSuccess)

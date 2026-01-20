@@ -1,6 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.application.feed.repository.dto;
 
-public record DowithTaskSuccessImageQueryDto(
+public record SuccessDowithTaskQueryDto(
         Long dowithTaskId,
         String title,
         String memberNickname,

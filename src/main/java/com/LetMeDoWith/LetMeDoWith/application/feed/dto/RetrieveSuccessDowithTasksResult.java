@@ -1,18 +1,18 @@
 package com.LetMeDoWith.LetMeDoWith.application.feed.dto;
 
-import com.LetMeDoWith.LetMeDoWith.application.feed.repository.dto.DowithTaskSuccessImageQueryDto;
+import com.LetMeDoWith.LetMeDoWith.application.feed.repository.dto.SuccessDowithTaskQueryDto;
 import java.util.List;
 import java.util.Map;
 
-public record RetrieveDowithTaskSuccessImagesResult(Long totalCount, List<SuccessImage> successImages) {
-    public static RetrieveDowithTaskSuccessImagesResult of(
+public record RetrieveSuccessDowithTasksResult(Long totalCount, List<SuccessDowithTask> successDowithTasks) {
+    public static RetrieveSuccessDowithTasksResult of(
             Long totalCount,
-            List<DowithTaskSuccessImageQueryDto> successImageQueryDtos,
+            List<SuccessDowithTaskQueryDto> successImageQueryDtos,
             Map<Long, Long> dowithTaskLikeCountMap) {
-        return new RetrieveDowithTaskSuccessImagesResult(
+        return new RetrieveSuccessDowithTasksResult(
                 totalCount,
                 successImageQueryDtos.stream()
-                        .map(dto -> new SuccessImage(
+                        .map(dto -> new SuccessDowithTask(
                                 dto.dowithTaskId(),
                                 dto.title(),
                                 dto.memberNickname(),
@@ -23,7 +23,7 @@ public record RetrieveDowithTaskSuccessImagesResult(Long totalCount, List<Succes
                         .toList());
     }
 
-    public record SuccessImage(
+    public record SuccessDowithTask(
             Long dowithTaskId,
             String title,
             String memberNickname,
