@@ -1,5 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.redis;
 
+import static com.LetMeDoWith.LetMeDoWith.infrastructure.redis.RedisKeyGenerator.buildKey;
+
 import com.LetMeDoWith.LetMeDoWith.common.redis.RedisPolicySpec;
 import com.LetMeDoWith.LetMeDoWith.common.redis.RedisValueType;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -29,37 +31,23 @@ public class RedisOperator {
     private final RedisTemplate<String, Object> redisTemplate;
     private final ObjectMapper objectMapper;
 
-    /**
-     * Redis Key 생성
-     *
-     * @param policy CachePolicySpec
-     * @param key    식별자 (없을 경우 빈 문자열)
-     * @return prefix::key 형태의 full key
-     */
-    private String buildKey(RedisPolicySpec policy, String key) {
-        if (key == null || key.isBlank()) {
-            return policy.keyName();
-        }
-        return policy.keyName() + "::" + key;
-    }
-
     // ==================================================================================
     // Key Ops
     // ==================================================================================
 
     public void delete(RedisPolicySpec policy, String key) {
         String fullKey = buildKey(policy, key);
-        execute(() -> redisTemplate.delete(fullKey));
+        this.execute(() -> redisTemplate.delete(fullKey));
     }
 
     public void rename(RedisPolicySpec policy, String oldKey, String newKey) {
         String fullOldKey = buildKey(policy, oldKey);
         String fullNewKey = buildKey(policy, newKey);
 
-        execute(() -> {
+        this.execute(() -> {
             if (redisTemplate.hasKey(fullOldKey)) {
                 redisTemplate.rename(fullOldKey, fullNewKey);
-                applyTtl(fullNewKey, policy);
+                this.applyTtl(fullNewKey, policy);
             }
         });
     }
@@ -69,20 +57,20 @@ public class RedisOperator {
     // ==================================================================================
 
     public <T> void set(RedisPolicySpec policy, String key, T value) {
-        validatePolicy(policy, RedisValueType.STRING);
+        this.validatePolicy(policy, RedisValueType.STRING);
         String fullKey = buildKey(policy, key);
 
-        execute(() -> {
+        this.execute(() -> {
             redisTemplate.opsForValue().set(fullKey, value);
-            applyTtl(fullKey, policy);
+            this.applyTtl(fullKey, policy);
         });
     }
 
     public <T> Optional<T> get(RedisPolicySpec policy, String key, Class<T> clazz) {
-        validatePolicy(policy, RedisValueType.STRING);
+        this.validatePolicy(policy, RedisValueType.STRING);
         String fullKey = buildKey(policy, key);
 
-        return execute(() -> {
+        return this.execute(() -> {
             Object value = redisTemplate.opsForValue().get(fullKey);
             if (value == null) {
                 return null;
@@ -96,41 +84,41 @@ public class RedisOperator {
     // ==================================================================================
 
     public <T> void pushRightAll(RedisPolicySpec policy, String key, List<T> list) {
-        validatePolicy(policy, RedisValueType.LIST);
+        this.validatePolicy(policy, RedisValueType.LIST);
         if (list == null || list.isEmpty()) {
             return;
         }
         String fullKey = buildKey(policy, key);
 
-        execute(() -> {
+        this.execute(() -> {
             redisTemplate.opsForList().rightPushAll(fullKey, (List<Object>) list);
-            applyTtl(fullKey, policy);
+            this.applyTtl(fullKey, policy);
         });
     }
 
     public <T> List<T> getList(RedisPolicySpec policy, String key, long start, long end,
         Class<T> clazz) {
-        validatePolicy(policy, RedisValueType.LIST);
+        this.validatePolicy(policy, RedisValueType.LIST);
         String fullKey = buildKey(policy, key);
 
-        return execute(() -> {
-            List<Object> rawList = redisTemplate.opsForList().range(fullKey, start, end);
-            if (rawList == null || rawList.isEmpty()) {
-                return Collections.<T>emptyList();
-            }
+        return this.execute(() -> {
+                List<Object> rawList = redisTemplate.opsForList().range(fullKey, start, end);
+                if (rawList == null || rawList.isEmpty()) {
+                    return Collections.<T>emptyList();
+                }
 
-            return rawList.stream()
-                .map(item -> objectMapper.convertValue(item, clazz))
-                .collect(Collectors.toList());
-        })
+                return rawList.stream()
+                    .map(item -> objectMapper.convertValue(item, clazz))
+                    .collect(Collectors.toList());
+            })
             .orElseGet(Collections::emptyList);
     }
 
     public <T> void removeList(RedisPolicySpec policy, String key, T value) {
-        validatePolicy(policy, RedisValueType.LIST);
+        this.validatePolicy(policy, RedisValueType.LIST);
         String fullKey = buildKey(policy, key);
 
-        execute(() -> redisTemplate.opsForList().remove(fullKey, 1, value));
+        this.execute(() -> redisTemplate.opsForList().remove(fullKey, 1, value));
     }
 
     // ==================================================================================
@@ -138,30 +126,30 @@ public class RedisOperator {
     // ==================================================================================
 
     public <T> void zAdd(RedisPolicySpec policy, String key, T value, double score) {
-        validatePolicy(policy, RedisValueType.ZSET);
+        this.validatePolicy(policy, RedisValueType.ZSET);
         String fullKey = buildKey(policy, key);
 
-        execute(() -> {
+        this.execute(() -> {
             redisTemplate.opsForZSet().add(fullKey, value, score);
-            applyTtl(fullKey, policy);
+            this.applyTtl(fullKey, policy);
         });
     }
 
     public <T> Set<T> zRange(RedisPolicySpec policy, String key, long start, long end,
         Class<T> clazz) {
-        validatePolicy(policy, RedisValueType.ZSET);
+        this.validatePolicy(policy, RedisValueType.ZSET);
         String fullKey = buildKey(policy, key);
 
-        return execute(() -> {
-            Set<Object> rawSet = redisTemplate.opsForZSet().range(fullKey, start, end);
-            if (rawSet == null || rawSet.isEmpty()) {
-                return Collections.<T>emptySet();
-            }
+        return this.execute(() -> {
+                Set<Object> rawSet = redisTemplate.opsForZSet().range(fullKey, start, end);
+                if (rawSet == null || rawSet.isEmpty()) {
+                    return Collections.<T>emptySet();
+                }
 
-            return rawSet.stream()
-                .map(item -> objectMapper.convertValue(item, clazz))
-                .collect(Collectors.toSet());
-        })
+                return rawSet.stream()
+                    .map(item -> objectMapper.convertValue(item, clazz))
+                    .collect(Collectors.toSet());
+            })
             .orElseGet(Collections::emptySet);
     }
 
@@ -170,23 +158,23 @@ public class RedisOperator {
     // ==================================================================================
 
     public void putHash(RedisPolicySpec policy, String key, Object dto) {
-        validatePolicy(policy, RedisValueType.HASH);
+        this.validatePolicy(policy, RedisValueType.HASH);
         String fullKey = buildKey(policy, key);
 
-        execute(() -> {
+        this.execute(() -> {
             Map<String, Object> map = objectMapper.convertValue(dto,
                 new TypeReference<Map<String, Object>>() {
                 });
             redisTemplate.opsForHash().putAll(fullKey, map);
-            applyTtl(fullKey, policy);
+            this.applyTtl(fullKey, policy);
         });
     }
 
     public <T> Optional<T> getHash(RedisPolicySpec policy, String key, Class<T> clazz) {
-        validatePolicy(policy, RedisValueType.HASH);
+        this.validatePolicy(policy, RedisValueType.HASH);
         String fullKey = buildKey(policy, key);
 
-        return execute(() -> {
+        return this.execute(() -> {
             Map<Object, Object> entries = redisTemplate.opsForHash().entries(fullKey);
             if (entries.isEmpty()) {
                 return null;
@@ -205,12 +193,12 @@ public class RedisOperator {
      */
     public <T> void putHashes(RedisPolicySpec policy, List<T> dtoList,
         Function<T, String> keyMapper) {
-        validatePolicy(policy, RedisValueType.HASH);
+        this.validatePolicy(policy, RedisValueType.HASH);
         if (dtoList == null || dtoList.isEmpty()) {
             return;
         }
 
-        execute(() -> redisTemplate.executePipelined(new SessionCallback<Object>() {
+        this.execute(() -> redisTemplate.executePipelined(new SessionCallback<Object>() {
             @Override
             public <K, V> Object execute(RedisOperations<K, V> operations)
                 throws DataAccessException {
@@ -243,49 +231,49 @@ public class RedisOperator {
      * @return 조회된 DTO 리스트 (중간에 실패하거나 없는 경우 해당 항목 제외, 전체 실패 시 Empty List)
      */
     public <T> List<T> getHashes(RedisPolicySpec policy, List<String> keys, Class<T> clazz) {
-        validatePolicy(policy, RedisValueType.HASH);
+        this.validatePolicy(policy, RedisValueType.HASH);
         if (keys == null || keys.isEmpty()) {
             return Collections.emptyList();
         }
 
-        return execute(() -> {
-            List<Object> results = redisTemplate.executePipelined(new SessionCallback<Object>() {
-                @Override
-                public <K, V> Object execute(RedisOperations<K, V> operations)
-                    throws DataAccessException {
-                    RedisTemplate<String, Object> template = (RedisTemplate<String, Object>) operations;
-                    for (String key : keys) {
-                        template.opsForHash().entries(buildKey(policy, key));
+        return this.execute(() -> {
+                List<Object> results = redisTemplate.executePipelined(new SessionCallback<Object>() {
+                    @Override
+                    public <K, V> Object execute(RedisOperations<K, V> operations)
+                        throws DataAccessException {
+                        RedisTemplate<String, Object> template = (RedisTemplate<String, Object>) operations;
+                        for (String key : keys) {
+                            template.opsForHash().entries(buildKey(policy, key));
+                        }
+                        return null;
                     }
-                    return null;
-                }
-            });
+                });
 
-            // executePipelined는 항상 List를 반환
-            return results.stream()
-                .filter(obj -> obj instanceof Map && !((Map<?, ?>) obj).isEmpty())
-                .map(obj -> objectMapper.convertValue(obj, clazz))
-                .collect(Collectors.toList());
-        })
+                // this.executePipelined는 항상 List를 반환
+                return results.stream()
+                    .filter(obj -> obj instanceof Map && !((Map<?, ?>) obj).isEmpty())
+                    .map(obj -> objectMapper.convertValue(obj, clazz))
+                    .collect(Collectors.toList());
+            })
             .orElseGet(Collections::emptyList);
     }
 
     public <T> void putHashField(RedisPolicySpec policy, String key, String field, T value) {
-        validatePolicy(policy, RedisValueType.HASH);
+        this.validatePolicy(policy, RedisValueType.HASH);
         String fullKey = buildKey(policy, key);
 
-        execute(() -> {
+        this.execute(() -> {
             redisTemplate.opsForHash().put(fullKey, field, value);
-            applyTtl(fullKey, policy);
+            this.applyTtl(fullKey, policy);
         });
     }
 
     public <T> Optional<T> getHashField(RedisPolicySpec policy, String key, String field,
         Class<T> clazz) {
-        validatePolicy(policy, RedisValueType.HASH);
+        this.validatePolicy(policy, RedisValueType.HASH);
         String fullKey = buildKey(policy, key);
 
-        return execute(() -> {
+        return this.execute(() -> {
             Object value = redisTemplate.opsForHash().get(fullKey, field);
             if (value == null) {
                 return null;
@@ -295,10 +283,10 @@ public class RedisOperator {
     }
 
     public void deleteHashField(RedisPolicySpec policy, String key, String field) {
-        validatePolicy(policy, RedisValueType.HASH);
+        this.validatePolicy(policy, RedisValueType.HASH);
         String fullKey = buildKey(policy, key);
 
-        execute(() -> redisTemplate.opsForHash().delete(fullKey, field));
+        this.execute(() -> redisTemplate.opsForHash().delete(fullKey, field));
     }
 
     /**
