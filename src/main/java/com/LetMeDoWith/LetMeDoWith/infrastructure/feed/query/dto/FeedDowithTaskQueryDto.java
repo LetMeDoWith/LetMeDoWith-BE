@@ -1,6 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.feed.query.dto;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 public record FeedDowithTaskQueryDto(
@@ -12,4 +13,9 @@ public record FeedDowithTaskQueryDto(
         String status,
         LocalDate date,
         LocalTime startTime,
-        Long feedbackCount) {}
+        Long feedbackCount) {
+
+    public LocalDateTime startDateTime() {
+        return LocalDateTime.of(date, startTime);
+    }
+}
