@@ -1,30 +1,31 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.feed.dto;
 
 import com.LetMeDoWith.LetMeDoWith.application.feed.dto.RetrieveSuccessDowithTasksResult;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 
-public record RetrieveSuccessDowithTasksRes(List<SuccessImage> successImages) {
+public record RetrieveSuccessDowithTasksRes(List<SuccessDowithTask> successDowithTasks) {
 
     public static RetrieveSuccessDowithTasksRes from(RetrieveSuccessDowithTasksResult result) {
-        List<SuccessImage> successImages = result.successDowithTasks().stream()
-                .map(image -> new SuccessImage(
-                        image.dowithTaskId(),
-                        image.title(),
-                        image.memberNickname(),
-                        image.memberProfileImageUrl(),
-                        image.successImageUrl(),
-                        image.isLiked(),
-                        image.likeCount()))
+        List<SuccessDowithTask> successDowithTasks = result.successDowithTasks().stream()
+                .map(dowith -> new SuccessDowithTask(
+                        dowith.id(),
+                        dowith.title(),
+                        dowith.nickname(),
+                        dowith.profileImageUrl(),
+                        dowith.successImageUrl(),
+                        dowith.isLiked(),
+                        dowith.likeCount()))
                 .toList();
-        return new RetrieveSuccessDowithTasksRes(successImages);
+        return new RetrieveSuccessDowithTasksRes(successDowithTasks);
     }
 
-    public record SuccessImage(
-            Long dowithTaskId,
-            String title,
-            String memberNickname,
-            String memberProfileImageUrl,
-            String successImageUrl,
-            Boolean isLiked,
-            Long likeCount) {}
+    public record SuccessDowithTask(
+            @Schema(description = "Task ID", example = "1") Long id,
+            @Schema(description = "제목", example = "아침 먹기") String title,
+            @Schema(description = "닉네임", example = "스토디") String nickname,
+            @Schema(description = "프로필사진", example = "https://storage/image.jpg") String profileImageUrl,
+            @Schema(description = "성공인증사진", example = "https://storage/image.jpg") String successImageUrl,
+            @Schema(description = "좋아요여부", example = "true") Boolean isLiked,
+            @Schema(description = "좋아요수", example = "100") Long likeCount) {}
 }

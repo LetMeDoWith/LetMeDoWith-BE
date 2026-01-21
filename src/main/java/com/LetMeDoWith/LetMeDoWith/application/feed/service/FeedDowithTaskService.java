@@ -29,10 +29,8 @@ public class FeedDowithTaskService {
         var totalCount = feedDowithTaskQueryRepository.countSuccessDowithTasks();
         var successImages = feedDowithTaskQueryRepository.getSuccessDowithTasks(requestMemberId, offset, limit);
 
-        Map<Long, Long> dowithTaskLikeCountMap =
-                feedDowithTaskQueryRepository.countDowithTaskLikes(successImages.stream()
-                        .map(SuccessDowithTaskQueryDto::dowithTaskId)
-                        .collect(Collectors.toSet()));
+        Map<Long, Long> dowithTaskLikeCountMap = feedDowithTaskQueryRepository.countDowithTaskLikes(
+                successImages.stream().map(SuccessDowithTaskQueryDto::id).collect(Collectors.toSet()));
 
         return RetrieveSuccessDowithTasksResult.of(totalCount, successImages, dowithTaskLikeCountMap);
     }

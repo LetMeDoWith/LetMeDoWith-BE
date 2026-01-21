@@ -63,7 +63,7 @@ public class UpdateDowithTaskIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @DisplayName("[SUCCESS] DowithTask 수정(/tasks/dowith/{dowithTaskId}) - 루틴(DAILY) 생성이 포함된 경우")
+    @DisplayName("[SUCCESS] DowithTask 수정(/tasks/dowith/{id}) - 루틴(DAILY) 생성이 포함된 경우")
     void updateDowithTask1() throws Exception {
         // given
         setFixedClock(LocalDateTime.of(2024, 3, 1, 0, 0));
@@ -134,7 +134,7 @@ public class UpdateDowithTaskIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @DisplayName("[SUCCESS] DowithTask 수정(/tasks/dowith/{dowithTaskId}) - 루틴 생성하지 않고 내용만 수정하는 경우")
+    @DisplayName("[SUCCESS] DowithTask 수정(/tasks/dowith/{id}) - 루틴 생성하지 않고 내용만 수정하는 경우")
     void updateDowithTask2() throws Exception {
         // given
         setFixedClock(LocalDateTime.of(2024, 3, 1, 0, 0));
@@ -175,7 +175,7 @@ public class UpdateDowithTaskIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @DisplayName("[FAIL] DowithTask 수정(/tasks/dowith/{dowithTaskId}) - 루틴이 있는 task 대상으로 routineCondition null 요청시")
+    @DisplayName("[FAIL] DowithTask 수정(/tasks/dowith/{id}) - 루틴이 있는 task 대상으로 routineCondition null 요청시")
     void updateDowithTask3() throws Exception {
         // given
         setFixedClock(LocalDateTime.of(2024, 3, 1, 0, 0));
@@ -212,7 +212,7 @@ public class UpdateDowithTaskIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @DisplayName("[SUCCESS] DowithTask 루틴과 함께 수정(/tasks/dowith/{dowithTaskId}/with-routine)")
+    @DisplayName("[SUCCESS] DowithTask 루틴과 함께 수정(/tasks/dowith/{id}/with-routine)")
     void updateDowithTaskWithRoutine() throws Exception {
         // given
         // 기존 Dowith : 3/2일 등록 3/2일부터 3/14일까지 매일
@@ -314,7 +314,7 @@ public class UpdateDowithTaskIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     @DisplayName(
-            "[SUCCESS] DowithTask 루틴 수정(/tasks/dowith/{dowithTaskId}/routine) - 두윗모드 테스크의 DAILY Routine -> 다른 형태의 DAILY Routine으로 수정")
+            "[SUCCESS] DowithTask 루틴 수정(/tasks/dowith/{id}/routine) - 두윗모드 테스크의 DAILY Routine -> 다른 형태의 DAILY Routine으로 수정")
     void updateDowithTaskRoutine() throws Exception {
         // given
         // 기존 Dowith : 3/2일 등록 3/2일부터 3/14일까지 매일

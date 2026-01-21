@@ -10,7 +10,7 @@ import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.TaskCategoryJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.integration.AbstractIntegrationTest;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.GenerateDowithTaskSuccessImageUploadPresignedUrlsReqDto;
-import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.successDowithTaskReqDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.SuccessDowithTaskReqDto;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -26,9 +26,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 public class SuccessDowithTaskIntegrationTest extends AbstractIntegrationTest {
 
     static final String RETRIEVE_TASKS_URL = "/api/v1/tasks";
-    private static final String SUCCESS_TASK_URL = "/api/v1/tasks/dowith/{dowithTaskId}/success";
+    private static final String SUCCESS_TASK_URL = "/api/v1/tasks/dowith/{id}/success";
     private static final String GET_CONFIRM_UPLOAD_PRESIGNED_URL =
-            "/api/v1/tasks/dowith/{dowithTaskId}/success/image/upload-presigned-url";
+            "/api/v1/tasks/dowith/{id}/success/image/upload-presigned-url";
 
     @Autowired
     private DowithTaskJpaRepository dowithTaskJpaRepository;
@@ -135,7 +135,7 @@ public class SuccessDowithTaskIntegrationTest extends AbstractIntegrationTest {
         this.setFixedClock(LocalDateTime.of(2024, 3, 1, 10, 0));
 
         // when
-        successDowithTaskReqDto requestBody = new successDowithTaskReqDto(publicImageUrls);
+        SuccessDowithTaskReqDto requestBody = new SuccessDowithTaskReqDto(publicImageUrls);
         ResultActions confirmResultActions =
                 this.request(MockMvcRequestBuilders.post(SUCCESS_TASK_URL, dowithTask.getId())
                         .content(this.writeRequestBodyAsString(requestBody)));
@@ -162,7 +162,7 @@ public class SuccessDowithTaskIntegrationTest extends AbstractIntegrationTest {
         this.setFixedClock(LocalDateTime.of(2024, 3, 1, 14, 1));
 
         // when
-        successDowithTaskReqDto requestBody = new successDowithTaskReqDto(publicImageUrls);
+        SuccessDowithTaskReqDto requestBody = new SuccessDowithTaskReqDto(publicImageUrls);
         ResultActions confirmResultActions =
                 this.request(MockMvcRequestBuilders.post(SUCCESS_TASK_URL, dowithTask.getId())
                         .content(this.writeRequestBodyAsString(requestBody)));

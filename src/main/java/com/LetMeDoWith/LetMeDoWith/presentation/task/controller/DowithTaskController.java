@@ -162,7 +162,7 @@ public class DowithTaskController {
     @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")})
     @PostMapping("/{dowithTaskId}/success")
     public ResponseEntity<ResponseDto<Object>> successDowithTask(
-            @PathVariable Long dowithTaskId, @RequestBody successDowithTaskReqDto requestBody) {
+            @PathVariable Long dowithTaskId, @RequestBody SuccessDowithTaskReqDto requestBody) {
 
         String memberId = AuthUtil.getMemberId();
 

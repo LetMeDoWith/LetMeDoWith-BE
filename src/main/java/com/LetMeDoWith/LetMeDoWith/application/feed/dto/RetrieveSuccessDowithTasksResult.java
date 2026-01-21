@@ -13,21 +13,21 @@ public record RetrieveSuccessDowithTasksResult(Long totalCount, List<SuccessDowi
                 totalCount,
                 successImageQueryDtos.stream()
                         .map(dto -> new SuccessDowithTask(
-                                dto.dowithTaskId(),
+                                dto.id(),
                                 dto.title(),
-                                dto.memberNickname(),
-                                dto.memberProfileImageUrl(),
+                                dto.nickname(),
+                                dto.profileImageUrl(),
                                 dto.successImageUrl(),
                                 dto.isLiked() != null && dto.isLiked(),
-                                dowithTaskLikeCountMap.getOrDefault(dto.dowithTaskId(), 0L)))
+                                dowithTaskLikeCountMap.getOrDefault(dto.id(), 0L)))
                         .toList());
     }
 
     public record SuccessDowithTask(
-            Long dowithTaskId,
+            Long id,
             String title,
-            String memberNickname,
-            String memberProfileImageUrl,
+            String nickname,
+            String profileImageUrl,
             String successImageUrl,
             boolean isLiked,
             Long likeCount) {}

@@ -27,7 +27,6 @@ public class FeedController {
     @GetMapping("/tasks/dowith/success")
     public ResponseEntity<ResponsePageDto<RetrieveSuccessDowithTasksRes>> retrieveSuccessDowithTasks(
             @ParameterObject Pageable pageable) {
-
         String requestMemberId = AuthUtil.getMemberId();
         var result = this.feedDowithTaskService.retrieveSuccessDowithTasks(requestMemberId, pageable);
         return ResponseUtil.createSuccessResponse(
