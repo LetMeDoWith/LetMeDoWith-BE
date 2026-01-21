@@ -43,59 +43,6 @@ public class RedisOperator {
         return policy.keyName() + "::" + key;
     }
 
-    /**
-     * TTL 적용 (Policy에 TTL이 설정된 경우에만)
-     *
-     * @param fullKey Redis Full Key
-     * @param policy  CachePolicySpec
-     */
-    private void applyTtl(String fullKey, RedisPolicySpec policy) {
-        if (policy.ttl() != null) {
-            redisTemplate.expire(fullKey, policy.ttl().toMillis(), TimeUnit.MILLISECONDS);
-        }
-    }
-
-    /**
-     * CachePolicy의 RedisValueType 검증
-     */
-    private void validatePolicy(RedisPolicySpec policy, RedisValueType expectedType) {
-        if (policy.redisValueType() != expectedType) {
-            throw new IllegalArgumentException(String.format(
-                    "Invalid CachePolicy. Expected: %s, Actual: %s, Policy: %s",
-                    expectedType, policy.redisValueType(), policy.name()));
-        }
-    }
-
-    /**
-     * Redis 작업을 수행하되, 실패하거나 값이 없으면 빈 Optional을 반환한다. (예외를 로그로 남기고 안전하게 무시함)
-     *
-     * @param operation Redis 수행 로직 (Lambda)
-     * @param <T>       반환 타입
-     * @return Redis 값 또는 Optional.empty()
-     */
-    public <T> Optional<T> execute(Supplier<T> operation) {
-        try {
-            T result = operation.get();
-            return Optional.ofNullable(result);
-        } catch (DataAccessException e) {
-            log.warn("Redis Operation Failed. Cause: {}", e.getMessage());
-            return Optional.empty();
-        }
-    }
-
-    /**
-     * 반환값이 없는(void) Redis 작업(저장/삭제)을 안전하게 수행한다. 실패 시 로그만 남기고 진행 (Fire and Forget)
-     *
-     * @param operation Redis 수행 로직 (Lambda)
-     */
-    public void execute(Runnable operation) {
-        try {
-            operation.run();
-        } catch (DataAccessException e) {
-            log.warn("Redis Write/Delete Operation Failed. Cause: {}", e.getMessage());
-        }
-    }
-
     // ==================================================================================
     // Key Ops
     // ==================================================================================
@@ -161,21 +108,22 @@ public class RedisOperator {
         });
     }
 
-    public <T> List<T> getList(RedisPolicySpec policy, String key, long start, long end, Class<T> clazz) {
+    public <T> List<T> getList(RedisPolicySpec policy, String key, long start, long end,
+        Class<T> clazz) {
         validatePolicy(policy, RedisValueType.LIST);
         String fullKey = buildKey(policy, key);
 
         return execute(() -> {
-                    List<Object> rawList = redisTemplate.opsForList().range(fullKey, start, end);
-                    if (rawList == null || rawList.isEmpty()) {
-                        return Collections.<T>emptyList();
-                    }
+            List<Object> rawList = redisTemplate.opsForList().range(fullKey, start, end);
+            if (rawList == null || rawList.isEmpty()) {
+                return Collections.<T>emptyList();
+            }
 
-                    return rawList.stream()
-                            .map(item -> objectMapper.convertValue(item, clazz))
-                            .collect(Collectors.toList());
-                })
-                .orElseGet(Collections::emptyList);
+            return rawList.stream()
+                .map(item -> objectMapper.convertValue(item, clazz))
+                .collect(Collectors.toList());
+        })
+            .orElseGet(Collections::emptyList);
     }
 
     public <T> void removeList(RedisPolicySpec policy, String key, T value) {
@@ -199,21 +147,22 @@ public class RedisOperator {
         });
     }
 
-    public <T> Set<T> zRange(RedisPolicySpec policy, String key, long start, long end, Class<T> clazz) {
+    public <T> Set<T> zRange(RedisPolicySpec policy, String key, long start, long end,
+        Class<T> clazz) {
         validatePolicy(policy, RedisValueType.ZSET);
         String fullKey = buildKey(policy, key);
 
         return execute(() -> {
-                    Set<Object> rawSet = redisTemplate.opsForZSet().range(fullKey, start, end);
-                    if (rawSet == null || rawSet.isEmpty()) {
-                        return Collections.<T>emptySet();
-                    }
+            Set<Object> rawSet = redisTemplate.opsForZSet().range(fullKey, start, end);
+            if (rawSet == null || rawSet.isEmpty()) {
+                return Collections.<T>emptySet();
+            }
 
-                    return rawSet.stream()
-                            .map(item -> objectMapper.convertValue(item, clazz))
-                            .collect(Collectors.toSet());
-                })
-                .orElseGet(Collections::emptySet);
+            return rawSet.stream()
+                .map(item -> objectMapper.convertValue(item, clazz))
+                .collect(Collectors.toSet());
+        })
+            .orElseGet(Collections::emptySet);
     }
 
     // ==================================================================================
@@ -225,7 +174,9 @@ public class RedisOperator {
         String fullKey = buildKey(policy, key);
 
         execute(() -> {
-            Map<String, Object> map = objectMapper.convertValue(dto, new TypeReference<Map<String, Object>>() {});
+            Map<String, Object> map = objectMapper.convertValue(dto,
+                new TypeReference<Map<String, Object>>() {
+                });
             redisTemplate.opsForHash().putAll(fullKey, map);
             applyTtl(fullKey, policy);
         });
@@ -252,7 +203,8 @@ public class RedisOperator {
      * @param keyMapper DTO에서 Key 식별자를 추출하는 함수
      * @param <T>       DTO 타입
      */
-    public <T> void putHashes(RedisPolicySpec policy, List<T> dtoList, Function<T, String> keyMapper) {
+    public <T> void putHashes(RedisPolicySpec policy, List<T> dtoList,
+        Function<T, String> keyMapper) {
         validatePolicy(policy, RedisValueType.HASH);
         if (dtoList == null || dtoList.isEmpty()) {
             return;
@@ -260,14 +212,16 @@ public class RedisOperator {
 
         execute(() -> redisTemplate.executePipelined(new SessionCallback<Object>() {
             @Override
-            public <K, V> Object execute(RedisOperations<K, V> operations) throws DataAccessException {
+            public <K, V> Object execute(RedisOperations<K, V> operations)
+                throws DataAccessException {
                 RedisTemplate<String, Object> template = (RedisTemplate<String, Object>) operations;
                 for (T dto : dtoList) {
                     String key = keyMapper.apply(dto);
                     String fullKey = buildKey(policy, key);
 
                     Map<String, Object> map =
-                            objectMapper.convertValue(dto, new TypeReference<Map<String, Object>>() {});
+                        objectMapper.convertValue(dto, new TypeReference<Map<String, Object>>() {
+                        });
                     template.opsForHash().putAll(fullKey, map);
 
                     if (policy.ttl() != null) {
@@ -295,24 +249,25 @@ public class RedisOperator {
         }
 
         return execute(() -> {
-                    List<Object> results = redisTemplate.executePipelined(new SessionCallback<Object>() {
-                        @Override
-                        public <K, V> Object execute(RedisOperations<K, V> operations) throws DataAccessException {
-                            RedisTemplate<String, Object> template = (RedisTemplate<String, Object>) operations;
-                            for (String key : keys) {
-                                template.opsForHash().entries(buildKey(policy, key));
-                            }
-                            return null;
-                        }
-                    });
+            List<Object> results = redisTemplate.executePipelined(new SessionCallback<Object>() {
+                @Override
+                public <K, V> Object execute(RedisOperations<K, V> operations)
+                    throws DataAccessException {
+                    RedisTemplate<String, Object> template = (RedisTemplate<String, Object>) operations;
+                    for (String key : keys) {
+                        template.opsForHash().entries(buildKey(policy, key));
+                    }
+                    return null;
+                }
+            });
 
-                    // executePipelined는 항상 List를 반환
-                    return results.stream()
-                            .filter(obj -> obj instanceof Map && !((Map<?, ?>) obj).isEmpty())
-                            .map(obj -> objectMapper.convertValue(obj, clazz))
-                            .collect(Collectors.toList());
-                })
-                .orElseGet(Collections::emptyList);
+            // executePipelined는 항상 List를 반환
+            return results.stream()
+                .filter(obj -> obj instanceof Map && !((Map<?, ?>) obj).isEmpty())
+                .map(obj -> objectMapper.convertValue(obj, clazz))
+                .collect(Collectors.toList());
+        })
+            .orElseGet(Collections::emptyList);
     }
 
     public <T> void putHashField(RedisPolicySpec policy, String key, String field, T value) {
@@ -325,7 +280,8 @@ public class RedisOperator {
         });
     }
 
-    public <T> Optional<T> getHashField(RedisPolicySpec policy, String key, String field, Class<T> clazz) {
+    public <T> Optional<T> getHashField(RedisPolicySpec policy, String key, String field,
+        Class<T> clazz) {
         validatePolicy(policy, RedisValueType.HASH);
         String fullKey = buildKey(policy, key);
 
@@ -343,5 +299,58 @@ public class RedisOperator {
         String fullKey = buildKey(policy, key);
 
         execute(() -> redisTemplate.opsForHash().delete(fullKey, field));
+    }
+
+    /**
+     * TTL 적용 (Policy에 TTL이 설정된 경우에만)
+     *
+     * @param fullKey Redis Full Key
+     * @param policy  CachePolicySpec
+     */
+    private void applyTtl(String fullKey, RedisPolicySpec policy) {
+        if (policy.ttl() != null) {
+            redisTemplate.expire(fullKey, policy.ttl().toMillis(), TimeUnit.MILLISECONDS);
+        }
+    }
+
+    /**
+     * CachePolicy의 RedisValueType 검증
+     */
+    private void validatePolicy(RedisPolicySpec policy, RedisValueType expectedType) {
+        if (policy.redisValueType() != expectedType) {
+            throw new IllegalArgumentException(String.format(
+                "Invalid CachePolicy. Expected: %s, Actual: %s, Policy: %s",
+                expectedType, policy.redisValueType(), policy.name()));
+        }
+    }
+
+    /**
+     * Redis 작업을 수행하되, 실패하거나 값이 없으면 빈 Optional을 반환한다. (예외를 로그로 남기고 안전하게 무시함)
+     *
+     * @param operation Redis 수행 로직 (Lambda)
+     * @param <T>       반환 타입
+     * @return Redis 값 또는 Optional.empty()
+     */
+    private <T> Optional<T> execute(Supplier<T> operation) {
+        try {
+            T result = operation.get();
+            return Optional.ofNullable(result);
+        } catch (DataAccessException e) {
+            log.warn("Redis Operation Failed. Cause: {}", e.getMessage());
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * 반환값이 없는(void) Redis 작업(저장/삭제)을 안전하게 수행한다. 실패 시 로그만 남기고 진행 (Fire and Forget)
+     *
+     * @param operation Redis 수행 로직 (Lambda)
+     */
+    private void execute(Runnable operation) {
+        try {
+            operation.run();
+        } catch (DataAccessException e) {
+            log.warn("Redis Write/Delete Operation Failed. Cause: {}", e.getMessage());
+        }
     }
 }
