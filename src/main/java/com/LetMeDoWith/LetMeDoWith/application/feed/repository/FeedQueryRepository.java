@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.infrastructure.feed.query;
+package com.LetMeDoWith.LetMeDoWith.application.feed.repository;
 
 import com.LetMeDoWith.LetMeDoWith.infrastructure.feed.query.dto.FeedDowithTaskQueryDto;
 import java.time.LocalDateTime;
