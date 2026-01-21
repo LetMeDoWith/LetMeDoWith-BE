@@ -325,7 +325,7 @@ public class RedisOperator {
             return Optional.ofNullable(result);
         } catch (DataAccessException e) {
             log.warn("Redis Operation Failed. Cause: {}", e.getMessage());
-            return Optional.empty();
+            throw e;
         }
     }
 
@@ -339,6 +339,7 @@ public class RedisOperator {
             operation.run();
         } catch (DataAccessException e) {
             log.warn("Redis Write/Delete Operation Failed. Cause: {}", e.getMessage());
+            throw e;
         }
     }
 }
