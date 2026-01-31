@@ -13,7 +13,8 @@ public record FeedDowithTaskQueryDto(
         String status,
         LocalDate date,
         LocalTime startTime,
-        Long feedbackCount) {
+        Integer feedbackCount,
+        Boolean isFeedbacked) {
 
     public LocalDateTime startDateTime() {
         return LocalDateTime.of(date, startTime);
