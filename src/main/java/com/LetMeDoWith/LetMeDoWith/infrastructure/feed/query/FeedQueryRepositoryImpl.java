@@ -12,12 +12,14 @@ import com.LetMeDoWith.LetMeDoWith.domain.task.model.QDowithTask;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.feed.query.dto.FeedDowithTaskQueryDto;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
-import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -35,7 +37,7 @@ public class FeedQueryRepositoryImpl implements FeedQueryRepository {
 
     @Override
     public List<FeedDowithTaskQueryDto> getFeedbackAvailableDowithTasks(
-        LocalDateTime referenceDateTime) {
+        LocalDateTime referenceDateTime, Long offset, int size) {
 
         LocalDateTime now = referenceDateTime != null ? referenceDateTime : SystemTimeUtil.now();
 
@@ -63,7 +65,8 @@ public class FeedQueryRepositoryImpl implements FeedQueryRepository {
                     .or(dowithTask.date.eq(today).and(dowithTask.startTime.loe(nowTime))));
         }
 
-        return queryFactory
+        // 1. 메인 리스트 조회 (Count는 0으로 임시 설정)
+        List<FeedDowithTaskQueryDto> rawTasks = queryFactory
             .select(Projections.constructor(
                 FeedDowithTaskQueryDto.class,
                 dowithTask.id,
@@ -74,9 +77,8 @@ public class FeedQueryRepositoryImpl implements FeedQueryRepository {
                 dowithTask.status.stringValue(),
                 dowithTask.date,
                 dowithTask.startTime,
-                JPAExpressions.select(dowithTaskFeedback.count())
-                    .from(dowithTaskFeedback)
-                    .where(dowithTaskFeedback.dowithTaskId.eq(dowithTask.id))))
+                Expressions.asNumber(0L) // 서브쿼리 제거하고 임시값 0L 주입
+            ))
             .from(dowithTask)
             .leftJoin(member)
             .on(member.id.eq(dowithTask.memberId))
@@ -85,6 +87,50 @@ public class FeedQueryRepositoryImpl implements FeedQueryRepository {
             .leftJoin(badge)
             .on(badge.id.eq(memberBadge.badge.id))
             .where(condition)
+            .offset(offset)
+            .limit(size)
             .fetch();
+
+        if (rawTasks.isEmpty()) {
+            return rawTasks;
+        }
+
+        // 2. 조회된 Task ID 추출
+        List<Long> taskIds = rawTasks.stream()
+            .map(FeedDowithTaskQueryDto::id)
+            .toList();
+
+        // 3. 별도 쿼리로 Count 집계 (IN 절 사용)
+        Map<Long, Long> feedbackCountMap = queryFactory
+            .select(Projections.constructor(FeedbackCountDto.class,
+                dowithTaskFeedback.dowithTaskId,
+                dowithTaskFeedback.count()))
+            .from(dowithTaskFeedback)
+            .where(dowithTaskFeedback.dowithTaskId.in(taskIds))
+            .groupBy(dowithTaskFeedback.dowithTaskId)
+            .fetch()
+            .stream()
+            .collect(Collectors.toMap(
+                FeedbackCountDto::taskId,
+                FeedbackCountDto::count
+            ));
+
+        // 4. 메모리에서 데이터 조합 (Record 재생성)
+        return rawTasks.stream()
+            .map(task -> new FeedDowithTaskQueryDto(
+                task.id(),
+                task.memberId(),
+                task.nickname(),
+                task.badgeImageUrl(),
+                task.title(),
+                task.status(),
+                task.date(),
+                task.startTime(),
+                feedbackCountMap.getOrDefault(task.id(), 0L) // 집계된 Count 주입
+            ))
+            .toList();
+    }
+
+    private record FeedbackCountDto(Long taskId, Long count) {
     }
 }
