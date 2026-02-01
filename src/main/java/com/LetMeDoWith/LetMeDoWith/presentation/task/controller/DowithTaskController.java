@@ -43,6 +43,16 @@ public class DowithTaskController {
         return ResponseUtil.createSuccessResponse(RetrieveDowithTaskResDto.from(result));
     }
 
+    @Operation(summary = "성공 Dowith Task 조회 (인증 사진 조회)")
+    @GetMapping("/success")
+    public ResponseEntity<ResponsePageDto<RetrieveSuccessDowithTasksRes>> retrieveSuccessDowithTasks(
+            @ParameterObject Pageable pageable) {
+        String requestMemberId = AuthUtil.getMemberId();
+        var result = this.successDowithTaskService.retrieveSuccessDowithTasks(requestMemberId, pageable);
+        return ResponseUtil.createSuccessResponse(
+                RetrieveSuccessDowithTasksRes.from(result), pageable, result.totalCount());
+    }
+
     @Operation(summary = "두윗모드 Task 생성", description = "두윗모드 테스크를 생성합니다.")
     @ApiSuccessResponse(description = "두윗모드 Task 생성 성공.")
     @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")})
@@ -176,16 +186,6 @@ public class DowithTaskController {
         successDowithTaskService.successDowithTask(memberId, dowithTaskId, requestBody.publicImageUrls());
 
         return ResponseUtil.createSuccessResponse();
-    }
-
-    @Operation(summary = "성공 Dowith Task 조회 (인증 사진 조회)")
-    @GetMapping("/success")
-    public ResponseEntity<ResponsePageDto<RetrieveSuccessDowithTasksRes>> retrieveSuccessDowithTasks(
-            @ParameterObject Pageable pageable) {
-        String requestMemberId = AuthUtil.getMemberId();
-        var result = this.successDowithTaskService.retrieveSuccessDowithTasks(requestMemberId, pageable);
-        return ResponseUtil.createSuccessResponse(
-                RetrieveSuccessDowithTasksRes.from(result), pageable, result.totalCount());
     }
 
     @Operation(summary = "두윗모드 Task 잔여 개수 조회", description = "두윗모드 Task의 잔여 개수를 조회합니다.")
