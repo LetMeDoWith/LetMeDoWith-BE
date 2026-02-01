@@ -273,47 +273,20 @@ public class SuccessDowithTaskIntegrationTest extends AbstractIntegrationTest {
                     .isEqualTo(
                             this.successDowithTasks.get(i).getSuccesses().get(0).getImageUrl());
 
-            //            resultActions
-            //                    .andExpect(jsonPath("$.data.successDowithTasks[%d].id".formatted(i))
-            //                            .value(task.getId()))
-            //                    .andExpect(jsonPath("$.data.successDowithTasks[%d].title".formatted(i))
-            //                            .value(task.getTitle()))
-            //                    .andExpect(jsonPath("$.data.successDowithTasks[%d].nickname".formatted(i))
-            //                            .value(this.requestMember.getNickname()))
-            //                    .andExpect(jsonPath("$.data.successDowithTasks[%d].profileImageUrl".formatted(i))
-            //                            .value(this.requestMember.getProfileImageUrl()))
-            //                    .andExpect(jsonPath("$.data.successDowithTasks[%d].successImageUrl".formatted(i))
-            //                            .value(task.getSuccesses().get(0).getImageUrl()));
-
             if (i == 0) {
 
                 assertThat(task.isLiked()).isFalse();
                 assertThat(task.likeCount()).isEqualTo(2L);
-                //
-                //                resultActions
-                //                        .andExpect(jsonPath("$.data.successDowithTasks[%d].isLiked".formatted(i))
-                //                                .value(false))
-                //                        .andExpect(jsonPath("$.data.successDowithTasks[%d].likeCount".formatted(i))
-                //                                .value(2));
+
             } else if (i == 1) {
 
                 assertThat(task.isLiked()).isTrue();
                 assertThat(task.likeCount()).isEqualTo(2L);
-                //                resultActions
-                //                        .andExpect(jsonPath("$.data.successDowithTasks[%d].isLiked".formatted(i))
-                //                                .value(true))
-                //                        .andExpect(jsonPath("$.data.successDowithTasks[%d].likeCount".formatted(i))
-                //                                .value(2));
+
             } else {
 
                 assertThat(task.isLiked()).isFalse();
                 assertThat(task.likeCount()).isEqualTo(0L);
-
-                //                resultActions
-                //                        .andExpect(jsonPath("$.data.successDowithTasks[%d].isLiked".formatted(i))
-                //                                .value(false))
-                //                        .andExpect(jsonPath("$.data.successDowithTasks[%d].likeCount".formatted(i))
-                //                                .value(0));
             }
         }
     }
