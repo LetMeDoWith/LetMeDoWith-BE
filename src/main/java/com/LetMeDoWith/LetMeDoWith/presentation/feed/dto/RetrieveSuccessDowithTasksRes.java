@@ -1,6 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.feed.dto;
 
-import com.LetMeDoWith.LetMeDoWith.application.feed.dto.RetrieveSuccessDowithTasksResult;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.RetrieveSuccessDowithTasksResult;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 

@@ -11,15 +11,14 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
@@ -53,7 +52,7 @@ public class DowithTaskQueryRespositoryImpl implements DowithTaskQueryRepository
                         // FeedBack
                         // 개발시
                         // 추가
-                ))
+                        ))
                 .from(dowithTask)
                 .leftJoin(taskCategory)
                 .on(dowithTask.taskCategoryId.eq(taskCategory.id))
@@ -89,7 +88,7 @@ public class DowithTaskQueryRespositoryImpl implements DowithTaskQueryRepository
                         // FeedBack
                         // 개발시
                         // 추가
-                ))
+                        ))
                 .from(dowithTask)
                 .leftJoin(taskCategory)
                 .on(dowithTask.taskCategoryId.eq(taskCategory.id))
@@ -101,15 +100,6 @@ public class DowithTaskQueryRespositoryImpl implements DowithTaskQueryRepository
                 .fetchOne();
 
         return Optional.ofNullable(result);
-    }
-
-    @Override
-    public Long countSuccessDowithTasks() {
-        return queryFactory
-                .select(dowithTask.count())
-                .from(dowithTask)
-                .where(dowithTask.status.eq(DowithTaskStatus.SUCCESS))
-                .fetchOne();
     }
 
     @Override

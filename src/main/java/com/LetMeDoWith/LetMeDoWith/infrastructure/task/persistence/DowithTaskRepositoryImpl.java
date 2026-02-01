@@ -1,5 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence;
 
+import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTaskRoutine;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskRepository;
@@ -64,5 +65,10 @@ public class DowithTaskRepositoryImpl implements DowithTaskRepository {
     @Override
     public void delete(List<DowithTask> dowithTasks) {
         dowithTaskJpaRepository.deleteAll(dowithTasks);
+    }
+
+    @Override
+    public long countByStatus(DowithTaskStatus status) {
+        return dowithTaskJpaRepository.countByStatus(status);
     }
 }

@@ -1,7 +1,6 @@
-package com.LetMeDoWith.LetMeDoWith.application.feed.dto;
+package com.LetMeDoWith.LetMeDoWith.application.task.dto;
 
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.SuccessDowithTaskQueryDto;
-
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +30,5 @@ public record RetrieveSuccessDowithTasksResult(Long totalCount, List<SuccessDowi
             String profileImageUrl,
             String successImageUrl,
             boolean isLiked,
-            Long likeCount) {
-    }
+            Long likeCount) {}
 }

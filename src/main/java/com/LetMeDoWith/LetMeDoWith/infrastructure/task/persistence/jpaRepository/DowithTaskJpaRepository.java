@@ -1,5 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository;
 
+import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
 import java.time.LocalDate;
 import java.util.List;
@@ -12,4 +13,6 @@ public interface DowithTaskJpaRepository extends JpaRepository<DowithTask, Long>
     Optional<DowithTask> findByDate(LocalDate date);
 
     List<DowithTask> findAllByDateIn(Set<LocalDate> dates);
+
+    Long countByStatus(DowithTaskStatus statusCode);
 }

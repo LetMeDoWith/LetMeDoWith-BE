@@ -1,6 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.feed.controller;
 
-import com.LetMeDoWith.LetMeDoWith.application.feed.service.FeedDowithTaskService;
+import com.LetMeDoWith.LetMeDoWith.application.task.service.SuccessDowithTaskService;
 import com.LetMeDoWith.LetMeDoWith.common.dto.ResponsePageDto;
 import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
@@ -21,14 +21,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class FeedController {
 
-    private final FeedDowithTaskService feedDowithTaskService;
+    private final SuccessDowithTaskService successDowithTaskService;
 
     @Operation(summary = "성공 Dowith Task 조회 (인증 사진 조회)")
     @GetMapping("/tasks/dowith/success")
     public ResponseEntity<ResponsePageDto<RetrieveSuccessDowithTasksRes>> retrieveSuccessDowithTasks(
             @ParameterObject Pageable pageable) {
         String requestMemberId = AuthUtil.getMemberId();
-        var result = this.feedDowithTaskService.retrieveSuccessDowithTasks(requestMemberId, pageable);
+        var result = this.successDowithTaskService.retrieveSuccessDowithTasks(requestMemberId, pageable);
         return ResponseUtil.createSuccessResponse(
                 RetrieveSuccessDowithTasksRes.from(result), pageable, result.totalCount());
     }
