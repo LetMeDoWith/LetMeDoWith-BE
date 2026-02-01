@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.presentation.feed.dto;
+package com.LetMeDoWith.LetMeDoWith.presentation.task.dto;
 
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.RetrieveSuccessDowithTasksResult;
 import io.swagger.v3.oas.annotations.media.Schema;

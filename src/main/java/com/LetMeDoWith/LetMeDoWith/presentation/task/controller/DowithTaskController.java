@@ -6,6 +6,7 @@ import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiErrorResponse;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiErrorResponses;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiSuccessResponse;
 import com.LetMeDoWith.LetMeDoWith.common.dto.ResponseDto;
+import com.LetMeDoWith.LetMeDoWith.common.dto.ResponsePageDto;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
@@ -15,6 +16,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -153,8 +156,12 @@ public class DowithTaskController {
         List<String> presignedUrls = successDowithTaskService.generateDowithTaskSuccessImageUploadPresignedUrls(
                 memberId, dowithTaskId, requestBody.imageFileNames());
 
+        List<String> publicImageUrls = presignedUrls.stream()
+                .map(url -> url.contains("?") ? url.substring(0, url.indexOf('?')) : url)
+                .toList();
+
         return ResponseUtil.createSuccessResponse(
-                new GenerateDowithTaskSuccessImageUploadPresignedUrlsResDto(presignedUrls, "POST"));
+                new GenerateDowithTaskSuccessImageUploadPresignedUrlsResDto(publicImageUrls, presignedUrls, "POST"));
     }
 
     @Operation(summary = "두윗모드 Task 인증", description = "Presigned url을 통해서 업로드한 파일의 public url을 body에 담아 요청합니다.")
@@ -169,6 +176,16 @@ public class DowithTaskController {
         successDowithTaskService.successDowithTask(memberId, dowithTaskId, requestBody.publicImageUrls());
 
         return ResponseUtil.createSuccessResponse();
+    }
+
+    @Operation(summary = "성공 Dowith Task 조회 (인증 사진 조회)")
+    @GetMapping("/success")
+    public ResponseEntity<ResponsePageDto<RetrieveSuccessDowithTasksRes>> retrieveSuccessDowithTasks(
+            @ParameterObject Pageable pageable) {
+        String requestMemberId = AuthUtil.getMemberId();
+        var result = this.successDowithTaskService.retrieveSuccessDowithTasks(requestMemberId, pageable);
+        return ResponseUtil.createSuccessResponse(
+                RetrieveSuccessDowithTasksRes.from(result), pageable, result.totalCount());
     }
 
     @Operation(summary = "두윗모드 Task 잔여 개수 조회", description = "두윗모드 Task의 잔여 개수를 조회합니다.")
