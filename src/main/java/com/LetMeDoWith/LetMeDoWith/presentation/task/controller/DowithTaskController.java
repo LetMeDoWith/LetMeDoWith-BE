@@ -66,7 +66,7 @@ public class DowithTaskController {
                 retrieveTaskService.retrieveFeedbackAvailableDowithTasks(pageable);
 
         return ResponseUtil.createSuccessResponse(
-                RetrieveFeedbackAvailableDowithTasksResDto.from(result), pageable, null);
+                RetrieveFeedbackAvailableDowithTasksResDto.from(result), pageable, -1L);
     }
 
     @Operation(summary = "두윗모드 Task 조회")

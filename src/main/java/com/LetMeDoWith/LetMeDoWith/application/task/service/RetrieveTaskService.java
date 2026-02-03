@@ -93,8 +93,7 @@ public class RetrieveTaskService {
 
         // 1. Task 리스트 조회
         List<FeedbackAvailableDowithTasksQueryDto> feedbackAvailableDowithTasks =
-                dowithTaskQueryRepository.getFeedbackAvailableDowithTasks(
-                        memberId, pageable.getOffset(), pageable.getPageSize());
+                dowithTaskQueryRepository.getFeedbackAvailableDowithTasks(pageable.getOffset(), pageable.getPageSize());
 
         if (feedbackAvailableDowithTasks.isEmpty()) {
             return RetreiveFeedbackAvailableDowithTasksResult.from(feedbackAvailableDowithTasks);

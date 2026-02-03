@@ -1,17 +1,18 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.feedback.query;
 
-import static com.querydsl.core.group.GroupBy.groupBy;
-import static com.querydsl.core.group.GroupBy.list;
-
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.model.QDowithTaskFeedback;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.QMember;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.feedback.query.dto.DowithTaskFeedbackQueryDto;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.feedback.query.dto.SentFeedbacksQueryDto;
+import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -148,14 +149,24 @@ public class DowithTaskFeedbackQueryRepositoryImpl implements DowithTaskFeedback
 
     @Override
     public Map<Long, List<SentFeedbacksQueryDto>> getSentFeedbacks(String senderId, List<Long> taskIds) {
-        return queryFactory
+        Expression<SentFeedbacksQueryDto> feedbackDto = Projections.constructor(
+                SentFeedbacksQueryDto.class,
+                dowithTaskFeedback.senderMemberId,
+                dowithTaskFeedback.taskFeedbackTemplateId,
+                dowithTaskFeedback.createdAt);
+
+        List<Tuple> rows = queryFactory
+                .select(dowithTaskFeedback.dowithTaskId, feedbackDto)
                 .from(dowithTaskFeedback)
                 .where(dowithTaskFeedback.dowithTaskId.in(taskIds), dowithTaskFeedback.senderMemberId.eq(senderId))
-                .transform(groupBy(dowithTaskFeedback.dowithTaskId)
-                        .as(list(Projections.constructor(
-                                SentFeedbacksQueryDto.class,
-                                dowithTaskFeedback.senderMemberId,
-                                dowithTaskFeedback.taskFeedbackTemplateId,
-                                dowithTaskFeedback.createdAt))));
+                .fetch();
+
+        Map<Long, List<SentFeedbacksQueryDto>> result = new HashMap<>();
+        for (Tuple row : rows) {
+            Long taskId = row.get(dowithTaskFeedback.dowithTaskId);
+            SentFeedbacksQueryDto dto = row.get(feedbackDto);
+            result.computeIfAbsent(taskId, key -> new ArrayList<>()).add(dto);
+        }
+        return result;
     }
 }

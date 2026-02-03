@@ -41,8 +41,7 @@ public class DowithTaskQueryRespositoryImpl implements DowithTaskQueryRepository
     private final QBadge badge = QBadge.badge;
 
     @Override
-    public List<FeedbackAvailableDowithTasksQueryDto> getFeedbackAvailableDowithTasks(
-            String memberId, Long offset, int size) {
+    public List<FeedbackAvailableDowithTasksQueryDto> getFeedbackAvailableDowithTasks(Long offset, int size) {
 
         LocalDateTime now = SystemTimeUtil.now();
 

@@ -13,5 +13,5 @@ public interface DowithTaskQueryRepository {
 
     Optional<DowithTaskDetailQueryDto> getDowithTask(String memberId, Long dowithTaskId);
 
-    List<FeedbackAvailableDowithTasksQueryDto> getFeedbackAvailableDowithTasks(String memberId, Long offset, int size);
+    List<FeedbackAvailableDowithTasksQueryDto> getFeedbackAvailableDowithTasks(Long offset, int size);
 }
