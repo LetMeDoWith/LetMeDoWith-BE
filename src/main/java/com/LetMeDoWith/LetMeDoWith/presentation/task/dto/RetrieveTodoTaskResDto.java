@@ -11,13 +11,13 @@ import lombok.Builder;
 
 @Builder
 public record RetrieveTodoTaskResDto(
-        @Schema(description = "Task ID", defaultValue = "1") Long id,
-        @Schema(description = "Task 카테고리 ID", defaultValue = "1") Long taskCategoryId,
-        @Schema(description = "Task 카테고리명", defaultValue = "일상") String taskCategoryName,
-        @Schema(description = "제목", defaultValue = "아침 먹기") String title,
-        @Schema(description = "상태", defaultValue = "WAIT") String status,
-        @Schema(description = "시작 일자", defaultValue = "2025-01-30") LocalDate date,
-        @Schema(description = "시작 시각", defaultValue = "11:30:00") LocalTime startTime,
+        @Schema(description = "Task ID", example = "1") Long id,
+        @Schema(description = "Task 카테고리 ID", example = "1") Long taskCategoryId,
+        @Schema(description = "Task 카테고리명", example = "일상") String taskCategoryName,
+        @Schema(description = "제목", example = "아침 먹기") String title,
+        @Schema(description = "상태", example = "WAIT") String status,
+        @Schema(description = "시작 일자", example = "2025-01-30") LocalDate date,
+        @Schema(description = "시작 시각", example = "11:30:00") LocalTime startTime,
         @Schema(description = "루틴 반복 조건") TodoTaskRoutineDto routineCondition) {
 
     public static RetrieveTodoTaskResDto from(RetrieveTodoTaskResult result) {

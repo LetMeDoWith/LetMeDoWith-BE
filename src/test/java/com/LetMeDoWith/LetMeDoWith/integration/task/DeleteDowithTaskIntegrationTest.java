@@ -27,8 +27,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 public class DeleteDowithTaskIntegrationTest extends AbstractIntegrationTest {
 
-    static final String DELETE_TASK_URL = "/api/v1/tasks/dowith" + "/{dowithTaskId}";
-    static final String DELETE_TASK_WITH_ROUTINE_URL = "/api/v1/tasks/dowith" + "/{dowithTaskId}" + "/with-routine";
+    static final String DELETE_TASK_URL = "/api/v1/tasks/dowith" + "/{id}";
+    static final String DELETE_TASK_WITH_ROUTINE_URL = "/api/v1/tasks/dowith" + "/{id}" + "/with-routine";
     static final String RETRIEVE_TASKS_URL = "/api/v1/tasks";
 
     @Autowired
