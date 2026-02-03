@@ -204,8 +204,7 @@ class RedisOperatorTest {
 
         List<Object> pipelineResults = Arrays.asList(map1, map2);
 
-        when(redisTemplate.executePipelined(any(SessionCallback.class))).thenReturn(
-            pipelineResults);
+        when(redisTemplate.executePipelined(any(SessionCallback.class))).thenReturn(pipelineResults);
 
         // When
         List<TestDto> result = redisOperator.getHashes(policy, keys, TestDto.class);
@@ -324,8 +323,7 @@ class RedisOperatorTest {
         private String name;
         private int age;
 
-        public TestDto() {
-        }
+        public TestDto() {}
 
         public TestDto(String name, int age) {
             this.name = name;

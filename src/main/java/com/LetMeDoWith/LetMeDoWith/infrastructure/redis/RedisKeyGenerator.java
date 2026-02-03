@@ -10,5 +10,4 @@ public class RedisKeyGenerator {
         }
         return policy.keyName() + "::" + key;
     }
-
 }
