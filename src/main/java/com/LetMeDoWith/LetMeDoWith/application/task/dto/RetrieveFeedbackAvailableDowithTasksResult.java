@@ -7,12 +7,12 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
-public record RetreiveFeedbackAvailableDowithTasksResult(List<FeedbackAvailableDowithTaskDto> dowithTasks) {
+public record RetrieveFeedbackAvailableDowithTasksResult(List<FeedbackAvailableDowithTaskDto> dowithTasks) {
 
-    public static RetreiveFeedbackAvailableDowithTasksResult from(List<FeedbackAvailableDowithTasksQueryDto> dto) {
+    public static RetrieveFeedbackAvailableDowithTasksResult from(List<FeedbackAvailableDowithTasksQueryDto> dto) {
         List<FeedbackAvailableDowithTaskDto> dowithTasks =
                 dto.stream().map(FeedbackAvailableDowithTaskDto::from).toList();
-        return new RetreiveFeedbackAvailableDowithTasksResult(dowithTasks);
+        return new RetrieveFeedbackAvailableDowithTasksResult(dowithTasks);
     }
 
     public record FeedbackAvailableDowithTaskDto(

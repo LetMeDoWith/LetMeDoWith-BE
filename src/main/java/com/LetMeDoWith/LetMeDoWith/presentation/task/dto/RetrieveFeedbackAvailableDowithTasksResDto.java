@@ -1,8 +1,8 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.task.dto;
 
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.RetreiveFeedbackAvailableDowithTasksResult;
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.RetreiveFeedbackAvailableDowithTasksResult.FeedbackAvailableDowithTaskDto;
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.RetreiveFeedbackAvailableDowithTasksResult.SentFeedbackDto;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.RetrieveFeedbackAvailableDowithTasksResult;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.RetrieveFeedbackAvailableDowithTasksResult.FeedbackAvailableDowithTaskDto;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.RetrieveFeedbackAvailableDowithTasksResult.SentFeedbackDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -13,7 +13,7 @@ import java.util.List;
 public record RetrieveFeedbackAvailableDowithTasksResDto(
         @Schema(description = "두윗 태스크 목록") List<RetrieveFeedbackAvailableDowithTaskResDto> dowithTasks) {
 
-    public static RetrieveFeedbackAvailableDowithTasksResDto from(RetreiveFeedbackAvailableDowithTasksResult result) {
+    public static RetrieveFeedbackAvailableDowithTasksResDto from(RetrieveFeedbackAvailableDowithTasksResult result) {
         return new RetrieveFeedbackAvailableDowithTasksResDto(result.dowithTasks().stream()
                 .map(RetrieveFeedbackAvailableDowithTaskResDto::from)
                 .toList());
@@ -51,6 +51,7 @@ public record RetrieveFeedbackAvailableDowithTasksResDto(
     public record SentFeedbackResDto(
             @Schema(description = "피드백 템플릿 ID", example = "1") Long templateId,
             @Schema(description = "피드백 전송 일시", example = "2023-10-01T14:30:00") LocalDateTime createdAt) {
+
         public static SentFeedbackResDto from(SentFeedbackDto dto) {
             return new SentFeedbackResDto(dto.templateId(), dto.createdAt());
         }

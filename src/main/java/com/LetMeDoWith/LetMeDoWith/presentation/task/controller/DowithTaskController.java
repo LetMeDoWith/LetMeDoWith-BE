@@ -1,7 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.task.controller;
 
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.RetreiveFeedbackAvailableDowithTasksResult;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.RetrieveDowithTaskResult;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.RetrieveFeedbackAvailableDowithTasksResult;
 import com.LetMeDoWith.LetMeDoWith.application.task.service.CreateDowithTaskService;
 import com.LetMeDoWith.LetMeDoWith.application.task.service.DeleteDowithTaskService;
 import com.LetMeDoWith.LetMeDoWith.application.task.service.RetrieveTaskService;
@@ -62,7 +62,7 @@ public class DowithTaskController {
     public ResponseEntity<ResponsePageDto<RetrieveFeedbackAvailableDowithTasksResDto>>
             retrieveFeedbackAvailableDowithTasks(@PageableDefault(size = 20) Pageable pageable) {
 
-        RetreiveFeedbackAvailableDowithTasksResult result =
+        RetrieveFeedbackAvailableDowithTasksResult result =
                 retrieveTaskService.retrieveFeedbackAvailableDowithTasks(pageable);
 
         return ResponseUtil.createSuccessResponse(

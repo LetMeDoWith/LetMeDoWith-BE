@@ -1,7 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.application.task.service;
 
-import com.LetMeDoWith.LetMeDoWith.application.task.dto.RetreiveFeedbackAvailableDowithTasksResult;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.RetrieveDowithTaskResult;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.RetrieveFeedbackAvailableDowithTasksResult;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.RetrieveTasksResult;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.RetrieveTodoTaskResult;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
@@ -88,7 +88,7 @@ public class RetrieveTaskService {
      * @return 잔소리 가능 두윗 목록과 내가 보낸 잔소리
      */
     @Transactional(readOnly = true)
-    public RetreiveFeedbackAvailableDowithTasksResult retrieveFeedbackAvailableDowithTasks(Pageable pageable) {
+    public RetrieveFeedbackAvailableDowithTasksResult retrieveFeedbackAvailableDowithTasks(Pageable pageable) {
         String memberId = AuthUtil.getMemberId();
 
         // 1. Task 리스트 조회
@@ -96,7 +96,7 @@ public class RetrieveTaskService {
                 dowithTaskQueryRepository.getFeedbackAvailableDowithTasks(pageable.getOffset(), pageable.getPageSize());
 
         if (feedbackAvailableDowithTasks.isEmpty()) {
-            return RetreiveFeedbackAvailableDowithTasksResult.from(feedbackAvailableDowithTasks);
+            return RetrieveFeedbackAvailableDowithTasksResult.from(feedbackAvailableDowithTasks);
         }
 
         List<Long> taskIds = feedbackAvailableDowithTasks.stream()
@@ -121,6 +121,6 @@ public class RetrieveTaskService {
                 })
                 .toList();
 
-        return RetreiveFeedbackAvailableDowithTasksResult.from(tasks);
+        return RetrieveFeedbackAvailableDowithTasksResult.from(tasks);
     }
 }
