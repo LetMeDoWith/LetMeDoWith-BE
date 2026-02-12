@@ -3,6 +3,7 @@ package com.LetMeDoWith.LetMeDoWith.domain.task.repository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTaskRoutine;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -29,4 +30,6 @@ public interface DowithTaskRepository {
     void delete(List<DowithTask> dowithTasks);
 
     long countByStatus(DowithTaskStatus status);
+
+    void flush();
 }

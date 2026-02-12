@@ -5,15 +5,16 @@ import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskCategory;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskCategory.TaskCategoryCreationType;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TaskCategoryRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.TaskCategoryJpaRepository;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
 @Repository
 @RequiredArgsConstructor
-public class TaskCategoryRepositoryImpl implements TaskCategoryRepository {
+class TaskCategoryRepositoryImpl implements TaskCategoryRepository {
 
     private final TaskCategoryJpaRepository taskCategoryJpaRepository;
 

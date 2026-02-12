@@ -3,13 +3,14 @@ package com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTaskRoutine;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskRoutineRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.DowithTaskRoutineJpaRepository;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 @RequiredArgsConstructor
-public class DowithTaskRoutineRepositoryImpl implements DowithTaskRoutineRepository {
+class DowithTaskRoutineRepositoryImpl implements DowithTaskRoutineRepository {
 
     private final DowithTaskRoutineJpaRepository jpaRepository;
 

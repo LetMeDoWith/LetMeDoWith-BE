@@ -3,4 +3,6 @@ package com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepositor
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTaskLike;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface DowithTaskLikeJpaRepository extends JpaRepository<DowithTaskLike, Long> {}
+public interface DowithTaskLikeJpaRepository extends JpaRepository<DowithTaskLike, Long> {
+    long countByDowithTask_Id(Long dowithTaskId);
+}

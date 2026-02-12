@@ -4,14 +4,15 @@ import com.LetMeDoWith.LetMeDoWith.domain.task.enums.CountryCode;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.Holiday;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.HolidayRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.HolidayJpaRepository;
-import java.time.LocalDate;
-import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.util.Set;
+
 @Repository
 @RequiredArgsConstructor
-public class HolidayRepositoryImpl implements HolidayRepository {
+class HolidayRepositoryImpl implements HolidayRepository {
 
     private final HolidayJpaRepository holidayJpaRepository;
 
