@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.infrastructure.task.query;
+package com.LetMeDoWith.LetMeDoWith.domain.task.repository;
 
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.dto.DowithTaskDetailQueryDto;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.dto.DowithTaskQueryDto;
@@ -9,9 +9,11 @@ import java.util.Optional;
 
 public interface DowithTaskQueryRepository {
 
-    List<DowithTaskQueryDto> getDowithTasks(String memberId, LocalDate startDate, LocalDate endDate);
+    List<DowithTaskQueryDto> getDowithTasks(String memberId, LocalDate startDate,
+        LocalDate endDate);
 
     Optional<DowithTaskDetailQueryDto> getDowithTask(String memberId, Long dowithTaskId);
 
-    List<FeedbackAvailableDowithTasksQueryDto> getFeedbackAvailableDowithTasks(Long offset, int size);
+    List<FeedbackAvailableDowithTasksQueryDto> getFeedbackAvailableDowithTasks(Long offset,
+        int size);
 }

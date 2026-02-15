@@ -7,9 +7,9 @@ import com.LetMeDoWith.LetMeDoWith.application.task.dto.RetrieveTodoTaskResult;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
+import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskQueryRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.feedback.query.DowithTaskFeedbackQueryRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.feedback.query.dto.SentFeedbacksQueryDto;
-import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.DowithTaskQueryRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.TodoTaskQueryRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.dto.DowithTaskDetailQueryDto;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.dto.DowithTaskQueryDto;
@@ -45,8 +45,8 @@ public class RetrieveTaskService {
     public RetrieveDowithTaskResult retrieveDowithTask(Long dowithTaskId) {
         String memberId = AuthUtil.getMemberId();
         DowithTaskDetailQueryDto result = dowithTaskQueryRepository
-                .getDowithTask(memberId, dowithTaskId)
-                .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
+            .getDowithTask(memberId, dowithTaskId)
+            .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
         return RetrieveDowithTaskResult.from(result);
     }
 
@@ -60,8 +60,8 @@ public class RetrieveTaskService {
         String memberId = AuthUtil.getMemberId();
 
         TodoTaskDetailQueryDto result = todoTaskQueryRepository
-                .getTodoTask(memberId, todoTaskId)
-                .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
+            .getTodoTask(memberId, todoTaskId)
+            .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
 
         return RetrieveTodoTaskResult.from(result);
     }
@@ -74,9 +74,10 @@ public class RetrieveTaskService {
 
         // TODO - 추후 Cache 적용
 
-        List<TodoTaskQueryDto> todoTaskQueryDtos = todoTaskQueryRepository.getTodoTasks(memberId, startDate, endDate);
+        List<TodoTaskQueryDto> todoTaskQueryDtos = todoTaskQueryRepository.getTodoTasks(memberId,
+            startDate, endDate);
         List<DowithTaskQueryDto> dowithTaskQueryDtos =
-                dowithTaskQueryRepository.getDowithTasks(memberId, startDate, endDate);
+            dowithTaskQueryRepository.getDowithTasks(memberId, startDate, endDate);
 
         return RetrieveTasksResult.of(todoTaskQueryDtos, dowithTaskQueryDtos);
     }
@@ -88,38 +89,41 @@ public class RetrieveTaskService {
      * @return 잔소리 가능 두윗 목록과 내가 보낸 잔소리
      */
     @Transactional(readOnly = true)
-    public RetrieveFeedbackAvailableDowithTasksResult retrieveFeedbackAvailableDowithTasks(Pageable pageable) {
+    public RetrieveFeedbackAvailableDowithTasksResult retrieveFeedbackAvailableDowithTasks(
+        Pageable pageable) {
         String memberId = AuthUtil.getMemberId();
 
         // 1. Task 리스트 조회
         List<FeedbackAvailableDowithTasksQueryDto> feedbackAvailableDowithTasks =
-                dowithTaskQueryRepository.getFeedbackAvailableDowithTasks(pageable.getOffset(), pageable.getPageSize());
+            dowithTaskQueryRepository.getFeedbackAvailableDowithTasks(pageable.getOffset(),
+                pageable.getPageSize());
 
         if (feedbackAvailableDowithTasks.isEmpty()) {
             return RetrieveFeedbackAvailableDowithTasksResult.from(feedbackAvailableDowithTasks);
         }
 
         List<Long> taskIds = feedbackAvailableDowithTasks.stream()
-                .map(FeedbackAvailableDowithTasksQueryDto::id)
-                .toList();
+            .map(FeedbackAvailableDowithTasksQueryDto::id)
+            .toList();
 
         // 2. Feedback Count 조회
-        Map<Long, Long> feedbackCountMap = dowithTaskFeedbackQueryRepository.countFeedbacksByTaskIds(taskIds);
+        Map<Long, Long> feedbackCountMap = dowithTaskFeedbackQueryRepository.countFeedbacksByTaskIds(
+            taskIds);
 
         // 3. 내가 보낸 Feedback 조회
         Map<Long, List<SentFeedbacksQueryDto>> myFeedbacksMap =
-                dowithTaskFeedbackQueryRepository.getSentFeedbacks(memberId, taskIds);
+            dowithTaskFeedbackQueryRepository.getSentFeedbacks(memberId, taskIds);
 
         // 4. 데이터 조합
         List<FeedbackAvailableDowithTasksQueryDto> tasks = feedbackAvailableDowithTasks.stream()
-                .map(task -> {
-                    Long count = feedbackCountMap.getOrDefault(task.id(), 0L);
-                    List<SentFeedbacksQueryDto> myFeedbacks =
-                            myFeedbacksMap.getOrDefault(task.id(), Collections.emptyList());
+            .map(task -> {
+                Long count = feedbackCountMap.getOrDefault(task.id(), 0L);
+                List<SentFeedbacksQueryDto> myFeedbacks =
+                    myFeedbacksMap.getOrDefault(task.id(), Collections.emptyList());
 
-                    return FeedbackAvailableDowithTasksQueryDto.of(task, count, myFeedbacks);
-                })
-                .toList();
+                return FeedbackAvailableDowithTasksQueryDto.of(task, count, myFeedbacks);
+            })
+            .toList();
 
         return RetrieveFeedbackAvailableDowithTasksResult.from(tasks);
     }
