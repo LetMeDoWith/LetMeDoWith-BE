@@ -1,7 +1,13 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.task.controller;
 
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.RetrieveDowithTaskResult;
-import com.LetMeDoWith.LetMeDoWith.application.task.service.*;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.RetrieveFeedbackAvailableDowithTasksResult;
+import com.LetMeDoWith.LetMeDoWith.application.task.service.CreateDowithTaskService;
+import com.LetMeDoWith.LetMeDoWith.application.task.service.DeleteDowithTaskService;
+import com.LetMeDoWith.LetMeDoWith.application.task.service.RetrieveTaskService;
+import com.LetMeDoWith.LetMeDoWith.application.task.service.SuccessDowithTaskService;
+import com.LetMeDoWith.LetMeDoWith.application.task.service.TaskSummaryService;
+import com.LetMeDoWith.LetMeDoWith.application.task.service.UpdateDowithTaskService;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiErrorResponse;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiErrorResponses;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiSuccessResponse;
@@ -10,7 +16,17 @@ import com.LetMeDoWith.LetMeDoWith.common.dto.ResponsePageDto;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
-import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.*;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.CreateDowithTaskReqDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.GenerateDowithTaskSuccessImageUploadPresignedUrlsReqDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.GenerateDowithTaskSuccessImageUploadPresignedUrlsResDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.GetRemainedDowithTaskCountRes;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.RetrieveDowithTaskResDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.RetrieveFeedbackAvailableDowithTasksResDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.RetrieveSuccessDowithTasksRes;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.SuccessDowithTaskReqDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.UpdateDowithTaskReqDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.UpdateDowithTaskRoutineReqDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.UpdateDowithTaskWithRoutineReqDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -18,8 +34,16 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Dowith Task", description = "두윗모드 테스크")
 @RestController
@@ -195,5 +219,18 @@ public class DowithTaskController {
     public ResponseEntity<ResponseDto<GetRemainedDowithTaskCountRes>> getRemainedDowithTaskCount() {
         int remainedDowithTaskCount = taskSummaryService.getRemainedDowithTaskCount(AuthUtil.getMemberId());
         return ResponseUtil.createSuccessResponse(new GetRemainedDowithTaskCountRes(remainedDowithTaskCount));
+    }
+
+    @Operation(summary = "잔소리 가능한 두윗 태스크 목록 조회")
+    @ApiSuccessResponse(description = "잔소리 가능한 두윗 태스크 목록 조회 성공")
+    @GetMapping("/feedback-available")
+    public ResponseEntity<ResponsePageDto<RetrieveFeedbackAvailableDowithTasksResDto>>
+            retrieveFeedbackAvailableDowithTasks(@PageableDefault(size = 20) Pageable pageable) {
+
+        RetrieveFeedbackAvailableDowithTasksResult result =
+                retrieveTaskService.retrieveFeedbackAvailableDowithTasks(pageable);
+
+        return ResponseUtil.createSuccessResponse(
+                RetrieveFeedbackAvailableDowithTasksResDto.from(result), pageable, -1L);
     }
 }

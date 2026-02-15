@@ -1,17 +1,30 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.task.query;
 
+import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
+import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
+import com.LetMeDoWith.LetMeDoWith.domain.member.model.QBadge;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.QMember;
+import com.LetMeDoWith.LetMeDoWith.domain.member.model.QMemberBadge;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
-import com.LetMeDoWith.LetMeDoWith.domain.task.model.*;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.QDowithTask;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.QDowithTaskLike;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.QDowithTaskRoutine;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.QDowithTaskSuccess;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.QTaskCategory;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskQueryRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.DowithTaskDetailQueryDto;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.DowithTaskQueryDto;
+import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.FeedbackAvailableDowithTasksQueryDto;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.SuccessDowithTaskQueryDto;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -32,6 +45,8 @@ public class DowithTaskQueryRespositoryImpl implements DowithTaskQueryRepository
     private final QTaskCategory taskCategory = QTaskCategory.taskCategory;
     private final QDowithTaskLike dowithTaskLike = QDowithTaskLike.dowithTaskLike;
     private final QMember member = QMember.member;
+    private final QMemberBadge memberBadge = QMemberBadge.memberBadge;
+    private final QBadge badge = QBadge.badge;
 
     @Override
     public List<DowithTaskQueryDto> getDowithTasks(String memberId, LocalDate startDate, LocalDate endDate) {
@@ -142,5 +157,60 @@ public class DowithTaskQueryRespositoryImpl implements DowithTaskQueryRepository
                 .collect(Collectors.toMap(tuple -> tuple.get(dowithTask.id), tuple -> Optional.ofNullable(
                                 tuple.get(dowithTaskLike.count()))
                         .orElse(0L)));
+    }
+
+    @Override
+    public List<FeedbackAvailableDowithTasksQueryDto> getFeedbackAvailableDowithTasks(Long offset, int size) {
+
+        LocalDateTime now = SystemTimeUtil.now();
+
+        LocalDate today = now.toLocalDate();
+        LocalTime nowTime = now.toLocalTime();
+
+        LocalDateTime startRangeDateTime = now.minusMinutes(59).minusSeconds(59);
+        LocalDate startRangeDate = startRangeDateTime.toLocalDate();
+        LocalTime startRangeTime = startRangeDateTime.toLocalTime();
+
+        BooleanBuilder condition = new BooleanBuilder();
+        condition.and(dowithTask.status.eq(DowithTaskStatus.WAIT));
+
+        if (today.equals(startRangeDate)) {
+            // Case 1: 범위 시작과 끝이 같은 날짜인 경우
+            condition.and(dowithTask
+                    .date
+                    .eq(today)
+                    .and(dowithTask.startTime.gt(startRangeTime))
+                    .and(dowithTask.startTime.loe(nowTime)));
+        } else {
+            // Case 2: 날짜가 걸쳐있는 경우 (자정 직후)
+            condition.and((dowithTask.date.eq(startRangeDate).and(dowithTask.startTime.gt(startRangeTime)))
+                    .or(dowithTask.date.eq(today).and(dowithTask.startTime.loe(nowTime))));
+        }
+
+        return queryFactory
+                .select(Projections.constructor(
+                        FeedbackAvailableDowithTasksQueryDto.class,
+                        dowithTask.id,
+                        dowithTask.memberId,
+                        member.nickname,
+                        badge.imageUrl,
+                        dowithTask.title,
+                        dowithTask.status.stringValue(),
+                        dowithTask.date,
+                        dowithTask.startTime,
+                        Expressions.constant(0), // 임시값 0 (Integer) 주입
+                        Expressions.constant(Collections.emptyList()) // 임시 빈 리스트 주입
+                        ))
+                .from(dowithTask)
+                .leftJoin(member)
+                .on(member.id.eq(dowithTask.memberId))
+                .leftJoin(memberBadge)
+                .on(memberBadge.memberId.eq(member.id).and(memberBadge.isMain.eq(Yn.TRUE)))
+                .leftJoin(badge)
+                .on(badge.id.eq(memberBadge.badge.id))
+                .where(condition)
+                .offset(offset)
+                .limit(size)
+                .fetch();
     }
 }

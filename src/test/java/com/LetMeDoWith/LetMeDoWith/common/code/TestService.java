@@ -1,6 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.common.code;
 
-import com.LetMeDoWith.LetMeDoWith.common.cache.CacheName;
+import com.LetMeDoWith.LetMeDoWith.common.redis.CacheName;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.Builder;
