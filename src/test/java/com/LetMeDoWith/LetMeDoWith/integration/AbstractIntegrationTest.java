@@ -51,13 +51,13 @@ public abstract class AbstractIntegrationTest {
     protected RefreshToken requestMemberRefreshToken;
 
     @Autowired
+    protected MemberJpaRepository memberJpaRepository;
+
+    @Autowired
     ObjectMapper objectMapper;
 
     @Autowired
     MockMvc mockMvc;
-
-    @Autowired
-    MemberJpaRepository memberJpaRepository;
 
     @Autowired
     AccessTokenProvider accessTokenProvider;

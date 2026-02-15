@@ -83,7 +83,7 @@ class MemberServiceTest {
     //
     // when(memberJpaRepository.save(any(Member.class)))
     // .thenReturn(Member.builder()
-    // .dowithTaskId(1L)
+    // .id(1L)
     // .email("test@email.com")
     // .type(MemberType.USER)
     // .status(MemberStatus.SOCIAL_AUTHENTICATED)

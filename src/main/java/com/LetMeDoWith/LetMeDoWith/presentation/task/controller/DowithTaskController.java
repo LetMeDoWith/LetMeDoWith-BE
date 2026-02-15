@@ -33,6 +33,8 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -64,6 +66,16 @@ public class DowithTaskController {
     public ResponseEntity retrieveDowithTask(@PathVariable Long dowithTaskId) {
         RetrieveDowithTaskResult result = this.retrieveTaskService.retrieveDowithTask(dowithTaskId);
         return ResponseUtil.createSuccessResponse(RetrieveDowithTaskResDto.from(result));
+    }
+
+    @Operation(summary = "성공 Dowith Task 조회 (인증 사진 조회)")
+    @GetMapping("/success")
+    public ResponseEntity<ResponsePageDto<RetrieveSuccessDowithTasksRes>> retrieveSuccessDowithTasks(
+            @ParameterObject Pageable pageable) {
+        String requestMemberId = AuthUtil.getMemberId();
+        var result = this.successDowithTaskService.retrieveSuccessDowithTasks(requestMemberId, pageable);
+        return ResponseUtil.createSuccessResponse(
+                RetrieveSuccessDowithTasksRes.from(result), pageable, result.totalCount());
     }
 
     @Operation(summary = "두윗모드 Task 생성", description = "두윗모드 테스크를 생성합니다.")
@@ -185,8 +197,12 @@ public class DowithTaskController {
         List<String> presignedUrls = successDowithTaskService.generateDowithTaskSuccessImageUploadPresignedUrls(
             memberId, dowithTaskId, requestBody.imageFileNames());
 
+        List<String> publicImageUrls = presignedUrls.stream()
+                .map(url -> url.contains("?") ? url.substring(0, url.indexOf('?')) : url)
+                .toList();
+
         return ResponseUtil.createSuccessResponse(
-            new GenerateDowithTaskSuccessImageUploadPresignedUrlsResDto(presignedUrls, "POST"));
+                new GenerateDowithTaskSuccessImageUploadPresignedUrlsResDto(publicImageUrls, presignedUrls, "POST"));
     }
 
     @Operation(summary = "두윗모드 Task 인증", description = "Presigned url을 통해서 업로드한 파일의 public url을 body에 담아 요청합니다.")
@@ -195,7 +211,7 @@ public class DowithTaskController {
         @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")})
     @PostMapping("/{dowithTaskId}/success")
     public ResponseEntity<ResponseDto<Object>> successDowithTask(
-        @PathVariable Long dowithTaskId, @RequestBody successDowithTaskReqDto requestBody) {
+            @PathVariable Long dowithTaskId, @RequestBody SuccessDowithTaskReqDto requestBody) {
 
         String memberId = AuthUtil.getMemberId();
 

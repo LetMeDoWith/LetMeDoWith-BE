@@ -1,7 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.application.task.dto;
 
-import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.dto.DowithTaskQueryDto;
-import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.dto.TodoTaskQueryDto;
+import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.DowithTaskQueryDto;
+import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.TodoTaskQueryDto;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Comparator;

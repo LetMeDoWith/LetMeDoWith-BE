@@ -1,29 +1,25 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.task.query;
 
-import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
-import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
-import com.LetMeDoWith.LetMeDoWith.domain.member.model.QBadge;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.QMember;
-import com.LetMeDoWith.LetMeDoWith.domain.member.model.QMemberBadge;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
-import com.LetMeDoWith.LetMeDoWith.domain.task.model.QDowithTask;
-import com.LetMeDoWith.LetMeDoWith.domain.task.model.QDowithTaskRoutine;
-import com.LetMeDoWith.LetMeDoWith.domain.task.model.QDowithTaskSuccess;
-import com.LetMeDoWith.LetMeDoWith.domain.task.model.QTaskCategory;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.*;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskQueryRepository;
-import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.dto.DowithTaskDetailQueryDto;
-import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.dto.DowithTaskQueryDto;
-import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.dto.FeedbackAvailableDowithTasksQueryDto;
-import com.querydsl.core.BooleanBuilder;
+import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.DowithTaskDetailQueryDto;
+import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.DowithTaskQueryDto;
+import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.SuccessDowithTaskQueryDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -37,6 +33,8 @@ public class DowithTaskQueryRespositoryImpl implements DowithTaskQueryRepository
     private final QDowithTaskRoutine dowithTaskRoutine = QDowithTaskRoutine.dowithTaskRoutine;
     private final QDowithTaskSuccess dowithTaskSuccess = QDowithTaskSuccess.dowithTaskSuccess;
     private final QTaskCategory taskCategory = QTaskCategory.taskCategory;
+    private final QDowithTaskLike dowithTaskLike = QDowithTaskLike.dowithTaskLike;
+    private final QMember member = QMember.member;
     private final QMember member = QMember.member;
     private final QMemberBadge memberBadge = QMemberBadge.memberBadge;
     private final QBadge badge = QBadge.badge;
@@ -111,6 +109,49 @@ public class DowithTaskQueryRespositoryImpl implements DowithTaskQueryRepository
 
         return Optional.ofNullable(result);
     }
+
+    @Override
+    public List<SuccessDowithTaskQueryDto> getSuccessDowithTasks(String requestMemberId, int offset, int limit) {
+        return queryFactory
+                .select(Projections.constructor(
+                        SuccessDowithTaskQueryDto.class,
+                        dowithTask.id,
+                        dowithTask.title,
+                        member.nickname,
+                        member.profileImageUrl,
+                        dowithTaskSuccess.imageUrl,
+                        JPAExpressions.selectOne()
+                                .from(dowithTaskLike)
+                                .where(
+                                        dowithTaskLike.dowithTask.eq(dowithTask),
+                                        dowithTaskLike.memberId.eq(requestMemberId))
+                                .exists()))
+                .from(dowithTask)
+                .leftJoin(member)
+                .on(dowithTask.memberId.eq(member.id))
+                .join(dowithTaskSuccess)
+                .on(dowithTaskSuccess.dowithTask.eq(dowithTask))
+                .where(dowithTask.status.eq(DowithTaskStatus.SUCCESS))
+                .orderBy(dowithTaskSuccess.createdAt.desc())
+                .offset(offset)
+                .limit(limit)
+                .fetch();
+    }
+
+    @Override
+    public Map<Long, Long> countDowithTaskLikes(Set<Long> dowithTaskIds) {
+        return queryFactory
+                .select(dowithTask.id, dowithTaskLike.count())
+                .from(dowithTaskLike)
+                .where(dowithTaskLike.dowithTask.id.in(dowithTaskIds))
+                .groupBy(dowithTaskLike.dowithTask.id)
+                .fetch()
+                .stream()
+                .collect(Collectors.toMap(tuple -> tuple.get(dowithTask.id), tuple -> Optional.ofNullable(
+                                tuple.get(dowithTaskLike.count()))
+                        .orElse(0L)));
+    }
+}
 
     @Override
     public List<FeedbackAvailableDowithTasksQueryDto> getFeedbackAvailableDowithTasks(Long offset,

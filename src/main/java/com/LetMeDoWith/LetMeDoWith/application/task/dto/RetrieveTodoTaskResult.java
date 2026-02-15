@@ -1,6 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.application.task.dto;
 
-import com.LetMeDoWith.LetMeDoWith.infrastructure.task.query.dto.TodoTaskDetailQueryDto;
+import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.TodoTaskDetailQueryDto;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Set;

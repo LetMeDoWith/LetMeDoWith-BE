@@ -42,7 +42,7 @@ public class SignupTokenProvider {
      *
      * <p>이후 회원가입 완료 시점에 본 메서드의 JWT를 포함하여 요청하여 회원가입 요청을 인증한다.
      *
-     * @param memberId 회원가입을 계속해서 진행할 member의 dowithTaskId.
+     * @param memberId 회원가입을 계속해서 진행할 member의 id.
      * @return
      */
     public SignupToken generateToken(String memberId) {
