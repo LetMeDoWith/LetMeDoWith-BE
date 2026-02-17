@@ -56,4 +56,16 @@ public class Ranking extends BaseAuditEntity {
 
     @Column(name = "previous_rank", nullable = true)
     private Long previousRank;
+
+    public static Ranking of(RankingTopic rankingTopic, String memberId, Integer year, Integer month, Integer week) {
+        return Ranking.builder()
+                .rankingTopic(rankingTopic)
+                .memberId(memberId)
+                .year(year)
+                .month(month)
+                .week(week)
+                .currentRank(0L)
+                .previousRank(0L)
+                .build();
+    }
 }
