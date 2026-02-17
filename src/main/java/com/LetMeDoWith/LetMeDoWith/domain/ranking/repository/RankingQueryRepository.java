@@ -8,7 +8,7 @@ import com.LetMeDoWith.LetMeDoWith.domain.ranking.repository.dto.RankingsQueryDt
 public interface RankingQueryRepository {
     List<RankingTopicsQueryDto> getRankingTopics();
 
-    List<RankingsQueryDto> getRankingsByTopicId(Long rankingTopicId, Integer year, Integer month, Integer week);
+    List<RankingsQueryDto> getRankingsByTopicId(Long rankingTopicId, Integer year, Integer month, Integer week, Integer limit);
 
     // 내 랭킹 조회
     RankingsQueryDto getMyRanking(String memberId, Long rankingTopicId, Integer year, Integer month, Integer week);
