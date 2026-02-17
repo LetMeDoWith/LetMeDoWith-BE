@@ -339,7 +339,7 @@ CREATE TABLE `ranking`
     `week`             int         NOT NULL,
     `ranking_topic_id` bigint      NOT NULL,
     PRIMARY KEY (`id`),
-    UNIQUE KEY `uk_ranking_1` (`ranking_topic_id`, `member_id`),
+    UNIQUE KEY `uk_ranking_1` (`ranking_topic_id`, `member_id`, `year`, `month`, `week`),
     CONSTRAINT `FKggr9gbi0wjxwekbl0mpnrhm99` FOREIGN KEY (`ranking_topic_id`) REFERENCES `ranking_topic` (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4

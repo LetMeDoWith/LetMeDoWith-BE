@@ -26,7 +26,7 @@ import lombok.NoArgsConstructor;
         uniqueConstraints = {
             @UniqueConstraint(
                     name = "uk_ranking_1",
-                    columnNames = {"ranking_topic_id", "member_id"})
+                    columnNames = {"ranking_topic_id", "member_id", "year", "month", "week"})
         })
 public class Ranking extends BaseAuditEntity {
 
