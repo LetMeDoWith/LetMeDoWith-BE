@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.common.cache;
+package com.LetMeDoWith.LetMeDoWith.common.redis;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
@@ -53,7 +53,8 @@ public class CacheHelper {
 
             if (!fieldType.isInstance(value)) {
                 throw new IllegalArgumentException("Cached value type mismatch. Expected: "
-                        + value.getClass().getName() + ", but input parameter filedType: " + fieldType.getName());
+                        + value.getClass().getName() + ", but input parameter filedType: "
+                        + fieldType.getName());
             }
             return fieldType.cast(value);
         } else {

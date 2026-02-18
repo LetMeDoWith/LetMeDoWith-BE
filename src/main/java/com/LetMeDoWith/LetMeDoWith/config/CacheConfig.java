@@ -1,6 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.config;
 
-import com.LetMeDoWith.LetMeDoWith.common.cache.CachePolicy;
+import com.LetMeDoWith.LetMeDoWith.common.redis.CachePolicy;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,7 +35,7 @@ public class CacheConfig {
             if (policy.ttl() == null) {
                 continue;
             }
-            individualConfiguration.put(policy.cacheName(), defaultConfig.entryTtl(policy.ttl()));
+            individualConfiguration.put(policy.keyName(), defaultConfig.entryTtl(policy.ttl()));
         }
         return RedisCacheManager.RedisCacheManagerBuilder.fromConnectionFactory(cf)
                 //                .cacheDefaults(defaultConfig)

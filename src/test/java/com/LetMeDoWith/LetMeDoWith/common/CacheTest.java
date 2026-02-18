@@ -2,9 +2,9 @@ package com.LetMeDoWith.LetMeDoWith.common;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.LetMeDoWith.LetMeDoWith.common.cache.CacheHelper;
-import com.LetMeDoWith.LetMeDoWith.common.cache.CacheName;
 import com.LetMeDoWith.LetMeDoWith.common.code.TestService;
+import com.LetMeDoWith.LetMeDoWith.common.redis.CacheHelper;
+import com.LetMeDoWith.LetMeDoWith.common.redis.CacheName;
 import java.util.List;
 import java.util.UUID;
 import lombok.Builder;
@@ -83,11 +83,12 @@ public class CacheTest {
         TestDto cacheTarget = TestDto.builder().str1(str1).str2(str2).num1(num1).build();
 
         // when
-        cacheHelper.put(CacheName.DOWITH_TASK, dowithTaskId, cacheTarget);
-        String cachedStr1 = cacheHelper.get(CacheName.DOWITH_TASK, dowithTaskId, "str1", String.class);
-        int num1 = cacheHelper.get(CacheName.DOWITH_TASK, dowithTaskId, "num1", Integer.class);
+        cacheHelper.put(CacheName.FEEDBACK_AVAILABLE_DOWITH_TASKS, dowithTaskId, cacheTarget);
+        String cachedStr1 =
+                cacheHelper.get(CacheName.FEEDBACK_AVAILABLE_DOWITH_TASKS, dowithTaskId, "str1", String.class);
+        int num1 = cacheHelper.get(CacheName.FEEDBACK_AVAILABLE_DOWITH_TASKS, dowithTaskId, "num1", Integer.class);
 
-        TestDto cachedTarget = cacheHelper.get(CacheName.DOWITH_TASK, dowithTaskId, TestDto.class);
+        TestDto cachedTarget = cacheHelper.get(CacheName.FEEDBACK_AVAILABLE_DOWITH_TASKS, dowithTaskId, TestDto.class);
 
         // then
         assertThat(cachedStr1).isEqualTo(this.str1);
@@ -105,8 +106,9 @@ public class CacheTest {
         TestDto cacheTarget = new TestDto(str1, str2, num1);
 
         // when
-        cacheHelper.push(CacheName.LAZY_DOWITH_TASK, listKey, cacheTarget);
-        List<TestDto> cachedTarget = cacheHelper.getByRange(CacheName.LAZY_DOWITH_TASK, listKey, 0, -1, TestDto.class);
+        cacheHelper.push(CacheName.LAZY_DOWITH_TASK_IDS, listKey, cacheTarget);
+        List<TestDto> cachedTarget =
+                cacheHelper.getByRange(CacheName.LAZY_DOWITH_TASK_IDS, listKey, 0, -1, TestDto.class);
 
         // then
         assertThat(cachedTarget.get(0)).isEqualTo(cacheTarget);
@@ -121,10 +123,11 @@ public class CacheTest {
         TestDto cacheTarget2 = new TestDto(str3, str4, num2);
 
         // when
-        cacheHelper.push(CacheName.LAZY_DOWITH_TASK, listKey, cacheTarget1);
-        cacheHelper.push(CacheName.LAZY_DOWITH_TASK, listKey, cacheTarget2);
-        cacheHelper.remove(CacheName.LAZY_DOWITH_TASK, listKey, cacheTarget1);
-        List<TestDto> cachedTarget = cacheHelper.getByRange(CacheName.LAZY_DOWITH_TASK, listKey, 0, -1, TestDto.class);
+        cacheHelper.push(CacheName.LAZY_DOWITH_TASK_IDS, listKey, cacheTarget1);
+        cacheHelper.push(CacheName.LAZY_DOWITH_TASK_IDS, listKey, cacheTarget2);
+        cacheHelper.remove(CacheName.LAZY_DOWITH_TASK_IDS, listKey, cacheTarget1);
+        List<TestDto> cachedTarget =
+                cacheHelper.getByRange(CacheName.LAZY_DOWITH_TASK_IDS, listKey, 0, -1, TestDto.class);
 
         // then
         assertThat(cachedTarget.size()).isEqualTo(1);
