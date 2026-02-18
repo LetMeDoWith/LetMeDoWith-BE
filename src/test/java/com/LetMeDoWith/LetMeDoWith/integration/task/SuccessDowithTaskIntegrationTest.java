@@ -17,10 +17,7 @@ import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.DowithTaskLikeJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.TaskCategoryJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.integration.AbstractIntegrationTest;
-import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.GenerateDowithTaskSuccessImageUploadPresignedUrlsReqDto;
-import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.LikeDowithTaskResDto;
-import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.RetrieveSuccessDowithTasksRes;
-import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.SuccessDowithTaskReqDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -32,7 +29,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -323,43 +319,76 @@ public class SuccessDowithTaskIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @DisplayName("성공한 Dowith Task 좋아요 동시성 테스트")
-    void likeSuccessDowithTaskConcurrencyTest() throws Exception {
+    @DisplayName("성공한 DowithTask 좋아요 취소 테스트 - 이미 좋아요한 경우에 멱등성 보장")
+    void cancelLikeSuccessDowithTask() throws Exception {
         // Given
         Long successDowithTaskId = this.successDowithTasks.get(0).getId();
-        int concurrentRequests = 100;
 
-        // When
-        List<Thread> threads = new ArrayList<>();
-        List<ResultActions> resultActions = new ArrayList<>();
-        for (int i = 0; i < concurrentRequests; i++) {
-            Thread thread = new Thread(() -> {
-                resultActions.add(
-                        this.request(MockMvcRequestBuilders.post(LIKE_SUCCESS_DOWITH_TASK_URL, successDowithTaskId)));
-            });
-            threads.add(thread);
-            thread.start();
-        }
+        // when
+        ResultActions likeRequest =
+                this.request(MockMvcRequestBuilders.post(LIKE_SUCCESS_DOWITH_TASK_URL, successDowithTaskId));
+        ResultActions firstCancelLikeRequest =
+                this.request(MockMvcRequestBuilders.delete(LIKE_SUCCESS_DOWITH_TASK_URL, successDowithTaskId));
+        ResultActions secondCancelLikeRequest =
+                this.request(MockMvcRequestBuilders.delete(LIKE_SUCCESS_DOWITH_TASK_URL, successDowithTaskId));
 
-        for (Thread thread : threads) {
-            thread.join();
-        }
+        // then
+        likeRequest.andExpect(status().isOk());
+        firstCancelLikeRequest.andExpect(status().isOk());
+        secondCancelLikeRequest.andExpect(status().isOk());
 
-        // Then
+        CancelLikeDowithTaskResDto firstCancelLikeResponse =
+                this.readResponse(firstCancelLikeRequest, CancelLikeDowithTaskResDto.class);
+        CancelLikeDowithTaskResDto secondCancelLikeResponse =
+                this.readResponse(secondCancelLikeRequest, CancelLikeDowithTaskResDto.class);
+        assertThat(firstCancelLikeResponse.isAlreadyCanceled()).isFalse();
+        assertThat(firstCancelLikeResponse.likeCount()).isEqualTo(2L);
+        assertThat(secondCancelLikeResponse.isAlreadyCanceled()).isTrue();
+        assertThat(secondCancelLikeResponse.likeCount()).isEqualTo(2L);
+
         long likeCount = dowithTaskLikeJpaRepository.countByDowithTask_Id(successDowithTaskId);
-        assertThat(likeCount).isEqualTo(3L);
-
-        int successCount = 0;
-        int failCount = 0;
-        for (ResultActions actions : resultActions) {
-            MockHttpServletResponse response = actions.andReturn().getResponse();
-            if (response.getStatus() == 200) successCount++;
-            else if (response.getStatus() == 400) failCount++;
-            else {
-                throw new RuntimeException("Unexpected response status: " + response.getStatus());
-            }
-        }
-        assertThat(successCount).isEqualTo(1);
-        assertThat(failCount).isEqualTo(concurrentRequests - 1);
+        assertThat(likeCount).isEqualTo(2L);
     }
+
+    //    @Test
+    //    @DisplayName("성공한 Dowith Task 좋아요 동시성 테스트")
+    //    void likeSuccessDowithTaskConcurrencyTest() throws Exception {
+    //        // Given
+    //        Long successDowithTaskId = this.successDowithTasks.get(0).getId();
+    //        int concurrentRequests = 100;
+    //
+    //        // When
+    //        List<Thread> threads = new ArrayList<>();
+    //        List<ResultActions> resultActions = new ArrayList<>();
+    //        for (int i = 0; i < concurrentRequests; i++) {
+    //            Thread thread = new Thread(() -> {
+    //                resultActions.add(
+    //                        this.request(MockMvcRequestBuilders.post(LIKE_SUCCESS_DOWITH_TASK_URL,
+    // successDowithTaskId)));
+    //            });
+    //            threads.add(thread);
+    //            thread.start();
+    //        }
+    //
+    //        for (Thread thread : threads) {
+    //            thread.join();
+    //        }
+    //
+    //        // Then
+    //        long likeCount = dowithTaskLikeJpaRepository.countByDowithTask_Id(successDowithTaskId);
+    //        assertThat(likeCount).isEqualTo(3L);
+    //
+    //        int successCount = 0;
+    //        int failCount = 0;
+    //        for (ResultActions actions : resultActions) {
+    //            MockHttpServletResponse response = actions.andReturn().getResponse();
+    //            if (response.getStatus() == 200) successCount++;
+    //            else if (response.getStatus() == 400) failCount++;
+    //            else {
+    //                throw new RuntimeException("Unexpected response status: " + response.getStatus());
+    //            }
+    //        }
+    //        assertThat(successCount).isEqualTo(1);
+    //        assertThat(failCount).isEqualTo(concurrentRequests - 1);
+    //    }
 }

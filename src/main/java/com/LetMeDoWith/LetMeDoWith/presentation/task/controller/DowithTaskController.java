@@ -205,12 +205,13 @@ public class DowithTaskController {
     @ApiSuccessResponse(description = "두윗모드 Task 좋아요 취소")
     @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")})
     @DeleteMapping("/{dowithTaskId}/like")
-    public ResponseEntity<ResponseDto<LikeDowithTaskResDto>> cancelLikeDowithTask(@PathVariable Long dowithTaskId) {
+    public ResponseEntity<ResponseDto<CancelLikeDowithTaskResDto>> cancelLikeDowithTask(
+            @PathVariable Long dowithTaskId) {
         String memberId = AuthUtil.getMemberId();
         CancelLikeSuccessDowithTaskResult result =
                 successDowithTaskService.cancelLikeSuccessDowithTask(memberId, dowithTaskId);
         return ResponseUtil.createSuccessResponse(
-                new LikeDowithTaskResDto(result.isAlreadyCanceled(), result.likeCount()));
+                new CancelLikeDowithTaskResDto(result.isAlreadyCanceled(), result.likeCount()));
     }
 
     @Operation(summary = "두윗모드 Task 잔여 개수 조회", description = "두윗모드 Task의 잔여 개수를 조회합니다.")

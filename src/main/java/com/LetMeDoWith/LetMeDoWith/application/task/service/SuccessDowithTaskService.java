@@ -16,6 +16,7 @@ import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.SuccessDowithTaskQ
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,14 +121,18 @@ public class SuccessDowithTaskService {
                 .getDowithTask(dowithTaskId)
                 .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
 
-        DowithTaskLike dowithTaskLike = dowithTaskLikeRepository
-                .getDowithTaskLike(memberId, dowithTask)
-                .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
+        Optional<DowithTaskLike> opDowithTaskLike = dowithTaskLikeRepository.getDowithTaskLike(memberId, dowithTask);
 
-        boolean deleted = dowithTaskLikeRepository.delete(dowithTaskLike);
+        boolean isAlreadyCanceled = false;
+        if (opDowithTaskLike.isEmpty()) {
+            isAlreadyCanceled = true;
+        } else {
+            boolean deleted = dowithTaskLikeRepository.delete(opDowithTaskLike.get());
+            isAlreadyCanceled = !deleted;
+        }
 
         long likeCount = dowithTaskLikeRepository.countDowithTaskLikesByDowithTaskId(dowithTaskId);
 
-        return new CancelLikeSuccessDowithTaskResult(!deleted, likeCount);
+        return new CancelLikeSuccessDowithTaskResult(isAlreadyCanceled, likeCount);
     }
 }
