@@ -1,9 +1,12 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence;
 
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTaskLike;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskLikeRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.DowithTaskLikeJpaRepository;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -18,17 +21,22 @@ class DowithTaskLikeRepositoryImpl implements DowithTaskLikeRepository {
     }
 
     @Override
+    public Optional<DowithTaskLike> getDowithTaskLike(String memberId, DowithTask dowithTask) {
+        return jpaRepository.findByMemberIdAndDowithTask(memberId, dowithTask);
+    }
+
+    @Override
     public DowithTaskLike save(DowithTaskLike dowithTaskLike) {
         return jpaRepository.save(dowithTaskLike);
     }
 
     @Override
-    public void flush() {
-        jpaRepository.flush();
-    }
-
-    @Override
-    public boolean existsByDowithTaskIdAndMemberId(Long dowithTaskId, String memberId) {
-        return jpaRepository.existsByDowithTask_IdAndMemberId(dowithTaskId, memberId);
+    public boolean delete(DowithTaskLike dowithTaskLike) {
+        try {
+            jpaRepository.delete(dowithTaskLike);
+        } catch (EmptyResultDataAccessException e) {
+            return false;
+        }
+        return true;
     }
 }

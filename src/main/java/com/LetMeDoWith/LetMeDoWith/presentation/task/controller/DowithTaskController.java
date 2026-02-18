@@ -1,5 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.task.controller;
 
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.CancelLikeSuccessDowithTaskResult;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.LikeSuccessDowithTaskResult;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.RetrieveDowithTaskResult;
 import com.LetMeDoWith.LetMeDoWith.application.task.service.*;
@@ -198,6 +199,18 @@ public class DowithTaskController {
         LikeSuccessDowithTaskResult result = successDowithTaskService.likeSuccessDowithTask(memberId, dowithTaskId);
         return ResponseUtil.createSuccessResponse(
                 new LikeDowithTaskResDto(result.isAlreadyLiked(), result.likeCount()));
+    }
+
+    @Operation(summary = "두윗모드 Task 좋아요 취소", description = "두윗모드 Task에 좋아요를 취소합니다.")
+    @ApiSuccessResponse(description = "두윗모드 Task 좋아요 취소")
+    @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")})
+    @DeleteMapping("/{dowithTaskId}/like")
+    public ResponseEntity<ResponseDto<LikeDowithTaskResDto>> cancelLikeDowithTask(@PathVariable Long dowithTaskId) {
+        String memberId = AuthUtil.getMemberId();
+        CancelLikeSuccessDowithTaskResult result =
+                successDowithTaskService.cancelLikeSuccessDowithTask(memberId, dowithTaskId);
+        return ResponseUtil.createSuccessResponse(
+                new LikeDowithTaskResDto(result.isAlreadyCanceled(), result.likeCount()));
     }
 
     @Operation(summary = "두윗모드 Task 잔여 개수 조회", description = "두윗모드 Task의 잔여 개수를 조회합니다.")

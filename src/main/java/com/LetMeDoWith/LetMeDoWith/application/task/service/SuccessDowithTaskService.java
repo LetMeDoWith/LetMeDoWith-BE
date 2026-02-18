@@ -1,6 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.application.task.service;
 
 import com.LetMeDoWith.LetMeDoWith.application.task.client.FileClient;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.CancelLikeSuccessDowithTaskResult;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.LikeSuccessDowithTaskResult;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.RetrieveSuccessDowithTasksResult;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
@@ -111,5 +112,22 @@ public class SuccessDowithTaskService {
     public void tryInsertLikeInNewTransaction(DowithTask dowithTask, String memberId) {
         DowithTaskLike like = dowithTask.like(memberId);
         dowithTaskLikeRepository.save(like);
+    }
+
+    @Transactional
+    public CancelLikeSuccessDowithTaskResult cancelLikeSuccessDowithTask(String memberId, Long dowithTaskId) {
+        DowithTask dowithTask = dowithTaskRepository
+                .getDowithTask(dowithTaskId)
+                .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
+
+        DowithTaskLike dowithTaskLike = dowithTaskLikeRepository
+                .getDowithTaskLike(memberId, dowithTask)
+                .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
+
+        boolean deleted = dowithTaskLikeRepository.delete(dowithTaskLike);
+
+        long likeCount = dowithTaskLikeRepository.countDowithTaskLikesByDowithTaskId(dowithTaskId);
+
+        return new CancelLikeSuccessDowithTaskResult(!deleted, likeCount);
     }
 }
