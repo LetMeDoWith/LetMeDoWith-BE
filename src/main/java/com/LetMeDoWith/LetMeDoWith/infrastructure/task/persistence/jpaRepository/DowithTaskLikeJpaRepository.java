@@ -5,4 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface DowithTaskLikeJpaRepository extends JpaRepository<DowithTaskLike, Long> {
     long countByDowithTask_Id(Long dowithTaskId);
+
+    boolean existsByDowithTask_IdAndMemberId(Long dowithTaskId, String memberId);
 }

@@ -7,13 +7,12 @@ import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.DowithTaskConfirmJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.DowithTaskJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.DowithTaskRoutineJpaRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
@@ -22,6 +21,11 @@ class DowithTaskRepositoryImpl implements DowithTaskRepository {
     private final DowithTaskJpaRepository dowithTaskJpaRepository;
     private final DowithTaskRoutineJpaRepository dowithTaskRoutineJpaRepository;
     private final DowithTaskConfirmJpaRepository dowithTaskConfirmJpaRepository;
+
+    @Override
+    public DowithTask getReferenceById(Long id) {
+        return dowithTaskJpaRepository.getReferenceById(id);
+    }
 
     @Override
     public Optional<DowithTask> getDowithTask(Long id) {

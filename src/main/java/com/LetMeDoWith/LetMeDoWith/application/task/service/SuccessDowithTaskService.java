@@ -1,24 +1,28 @@
 package com.LetMeDoWith.LetMeDoWith.application.task.service;
 
 import com.LetMeDoWith.LetMeDoWith.application.task.client.FileClient;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.LikeSuccessDowithTaskResult;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.RetrieveSuccessDowithTasksResult;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTaskLike;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskLikeRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskQueryRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.SuccessDowithTaskQueryDto;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +32,10 @@ public class SuccessDowithTaskService {
     private final DowithTaskQueryRepository dowithTaskQueryRepository;
     private final DowithTaskLikeRepository dowithTaskLikeRepository;
     private final FileClient fileClient;
+
+    @Lazy
+    @Autowired
+    private SuccessDowithTaskService self;
 
     public List<String> generateDowithTaskSuccessImageUploadPresignedUrls(
             String memberId, Long dowithTaskId, List<String> imageFileNames) {
@@ -75,26 +83,33 @@ public class SuccessDowithTaskService {
     }
 
     /**
-     * DowithTask 좋아요
+     * 성공 DowithTask 좋아요
      *
      * @param memberId
      * @param dowithTaskId
-     * @return 좋아요 수
+     * @return
      */
-    @Transactional
-    public long likeSuccessDowithTask(String memberId, Long dowithTaskId) {
-        DowithTask dowithTask = dowithTaskRepository.getDowithTask(dowithTaskId)
+    public LikeSuccessDowithTaskResult likeSuccessDowithTask(String memberId, Long dowithTaskId) {
+        DowithTask dowithTask = dowithTaskRepository
+                .getDowithTask(dowithTaskId)
                 .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
 
-        dowithTask.like(memberId);
-
+        boolean isAlreadyLiked = false;
         try {
-            dowithTaskRepository.saveDowithTask(dowithTask);
-            dowithTaskRepository.flush();
-        } catch (Exception e) {
-            throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
+            // insert 시도하는 부분만 트랜잭션 분리
+            // 분리하지 않을 경우, DowithTaskLike entity의 id가 null로 남아있어서 트랜잭션 커밋 시점에 UnexpectedRollbackException 발생
+            self.tryInsertLikeInNewTransaction(dowithTask, memberId);
+        } catch (DataIntegrityViolationException e) {
+            isAlreadyLiked = true;
         }
 
-        return dowithTaskLikeRepository.countDowithTaskLikesByDowithTaskId(dowithTaskId);
+        long likeCount = dowithTaskLikeRepository.countDowithTaskLikesByDowithTaskId(dowithTaskId);
+        return new LikeSuccessDowithTaskResult(isAlreadyLiked, likeCount);
+    }
+
+    @Transactional
+    public void tryInsertLikeInNewTransaction(DowithTask dowithTask, String memberId) {
+        DowithTaskLike like = dowithTask.like(memberId);
+        dowithTaskLikeRepository.save(like);
     }
 }
