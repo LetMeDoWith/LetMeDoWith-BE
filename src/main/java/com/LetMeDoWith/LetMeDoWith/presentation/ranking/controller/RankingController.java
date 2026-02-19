@@ -3,6 +3,8 @@ package com.LetMeDoWith.LetMeDoWith.presentation.ranking.controller;
 import com.LetMeDoWith.LetMeDoWith.application.ranking.service.RetrieveRankingService;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiSuccessResponse;
 import com.LetMeDoWith.LetMeDoWith.common.dto.ResponseDto;
+import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
+import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
 import com.LetMeDoWith.LetMeDoWith.presentation.ranking.dto.RetrieveMyRankingResDto;
@@ -42,6 +44,9 @@ public class RankingController {
             @RequestParam Integer month,
             @RequestParam Integer week,
             @RequestParam(defaultValue = "5") Integer size) {
+        if (size < 1) {
+            throw new RestApiException(FailResponseStatus.INVALID_PARAM_ERROR);
+        }
         return ResponseUtil.createSuccessResponse(RetrieveRankingsResDto.from(
                 retrieveRankingService.retrieveRankingsByTopicId(topicId, year, month, week, size)));
     }
