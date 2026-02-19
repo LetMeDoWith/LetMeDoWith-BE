@@ -9,6 +9,7 @@ import com.LetMeDoWith.LetMeDoWith.domain.ranking.repository.dto.RankingsQueryDt
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -62,9 +63,9 @@ public class RankingQueryRepositoryImpl implements RankingQueryRepository {
     }
 
     @Override
-    public RankingsQueryDto getMyRanking(
+    public Optional<RankingsQueryDto> getMyRanking(
             String memberId, Long rankingTopicId, Integer year, Integer month, Integer week) {
-        return queryFactory
+        RankingsQueryDto ranking = queryFactory
                 .select(Projections.constructor(
                         RankingsQueryDto.class,
                         qRanking.year,
@@ -88,5 +89,7 @@ public class RankingQueryRepositoryImpl implements RankingQueryRepository {
                         .and(qRanking.week.eq(week))
                         .and(qRanking.memberId.eq(memberId)))
                 .fetchOne();
+                
+        return Optional.ofNullable(ranking);
     }
 }
