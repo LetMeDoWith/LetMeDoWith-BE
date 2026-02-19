@@ -1,9 +1,8 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.ranking.dto;
 
-import java.util.List;
-
 import com.LetMeDoWith.LetMeDoWith.application.ranking.dto.RetrieveRankingTopicsResult;
 import com.LetMeDoWith.LetMeDoWith.application.ranking.dto.RetrieveRankingTopicsResult.RetrieveRankingTopicResult;
+import java.util.List;
 
 public record RetrieveRankingTopicsResDto(List<RetrieveRankingTopicResDto> rankingTopics) {
     public static RetrieveRankingTopicsResDto from(RetrieveRankingTopicsResult result) {

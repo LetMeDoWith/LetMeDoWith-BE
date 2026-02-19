@@ -1,15 +1,13 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.ranking.dto;
 
-import java.util.List;
-
 import com.LetMeDoWith.LetMeDoWith.application.ranking.dto.RetrieveRankingsResult;
 import com.LetMeDoWith.LetMeDoWith.application.ranking.dto.RetrieveRankingsResult.RetrieveRankingResult;
+import java.util.List;
 
 public record RetrieveRankingsResDto(List<RetrieveRankingResDto> rankings) {
     public static RetrieveRankingsResDto from(RetrieveRankingsResult result) {
-        return new RetrieveRankingsResDto(result.rankings().stream()
-                .map(RetrieveRankingResDto::from)
-                .toList());
+        return new RetrieveRankingsResDto(
+                result.rankings().stream().map(RetrieveRankingResDto::from).toList());
     }
 
     public record RetrieveRankingResDto(
