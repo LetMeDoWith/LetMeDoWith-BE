@@ -33,20 +33,20 @@ public class RankingController {
                 RetrieveRankingTopicsResDto.from(retrieveRankingService.retrieveRankingTopics()));
     }
 
-    @Operation(summary = "랭킹 조회", description = "랭킹을 조회합니다.")
-    @ApiSuccessResponse(description = "랭킹 조회 성공")
-    @GetMapping("/topicId}")
+    @Operation(summary = "랭킹 상세 조회", description = "랭킹 상세 내역을 조회합니다.")
+    @ApiSuccessResponse(description = "랭킹 상세 조회 성공")
+    @GetMapping("/{topicId}")
     public ResponseEntity<ResponseDto<RetrieveRankingsResDto>> retrieveRankings(
             @PathVariable Long topicId,
             @RequestParam Integer year,
             @RequestParam Integer month,
             @RequestParam Integer week,
-            @RequestParam(defaultValue = "5") Integer limit) {
+            @RequestParam(defaultValue = "5") Integer size) {
         return ResponseUtil.createSuccessResponse(RetrieveRankingsResDto.from(
-                retrieveRankingService.retrieveRankingsByTopicId(topicId, year, month, week, limit)));
+                retrieveRankingService.retrieveRankingsByTopicId(topicId, year, month, week, size)));
     }
 
-    @Operation(summary = "내 랭킹 조회", description = "내 랭킹을 조회합니다.")
+    @Operation(summary = "내 랭킹 조회", description = "특정 토픽에 대한 내 랭킹을 조회합니다.")
     @ApiSuccessResponse(description = "내 랭킹 조회 성공")
     @GetMapping("/{topicId}/me")
     public ResponseEntity<ResponseDto<RetrieveMyRankingResDto>> retrieveMyRanking(
