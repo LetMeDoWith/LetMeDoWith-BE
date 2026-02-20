@@ -89,7 +89,7 @@ public class RankingQueryRepositoryImpl implements RankingQueryRepository {
                         .and(qRanking.week.eq(week))
                         .and(qRanking.memberId.eq(memberId)))
                 .fetchOne();
-                
+
         return Optional.ofNullable(ranking);
     }
 }
