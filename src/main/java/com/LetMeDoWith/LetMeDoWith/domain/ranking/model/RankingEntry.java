@@ -22,13 +22,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(
-        name = "ranking",
+        name = "ranking_entry",
         uniqueConstraints = {
             @UniqueConstraint(
-                    name = "uk_ranking_1",
-                    columnNames = {"ranking_topic_id", "member_id", "year", "month", "week"})
+                    name = "uk_ranking_entry_1",
+                    columnNames = {"ranking_topic_round_id", "member_id"})
         })
-public class Ranking extends BaseAuditEntity {
+public class RankingEntry extends BaseAuditEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,17 +36,8 @@ public class Ranking extends BaseAuditEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ranking_topic_id", nullable = false)
-    private RankingTopic rankingTopic;
-
-    @Column(name = "year", nullable = false)
-    private Integer year;
-
-    @Column(name = "month", nullable = false)
-    private Integer month;
-
-    @Column(name = "week", nullable = false)
-    private Integer week;
+    @JoinColumn(name = "ranking_topic_round_id", nullable = false)
+    private RankingTopicRound rankingTopicRound;
 
     @Column(name = "member_id", nullable = false, length = 26)
     private String memberId;
@@ -56,16 +47,4 @@ public class Ranking extends BaseAuditEntity {
 
     @Column(name = "previous_rank", nullable = true)
     private Long previousRank;
-
-    public static Ranking of(RankingTopic rankingTopic, String memberId, Integer year, Integer month, Integer week) {
-        return Ranking.builder()
-                .rankingTopic(rankingTopic)
-                .memberId(memberId)
-                .year(year)
-                .month(month)
-                .week(week)
-                .currentRank(0L)
-                .previousRank(0L)
-                .build();
-    }
 }
