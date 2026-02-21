@@ -23,18 +23,23 @@ public class RetrieveRankingService {
         return RetrieveRankingTopicsResult.from(rankingTopics);
     }
 
-    public RetrieveRankingsResult retrieveRankingsByTopicId(
-            Long rankingTopicId, Integer year, Integer month, Integer week, Integer limit) {
-        List<RankingsQueryDto> rankings =
-                rankingQueryRepository.getRankingsByTopicId(rankingTopicId, year, month, week, limit);
+    public RetrieveRankingsResult retrieveRankingsByTopicId(Long rankingTopicId, Long round, Integer limit) {
+        validateTopicRound(rankingTopicId, round);
+        List<RankingsQueryDto> rankings = rankingQueryRepository.getRankingsByTopicId(rankingTopicId, round, limit);
         return RetrieveRankingsResult.from(rankings);
     }
 
-    public RetrieveMyRankingResult retrieveMyRanking(
-            String memberId, Long rankingTopicId, Integer year, Integer month, Integer week) {
-        RankingsQueryDto ranking = rankingQueryRepository
-                .getMyRanking(memberId, rankingTopicId, year, month, week)
-                .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
-        return RetrieveMyRankingResult.from(ranking);
+    public RetrieveMyRankingResult retrieveMyRanking(String memberId, Long rankingTopicId, Long round) {
+        validateTopicRound(rankingTopicId, round);
+        return rankingQueryRepository
+                .getMyRanking(memberId, rankingTopicId, round)
+                .map(ranking -> RetrieveMyRankingResult.from(round, rankingTopicId, ranking.topicTitle(), ranking))
+                .orElseGet(() -> RetrieveMyRankingResult.empty(round, rankingTopicId, null));
+    }
+
+    private void validateTopicRound(Long rankingTopicId, Long round) {
+        if (!rankingQueryRepository.existsTopicRound(rankingTopicId, round)) {
+            throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
+        }
     }
 }

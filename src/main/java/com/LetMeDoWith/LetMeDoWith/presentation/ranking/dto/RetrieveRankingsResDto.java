@@ -14,9 +14,7 @@ public record RetrieveRankingsResDto(@Schema(description = "랭킹 목록") List
 
     @Schema(description = "랭킹 정보")
     public record RetrieveRankingResDto(
-            @Schema(description = "조회 연도", example = "2026") Integer year,
-            @Schema(description = "조회 월", example = "2") Integer month,
-            @Schema(description = "조회 주차", example = "3") Integer week,
+            @Schema(description = "조회 회차", example = "3") Long round,
             @Schema(description = "주제 ID", example = "1") Long topicId,
             @Schema(description = "주제 제목", example = "이번 주 독서왕") String topicTitle,
             @Schema(description = "현재 순위", example = "1") Long currentRank,
@@ -26,9 +24,7 @@ public record RetrieveRankingsResDto(@Schema(description = "랭킹 목록") List
             @Schema(description = "프로필 이미지 URL", example = "https://example.com/profile.png") String profileImageUrl) {
         public static RetrieveRankingResDto from(RetrieveRankingResult ranking) {
             return new RetrieveRankingResDto(
-                    ranking.year(),
-                    ranking.month(),
-                    ranking.week(),
+                    ranking.round(),
                     ranking.topicId(),
                     ranking.topicTitle(),
                     ranking.currentRank(),

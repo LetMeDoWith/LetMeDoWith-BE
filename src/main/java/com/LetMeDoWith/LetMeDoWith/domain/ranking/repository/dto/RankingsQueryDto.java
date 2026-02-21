@@ -1,9 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.domain.ranking.repository.dto;
 
 public record RankingsQueryDto(
-        Integer year,
-        Integer month,
-        Integer week,
+        Long round,
         Long topicId,
         String topicTitle,
         Long currentRank,

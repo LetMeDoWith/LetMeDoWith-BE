@@ -39,28 +39,21 @@ public class RankingController {
     @ApiSuccessResponse(description = "랭킹 상세 조회 성공")
     @GetMapping("/{topicId}")
     public ResponseEntity<ResponseDto<RetrieveRankingsResDto>> retrieveRankings(
-            @PathVariable Long topicId,
-            @RequestParam Integer year,
-            @RequestParam Integer month,
-            @RequestParam Integer week,
-            @RequestParam(defaultValue = "5") Integer size) {
+            @PathVariable Long topicId, @RequestParam Long round, @RequestParam(defaultValue = "5") Integer size) {
         if (size < 1) {
             throw new RestApiException(FailResponseStatus.INVALID_PARAM_ERROR);
         }
-        return ResponseUtil.createSuccessResponse(RetrieveRankingsResDto.from(
-                retrieveRankingService.retrieveRankingsByTopicId(topicId, year, month, week, size)));
+        return ResponseUtil.createSuccessResponse(
+                RetrieveRankingsResDto.from(retrieveRankingService.retrieveRankingsByTopicId(topicId, round, size)));
     }
 
     @Operation(summary = "내 랭킹 조회", description = "특정 토픽에 대한 내 랭킹을 조회합니다.")
     @ApiSuccessResponse(description = "내 랭킹 조회 성공")
     @GetMapping("/{topicId}/me")
     public ResponseEntity<ResponseDto<RetrieveMyRankingResDto>> retrieveMyRanking(
-            @PathVariable Long topicId,
-            @RequestParam Integer year,
-            @RequestParam Integer month,
-            @RequestParam Integer week) {
+            @PathVariable Long topicId, @RequestParam Long round) {
         String memberId = AuthUtil.getMemberId();
-        return ResponseUtil.createSuccessResponse(RetrieveMyRankingResDto.from(
-                retrieveRankingService.retrieveMyRanking(memberId, topicId, year, month, week)));
+        return ResponseUtil.createSuccessResponse(
+                RetrieveMyRankingResDto.from(retrieveRankingService.retrieveMyRanking(memberId, topicId, round)));
     }
 }

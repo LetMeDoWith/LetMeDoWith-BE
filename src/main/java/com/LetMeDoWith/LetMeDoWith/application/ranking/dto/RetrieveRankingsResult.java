@@ -10,9 +10,7 @@ public record RetrieveRankingsResult(List<RetrieveRankingResult> rankings) {
     }
 
     public record RetrieveRankingResult(
-            Integer year,
-            Integer month,
-            Integer week,
+            Long round,
             Long topicId,
             String topicTitle,
             Long currentRank,
@@ -22,9 +20,7 @@ public record RetrieveRankingsResult(List<RetrieveRankingResult> rankings) {
             String profileImageUrl) {
         public static RetrieveRankingResult from(RankingsQueryDto ranking) {
             return new RetrieveRankingResult(
-                    ranking.year(),
-                    ranking.month(),
-                    ranking.week(),
+                    ranking.round(),
                     ranking.topicId(),
                     ranking.topicTitle(),
                     ranking.currentRank(),

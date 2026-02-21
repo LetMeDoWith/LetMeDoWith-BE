@@ -18,9 +18,11 @@ public record RetrieveRankingTopicsResDto(
     public record RetrieveRankingTopicResDto(
             @Schema(description = "주제 ID", example = "1") Long id,
             @Schema(description = "주제 제목", example = "이번 주 독서왕") String title,
-            @Schema(description = "주제 설명", example = "한 주 동안 가장 많이 독서한 사용자를 확인해요.") String description) {
+            @Schema(description = "주제 설명", example = "한 주 동안 가장 많이 독서한 사용자를 확인해요.") String description,
+            @Schema(description = "현재 조회 회차", example = "3") Long currentRound) {
         public static RetrieveRankingTopicResDto from(RetrieveRankingTopicResult rankingTopic) {
-            return new RetrieveRankingTopicResDto(rankingTopic.id(), rankingTopic.title(), rankingTopic.description());
+            return new RetrieveRankingTopicResDto(
+                    rankingTopic.id(), rankingTopic.title(), rankingTopic.description(), rankingTopic.currentRound());
         }
     }
 }

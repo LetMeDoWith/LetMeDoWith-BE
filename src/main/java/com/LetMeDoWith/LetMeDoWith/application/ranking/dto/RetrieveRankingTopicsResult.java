@@ -9,9 +9,10 @@ public record RetrieveRankingTopicsResult(List<RetrieveRankingTopicResult> ranki
                 rankingTopics.stream().map(RetrieveRankingTopicResult::from).toList());
     }
 
-    public record RetrieveRankingTopicResult(Long id, String title, String description) {
+    public record RetrieveRankingTopicResult(Long id, String title, String description, Long currentRound) {
         public static RetrieveRankingTopicResult from(RankingTopicsQueryDto rankingTopic) {
-            return new RetrieveRankingTopicResult(rankingTopic.id(), rankingTopic.title(), rankingTopic.description());
+            return new RetrieveRankingTopicResult(
+                    rankingTopic.id(), rankingTopic.title(), rankingTopic.description(), rankingTopic.currentRound());
         }
     }
 }

@@ -8,10 +8,10 @@ import java.util.Optional;
 public interface RankingQueryRepository {
     List<RankingTopicsQueryDto> getRankingTopics();
 
-    List<RankingsQueryDto> getRankingsByTopicId(
-            Long rankingTopicId, Integer year, Integer month, Integer week, Integer limit);
+    boolean existsTopicRound(Long rankingTopicId, Long round);
+
+    List<RankingsQueryDto> getRankingsByTopicId(Long rankingTopicId, Long round, Integer limit);
 
     // 내 랭킹 조회
-    Optional<RankingsQueryDto> getMyRanking(
-            String memberId, Long rankingTopicId, Integer year, Integer month, Integer week);
+    Optional<RankingsQueryDto> getMyRanking(String memberId, Long rankingTopicId, Long round);
 }
