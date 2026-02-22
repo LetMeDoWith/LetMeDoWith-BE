@@ -3,28 +3,28 @@ spring:
     activate:
       on-profile: test-confidential
   datasource:
-    username: letmedowith
-    password: letmedowith@admin#2024
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
   flyway:
-    user: letmedowith
-    password: letmedowith@admin#2024
+    user: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
 
 auth:
   jwt:
-    issuer: letMeDoWith.co.kr
-    secret: c2lsdmVycmluZycmluZy1TEST3dC10dXRvcmlhbC1zZWNyZXTESTp1bmluZS10ZWNoLXNwib290LWTESTlsdmVybmluZS10ZWNoLXNw3dCTESTRvcmlhbC1zZWNyZXQK
-    signup-duration-min: 10
-    atk-duration-min: 180 # 개발 및 테스트 용으로 180분 설정
-    rtk-duration-day: 1 # 개발 및 테스트 용으로 1일 설정
+    issuer: ${JWT_ISSUER}
+    secret: ${JWT_SECRET}
+    signup-duration-min: ${JWT_SIGNUP_DURATION_MIN}
+    atk-duration-min: ${JWT_ATK_DURATION_MIN} # 개발 및 테스트 용으로 180분 설정
+    rtk-duration-day: ${JWT_RTK_DURATION_DAY} # 개발 및 테스트 용으로 1일 설정
 
   oidc:
     aud:
-      kakao: d94809e9a1ea2e0a8d51647b585bf68d
-      google: google
-      apple: apple
+      kakao: ${KAKAO_CLIENT_ID}
+      google: ${GOOGLE_CLIENT_ID}
+      apple: ${APPLE_CLIENT_ID}
 
 cloud:
   aws:
-    region: ap-northeast-2
+    region: ${AWS_REGION}
     s3:
-      bucketName: letmedowith-dev
+      bucketName: ${AWS_S3_BUCKET_NAME}

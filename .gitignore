@@ -39,7 +39,6 @@ out/
 
 
 ### Dev-Confidential ###
-/src/main/**/application-dev-confidential.yml
 
 ### Prod-Confidential ###
 /src/main/**/application-prod-confidential.yml
