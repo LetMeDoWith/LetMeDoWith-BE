@@ -51,12 +51,6 @@ public class RankingTopicRound extends BaseAuditEntity {
     @Column(name = "ranking_aggregation_end_at", nullable = false)
     private LocalDateTime rankingAggregationEndDateTime;
 
-    @Column(name = "display_start_at", nullable = false)
-    private LocalDateTime displayStartDateTime;
-
-    @Column(name = "display_end_at", nullable = false)
-    private LocalDateTime displayEndDateTime;
-
     @OneToMany(mappedBy = "rankingTopicRound", fetch = FetchType.LAZY)
     private List<RankingEntry> rankingEntries;
 }

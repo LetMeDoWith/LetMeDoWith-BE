@@ -336,8 +336,6 @@ CREATE TABLE `ranking_topic_round`
     `round`                        bigint       NOT NULL,
     `ranking_aggregation_start_at` datetime(6)  NOT NULL,
     `ranking_aggregation_end_at`   datetime(6)  NOT NULL,
-    `display_start_at`             datetime(6)  NOT NULL,
-    `display_end_at`               datetime(6)  NOT NULL,
     `ranking_topic_id`             bigint       NOT NULL,
     PRIMARY KEY (`id`),
     UNIQUE KEY `uk_ranking_topic_round_1` (`ranking_topic_id`, `round`),

@@ -70,8 +70,6 @@ class RankingIntegrationTest extends AbstractIntegrationTest {
                 .round(ROUND_MAIN)
                 .rankingAggregationStartDateTime(now.minusDays(7))
                 .rankingAggregationEndDateTime(now.minusDays(1))
-                .displayStartDateTime(now.minusHours(1))
-                .displayEndDateTime(now.plusDays(6))
                 .build();
         entityManager.persist(mainRound);
 
@@ -80,8 +78,6 @@ class RankingIntegrationTest extends AbstractIntegrationTest {
                 .round(ROUND_WITHOUT_ME)
                 .rankingAggregationStartDateTime(now.minusDays(14))
                 .rankingAggregationEndDateTime(now.minusDays(8))
-                .displayStartDateTime(now.minusDays(8))
-                .displayEndDateTime(now.minusDays(2))
                 .build();
         entityManager.persist(mainRoundWithoutMe);
 
@@ -90,8 +86,6 @@ class RankingIntegrationTest extends AbstractIntegrationTest {
                 .round(1L)
                 .rankingAggregationStartDateTime(now.minusDays(7))
                 .rankingAggregationEndDateTime(now.minusDays(1))
-                .displayStartDateTime(now.minusHours(1))
-                .displayEndDateTime(now.plusDays(6))
                 .build();
         entityManager.persist(emptyRound);
 
