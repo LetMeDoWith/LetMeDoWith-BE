@@ -161,7 +161,7 @@ class RankingIntegrationTest extends AbstractIntegrationTest {
     @Test
     @DisplayName("[SUCCESS] 랭킹 상세 조회 - 기본 size(5) 적용")
     void retrieveRankings_defaultSize_success() throws Exception {
-        String url = BASE_URL + "/" + mainTopicId + "?round=" + ROUND_MAIN;
+        String url = BASE_URL + "/topic/" + mainTopicId + "?round=" + ROUND_MAIN;
 
         MvcResult result = this.request(MockMvcRequestBuilders.get(url))
                 .andExpect(status().isOk())
@@ -177,7 +177,7 @@ class RankingIntegrationTest extends AbstractIntegrationTest {
     @Test
     @DisplayName("[SUCCESS] 랭킹 상세 조회 - size 지정")
     void retrieveRankings_withSize_success() throws Exception {
-        String url = BASE_URL + "/" + mainTopicId + "?round=" + ROUND_MAIN + "&size=3";
+        String url = BASE_URL + "/topic/" + mainTopicId + "?round=" + ROUND_MAIN + "&size=3";
 
         MvcResult result = this.request(MockMvcRequestBuilders.get(url))
                 .andExpect(status().isOk())
@@ -192,7 +192,7 @@ class RankingIntegrationTest extends AbstractIntegrationTest {
     @Test
     @DisplayName("[FAIL] 랭킹 상세 조회 - size가 1 미만이면 INVALID_PARAM_ERROR")
     void retrieveRankings_invalidSize_fail() throws Exception {
-        String url = BASE_URL + "/" + mainTopicId + "?round=" + ROUND_MAIN + "&size=0";
+        String url = BASE_URL + "/topic/" + mainTopicId + "?round=" + ROUND_MAIN + "&size=0";
 
         MvcResult result = this.request(MockMvcRequestBuilders.get(url))
                 .andExpect(status().isBadRequest())
@@ -204,7 +204,7 @@ class RankingIntegrationTest extends AbstractIntegrationTest {
     @Test
     @DisplayName("[SUCCESS] 내 랭킹 조회")
     void retrieveMyRanking_success() throws Exception {
-        String url = BASE_URL + "/" + mainTopicId + "/me?round=" + ROUND_MAIN;
+        String url = BASE_URL + "/topic/" + mainTopicId + "/me?round=" + ROUND_MAIN;
 
         MvcResult result = this.request(MockMvcRequestBuilders.get(url))
                 .andExpect(status().isOk())
@@ -220,7 +220,7 @@ class RankingIntegrationTest extends AbstractIntegrationTest {
     @Test
     @DisplayName("[SUCCESS] 내 랭킹 조회 - 데이터가 없으면 myRanking null")
     void retrieveMyRanking_notFound_success() throws Exception {
-        String url = BASE_URL + "/" + mainTopicId + "/me?round=" + ROUND_WITHOUT_ME;
+        String url = BASE_URL + "/topic/" + mainTopicId + "/me?round=" + ROUND_WITHOUT_ME;
 
         MvcResult result = this.request(MockMvcRequestBuilders.get(url))
                 .andExpect(status().isOk())
@@ -234,7 +234,7 @@ class RankingIntegrationTest extends AbstractIntegrationTest {
     @Test
     @DisplayName("[FAIL] 랭킹 조회 - 필수 쿼리 파라미터 누락")
     void retrieveRankings_missingQueryParam_fail() throws Exception {
-        String url = BASE_URL + "/" + mainTopicId;
+        String url = BASE_URL + "/topic/" + mainTopicId;
 
         this.request(MockMvcRequestBuilders.get(url)).andExpect(status().isBadRequest());
     }
@@ -242,7 +242,7 @@ class RankingIntegrationTest extends AbstractIntegrationTest {
     @Test
     @DisplayName("[FAIL] 랭킹 조회 - 존재하지 않는 회차")
     void retrieveRankings_invalidRound_fail() throws Exception {
-        String url = BASE_URL + "/" + mainTopicId + "?round=999";
+        String url = BASE_URL + "/topic/" + mainTopicId + "?round=999";
 
         MvcResult result = this.request(MockMvcRequestBuilders.get(url))
                 .andExpect(status().isBadRequest())

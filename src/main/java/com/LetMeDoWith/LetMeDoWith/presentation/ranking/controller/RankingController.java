@@ -37,7 +37,7 @@ public class RankingController {
 
     @Operation(summary = "랭킹 상세 조회", description = "랭킹 상세 내역을 조회합니다.")
     @ApiSuccessResponse(description = "랭킹 상세 조회 성공")
-    @GetMapping("/{topicId}")
+    @GetMapping("/topic/{topicId}")
     public ResponseEntity<ResponseDto<RetrieveRankingsResDto>> retrieveRankings(
             @PathVariable Long topicId, @RequestParam Long round, @RequestParam(defaultValue = "5") Integer size) {
         if (size < 1) {
@@ -49,7 +49,7 @@ public class RankingController {
 
     @Operation(summary = "내 랭킹 조회", description = "특정 토픽에 대한 내 랭킹을 조회합니다.")
     @ApiSuccessResponse(description = "내 랭킹 조회 성공")
-    @GetMapping("/{topicId}/me")
+    @GetMapping("/topic/{topicId}/me")
     public ResponseEntity<ResponseDto<RetrieveMyRankingResDto>> retrieveMyRanking(
             @PathVariable Long topicId, @RequestParam Long round) {
         String memberId = AuthUtil.getMemberId();
