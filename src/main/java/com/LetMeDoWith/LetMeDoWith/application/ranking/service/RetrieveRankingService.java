@@ -5,6 +5,7 @@ import com.LetMeDoWith.LetMeDoWith.application.ranking.dto.RetrieveRankingTopics
 import com.LetMeDoWith.LetMeDoWith.application.ranking.dto.RetrieveRankingsResult;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.ranking.repository.RankingQueryRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.ranking.repository.dto.RankingTopicsQueryDto;
 import com.LetMeDoWith.LetMeDoWith.domain.ranking.repository.dto.RankingsQueryDto;
@@ -23,14 +24,16 @@ public class RetrieveRankingService {
         return RetrieveRankingTopicsResult.from(rankingTopics);
     }
 
-    public RetrieveRankingsResult retrieveRankingsByTopicId(Long rankingTopicId, Long round, Integer limit) {
+    public RetrieveRankingsResult retrieveRankings(Long rankingTopicId, Long round, Integer limit) {
         validateTopicRound(rankingTopicId, round);
         List<RankingsQueryDto> rankings = rankingQueryRepository.getRankingsByTopicId(rankingTopicId, round, limit);
         return RetrieveRankingsResult.from(rankings);
     }
 
-    public RetrieveMyRankingResult retrieveMyRanking(String memberId, Long rankingTopicId, Long round) {
+    public RetrieveMyRankingResult retrieveMyRanking(Long rankingTopicId, Long round) {
         validateTopicRound(rankingTopicId, round);
+
+        String memberId = AuthUtil.getMemberId();
         return rankingQueryRepository
                 .getMyRanking(memberId, rankingTopicId, round)
                 .map(ranking -> RetrieveMyRankingResult.from(round, rankingTopicId, ranking.topicTitle(), ranking))

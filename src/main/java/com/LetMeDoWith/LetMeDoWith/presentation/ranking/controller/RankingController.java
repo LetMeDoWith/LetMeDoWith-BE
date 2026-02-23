@@ -5,7 +5,6 @@ import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiSuccessResponse;
 import com.LetMeDoWith.LetMeDoWith.common.dto.ResponseDto;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
-import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
 import com.LetMeDoWith.LetMeDoWith.presentation.ranking.dto.RetrieveMyRankingResDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.ranking.dto.RetrieveRankingTopicsResDto;
@@ -44,7 +43,7 @@ public class RankingController {
             throw new RestApiException(FailResponseStatus.INVALID_PARAM_ERROR);
         }
         return ResponseUtil.createSuccessResponse(
-                RetrieveRankingsResDto.from(retrieveRankingService.retrieveRankingsByTopicId(topicId, round, size)));
+                RetrieveRankingsResDto.from(retrieveRankingService.retrieveRankings(topicId, round, size)));
     }
 
     @Operation(summary = "내 랭킹 조회", description = "특정 토픽에 대한 내 랭킹을 조회합니다.")
@@ -52,8 +51,7 @@ public class RankingController {
     @GetMapping("/topic/{topicId}/me")
     public ResponseEntity<ResponseDto<RetrieveMyRankingResDto>> retrieveMyRanking(
             @PathVariable Long topicId, @RequestParam Long round) {
-        String memberId = AuthUtil.getMemberId();
         return ResponseUtil.createSuccessResponse(
-                RetrieveMyRankingResDto.from(retrieveRankingService.retrieveMyRanking(memberId, topicId, round)));
+                RetrieveMyRankingResDto.from(retrieveRankingService.retrieveMyRanking(topicId, round)));
     }
 }
