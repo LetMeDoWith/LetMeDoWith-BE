@@ -68,24 +68,24 @@ class RankingIntegrationTest extends AbstractIntegrationTest {
         RankingTopicRound mainRound = RankingTopicRound.builder()
                 .rankingTopic(mainTopic)
                 .round(ROUND_MAIN)
-                .rankingAggregationStartDateTime(now.minusDays(7))
-                .rankingAggregationEndDateTime(now.minusDays(1))
+                .aggregationStartDateTime(now.minusDays(7))
+                .aggregationEndDateTime(now.minusDays(1))
                 .build();
         entityManager.persist(mainRound);
 
         RankingTopicRound mainRoundWithoutMe = RankingTopicRound.builder()
                 .rankingTopic(mainTopic)
                 .round(ROUND_WITHOUT_ME)
-                .rankingAggregationStartDateTime(now.minusDays(14))
-                .rankingAggregationEndDateTime(now.minusDays(8))
+                .aggregationStartDateTime(now.minusDays(14))
+                .aggregationEndDateTime(now.minusDays(8))
                 .build();
         entityManager.persist(mainRoundWithoutMe);
 
         RankingTopicRound emptyRound = RankingTopicRound.builder()
                 .rankingTopic(emptyTopic)
                 .round(1L)
-                .rankingAggregationStartDateTime(now.minusDays(7))
-                .rankingAggregationEndDateTime(now.minusDays(1))
+                .aggregationStartDateTime(now.minusDays(7))
+                .aggregationEndDateTime(now.minusDays(1))
                 .build();
         entityManager.persist(emptyRound);
 

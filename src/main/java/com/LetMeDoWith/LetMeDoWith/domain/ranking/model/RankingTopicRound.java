@@ -45,11 +45,11 @@ public class RankingTopicRound extends BaseAuditEntity {
     @Column(name = "round", nullable = false)
     private Long round;
 
-    @Column(name = "ranking_aggregation_start_at", nullable = false)
-    private LocalDateTime rankingAggregationStartDateTime;
+    @Column(name = "aggregation_start_at", nullable = false)
+    private LocalDateTime aggregationStartDateTime;
 
-    @Column(name = "ranking_aggregation_end_at", nullable = false)
-    private LocalDateTime rankingAggregationEndDateTime;
+    @Column(name = "aggregation_end_at", nullable = false)
+    private LocalDateTime aggregationEndDateTime;
 
     @OneToMany(mappedBy = "rankingTopicRound", fetch = FetchType.LAZY)
     private List<RankingEntry> rankingEntries;
