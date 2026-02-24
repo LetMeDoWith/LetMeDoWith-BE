@@ -11,5 +11,5 @@ public interface DowithTaskLikeRepository {
 
     DowithTaskLike save(DowithTaskLike dowithTaskLike);
 
-    boolean delete(DowithTaskLike dowithTaskLike);
+    long delete(Long dowithTaskId, String memberId);
 }

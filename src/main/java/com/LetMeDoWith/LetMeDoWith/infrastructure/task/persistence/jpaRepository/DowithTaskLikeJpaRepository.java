@@ -11,4 +11,6 @@ public interface DowithTaskLikeJpaRepository extends JpaRepository<DowithTaskLik
     boolean existsByDowithTask_IdAndMemberId(Long dowithTaskId, String memberId);
 
     Optional<DowithTaskLike> findByMemberIdAndDowithTask(String memberId, DowithTask dowithTask);
+
+    long deleteByDowithTask_IdAndMemberId(Long dowithTaskId, String memberId);
 }

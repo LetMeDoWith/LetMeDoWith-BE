@@ -16,7 +16,6 @@ import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.SuccessDowithTaskQ
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -117,19 +116,12 @@ public class SuccessDowithTaskService {
 
     @Transactional
     public CancelLikeSuccessDowithTaskResult cancelLikeSuccessDowithTask(String memberId, Long dowithTaskId) {
-        DowithTask dowithTask = dowithTaskRepository
+        dowithTaskRepository
                 .getDowithTask(dowithTaskId)
                 .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
 
-        Optional<DowithTaskLike> opDowithTaskLike = dowithTaskLikeRepository.getDowithTaskLike(memberId, dowithTask);
-
-        boolean isAlreadyCanceled = false;
-        if (opDowithTaskLike.isEmpty()) {
-            isAlreadyCanceled = true;
-        } else {
-            boolean deleted = dowithTaskLikeRepository.delete(opDowithTaskLike.get());
-            isAlreadyCanceled = !deleted;
-        }
+        long deletedRows = dowithTaskLikeRepository.delete(dowithTaskId, memberId);
+        boolean isAlreadyCanceled = deletedRows == 0; // 삭제된 행이 없으면 이미 취소된 상태
 
         long likeCount = dowithTaskLikeRepository.countDowithTaskLikesByDowithTaskId(dowithTaskId);
 

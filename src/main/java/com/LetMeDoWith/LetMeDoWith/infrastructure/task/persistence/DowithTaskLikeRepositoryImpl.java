@@ -6,7 +6,6 @@ import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskLikeReposito
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.DowithTaskLikeJpaRepository;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -31,12 +30,8 @@ class DowithTaskLikeRepositoryImpl implements DowithTaskLikeRepository {
     }
 
     @Override
-    public boolean delete(DowithTaskLike dowithTaskLike) {
-        try {
-            jpaRepository.delete(dowithTaskLike);
-        } catch (EmptyResultDataAccessException e) {
-            return false;
-        }
-        return true;
+    public long delete(Long dowithTaskId, String memberId) {
+        long deletedRows = jpaRepository.deleteByDowithTask_IdAndMemberId(dowithTaskId, memberId);
+        return deletedRows;
     }
 }
