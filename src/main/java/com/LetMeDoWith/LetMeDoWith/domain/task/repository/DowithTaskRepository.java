@@ -9,9 +9,6 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface DowithTaskRepository {
-
-    DowithTask getReferenceById(Long id);
-
     Optional<DowithTask> getDowithTask(Long id);
 
     Optional<DowithTask> getDowithTask(Long id, String memberId);
