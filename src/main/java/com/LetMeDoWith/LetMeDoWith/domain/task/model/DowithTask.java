@@ -351,11 +351,6 @@ public class DowithTask extends BaseAuditEntity {
      * 반환된 Like는 애플리케이션 서비스에서 별도 persist (aggregate 컬렉션에 넣지 않아 dowith_task UPDATE 방지).
      */
     public DowithTaskLike like(String memberId) {
-        //        for (DowithTaskLike like : likes) {
-        //            if (like.getMemberId().equals(memberId)) {
-        //                throw new RestApiException(INVALID_REQUEST);
-        //            }
-        //        }
         return DowithTaskLike.of(memberId, this);
     }
 
