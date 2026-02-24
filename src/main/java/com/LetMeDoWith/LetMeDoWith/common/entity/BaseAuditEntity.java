@@ -5,13 +5,14 @@ import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
-import java.time.LocalDateTime;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.time.LocalDateTime;
 
 @EntityListeners(value = {AuditingEntityListener.class})
 @MappedSuperclass
@@ -34,7 +35,7 @@ public class BaseAuditEntity {
     @Column(name = "updated_by")
     private String updatedBy;
 
-    private String getCurrentUserId() {
+    private String getAuditingMemberId() {
         String memberId = AuthUtil.getMemberId();
         if (memberId == null) return "system";
         else return memberId;
@@ -47,8 +48,8 @@ public class BaseAuditEntity {
         LocalDateTime now = SystemTimeUtil.now();
         this.createdAt = now;
         this.updatedAt = now;
-        this.createdBy = this.getCurrentUserId();
-        this.updatedBy = this.getCurrentUserId();
+        this.createdBy = this.getAuditingMemberId();
+        this.updatedBy = this.getAuditingMemberId();
     }
 
     /**
@@ -57,6 +58,6 @@ public class BaseAuditEntity {
     public void setUpdateAuditingInfo() {
         LocalDateTime now = SystemTimeUtil.now();
         this.updatedAt = now;
-        this.updatedBy = this.getCurrentUserId();
+        this.updatedBy = this.getAuditingMemberId();
     }
 }
