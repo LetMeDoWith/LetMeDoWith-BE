@@ -23,11 +23,6 @@ class DowithTaskRepositoryImpl implements DowithTaskRepository {
     private final DowithTaskConfirmJpaRepository dowithTaskConfirmJpaRepository;
 
     @Override
-    public DowithTask getReferenceById(Long id) {
-        return dowithTaskJpaRepository.getReferenceById(id);
-    }
-
-    @Override
     public Optional<DowithTask> getDowithTask(Long id) {
         return dowithTaskJpaRepository.findDowithTaskAggregate(id);
     }
@@ -75,10 +70,5 @@ class DowithTaskRepositoryImpl implements DowithTaskRepository {
     @Override
     public long countByStatus(DowithTaskStatus status) {
         return dowithTaskJpaRepository.countByStatus(status);
-    }
-
-    @Override
-    public void flush() {
-        dowithTaskJpaRepository.flush();
     }
 }

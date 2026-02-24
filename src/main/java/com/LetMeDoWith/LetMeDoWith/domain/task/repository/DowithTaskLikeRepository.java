@@ -9,7 +9,7 @@ public interface DowithTaskLikeRepository {
 
     Optional<DowithTaskLike> getDowithTaskLike(String memberId, DowithTask dowithTask);
 
-    DowithTaskLike save(DowithTaskLike dowithTaskLike);
+    int saveIgnore(DowithTaskLike dowithTaskLike);
 
     long delete(Long dowithTaskId, String memberId);
 }

@@ -25,8 +25,9 @@ class DowithTaskLikeRepositoryImpl implements DowithTaskLikeRepository {
     }
 
     @Override
-    public DowithTaskLike save(DowithTaskLike dowithTaskLike) {
-        return jpaRepository.save(dowithTaskLike);
+    public int saveIgnore(DowithTaskLike dowithTaskLike) {
+        dowithTaskLike.setCreateAuditingInfo();
+        return jpaRepository.saveIgnore(dowithTaskLike);
     }
 
     @Override

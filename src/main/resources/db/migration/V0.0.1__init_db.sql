@@ -1,7 +1,7 @@
 CREATE TABLE `badge`
 (
     `id`           bigint       NOT NULL AUTO_INCREMENT,
-    `create_at`    datetime(6)  DEFAULT NULL,
+    `created_at`   datetime(6)  DEFAULT NULL,
     `created_by`   varchar(255) DEFAULT NULL,
     `updated_at`   datetime(6)  DEFAULT NULL,
     `updated_by`   varchar(255) DEFAULT NULL,
@@ -31,7 +31,7 @@ CREATE TABLE `dev_refresh_token`
 CREATE TABLE `dowith_task_routine`
 (
     `id`                  bigint      NOT NULL AUTO_INCREMENT,
-    `create_at`           datetime(6)  DEFAULT NULL,
+    `created_at`          datetime(6)  DEFAULT NULL,
     `created_by`          varchar(255) DEFAULT NULL,
     `updated_at`          datetime(6)  DEFAULT NULL,
     `updated_by`          varchar(255) DEFAULT NULL,
@@ -48,7 +48,7 @@ CREATE TABLE `dowith_task_routine`
 CREATE TABLE `dowith_task`
 (
     `id`                     bigint       NOT NULL AUTO_INCREMENT,
-    `create_at`              datetime(6)  DEFAULT NULL,
+    `created_at`             datetime(6)  DEFAULT NULL,
     `created_by`             varchar(255) DEFAULT NULL,
     `updated_at`             datetime(6)  DEFAULT NULL,
     `updated_by`             varchar(255) DEFAULT NULL,
@@ -71,7 +71,7 @@ CREATE TABLE `dowith_task`
 CREATE TABLE `dowith_task_feedback`
 (
     `id`                        bigint       NOT NULL AUTO_INCREMENT,
-    `create_at`                 datetime(6)  DEFAULT NULL,
+    `created_at`                datetime(6)  DEFAULT NULL,
     `created_by`                varchar(255) DEFAULT NULL,
     `updated_at`                datetime(6)  DEFAULT NULL,
     `updated_by`                varchar(255) DEFAULT NULL,
@@ -88,7 +88,7 @@ CREATE TABLE `dowith_task_feedback`
 CREATE TABLE `dowith_task_like`
 (
     `id`             bigint      NOT NULL AUTO_INCREMENT,
-    `create_at`      datetime(6)  DEFAULT NULL,
+    `created_at`     datetime(6)  DEFAULT NULL,
     `created_by`     varchar(255) DEFAULT NULL,
     `updated_at`     datetime(6)  DEFAULT NULL,
     `updated_by`     varchar(255) DEFAULT NULL,
@@ -105,7 +105,7 @@ CREATE TABLE `dowith_task_like`
 CREATE TABLE `dowith_task_success`
 (
     `id`             bigint NOT NULL AUTO_INCREMENT,
-    `create_at`      datetime(6)  DEFAULT NULL,
+    `created_at`     datetime(6)  DEFAULT NULL,
     `created_by`     varchar(255) DEFAULT NULL,
     `updated_at`     datetime(6)  DEFAULT NULL,
     `updated_by`     varchar(255) DEFAULT NULL,
@@ -121,7 +121,7 @@ CREATE TABLE `dowith_task_success`
 CREATE TABLE `holiday`
 (
     `id`           bigint       NOT NULL AUTO_INCREMENT,
-    `create_at`    datetime(6)  DEFAULT NULL,
+    `created_at`   datetime(6)  DEFAULT NULL,
     `created_by`   varchar(255) DEFAULT NULL,
     `updated_at`   datetime(6)  DEFAULT NULL,
     `updated_by`   varchar(255) DEFAULT NULL,
@@ -136,7 +136,7 @@ CREATE TABLE `holiday`
 CREATE TABLE `member`
 (
     `id`                varchar(26)  NOT NULL,
-    `create_at`         datetime(6)  DEFAULT NULL,
+    `created_at`        datetime(6)  DEFAULT NULL,
     `created_by`        varchar(255) DEFAULT NULL,
     `updated_at`        datetime(6)  DEFAULT NULL,
     `updated_by`        varchar(255) DEFAULT NULL,
@@ -156,7 +156,7 @@ CREATE TABLE `member`
 CREATE TABLE `member_alarm_setting`
 (
     `id`            bigint      NOT NULL AUTO_INCREMENT,
-    `create_at`     datetime(6)  DEFAULT NULL,
+    `created_at`    datetime(6)  DEFAULT NULL,
     `created_by`    varchar(255) DEFAULT NULL,
     `updated_at`    datetime(6)  DEFAULT NULL,
     `updated_by`    varchar(255) DEFAULT NULL,
@@ -175,7 +175,7 @@ CREATE TABLE `member_alarm_setting`
 CREATE TABLE `member_badge`
 (
     `id`         bigint       NOT NULL AUTO_INCREMENT,
-    `create_at`  datetime(6)  DEFAULT NULL,
+    `created_at` datetime(6)  DEFAULT NULL,
     `created_by` varchar(255) DEFAULT NULL,
     `updated_at` datetime(6)  DEFAULT NULL,
     `updated_by` varchar(255) DEFAULT NULL,
@@ -192,7 +192,7 @@ CREATE TABLE `member_badge`
 CREATE TABLE `member_follow`
 (
     `id`           bigint      NOT NULL AUTO_INCREMENT,
-    `create_at`    datetime(6)  DEFAULT NULL,
+    `created_at`   datetime(6)  DEFAULT NULL,
     `created_by`   varchar(255) DEFAULT NULL,
     `updated_at`   datetime(6)  DEFAULT NULL,
     `updated_by`   varchar(255) DEFAULT NULL,
@@ -210,7 +210,7 @@ CREATE TABLE `member_follow`
 CREATE TABLE `member_social_account`
 (
     `id`         bigint       NOT NULL AUTO_INCREMENT,
-    `create_at`  datetime(6)  DEFAULT NULL,
+    `created_at` datetime(6)  DEFAULT NULL,
     `created_by` varchar(255) DEFAULT NULL,
     `updated_at` datetime(6)  DEFAULT NULL,
     `updated_by` varchar(255) DEFAULT NULL,
@@ -226,7 +226,7 @@ CREATE TABLE `member_social_account`
 CREATE TABLE `member_status_history`
 (
     `id`                bigint       NOT NULL AUTO_INCREMENT,
-    `create_at`         datetime(6)  DEFAULT NULL,
+    `created_at`        datetime(6)  DEFAULT NULL,
     `created_by`        varchar(255) DEFAULT NULL,
     `updated_at`        datetime(6)  DEFAULT NULL,
     `updated_by`        varchar(255) DEFAULT NULL,
@@ -244,7 +244,7 @@ CREATE TABLE `member_status_history`
 CREATE TABLE `member_term_agree`
 (
     `id`             bigint      NOT NULL AUTO_INCREMENT,
-    `create_at`      datetime(6)  DEFAULT NULL,
+    `created_at`     datetime(6)  DEFAULT NULL,
     `created_by`     varchar(255) DEFAULT NULL,
     `updated_at`     datetime(6)  DEFAULT NULL,
     `updated_by`     varchar(255) DEFAULT NULL,
@@ -262,7 +262,7 @@ CREATE TABLE `member_term_agree`
 CREATE TABLE `notification`
 (
     `id`                         bigint       NOT NULL AUTO_INCREMENT,
-    `create_at`                  datetime(6)  DEFAULT NULL,
+    `created_at`                 datetime(6)  DEFAULT NULL,
     `created_by`                 varchar(255) DEFAULT NULL,
     `updated_at`                 datetime(6)  DEFAULT NULL,
     `updated_by`                 varchar(255) DEFAULT NULL,
@@ -281,7 +281,7 @@ CREATE TABLE `notification`
 CREATE TABLE `notification_template`
 (
     `id`            bigint       NOT NULL AUTO_INCREMENT,
-    `create_at`     datetime(6)  DEFAULT NULL,
+    `created_at`    datetime(6)  DEFAULT NULL,
     `created_by`    varchar(255) DEFAULT NULL,
     `updated_at`    datetime(6)  DEFAULT NULL,
     `updated_by`    varchar(255) DEFAULT NULL,
@@ -298,7 +298,7 @@ CREATE TABLE `notification_template`
 CREATE TABLE `notification_token`
 (
     `id`         bigint       NOT NULL AUTO_INCREMENT,
-    `create_at`  datetime(6)  DEFAULT NULL,
+    `created_at` datetime(6)  DEFAULT NULL,
     `created_by` varchar(255) DEFAULT NULL,
     `updated_at` datetime(6)  DEFAULT NULL,
     `updated_by` varchar(255) DEFAULT NULL,
@@ -313,7 +313,7 @@ CREATE TABLE `notification_token`
 CREATE TABLE `ranking_topic`
 (
     `id`          bigint       NOT NULL AUTO_INCREMENT,
-    `create_at`   datetime(6)  DEFAULT NULL,
+    `created_at`  datetime(6)  DEFAULT NULL,
     `created_by`  varchar(255) DEFAULT NULL,
     `updated_at`  datetime(6)  DEFAULT NULL,
     `updated_by`  varchar(255) DEFAULT NULL,
@@ -327,7 +327,7 @@ CREATE TABLE `ranking_topic`
 CREATE TABLE `ranking`
 (
     `id`               bigint      NOT NULL AUTO_INCREMENT,
-    `create_at`        datetime(6)  DEFAULT NULL,
+    `created_at`       datetime(6)  DEFAULT NULL,
     `created_by`       varchar(255) DEFAULT NULL,
     `updated_at`       datetime(6)  DEFAULT NULL,
     `updated_by`       varchar(255) DEFAULT NULL,
@@ -348,7 +348,7 @@ CREATE TABLE `ranking`
 CREATE TABLE `task_category`
 (
     `id`                 bigint       NOT NULL AUTO_INCREMENT,
-    `create_at`          datetime(6)  DEFAULT NULL,
+    `created_at`         datetime(6)  DEFAULT NULL,
     `created_by`         varchar(255) DEFAULT NULL,
     `updated_at`         datetime(6)  DEFAULT NULL,
     `updated_by`         varchar(255) DEFAULT NULL,
@@ -365,7 +365,7 @@ CREATE TABLE `task_category`
 CREATE TABLE `task_feedback_template`
 (
     `id`          bigint       NOT NULL AUTO_INCREMENT,
-    `create_at`   datetime(6)  DEFAULT NULL,
+    `created_at`  datetime(6)  DEFAULT NULL,
     `created_by`  varchar(255) DEFAULT NULL,
     `updated_at`  datetime(6)  DEFAULT NULL,
     `updated_by`  varchar(255) DEFAULT NULL,
@@ -381,7 +381,7 @@ CREATE TABLE `task_feedback_template`
 CREATE TABLE `task_feedback_template_message`
 (
     `id`                        bigint       NOT NULL AUTO_INCREMENT,
-    `create_at`                 datetime(6)  DEFAULT NULL,
+    `created_at`                datetime(6)  DEFAULT NULL,
     `created_by`                varchar(255) DEFAULT NULL,
     `updated_at`                datetime(6)  DEFAULT NULL,
     `updated_by`                varchar(255) DEFAULT NULL,
@@ -398,7 +398,7 @@ CREATE TABLE `task_feedback_template_message`
 CREATE TABLE `task_summary`
 (
     `id`                                    bigint       NOT NULL AUTO_INCREMENT,
-    `create_at`                             datetime(6)  DEFAULT NULL,
+    `created_at`                            datetime(6)  DEFAULT NULL,
     `created_by`                            varchar(255) DEFAULT NULL,
     `updated_at`                            datetime(6)  DEFAULT NULL,
     `updated_by`                            varchar(255) DEFAULT NULL,
@@ -415,7 +415,7 @@ CREATE TABLE `task_summary`
 CREATE TABLE `todo_task_routine`
 (
     `id`                  bigint      NOT NULL AUTO_INCREMENT,
-    `create_at`           datetime(6)  DEFAULT NULL,
+    `created_at`          datetime(6)  DEFAULT NULL,
     `created_by`          varchar(255) DEFAULT NULL,
     `updated_at`          datetime(6)  DEFAULT NULL,
     `updated_by`          varchar(255) DEFAULT NULL,
@@ -433,7 +433,7 @@ CREATE TABLE `todo_task_routine`
 CREATE TABLE `todo_task`
 (
     `id`                   bigint       NOT NULL AUTO_INCREMENT,
-    `create_at`            datetime(6)  DEFAULT NULL,
+    `created_at`           datetime(6)  DEFAULT NULL,
     `created_by`           varchar(255) DEFAULT NULL,
     `updated_at`           datetime(6)  DEFAULT NULL,
     `updated_by`           varchar(255) DEFAULT NULL,
@@ -454,7 +454,7 @@ CREATE TABLE `todo_task`
 CREATE TABLE `notice`
 (
     `id`                  bigint       NOT NULL AUTO_INCREMENT,
-    `create_at`           datetime(6)  DEFAULT NULL,
+    `created_at`          datetime(6)  DEFAULT NULL,
     `created_by`          varchar(255) DEFAULT NULL,
     `updated_at`          datetime(6)  DEFAULT NULL,
     `updated_by`          varchar(255) DEFAULT NULL,
@@ -473,7 +473,7 @@ CREATE TABLE `notice`
 CREATE TABLE `notice_content_image`
 (
     `id`         bigint       NOT NULL AUTO_INCREMENT,
-    `create_at`  datetime(6)  DEFAULT NULL,
+    `created_at` datetime(6)  DEFAULT NULL,
     `created_by` varchar(255) DEFAULT NULL,
     `updated_at` datetime(6)  DEFAULT NULL,
     `updated_by` varchar(255) DEFAULT NULL,

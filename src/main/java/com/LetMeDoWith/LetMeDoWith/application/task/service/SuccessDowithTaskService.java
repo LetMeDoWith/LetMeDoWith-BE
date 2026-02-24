@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -90,28 +89,20 @@ public class SuccessDowithTaskService {
      * @param dowithTaskId
      * @return
      */
+    @Transactional
     public LikeSuccessDowithTaskResult likeSuccessDowithTask(String memberId, Long dowithTaskId) {
         DowithTask dowithTask = dowithTaskRepository
                 .getDowithTask(dowithTaskId)
                 .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
 
         boolean isAlreadyLiked = false;
-        try {
-            // insert 시도하는 부분만 트랜잭션 분리
-            // 분리하지 않을 경우, DowithTaskLike entity의 id가 null로 남아있어서 트랜잭션 커밋 시점에 UnexpectedRollbackException 발생
-            self.tryInsertLikeInNewTransaction(dowithTask, memberId);
-        } catch (DataIntegrityViolationException e) {
-            isAlreadyLiked = true;
-        }
+
+        DowithTaskLike like = dowithTask.like(memberId);
+        int savedRowCount = dowithTaskLikeRepository.saveIgnore(like);
+        isAlreadyLiked = savedRowCount == 0; // 저장된 행이 없으면 이미 좋아요가 존재하는 상태
 
         long likeCount = dowithTaskLikeRepository.countDowithTaskLikesByDowithTaskId(dowithTaskId);
         return new LikeSuccessDowithTaskResult(isAlreadyLiked, likeCount);
-    }
-
-    @Transactional
-    public void tryInsertLikeInNewTransaction(DowithTask dowithTask, String memberId) {
-        DowithTaskLike like = dowithTask.like(memberId);
-        dowithTaskLikeRepository.save(like);
     }
 
     @Transactional
@@ -120,8 +111,8 @@ public class SuccessDowithTaskService {
                 .getDowithTask(dowithTaskId)
                 .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
 
-        long deletedRows = dowithTaskLikeRepository.delete(dowithTaskId, memberId);
-        boolean isAlreadyCanceled = deletedRows == 0; // 삭제된 행이 없으면 이미 취소된 상태
+        long deletedRowCount = dowithTaskLikeRepository.delete(dowithTaskId, memberId);
+        boolean isAlreadyCanceled = deletedRowCount == 0; // 삭제된 행이 없으면 이미 취소된 상태
 
         long likeCount = dowithTaskLikeRepository.countDowithTaskLikesByDowithTaskId(dowithTaskId);
 

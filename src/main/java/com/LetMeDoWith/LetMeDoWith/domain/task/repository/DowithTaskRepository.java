@@ -28,6 +28,4 @@ public interface DowithTaskRepository {
     void delete(List<DowithTask> dowithTasks);
 
     long countByStatus(DowithTaskStatus status);
-
-    void flush();
 }

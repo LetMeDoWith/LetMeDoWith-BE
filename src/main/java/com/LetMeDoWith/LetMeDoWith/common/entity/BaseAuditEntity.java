@@ -1,5 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.common.entity;
 
+import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
+import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
@@ -17,7 +19,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 public class BaseAuditEntity {
 
     @CreatedDate
-    @Column(name = "create_at", updatable = false)
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
     @LastModifiedDate
@@ -31,4 +33,30 @@ public class BaseAuditEntity {
     @LastModifiedBy
     @Column(name = "updated_by")
     private String updatedBy;
+
+    private String getCurrentUserId() {
+        String memberId = AuthUtil.getMemberId();
+        if (memberId == null) return "system";
+        else return memberId;
+    }
+
+    /**
+     * JPA로 영속화하지 않는 경우, INSERT 전에 해당 메서드 실행
+     */
+    public void setCreateAuditingInfo() {
+        LocalDateTime now = SystemTimeUtil.now();
+        this.createdAt = now;
+        this.updatedAt = now;
+        this.createdBy = this.getCurrentUserId();
+        this.updatedBy = this.getCurrentUserId();
+    }
+
+    /**
+     * JPA로 영속화하지 않는 경우, UPDATE 전에 해당 메서드 실행
+     */
+    public void setUpdateAuditingInfo() {
+        LocalDateTime now = SystemTimeUtil.now();
+        this.updatedAt = now;
+        this.updatedBy = this.getCurrentUserId();
+    }
 }
