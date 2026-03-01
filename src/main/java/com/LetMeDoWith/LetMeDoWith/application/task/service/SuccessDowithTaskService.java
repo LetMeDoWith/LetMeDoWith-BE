@@ -1,11 +1,15 @@
 package com.LetMeDoWith.LetMeDoWith.application.task.service;
 
 import com.LetMeDoWith.LetMeDoWith.application.task.client.FileClient;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.CancelLikeSuccessDowithTaskResult;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.LikeSuccessDowithTaskResult;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.RetrieveSuccessDowithTasksResult;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTaskLike;
+import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskLikeRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskQueryRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.SuccessDowithTaskQueryDto;
@@ -14,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +30,12 @@ public class SuccessDowithTaskService {
 
     private final DowithTaskRepository dowithTaskRepository;
     private final DowithTaskQueryRepository dowithTaskQueryRepository;
+    private final DowithTaskLikeRepository dowithTaskLikeRepository;
     private final FileClient fileClient;
+
+    @Lazy
+    @Autowired
+    private SuccessDowithTaskService self;
 
     public List<String> generateDowithTaskSuccessImageUploadPresignedUrls(
             String memberId, Long dowithTaskId, List<String> imageFileNames) {
@@ -69,5 +80,42 @@ public class SuccessDowithTaskService {
                 successImages.stream().map(SuccessDowithTaskQueryDto::id).collect(Collectors.toSet()));
 
         return RetrieveSuccessDowithTasksResult.of(totalCount, successImages, dowithTaskLikeCountMap);
+    }
+
+    /**
+     * 성공 DowithTask 좋아요
+     *
+     * @param memberId
+     * @param dowithTaskId
+     * @return
+     */
+    @Transactional
+    public LikeSuccessDowithTaskResult likeSuccessDowithTask(String memberId, Long dowithTaskId) {
+        DowithTask dowithTask = dowithTaskRepository
+                .getDowithTask(dowithTaskId)
+                .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
+
+        boolean isAlreadyLiked = false;
+
+        DowithTaskLike like = dowithTask.like(memberId);
+        int savedRowCount = dowithTaskLikeRepository.saveIgnore(like);
+        isAlreadyLiked = savedRowCount == 0; // 저장된 행이 없으면 이미 좋아요가 존재하는 상태
+
+        long likeCount = dowithTaskLikeRepository.countDowithTaskLikesByDowithTaskId(dowithTaskId);
+        return new LikeSuccessDowithTaskResult(isAlreadyLiked, likeCount);
+    }
+
+    @Transactional
+    public CancelLikeSuccessDowithTaskResult cancelLikeSuccessDowithTask(String memberId, Long dowithTaskId) {
+        dowithTaskRepository
+                .getDowithTask(dowithTaskId)
+                .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
+
+        long deletedRowCount = dowithTaskLikeRepository.delete(dowithTaskId, memberId);
+        boolean isAlreadyCanceled = deletedRowCount == 0; // 삭제된 행이 없으면 이미 취소된 상태
+
+        long likeCount = dowithTaskLikeRepository.countDowithTaskLikesByDowithTaskId(dowithTaskId);
+
+        return new CancelLikeSuccessDowithTaskResult(isAlreadyCanceled, likeCount);
     }
 }

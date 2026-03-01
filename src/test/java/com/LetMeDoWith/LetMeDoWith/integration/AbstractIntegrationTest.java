@@ -146,7 +146,7 @@ public abstract class AbstractIntegrationTest {
         try {
             return mockMvc.perform(requestBuilder).andDo(System.out::println);
         } catch (Exception e) {
-            log.error("request error", e);
+            e.printStackTrace();
             Assertions.fail("MockMvc 요청 중 에러 발생" + e.getMessage());
             return null;
         }
@@ -155,14 +155,52 @@ public abstract class AbstractIntegrationTest {
     /**
      * MockMvc ResultActions를 통해 받은 응답을 지정된 타입으로 변환합니다.
      *
-     * @param responseBody API Response 원문
-     * @param responseType 변환하려는 응답 타입
-     * @param <T>          변환하려는 응답 타입의 제네릭
+     * @param resultActions
+     * @param responseBodyType
+     * @param <T>
+     * @return
+     */
+    public <T> T readResponse(ResultActions resultActions, Class<T> responseBodyType) {
+        try {
+            String responseBody = resultActions.andReturn().getResponse().getContentAsString();
+            return readResponse(responseBody, responseBodyType);
+        } catch (Exception e) {
+            log.error("readResponse error", e);
+            Assertions.fail("MockMvc 응답 변환 중 에러 발생" + e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * MockMvc ResultActions를 통해 받은 응답을 지정된 타입으로 변환합니다.
+     *
+     * @param resultActions
+     * @param responseBodyType
+     * @param <T>
+     * @return
+     */
+    public <T> T readPagingResponse(ResultActions resultActions, Class<T> responseBodyType) {
+        try {
+            String responseBody = resultActions.andReturn().getResponse().getContentAsString();
+            return readPagingResponse(responseBody, responseBodyType);
+        } catch (Exception e) {
+            log.error("readResponse error", e);
+            Assertions.fail("MockMvc 응답 변환 중 에러 발생" + e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * MockMvc ResultActions를 통해 받은 응답을 지정된 타입으로 변환합니다.
+     *
+     * @param responseBody     API Response 원문
+     * @param responseBodyType 변환하려는 응답 타입
+     * @param <T>              변환하려는 응답 타입의 제네릭
      * @return 변환된 응답 객체
      */
-    public <T> T readResponse(String responseBody, Class<T> responseType) {
+    public <T> T readResponse(String responseBody, Class<T> responseBodyType) {
         try {
-            JavaType type = objectMapper.getTypeFactory().constructParametricType(ResponseDto.class, responseType);
+            JavaType type = objectMapper.getTypeFactory().constructParametricType(ResponseDto.class, responseBodyType);
 
             ResponseDto<T> responseDto = objectMapper.readValue(responseBody, type);
 
@@ -174,9 +212,10 @@ public abstract class AbstractIntegrationTest {
         }
     }
 
-    public <T> T readPagingResponse(String responseBody, Class<T> responseType) {
+    public <T> T readPagingResponse(String responseBody, Class<T> responseBodyType) {
         try {
-            JavaType type = objectMapper.getTypeFactory().constructParametricType(ResponsePageDto.class, responseType);
+            JavaType type =
+                    objectMapper.getTypeFactory().constructParametricType(ResponsePageDto.class, responseBodyType);
 
             ResponsePageDto<T> responsePageDto = objectMapper.readValue(responseBody, type);
 

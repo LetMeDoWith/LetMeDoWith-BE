@@ -17,9 +17,7 @@ import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.DowithTaskLikeJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.TaskCategoryJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.integration.AbstractIntegrationTest;
-import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.GenerateDowithTaskSuccessImageUploadPresignedUrlsReqDto;
-import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.RetrieveSuccessDowithTasksRes;
-import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.SuccessDowithTaskReqDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -36,11 +34,13 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 public class SuccessDowithTaskIntegrationTest extends AbstractIntegrationTest {
 
+    static final String BASE_URL = "/api/v1/tasks/dowith";
     static final String RETRIEVE_TASKS_URL = "/api/v1/tasks";
-    static final String RETRIEVE_SUCCESS_DOWITH_TASKS_URL = "/api/v1/tasks/dowith/success";
-    private static final String SUCCESS_TASK_URL = "/api/v1/tasks/dowith/{id}/success";
+    static final String RETRIEVE_SUCCESS_DOWITH_TASKS_URL = BASE_URL + "/success";
+    private static final String SUCCESS_TASK_URL = BASE_URL + "/{id}/success";
     private static final String GET_CONFIRM_UPLOAD_PRESIGNED_URL =
-            "/api/v1/tasks/dowith/{id}/success/image/upload-presigned-url";
+            BASE_URL + "/{id}/success/image/upload-presigned-url";
+    private static final String LIKE_SUCCESS_DOWITH_TASK_URL = BASE_URL + "/{id}/like";
 
     @Autowired
     private DowithTaskJpaRepository dowithTaskJpaRepository;
@@ -290,4 +290,105 @@ public class SuccessDowithTaskIntegrationTest extends AbstractIntegrationTest {
             }
         }
     }
+
+    @Test
+    @DisplayName("성공한 DowithTask 좋아요 테스트 - 이미 좋아요한 경우에 멱등성 보장")
+    void likeSuccessDowithTask() throws Exception {
+        // Given
+        Long successDowithTaskId = this.successDowithTasks.get(0).getId();
+
+        // when
+        ResultActions firstLikeResult =
+                this.request(MockMvcRequestBuilders.post(LIKE_SUCCESS_DOWITH_TASK_URL, successDowithTaskId));
+        ResultActions secondLikeResult =
+                this.request(MockMvcRequestBuilders.post(LIKE_SUCCESS_DOWITH_TASK_URL, successDowithTaskId));
+
+        // then
+        firstLikeResult.andExpect(status().isOk());
+        secondLikeResult.andExpect(status().isOk());
+
+        LikeDowithTaskResDto firstLikeResponse = this.readResponse(firstLikeResult, LikeDowithTaskResDto.class);
+        LikeDowithTaskResDto secondLikeResponse = this.readResponse(secondLikeResult, LikeDowithTaskResDto.class);
+        assertThat(firstLikeResponse.isAlreadyLiked()).isFalse();
+        assertThat(firstLikeResponse.likeCount()).isEqualTo(3L);
+        assertThat(secondLikeResponse.isAlreadyLiked()).isTrue();
+        assertThat(secondLikeResponse.likeCount()).isEqualTo(3L);
+
+        long likeCount = dowithTaskLikeJpaRepository.countByDowithTask_Id(successDowithTaskId);
+        assertThat(likeCount).isEqualTo(3L);
+    }
+
+    @Test
+    @DisplayName("성공한 DowithTask 좋아요 취소 테스트 - 이미 좋아요한 경우에 멱등성 보장")
+    void cancelLikeSuccessDowithTask() throws Exception {
+        // Given
+        Long successDowithTaskId = this.successDowithTasks.get(0).getId();
+
+        // when
+        ResultActions likeRequest =
+                this.request(MockMvcRequestBuilders.post(LIKE_SUCCESS_DOWITH_TASK_URL, successDowithTaskId));
+        ResultActions firstCancelLikeRequest =
+                this.request(MockMvcRequestBuilders.delete(LIKE_SUCCESS_DOWITH_TASK_URL, successDowithTaskId));
+        ResultActions secondCancelLikeRequest =
+                this.request(MockMvcRequestBuilders.delete(LIKE_SUCCESS_DOWITH_TASK_URL, successDowithTaskId));
+
+        // then
+        likeRequest.andExpect(status().isOk());
+        firstCancelLikeRequest.andExpect(status().isOk());
+        secondCancelLikeRequest.andExpect(status().isOk());
+
+        CancelLikeDowithTaskResDto firstCancelLikeResponse =
+                this.readResponse(firstCancelLikeRequest, CancelLikeDowithTaskResDto.class);
+        CancelLikeDowithTaskResDto secondCancelLikeResponse =
+                this.readResponse(secondCancelLikeRequest, CancelLikeDowithTaskResDto.class);
+        assertThat(firstCancelLikeResponse.isAlreadyCanceled()).isFalse();
+        assertThat(firstCancelLikeResponse.likeCount()).isEqualTo(2L);
+        assertThat(secondCancelLikeResponse.isAlreadyCanceled()).isTrue();
+        assertThat(secondCancelLikeResponse.likeCount()).isEqualTo(2L);
+
+        long likeCount = dowithTaskLikeJpaRepository.countByDowithTask_Id(successDowithTaskId);
+        assertThat(likeCount).isEqualTo(2L);
+    }
+
+    //    @Test
+    //    @DisplayName("성공한 Dowith Task 좋아요 동시성 테스트")
+    //    void likeSuccessDowithTaskConcurrencyTest() throws Exception {
+    //        // Given
+    //        Long successDowithTaskId = this.successDowithTasks.get(0).getId();
+    //        int concurrentRequests = 100;
+    //
+    //        // When
+    //        List<Thread> threads = new ArrayList<>();
+    //        List<ResultActions> resultActions = new ArrayList<>();
+    //        for (int i = 0; i < concurrentRequests; i++) {
+    //            Thread thread = new Thread(() -> {
+    //                resultActions.add(
+    //                        this.request(MockMvcRequestBuilders.post(LIKE_SUCCESS_DOWITH_TASK_URL,
+    // successDowithTaskId)));
+    //            });
+    //            threads.add(thread);
+    //            thread.start();
+    //        }
+    //
+    //        for (Thread thread : threads) {
+    //            thread.join();
+    //        }
+    //
+    //        // Then
+    //        long likeCount = dowithTaskLikeJpaRepository.countByDowithTask_Id(successDowithTaskId);
+    //        assertThat(likeCount).isEqualTo(3L);
+    //
+    //        int successCount = 0;
+    //        int failCount = 0;
+    //        for (ResultActions actions : resultActions) {
+    //            MockHttpServletResponse response = actions.andReturn().getResponse();
+    //            if (response.getStatus() == 200) successCount++;
+    //            else if (response.getStatus() == 400) failCount++;
+    //            else {
+    //                throw new RuntimeException("Unexpected response status: " + response.getStatus());
+    //            }
+    //        }
+    //        assertThat(successCount).isEqualTo(1);
+    //        assertThat(failCount).isEqualTo(concurrentRequests - 1);
+    //    }
 }

@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class TaskCategoryRepositoryImpl implements TaskCategoryRepository {
+class TaskCategoryRepositoryImpl implements TaskCategoryRepository {
 
     private final TaskCategoryJpaRepository taskCategoryJpaRepository;
 

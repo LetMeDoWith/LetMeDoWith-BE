@@ -16,7 +16,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class DowithTaskRepositoryImpl implements DowithTaskRepository {
+class DowithTaskRepositoryImpl implements DowithTaskRepository {
 
     private final DowithTaskJpaRepository dowithTaskJpaRepository;
     private final DowithTaskRoutineJpaRepository dowithTaskRoutineJpaRepository;

@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
-import com.LetMeDoWith.LetMeDoWith.config.JpaAuditingConfiguration;
+import com.LetMeDoWith.LetMeDoWith.config.JpaAuditConfig;
 import com.LetMeDoWith.LetMeDoWith.config.TestQueryDslConfig;
 import com.LetMeDoWith.LetMeDoWith.domain.auth.enums.SocialProvider;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
@@ -24,7 +24,7 @@ import org.springframework.context.annotation.Import;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
-@Import({JpaAuditingConfiguration.class, TestQueryDslConfig.class})
+@Import({JpaAuditConfig.class, TestQueryDslConfig.class})
 class MemberSocialAccountJpaRepositoryTest {
 
     @Autowired

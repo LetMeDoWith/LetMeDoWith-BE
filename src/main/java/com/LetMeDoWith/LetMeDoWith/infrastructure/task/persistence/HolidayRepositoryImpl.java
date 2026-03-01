@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class HolidayRepositoryImpl implements HolidayRepository {
+class HolidayRepositoryImpl implements HolidayRepository {
 
     private final HolidayJpaRepository holidayJpaRepository;
 

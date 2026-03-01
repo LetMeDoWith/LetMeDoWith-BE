@@ -60,6 +60,7 @@ public class AuthUtil {
 
         HttpServletRequest request =
                 ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-        return request.getAttribute("memberId").toString();
+        Object memberId = request.getAttribute("memberId");
+        return memberId == null ? null : memberId.toString();
     }
 }

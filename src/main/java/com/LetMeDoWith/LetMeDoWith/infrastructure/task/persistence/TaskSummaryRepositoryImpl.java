@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class TaskSummaryRepositoryImpl implements TaskSummaryRepository {
+class TaskSummaryRepositoryImpl implements TaskSummaryRepository {
 
     private final TaskSummaryJpaRepository taskSummaryJpaRepository;
 

@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class TodoTaskRepositoryImpl implements TodoTaskRepository {
+class TodoTaskRepositoryImpl implements TodoTaskRepository {
 
     private final TodoTaskJpaRepository todoTaskJpaRepository;
 
