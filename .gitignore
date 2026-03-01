@@ -54,3 +54,7 @@ samLocalEnvVars.json
 /.DS_Store
 /src/main/generated/
 /lib/
+
+### AI collaboration framework docs ###
+/docs
+/.cursor

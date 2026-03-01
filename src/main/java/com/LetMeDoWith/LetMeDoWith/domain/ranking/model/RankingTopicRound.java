@@ -9,8 +9,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import java.time.LocalDateTime;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,13 +25,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(
-        name = "ranking",
+        name = "ranking_topic_round",
         uniqueConstraints = {
             @UniqueConstraint(
-                    name = "uk_ranking_1",
-                    columnNames = {"ranking_topic_id", "member_id"})
+                    name = "uk_ranking_topic_round_1",
+                    columnNames = {"ranking_topic_id", "round"})
         })
-public class Ranking extends BaseAuditEntity {
+public class RankingTopicRound extends BaseAuditEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,21 +42,15 @@ public class Ranking extends BaseAuditEntity {
     @JoinColumn(name = "ranking_topic_id", nullable = false)
     private RankingTopic rankingTopic;
 
-    @Column(name = "year", nullable = false)
-    private Integer year;
+    @Column(name = "round", nullable = false)
+    private Long round;
 
-    @Column(name = "month", nullable = false)
-    private Integer month;
+    @Column(name = "aggregation_start_at", nullable = false)
+    private LocalDateTime aggregationStartDateTime;
 
-    @Column(name = "week", nullable = false)
-    private Integer week;
+    @Column(name = "aggregation_end_at", nullable = false)
+    private LocalDateTime aggregationEndDateTime;
 
-    @Column(name = "member_id", nullable = false, length = 26)
-    private String memberId;
-
-    @Column(name = "current_rank", nullable = false)
-    private Long currentRank;
-
-    @Column(name = "previous_rank", nullable = true)
-    private Long previousRank;
+    @OneToMany(mappedBy = "rankingTopicRound", fetch = FetchType.LAZY)
+    private List<RankingEntry> rankingEntries;
 }
