@@ -1,13 +1,15 @@
 spring:
   config:
     activate:
-      on-profile: local-confidential
+      on-profile: dev-confidential
   datasource:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
   flyway:
     user: ${DB_USERNAME}
     password: ${DB_PASSWORD}
+    enabled: false
+
 
 auth:
   jwt:
@@ -28,3 +30,6 @@ cloud:
     region: ${AWS_REGION}
     s3:
       bucketName: ${AWS_S3_BUCKET_NAME}
+
+firebase:
+  config-base64: ${FIREBASE_CONFIG_BASE64}

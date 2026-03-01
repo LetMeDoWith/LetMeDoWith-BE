@@ -1,6 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.domain.ranking.model;
 
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
+import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import jakarta.persistence.*;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -27,6 +28,14 @@ public class RankingTopic extends BaseAuditEntity {
     @Column(name = "description", nullable = true)
     private String description;
 
+    @Column(name = "active_yn", nullable = false)
+    @Builder.Default
+    private Yn isActive = Yn.TRUE;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "current_round_id", nullable = true)
+    private RankingTopicRound currentRound;
+
     @OneToMany(mappedBy = "rankingTopic", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Ranking> rankings;
+    private List<RankingTopicRound> rankingTopicRounds;
 }

@@ -312,38 +312,60 @@ CREATE TABLE `notification_token`
 
 CREATE TABLE `ranking_topic`
 (
-    `id`          bigint       NOT NULL AUTO_INCREMENT,
-    `created_at`  datetime(6)  DEFAULT NULL,
-    `created_by`  varchar(255) DEFAULT NULL,
-    `updated_at`  datetime(6)  DEFAULT NULL,
-    `updated_by`  varchar(255) DEFAULT NULL,
-    `description` varchar(255) DEFAULT NULL,
-    `title`       varchar(255) NOT NULL,
+    `id`               bigint       NOT NULL AUTO_INCREMENT,
+    `create_at`        datetime(6)           DEFAULT NULL,
+    `created_by`       varchar(255)          DEFAULT NULL,
+    `updated_at`       datetime(6)           DEFAULT NULL,
+    `updated_by`       varchar(255)          DEFAULT NULL,
+    `description`      varchar(255)          DEFAULT NULL,
+    `title`            varchar(255) NOT NULL,
+    `active_yn`        varchar(1)   NOT NULL DEFAULT 'Y',
+    `current_round_id` bigint                DEFAULT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
 
-CREATE TABLE `ranking`
+CREATE TABLE `ranking_topic_round`
 (
-    `id`               bigint      NOT NULL AUTO_INCREMENT,
-    `created_at`       datetime(6)  DEFAULT NULL,
-    `created_by`       varchar(255) DEFAULT NULL,
-    `updated_at`       datetime(6)  DEFAULT NULL,
-    `updated_by`       varchar(255) DEFAULT NULL,
-    `current_rank`     bigint      NOT NULL,
-    `member_id`        varchar(26) NOT NULL,
-    `previous_rank`    bigint       DEFAULT NULL,
-    `year`             int         NOT NULL,
-    `month`            int         NOT NULL,
-    `week`             int         NOT NULL,
-    `ranking_topic_id` bigint      NOT NULL,
+    `id`                   bigint      NOT NULL AUTO_INCREMENT,
+    `create_at`            datetime(6)  DEFAULT NULL,
+    `created_by`           varchar(255) DEFAULT NULL,
+    `updated_at`           datetime(6)  DEFAULT NULL,
+    `updated_by`           varchar(255) DEFAULT NULL,
+    `round`                bigint      NOT NULL,
+    `aggregation_start_at` datetime(6) NOT NULL,
+    `aggregation_end_at`   datetime(6) NOT NULL,
+    `ranking_topic_id`     bigint      NOT NULL,
     PRIMARY KEY (`id`),
-    UNIQUE KEY `uk_ranking_1` (`ranking_topic_id`, `member_id`),
-    CONSTRAINT `FKggr9gbi0wjxwekbl0mpnrhm99` FOREIGN KEY (`ranking_topic_id`) REFERENCES `ranking_topic` (`id`)
+    UNIQUE KEY `uk_ranking_topic_round_1` (`ranking_topic_id`, `round`),
+    CONSTRAINT `FK_ranking_topic_round_topic` FOREIGN KEY (`ranking_topic_id`) REFERENCES `ranking_topic` (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
+
+CREATE TABLE `ranking_entry`
+(
+    `id`                     bigint      NOT NULL AUTO_INCREMENT,
+    `create_at`              datetime(6)  DEFAULT NULL,
+    `created_by`             varchar(255) DEFAULT NULL,
+    `updated_at`             datetime(6)  DEFAULT NULL,
+    `updated_by`             varchar(255) DEFAULT NULL,
+    `current_rank`           bigint      NOT NULL,
+    `member_id`              varchar(26) NOT NULL,
+    `previous_rank`          bigint       DEFAULT NULL,
+    `ranking_topic_round_id` bigint      NOT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_ranking_entry_1` (`ranking_topic_round_id`, `member_id`),
+    KEY `idx_ranking_entry_round_rank` (`ranking_topic_round_id`, `current_rank`),
+    CONSTRAINT `FK_ranking_entry_round` FOREIGN KEY (`ranking_topic_round_id`) REFERENCES `ranking_topic_round` (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_0900_ai_ci;
+
+ALTER TABLE `ranking_topic`
+    ADD CONSTRAINT `FK_ranking_topic_current_round`
+        FOREIGN KEY (`current_round_id`) REFERENCES `ranking_topic_round` (`id`);
 
 CREATE TABLE `task_category`
 (

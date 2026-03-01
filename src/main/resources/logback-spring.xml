@@ -20,67 +20,28 @@
     </root>
   </springProfile>
 
-  <!-- ================= dev: 파일 ================= -->
+  <!-- ================= dev: 콘솔 (기존 파일 설정 제거) ================= -->
   <springProfile name="dev">
-
-    <appender class="ch.qos.logback.core.rolling.RollingFileAppender" name="APP">
+    <appender class="ch.qos.logback.core.ConsoleAppender" name="CONSOLE">
       <encoder>
         <pattern>${PATTERN}</pattern>
       </encoder>
-      <file>${APP_DIR}/app.log</file>
-      <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-        <fileNamePattern>${APP_DIR}/app-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-        <maxFileSize>10MB</maxFileSize>
-        <maxHistory>7</maxHistory>
-        <totalSizeCap>100MB</totalSizeCap>
-      </rollingPolicy>
-    </appender>
-    <appender class="ch.qos.logback.core.rolling.RollingFileAppender" name="ERROR_ONLY">
-      <encoder>
-        <pattern>${PATTERN}</pattern>
-      </encoder>
-      <file>${ERR_DIR}/error.log</file>
-      <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-        <level>ERROR</level>
-      </filter>
-      <immediateFlush>true</immediateFlush>
-      <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-        <fileNamePattern>${ERR_DIR}/error-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-        <maxFileSize>10MB</maxFileSize>
-        <maxHistory>7</maxHistory>
-        <totalSizeCap>100MB</totalSizeCap>
-      </rollingPolicy>
-    </appender>
-    <appender class="ch.qos.logback.core.rolling.RollingFileAppender" name="SQL">
-      <encoder>
-        <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %logger{36} - %msg%n</pattern>
-      </encoder>
-      <file>${SQL_DIR}/sql.log</file>
-      <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-        <fileNamePattern>${SQL_DIR}/sql-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-        <maxFileSize>10MB</maxFileSize>
-        <maxHistory>7</maxHistory>
-        <totalSizeCap>100MB</totalSizeCap>
-      </rollingPolicy>
     </appender>
 
-    <!-- App: 일별 롤링, 7일 보관 -->
+    <!-- SQL 로그 등을 보고 싶다면 레벨 조절 가능 -->
     <logger additivity="false" level="DEBUG" name="datasource-proxy">
-      <appender-ref ref="SQL"/>
+      <appender-ref ref="CONSOLE"/>
     </logger>
 
-    <logger level="OFF" name="org.hibernate.SQL"/>
+    <!-- 우리 애플리케이션 패키지 로그는 DEBUG로 설정 -->
+    <logger name="com.LetMeDoWith" level="DEBUG"/>
 
+    <logger level="OFF" name="org.hibernate.SQL"/>
     <logger level="OFF" name="org.hibernate.orm.jdbc.bind"/>
 
-    <property name="APP_DIR" value="/var/logs/app"/>
-
-    <property name="ERR_DIR" value="/var/logs/app/error"/>
-
-    <property name="SQL_DIR" value="/var/logs/query"/>
+    <!-- 전체 시스템 로그는 INFO로 설정 (너무 많은 로그 방지) -->
     <root level="INFO">
-      <appender-ref ref="APP"/>
-      <appender-ref ref="ERROR_ONLY"/>
+      <appender-ref ref="CONSOLE"/>
     </root>
 
   </springProfile>

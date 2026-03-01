@@ -39,7 +39,6 @@ out/
 
 
 ### Dev-Confidential ###
-/src/main/**/application-dev-confidential.yml
 
 ### Prod-Confidential ###
 /src/main/**/application-prod-confidential.yml
@@ -55,3 +54,7 @@ samLocalEnvVars.json
 /.DS_Store
 /src/main/generated/
 /lib/
+
+### AI collaboration framework docs ###
+/docs
+/.cursor

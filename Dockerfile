@@ -1,31 +1,38 @@
-# Base image
+# Stage 1: Build
+FROM bellsoft/liberica-openjdk-alpine:17 AS builder
+
+WORKDIR /project
+
+# Gradle 빌드에 필요한 파일들만 먼저 복사 (캐싱 효율화)
+COPY gradlew .
+COPY gradle gradle
+COPY build.gradle .
+COPY settings.gradle .
+
+# gradlew 실행 권한 부여
+RUN chmod +x gradlew
+
+# 소스 코드 복사
+COPY src src
+
+# 프로젝트 빌드 (테스트 제외 원할 경우 -x test 추가 가능하나, 기본 clean bootJar 수행)
+RUN ./gradlew clean bootJar
+
+# Stage 2: Run
 FROM bellsoft/liberica-openjdk-alpine:17
 
-
-# JAR 파일 복사
-ARG JAR_FILE=./build/libs/LetMeDoWith-0.0.1-SNAPSHOT.jar
-COPY ${JAR_FILE} LetMeDoWith.jar
+WORKDIR /app
 
 # 타임존 & JVM 옵션 (GC 로그, 힙덤프, JFR)
 ENV TZ=Asia/Seoul
-ENV JAVA_TOOL_OPTIONS="\
- -Duser.timezone=Asia/Seoul \
- -XX:+UseContainerSupport \
- -XX:MaxRAMPercentage=60 -XX:InitialRAMPercentage=30 \
- -Xlog:gc*:file=/var/logs/gc/gc-%t.log:time,level,tags,uptime:filecount=5,filesize=20m \
- -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/var/logs/heap/heap.hprof \
- -XX:StartFlightRecording=filename=/var/logs/jfr/app.jfr,settings=profile,maxage=2d,maxsize=256m,dumponexit=true \
-"
+ENV JAVA_TOOL_OPTIONS="-Duser.timezone=Asia/Seoul -XX:+UseContainerSupport -Xmx1024m"
+
+# 빌드 스테이지에서 생성된 JAR 파일 복사
+# bootJar로 생성된 jar는 build/libs에 위치함. 정확한 파일명을 모르더라도 패턴 매칭 사용
+COPY --from=builder /project/build/libs/*SNAPSHOT.jar LetMeDoWith.jar
 
 # 포트 오픈
 EXPOSE 8080
 
 # 실행
 ENTRYPOINT ["java", "-jar", "LetMeDoWith.jar"]
-
-# 컨테이너 실행 예시:
-# docker run -d --name app \
-#   --memory=700m --memory-swap=700m \
-#   -p 8080:8080 \
-#   -v /var/log/app:/var/log/app \
-#   your-image:tag
