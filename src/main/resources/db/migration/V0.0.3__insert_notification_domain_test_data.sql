@@ -2,7 +2,7 @@ INSERT INTO notification_template (code,
                                    title,
                                    body,
                                    app_deep_link,
-                                   create_at,
+                                   created_at,
                                    updated_at,
                                    created_by,
                                    updated_by)
