@@ -1,7 +1,8 @@
-package com.LetMeDoWith.LetMeDoWith.infrastructure.feedback.query;
+package com.LetMeDoWith.LetMeDoWith.domain.feedback.repository;
 
+import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.dto.TaskFeedbackTemplateQueryDto;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.CountryCode;
-import com.LetMeDoWith.LetMeDoWith.infrastructure.feedback.query.dto.TaskFeedbackTemplateQueryDto;
+
 import java.util.List;
 
 public interface TaskFeedbackTemplateQueryRepository {

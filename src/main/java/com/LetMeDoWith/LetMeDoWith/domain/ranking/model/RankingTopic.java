@@ -2,12 +2,14 @@ package com.LetMeDoWith.LetMeDoWith.domain.ranking.model;
 
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
+import com.LetMeDoWith.LetMeDoWith.common.enums.ranking.RankingTopicCode;
 import jakarta.persistence.*;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -21,6 +23,9 @@ public class RankingTopic extends BaseAuditEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
+
+    @Column(name = "code", nullable = false, length = 255)
+    private RankingTopicCode code;
 
     @Column(name = "title", nullable = false)
     private String title;

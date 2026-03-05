@@ -1,23 +1,14 @@
 package com.LetMeDoWith.LetMeDoWith.domain.ranking.model;
 
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
-import java.time.LocalDateTime;
-import java.util.List;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -27,9 +18,9 @@ import lombok.NoArgsConstructor;
 @Table(
         name = "ranking_topic_round",
         uniqueConstraints = {
-            @UniqueConstraint(
-                    name = "uk_ranking_topic_round_1",
-                    columnNames = {"ranking_topic_id", "round"})
+                @UniqueConstraint(
+                        name = "uk_ranking_topic_round_1",
+                        columnNames = {"ranking_topic_id", "round"})
         })
 public class RankingTopicRound extends BaseAuditEntity {
 
@@ -53,4 +44,17 @@ public class RankingTopicRound extends BaseAuditEntity {
 
     @OneToMany(mappedBy = "rankingTopicRound", fetch = FetchType.LAZY)
     private List<RankingEntry> rankingEntries;
+
+    static public RankingTopicRound of(
+            RankingTopic rankingTopic,
+            Long round,
+            LocalDateTime aggregationStartDateTime,
+            LocalDateTime aggregationEndDateTime) {
+        return RankingTopicRound.builder()
+                .rankingTopic(rankingTopic)
+                .round(round)
+                .aggregationStartDateTime(aggregationStartDateTime)
+                .aggregationEndDateTime(aggregationEndDateTime)
+                .build();
+    }
 }

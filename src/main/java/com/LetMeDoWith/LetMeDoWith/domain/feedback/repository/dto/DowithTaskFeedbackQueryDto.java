@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.infrastructure.feedback.query.dto;
+package com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -10,5 +10,6 @@ public record DowithTaskFeedbackQueryDto(
         @Schema(description = "잔소리 보낸사람 ID", example = "(TSID)") String senderId,
         @Schema(description = "잔소리 받는사람 닉네임", example = "feedbackSender123") String senderNickname,
         @Schema(description = "잔소리 받는사람 프로필 이미지 URL", example = "https://example.com/profile.jpg")
-                String senderProfileImageUrl,
-        @Schema(description = "잔소리 확인여부", example = "false") Boolean isChecked) {}
+        String senderProfileImageUrl,
+        @Schema(description = "잔소리 확인여부", example = "false") Boolean isChecked) {
+}
