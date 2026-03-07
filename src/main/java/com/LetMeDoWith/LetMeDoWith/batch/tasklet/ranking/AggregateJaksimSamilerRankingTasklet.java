@@ -7,7 +7,9 @@ import com.LetMeDoWith.LetMeDoWith.domain.ranking.model.RankingEntry;
 import com.LetMeDoWith.LetMeDoWith.domain.ranking.model.RankingTopic;
 import com.LetMeDoWith.LetMeDoWith.domain.ranking.model.RankingTopicRound;
 import com.LetMeDoWith.LetMeDoWith.domain.ranking.repository.JaksimSamilerRankingBatchQueryRepository;
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,12 +44,13 @@ public class AggregateJaksimSamilerRankingTasklet implements Tasklet {
         RankingTopicRound currentRound = rankingTopic.getCurrentRound();
         Long previousRound = currentRound == null ? null : currentRound.getRound();
         LocalDateTime aggregationStartDateTime = executionDateTime
-                .withDayOfMonth(1)
+                .with(TemporalAdjusters.firstDayOfMonth())
                 .withHour(0)
                 .withMinute(0)
                 .withSecond(0)
                 .withNano(0);
         LocalDateTime aggregationEndDateTime = executionDateTime
+                .with(TemporalAdjusters.lastInMonth(DayOfWeek.MONDAY))
                 .minusDays(1)
                 .withHour(23)
                 .withMinute(59)
