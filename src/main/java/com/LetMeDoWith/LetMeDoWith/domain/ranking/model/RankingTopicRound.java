@@ -53,4 +53,26 @@ public class RankingTopicRound extends BaseAuditEntity {
 
     @OneToMany(mappedBy = "rankingTopicRound", fetch = FetchType.LAZY)
     private List<RankingEntry> rankingEntries;
+
+    public static RankingTopicRound of(
+            RankingTopic rankingTopic,
+            Long round,
+            LocalDateTime aggregationStartDateTime,
+            LocalDateTime aggregationEndDateTime) {
+        return RankingTopicRound.builder()
+                .rankingTopic(rankingTopic)
+                .round(round)
+                .aggregationStartDateTime(aggregationStartDateTime)
+                .aggregationEndDateTime(aggregationEndDateTime)
+                .build();
+    }
+
+    public static RankingTopicRound nextOf(
+            RankingTopic rankingTopic,
+            RankingTopicRound currentRound,
+            LocalDateTime aggregationStartDateTime,
+            LocalDateTime aggregationEndDateTime) {
+        Long nextRound = currentRound == null ? 1L : currentRound.getRound() + 1;
+        return of(rankingTopic, nextRound, aggregationStartDateTime, aggregationEndDateTime);
+    }
 }

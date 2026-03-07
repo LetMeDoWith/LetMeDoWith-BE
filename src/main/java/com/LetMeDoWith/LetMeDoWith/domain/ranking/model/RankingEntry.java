@@ -47,4 +47,19 @@ public class RankingEntry extends BaseAuditEntity {
 
     @Column(name = "previous_rank", nullable = true)
     private Long previousRank;
+
+    public static RankingEntry of(
+            RankingTopicRound rankingTopicRound, String memberId, Long currentRank, Long previousRank) {
+        return RankingEntry.builder()
+                .rankingTopicRound(rankingTopicRound)
+                .memberId(memberId)
+                .currentRank(currentRank)
+                .previousRank(previousRank)
+                .build();
+    }
+
+    public void updateRank(Long currentRank, Long previousRank) {
+        this.currentRank = currentRank;
+        this.previousRank = previousRank;
+    }
 }

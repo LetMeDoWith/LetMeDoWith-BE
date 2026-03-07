@@ -5,7 +5,7 @@
 -- member_social_account 테이블 데이터 삽입
 -- 멤버들에게 다양한 소셜 로그인 계정 할당
 
-INSERT INTO member (id, create_at, updated_at, created_by, updated_by, subject, status,
+INSERT INTO member (id, created_at, updated_at, created_by, updated_by, subject, status,
                     nickname, self_description,
                     type, profile_image_url)
 VALUES ('01HXQ2X7Z7Q6XJX4X2X7Z7Q6XA', NOW(), NOW(), 'admin', 'admin', '1810473492', 'NORMAL', 'a1', 'a1 자기소개',
@@ -46,7 +46,7 @@ VALUES ('01HXQ2X7Z7Q6XJX4X2X7Z7Q6XA', NOW(), NOW(), 'admin', 'admin', '181047349
         's3:://a12_profile_image');
 
 -- member_follow 테이블 데이터 삽입
-INSERT INTO member_follow (create_at, updated_at, created_by, updated_by, follower_id, following_id)
+INSERT INTO member_follow (created_at, updated_at, created_by, updated_by, follower_id, following_id)
 VALUES (NOW(), NOW(), 'admin', 'admin', (SELECT id FROM member WHERE nickname = 'a1'),
         (SELECT id FROM member WHERE nickname = 'a2')),
        (NOW(), NOW(), 'admin', 'admin', (SELECT id FROM member WHERE nickname = 'a1'),
@@ -58,7 +58,7 @@ VALUES (NOW(), NOW(), 'admin', 'admin', (SELECT id FROM member WHERE nickname = 
        (NOW(), NOW(), 'admin', 'admin', (SELECT id FROM member WHERE nickname = 'a1'),
         (SELECT id FROM member WHERE nickname = 'a6'));
 
-INSERT INTO member_follow (create_at, updated_at, created_by, updated_by, follower_id, following_id)
+INSERT INTO member_follow (created_at, updated_at, created_by, updated_by, follower_id, following_id)
 VALUES (NOW(), NOW(), 'admin', 'admin', (SELECT id FROM member WHERE nickname = 'a7'),
         (SELECT id FROM member WHERE nickname = 'a1')),
        (NOW(), NOW(), 'admin', 'admin', (SELECT id FROM member WHERE nickname = 'a8'),
@@ -74,7 +74,7 @@ VALUES (NOW(), NOW(), 'admin', 'admin', (SELECT id FROM member WHERE nickname = 
 
 -- badge 테이블 데이터 삽입
 INSERT INTO badge (name, description, status, acquire_hint, image_url,
-                   sort_order, create_at, created_by, updated_at, updated_by)
+                   sort_order, created_at, created_by, updated_at, updated_by)
 VALUES ( '뱃지1', '뱃지1 설명설명입니다. 뱃지는 설명이 필요하죠', 'ACTIVE', '뱃지1 획득 힌트 입니다. 뱃지2를 획득하려면 힌트가 필요하죠'
        , 'https://contents.sixshop.com/uploadedFiles/84218/default/image_1547035192141.jpg'
        , 1, NOW(), 'admin', NOW(), 'admin'),
@@ -104,7 +104,7 @@ VALUES ( '뱃지1', '뱃지1 설명설명입니다. 뱃지는 설명이 필요�
        , 9, NOW(), 'admin', NOW(), 'admin');
 
 -- member_badge 테이블 데이터 삽입
-INSERT INTO member_badge (badge_id, main_yn, member_id, create_at, updated_at, created_by, updated_by)
+INSERT INTO member_badge (badge_id, main_yn, member_id, created_at, updated_at, created_by, updated_by)
 VALUES ((SELECT id FROM badge WHERE name = '뱃지1'), 'Y', (SELECT id FROM member WHERE nickname = 'a1'), NOW(), NOW(),
         'admin', 'admin'),
        ((SELECT id FROM badge WHERE name = '뱃지2'), 'N', (SELECT id FROM member WHERE nickname = 'a1'), NOW(), NOW(),
@@ -120,7 +120,7 @@ VALUES ((SELECT id FROM badge WHERE name = '뱃지1'), 'Y', (SELECT id FROM memb
 
 
 
-INSERT INTO member_social_account (member_id, provider, create_at, updated_at, created_by, updated_by)
+INSERT INTO member_social_account (member_id, provider, created_at, updated_at, created_by, updated_by)
 VALUES
     -- a1: KAKAO 로그인
     ('01HXQ2X7Z7Q6XJX4X2X7Z7Q6XA', 'KAKAO', NOW(), NOW(), 'admin', 'admin'),
@@ -161,7 +161,7 @@ VALUES
 
 -- member_term_agree 테이블 데이터 삽입
 -- 다양한 약관 동의 패턴으로 테스트 케이스 생성
-INSERT INTO member_term_agree (member_id, terms_of_agree, privacy, advertisement, create_at, updated_at, created_by,
+INSERT INTO member_term_agree (member_id, terms_of_agree, privacy, advertisement, created_at, updated_at, created_by,
                                updated_by)
 VALUES
     -- a1: 모든 약관 동의
@@ -202,7 +202,7 @@ VALUES
 
 -- member_alarm_setting 테이블 데이터 삽입
 -- 다양한 알림 설정 패턴으로 테스트 케이스 생성
-INSERT INTO member_alarm_setting (member_id, base_alarm_yn, todo_bot_yn, feedback_yn, marketing_yn, create_at,
+INSERT INTO member_alarm_setting (member_id, base_alarm_yn, todo_bot_yn, feedback_yn, marketing_yn, created_at,
                                   updated_at, created_by, updated_by)
 VALUES
     -- a1: 모든 알림 활성화

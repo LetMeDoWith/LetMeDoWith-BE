@@ -22,7 +22,7 @@ VALUES ((SELECT id FROM member WHERE nickname = 'a1'), 0, NOW(), NULL, '3'),
        ((SELECT id FROM member WHERE nickname = 'a12'), 0, NOW(), NULL, '3');
 
 -- task_category 테이블 데이터 삽입
-INSERT INTO task_category (create_at, updated_at, created_by, updated_by, title, active_yn,
+INSERT INTO task_category (created_at, updated_at, created_by, updated_by, title, active_yn,
                            creation_type, emoji, category_holder_id)
 VALUES (NOW(), NOW(), 'admin', 'admin', '약속', 'Y', 'COMMON', '🙋‍♀️', 'SYSTEM'),
        (NOW(), NOW(), 'admin', 'admin', '시험', 'Y', 'COMMON', '🗓️', 'SYSTEM'),
@@ -40,12 +40,12 @@ VALUES (1, 'test-member-id', '테스트 태스크', 'WAIT', CURRENT_DATE(),
         DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 10 MINUTE), '%H:%i:%s'));
 
 -- 2. 테스트용 피드백 템플릿 생성 (id=1)
-INSERT INTO task_feedback_template (id, emoji_url, title, description, is_active, create_at, updated_at, created_by,
+INSERT INTO task_feedback_template (id, emoji_url, title, description, is_active, created_at, updated_at, created_by,
                                     updated_by)
 VALUES (1, 'http://test.emoji.url', '칭찬', '잘했어요!', 'Y', NOW(), NOW(), 'system', 'system');
 
 -- 3. 테스트용 피드백 템플릿 메시지 생성 (id=1)
-INSERT INTO task_feedback_template_message (id, task_feedback_template_id, message, language, create_at, updated_at,
+INSERT INTO task_feedback_template_message (id, task_feedback_template_id, message, language, created_at, updated_at,
                                             created_by, updated_by)
 VALUES (1, 1, '정말 잘했어요!', 'KR', NOW(), NOW(), 'system', 'system');
 

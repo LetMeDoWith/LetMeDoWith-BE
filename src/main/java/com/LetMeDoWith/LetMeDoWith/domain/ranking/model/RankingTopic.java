@@ -38,4 +38,8 @@ public class RankingTopic extends BaseAuditEntity {
 
     @OneToMany(mappedBy = "rankingTopic", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<RankingTopicRound> rankingTopicRounds;
+
+    public void updateCurrentRound(RankingTopicRound currentRound) {
+        this.currentRound = currentRound;
+    }
 }
