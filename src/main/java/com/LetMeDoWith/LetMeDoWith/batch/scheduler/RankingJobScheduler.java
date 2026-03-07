@@ -1,6 +1,8 @@
 package com.LetMeDoWith.LetMeDoWith.batch.scheduler;
 
 import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
+import java.time.DayOfWeek;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
@@ -20,18 +22,34 @@ public class RankingJobScheduler {
 
     /**
      * 랭킹 집계 배치 실행 트리거.
-     * 매주 월요일 02:00에 트리거하고, 잡 내부에서 마지막 월요일 여부를 가드 처리한다.
+     * 매주 월요일 02:00에 트리거하고, 마지막 월요일에만 잡을 실행한다.
      */
     @Scheduled(cron = "0 0 2 * * MON")
     public void runJaksimSamilerRankingJob() {
+        LocalDateTime executionDateTime = SystemTimeUtil.now();
+        if (!isLastMondayAtTwo(executionDateTime)) {
+            log.info("Skip jaksimSamilerRankingJob. executionDateTime={}", executionDateTime);
+            return;
+        }
+
         JobParameters jobParameters = new JobParametersBuilder()
                 .addLong("run.id", System.currentTimeMillis())
-                .addLocalDateTime("executionDateTime", SystemTimeUtil.now())
+                .addLocalDateTime("executionDateTime", executionDateTime)
                 .toJobParameters();
         try {
             jobLauncher.run(jaksimSamilerRankingJob, jobParameters);
         } catch (Exception e) {
             log.error("Failed to run jaksimSamilerRankingJob", e);
         }
+    }
+
+    private boolean isLastMondayAtTwo(LocalDateTime targetDateTime) {
+        if (targetDateTime.getDayOfWeek() != DayOfWeek.MONDAY) {
+            return false;
+        }
+        if (targetDateTime.getHour() != 2) {
+            return false;
+        }
+        return targetDateTime.toLocalDate().plusWeeks(1).getMonth() != targetDateTime.getMonth();
     }
 }

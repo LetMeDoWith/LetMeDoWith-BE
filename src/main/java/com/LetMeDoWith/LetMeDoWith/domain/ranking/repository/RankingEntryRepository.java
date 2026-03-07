@@ -6,5 +6,5 @@ import java.util.List;
 public interface RankingEntryRepository {
     List<RankingEntry> getEntriesByTopicAndRound(Long topicId, Long round);
 
-    List<RankingEntry> saveAll(List<RankingEntry> rankingEntries);
+    List<RankingEntry> save(List<RankingEntry> rankingEntries);
 }

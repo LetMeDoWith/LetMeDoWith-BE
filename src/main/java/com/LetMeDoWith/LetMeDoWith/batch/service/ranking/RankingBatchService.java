@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.application.ranking.service;
+package com.LetMeDoWith.LetMeDoWith.batch.service.ranking;
 
 import com.LetMeDoWith.LetMeDoWith.domain.ranking.model.RankingEntry;
 import com.LetMeDoWith.LetMeDoWith.domain.ranking.model.RankingTopic;
@@ -24,14 +24,14 @@ public class RankingBatchService {
     private final RankingEntryRepository rankingEntryRepository;
 
     /**
-     * 활성화된 랭킹 토픽을 제목으로 조회한다.
+     * 활성 상태의 랭킹 토픽을 조회한다.
      *
      * @param title 랭킹 토픽 제목
      * @return 활성 토픽 Optional
      */
     @Transactional(readOnly = true)
-    public Optional<RankingTopic> getActiveTopicByTitle(String title) {
-        return rankingTopicRepository.getActiveTopicByTitle(title).map(topic -> {
+    public Optional<RankingTopic> getRankingTopic(String title) {
+        return rankingTopicRepository.getRankingTopic(title).map(topic -> {
             if (topic.getCurrentRound() != null) {
                 topic.getCurrentRound().getRound();
             }
@@ -84,7 +84,7 @@ public class RankingBatchService {
     @Transactional
     public void saveRankingEntries(List<RankingEntry> rankingEntries) {
         if (!rankingEntries.isEmpty()) {
-            rankingEntryRepository.saveAll(rankingEntries);
+            rankingEntryRepository.save(rankingEntries);
         }
     }
 

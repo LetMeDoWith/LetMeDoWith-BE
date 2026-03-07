@@ -20,7 +20,7 @@ class RankingEntryRepositoryImpl implements RankingEntryRepository {
     }
 
     @Override
-    public List<RankingEntry> saveAll(List<RankingEntry> rankingEntries) {
+    public List<RankingEntry> save(List<RankingEntry> rankingEntries) {
         return rankingEntryJpaRepository.saveAll(rankingEntries);
     }
 }

@@ -61,11 +61,6 @@ public class RankingEntry extends BaseAuditEntity {
                 .build();
     }
 
-    public void updateRank(Long currentRank, Long previousRank) {
-        this.currentRank = currentRank;
-        this.previousRank = previousRank;
-    }
-
     public static List<RankingEntry> of(
             RankingTopicRound rankingTopicRound,
             List<RankingScoreQueryDto> rankingScores,
@@ -77,5 +72,10 @@ public class RankingEntry extends BaseAuditEntity {
                         rankingScore.ranking(),
                         previousRankMap.get(rankingScore.memberId())))
                 .toList();
+    }
+
+    public void updateRank(Long currentRank, Long previousRank) {
+        this.currentRank = currentRank;
+        this.previousRank = previousRank;
     }
 }

@@ -1,13 +1,12 @@
 package com.LetMeDoWith.LetMeDoWith.batch.tasklet.ranking;
 
-import com.LetMeDoWith.LetMeDoWith.application.ranking.service.RankingBatchService;
+import com.LetMeDoWith.LetMeDoWith.batch.service.ranking.RankingBatchService;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.ranking.model.RankingEntry;
 import com.LetMeDoWith.LetMeDoWith.domain.ranking.model.RankingTopic;
 import com.LetMeDoWith.LetMeDoWith.domain.ranking.model.RankingTopicRound;
 import com.LetMeDoWith.LetMeDoWith.domain.ranking.repository.JaksimSamilerRankingBatchQueryRepository;
-import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -36,13 +35,8 @@ public class AggregateJaksimSamilerRankingTasklet implements Tasklet {
 
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) {
-        if (!isLastMondayAtTwo(executionDateTime)) {
-            log.info("Skip jaksimSamilerRankingJob. executionDateTime={}", executionDateTime);
-            return RepeatStatus.FINISHED;
-        }
-
         RankingTopic rankingTopic = rankingBatchService
-                .getActiveTopicByTitle(JAKSIM_SAMILER_TOPIC_TITLE)
+                .getRankingTopic(JAKSIM_SAMILER_TOPIC_TITLE)
                 .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
 
         RankingTopicRound currentRound = rankingTopic.getCurrentRound();
@@ -79,15 +73,5 @@ public class AggregateJaksimSamilerRankingTasklet implements Tasklet {
                 rankingEntries.size());
 
         return RepeatStatus.FINISHED;
-    }
-
-    private boolean isLastMondayAtTwo(LocalDateTime targetDateTime) {
-        if (targetDateTime.getDayOfWeek() != DayOfWeek.MONDAY) {
-            return false;
-        }
-        if (targetDateTime.getHour() != 2) {
-            return false;
-        }
-        return targetDateTime.toLocalDate().plusWeeks(1).getMonth() != targetDateTime.getMonth();
     }
 }

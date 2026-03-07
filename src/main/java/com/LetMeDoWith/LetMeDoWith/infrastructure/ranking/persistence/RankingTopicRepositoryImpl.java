@@ -15,7 +15,7 @@ class RankingTopicRepositoryImpl implements RankingTopicRepository {
     private final RankingTopicJpaRepository rankingTopicJpaRepository;
 
     @Override
-    public Optional<RankingTopic> getActiveTopicByTitle(String title) {
+    public Optional<RankingTopic> getRankingTopic(String title) {
         return rankingTopicJpaRepository.findByTitleAndIsActive(title, Yn.TRUE);
     }
 
