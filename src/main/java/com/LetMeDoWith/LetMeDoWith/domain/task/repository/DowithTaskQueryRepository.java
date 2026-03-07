@@ -2,9 +2,11 @@ package com.LetMeDoWith.LetMeDoWith.domain.task.repository;
 
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.DowithTaskDetailQueryDto;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.DowithTaskQueryDto;
+import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.FailedDowithTaskCountQueryDto;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.FeedbackAvailableDowithTasksQueryDto;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.SuccessDowithTaskQueryDto;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -21,4 +23,7 @@ public interface DowithTaskQueryRepository {
     Map<Long, Long> countDowithTaskLikes(Set<Long> dowithTaskIds);
 
     List<FeedbackAvailableDowithTasksQueryDto> getFeedbackAvailableDowithTasks(Long offset, int size);
+
+    List<FailedDowithTaskCountQueryDto> getFailedTaskCountsByMember(
+            LocalDateTime aggregationStartDateTime, LocalDateTime aggregationEndDateTime);
 }

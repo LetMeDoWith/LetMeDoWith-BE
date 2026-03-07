@@ -59,21 +59,23 @@ public class RankingBatchService {
     }
 
     /**
-     * 이전 회차의 멤버별 순위 맵을 생성한다.
+     * 실패 태스크 집계 결과를 회차 엔트리로 변환한다.
      *
      * @param topicId 랭킹 토픽 ID
      * @param previousRound 이전 회차 번호(없으면 null 가능)
-     * @return memberId -> previousRank 맵
+     * @param rankingTopicRound 집계 회차
+     * @param currentRankMap 이번 회차 순위 맵
+     * @return 랭킹 엔트리 목록
      */
     @Transactional(readOnly = true)
-    public Map<String, Long> getPreviousRankMap(Long topicId, Long previousRound) {
-        if (previousRound == null) {
-            return Map.of();
-        }
-        List<RankingEntry> previousEntries = rankingEntryRepository.getEntriesByTopicAndRound(topicId, previousRound);
-        Map<String, Long> previousRankMap = new LinkedHashMap<>();
-        previousEntries.forEach(entry -> previousRankMap.put(entry.getMemberId(), entry.getCurrentRank()));
-        return previousRankMap;
+    public List<RankingEntry> createRankingEntries(
+            Long topicId, Long previousRound, RankingTopicRound rankingTopicRound, Map<String, Long> currentRankMap) {
+        Map<String, Long> previousRankMap = createPreviousRankMap(topicId, previousRound);
+
+        return currentRankMap.entrySet().stream()
+                .map(entry -> RankingEntry.of(
+                        rankingTopicRound, entry.getKey(), entry.getValue(), previousRankMap.get(entry.getKey())))
+                .toList();
     }
 
     /**
@@ -98,5 +100,16 @@ public class RankingBatchService {
     public void updateCurrentRound(RankingTopic rankingTopic, RankingTopicRound rankingTopicRound) {
         rankingTopic.updateCurrentRound(rankingTopicRound);
         rankingTopicRepository.save(rankingTopic);
+    }
+
+    private Map<String, Long> createPreviousRankMap(Long topicId, Long previousRound) {
+        if (previousRound == null) {
+            return Map.of();
+        }
+
+        List<RankingEntry> previousEntries = rankingEntryRepository.getEntriesByTopicAndRound(topicId, previousRound);
+        Map<String, Long> previousRankMap = new LinkedHashMap<>();
+        previousEntries.forEach(entry -> previousRankMap.put(entry.getMemberId(), entry.getCurrentRank()));
+        return previousRankMap;
     }
 }

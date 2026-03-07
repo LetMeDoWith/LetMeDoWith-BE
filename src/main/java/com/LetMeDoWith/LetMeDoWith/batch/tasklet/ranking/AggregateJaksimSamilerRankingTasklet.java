@@ -6,11 +6,14 @@ import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.ranking.model.RankingEntry;
 import com.LetMeDoWith.LetMeDoWith.domain.ranking.model.RankingTopic;
 import com.LetMeDoWith.LetMeDoWith.domain.ranking.model.RankingTopicRound;
-import com.LetMeDoWith.LetMeDoWith.domain.ranking.repository.JaksimSamilerRankingBatchQueryRepository;
+import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskQueryRepository;
+import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.FailedDowithTaskCountQueryDto;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.StepContribution;
@@ -30,7 +33,7 @@ public class AggregateJaksimSamilerRankingTasklet implements Tasklet {
     private static final String JAKSIM_SAMILER_TOPIC_TITLE = "작심삼일러";
 
     private final RankingBatchService rankingBatchService;
-    private final JaksimSamilerRankingBatchQueryRepository jaksimSamilerRankingBatchQueryRepository;
+    private final DowithTaskQueryRepository dowithTaskQueryRepository;
 
     @Value("#{jobParameters['executionDateTime']}")
     private LocalDateTime executionDateTime;
@@ -60,11 +63,10 @@ public class AggregateJaksimSamilerRankingTasklet implements Tasklet {
         RankingTopicRound rankingTopicRound = rankingBatchService.createNextRound(
                 rankingTopic, currentRound, aggregationStartDateTime, aggregationEndDateTime);
 
-        List<RankingEntry> rankingEntries = RankingEntry.of(
-                rankingTopicRound,
-                jaksimSamilerRankingBatchQueryRepository.getRankingScores(
-                        aggregationStartDateTime, aggregationEndDateTime),
-                rankingBatchService.getPreviousRankMap(rankingTopic.getId(), previousRound));
+        List<FailedDowithTaskCountQueryDto> failedTaskCountsByMember =
+                dowithTaskQueryRepository.getFailedTaskCountsByMember(aggregationStartDateTime, aggregationEndDateTime);
+        List<RankingEntry> rankingEntries = rankingBatchService.createRankingEntries(
+                rankingTopic.getId(), previousRound, rankingTopicRound, createCurrentRankMap(failedTaskCountsByMember));
 
         rankingBatchService.saveRankingEntries(rankingEntries);
         rankingBatchService.updateCurrentRound(rankingTopic, rankingTopicRound);
@@ -76,5 +78,16 @@ public class AggregateJaksimSamilerRankingTasklet implements Tasklet {
                 rankingEntries.size());
 
         return RepeatStatus.FINISHED;
+    }
+
+    private Map<String, Long> createCurrentRankMap(List<FailedDowithTaskCountQueryDto> failedTaskCountsByMember) {
+        Map<String, Long> currentRankMap = new LinkedHashMap<>();
+
+        for (int index = 0; index < failedTaskCountsByMember.size(); index++) {
+            FailedDowithTaskCountQueryDto failedTaskCount = failedTaskCountsByMember.get(index);
+            currentRankMap.put(failedTaskCount.memberId(), (long) index + 1);
+        }
+
+        return currentRankMap;
     }
 }
