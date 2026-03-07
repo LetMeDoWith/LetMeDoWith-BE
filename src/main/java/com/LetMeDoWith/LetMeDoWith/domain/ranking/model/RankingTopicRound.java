@@ -2,13 +2,12 @@ package com.LetMeDoWith.LetMeDoWith.domain.ranking.model;
 
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Getter
@@ -18,9 +17,9 @@ import java.util.List;
 @Table(
         name = "ranking_topic_round",
         uniqueConstraints = {
-                @UniqueConstraint(
-                        name = "uk_ranking_topic_round_1",
-                        columnNames = {"ranking_topic_id", "round"})
+            @UniqueConstraint(
+                    name = "uk_ranking_topic_round_1",
+                    columnNames = {"ranking_topic_id", "round"})
         })
 public class RankingTopicRound extends BaseAuditEntity {
 
@@ -45,11 +44,7 @@ public class RankingTopicRound extends BaseAuditEntity {
     @OneToMany(mappedBy = "rankingTopicRound", fetch = FetchType.LAZY)
     private List<RankingEntry> rankingEntries;
 
-<<<<<<< HEAD
-    static public RankingTopicRound of(
-=======
     public static RankingTopicRound of(
->>>>>>> 016c75020c13bf395fc8ac93665c3efbbed050bb
             RankingTopic rankingTopic,
             Long round,
             LocalDateTime aggregationStartDateTime,
@@ -61,8 +56,6 @@ public class RankingTopicRound extends BaseAuditEntity {
                 .aggregationEndDateTime(aggregationEndDateTime)
                 .build();
     }
-<<<<<<< HEAD
-=======
 
     public static RankingTopicRound nextOf(
             RankingTopic rankingTopic,
@@ -72,5 +65,4 @@ public class RankingTopicRound extends BaseAuditEntity {
         Long nextRound = currentRound == null ? 1L : currentRound.getRound() + 1;
         return of(rankingTopic, nextRound, aggregationStartDateTime, aggregationEndDateTime);
     }
->>>>>>> 016c75020c13bf395fc8ac93665c3efbbed050bb
 }

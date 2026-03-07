@@ -40,6 +40,4 @@ public class MonthlyFeedbackKingJobConfig {
                 .tasklet(monthlyFeedbackKingTasklet, platformTransactionManager)
                 .build();
     }
-
-
 }

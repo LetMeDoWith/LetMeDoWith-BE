@@ -7,10 +7,9 @@ import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.dto.TaskFeedbackTe
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.CountryCode;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
