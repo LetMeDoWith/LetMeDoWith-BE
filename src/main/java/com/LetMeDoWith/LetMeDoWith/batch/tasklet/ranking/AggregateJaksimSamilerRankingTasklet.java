@@ -1,6 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.batch.tasklet.ranking;
 
-import com.LetMeDoWith.LetMeDoWith.batch.service.ranking.RankingBatchService;
+import com.LetMeDoWith.LetMeDoWith.batch.service.RankingBatchService;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.ranking.model.RankingEntry;

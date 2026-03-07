@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.batch.service.ranking;
+package com.LetMeDoWith.LetMeDoWith.batch.service;
 
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.domain.ranking.model.RankingEntry;
