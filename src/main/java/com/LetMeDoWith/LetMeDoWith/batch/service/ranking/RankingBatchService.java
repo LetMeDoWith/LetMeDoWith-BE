@@ -1,5 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.batch.service.ranking;
 
+import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.domain.ranking.model.RankingEntry;
 import com.LetMeDoWith.LetMeDoWith.domain.ranking.model.RankingTopic;
 import com.LetMeDoWith.LetMeDoWith.domain.ranking.model.RankingTopicRound;
@@ -31,7 +32,7 @@ public class RankingBatchService {
      */
     @Transactional(readOnly = true)
     public Optional<RankingTopic> getRankingTopic(String title) {
-        return rankingTopicRepository.getRankingTopic(title).map(topic -> {
+        return rankingTopicRepository.getRankingTopic(title, Yn.TRUE).map(topic -> {
             if (topic.getCurrentRound() != null) {
                 topic.getCurrentRound().getRound();
             }
