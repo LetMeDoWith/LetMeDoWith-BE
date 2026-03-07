@@ -26,5 +26,8 @@ auth:
 cloud:
   aws:
     region: ${AWS_REGION:ap-northeast-2}
+    credentials:
+      accessKey: ${AWS_ACCESS_KEY_ID:test-access-key}
+      secretKey: ${AWS_SECRET_ACCESS_KEY:test-secret-key}
     s3:
       bucketName: ${AWS_S3_BUCKET_NAME:test-bucket}

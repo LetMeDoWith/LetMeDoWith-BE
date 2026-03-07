@@ -4,9 +4,7 @@ import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.domain.ranking.model.RankingEntry;
 import com.LetMeDoWith.LetMeDoWith.domain.ranking.model.RankingTopic;
 import com.LetMeDoWith.LetMeDoWith.domain.ranking.model.RankingTopicRound;
-import com.LetMeDoWith.LetMeDoWith.domain.ranking.repository.RankingEntryRepository;
-import com.LetMeDoWith.LetMeDoWith.domain.ranking.repository.RankingTopicRepository;
-import com.LetMeDoWith.LetMeDoWith.domain.ranking.repository.RankingTopicRoundRepository;
+import com.LetMeDoWith.LetMeDoWith.domain.ranking.repository.RankingRepository;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -20,9 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class RankingBatchService {
 
-    private final RankingTopicRepository rankingTopicRepository;
-    private final RankingTopicRoundRepository rankingTopicRoundRepository;
-    private final RankingEntryRepository rankingEntryRepository;
+    private final RankingRepository rankingRepository;
 
     /**
      * 활성 상태의 랭킹 토픽을 조회한다.
@@ -32,7 +28,7 @@ public class RankingBatchService {
      */
     @Transactional(readOnly = true)
     public Optional<RankingTopic> getRankingTopic(String title) {
-        return rankingTopicRepository.getRankingTopic(title, Yn.TRUE).map(topic -> {
+        return rankingRepository.getRankingTopic(title, Yn.TRUE).map(topic -> {
             if (topic.getCurrentRound() != null) {
                 topic.getCurrentRound().getRound();
             }
@@ -55,7 +51,7 @@ public class RankingBatchService {
             RankingTopicRound currentRound,
             LocalDateTime aggregationStartDateTime,
             LocalDateTime aggregationEndDateTime) {
-        return rankingTopicRoundRepository.save(
+        return rankingRepository.save(
                 RankingTopicRound.nextOf(rankingTopic, currentRound, aggregationStartDateTime, aggregationEndDateTime));
     }
 
@@ -87,7 +83,7 @@ public class RankingBatchService {
     @Transactional
     public void saveRankingEntries(List<RankingEntry> rankingEntries) {
         if (!rankingEntries.isEmpty()) {
-            rankingEntryRepository.save(rankingEntries);
+            rankingRepository.save(rankingEntries);
         }
     }
 
@@ -100,7 +96,7 @@ public class RankingBatchService {
     @Transactional
     public void updateCurrentRound(RankingTopic rankingTopic, RankingTopicRound rankingTopicRound) {
         rankingTopic.updateCurrentRound(rankingTopicRound);
-        rankingTopicRepository.save(rankingTopic);
+        rankingRepository.save(rankingTopic);
     }
 
     private Map<String, Long> createPreviousRankMap(Long topicId, Long previousRound) {
@@ -108,7 +104,7 @@ public class RankingBatchService {
             return Map.of();
         }
 
-        List<RankingEntry> previousEntries = rankingEntryRepository.getEntriesByTopicAndRound(topicId, previousRound);
+        List<RankingEntry> previousEntries = rankingRepository.getRankingEntries(topicId, previousRound);
         Map<String, Long> previousRankMap = new LinkedHashMap<>();
         previousEntries.forEach(entry -> previousRankMap.put(entry.getMemberId(), entry.getCurrentRank()));
         return previousRankMap;
