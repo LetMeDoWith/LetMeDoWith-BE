@@ -23,7 +23,7 @@ public class DowithTaskSuccess extends BaseAuditEntity {
     @JoinColumn(name = "dowith_task_id", nullable = false)
     private DowithTask dowithTask;
 
-    @Column(name = "image_url")
+    @Column(name = "image_url", columnDefinition = "TEXT")
     private String imageUrl;
 
     public static DowithTaskSuccess of(DowithTask dowithTask, String imageUrl) {
