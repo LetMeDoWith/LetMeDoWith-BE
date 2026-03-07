@@ -40,10 +40,14 @@ public class RankingEntry extends BaseAuditEntity {
     private Long previousRank;
 
     public static RankingEntry of(
+<<<<<<< HEAD
             RankingTopicRound rankingTopicRound,
             String memberId,
             Long currentRank,
             Long previousRank) {
+=======
+            RankingTopicRound rankingTopicRound, String memberId, Long currentRank, Long previousRank) {
+>>>>>>> 016c75020c13bf395fc8ac93665c3efbbed050bb
         return RankingEntry.builder()
                 .rankingTopicRound(rankingTopicRound)
                 .memberId(memberId)
@@ -51,4 +55,12 @@ public class RankingEntry extends BaseAuditEntity {
                 .previousRank(previousRank)
                 .build();
     }
+<<<<<<< HEAD
+=======
+
+    public void updateRank(Long currentRank, Long previousRank) {
+        this.currentRank = currentRank;
+        this.previousRank = previousRank;
+    }
+>>>>>>> 016c75020c13bf395fc8ac93665c3efbbed050bb
 }

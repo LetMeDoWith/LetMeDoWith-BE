@@ -14,10 +14,12 @@ import com.LetMeDoWith.LetMeDoWith.domain.task.model.QTaskCategory;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskQueryRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.DowithTaskDetailQueryDto;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.DowithTaskQueryDto;
+import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.FailedDowithTaskCountQueryDto;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.FeedbackAvailableDowithTasksQueryDto;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.SuccessDowithTaskQueryDto;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.DateTimeExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -211,6 +213,35 @@ public class DowithTaskQueryRespositoryImpl implements DowithTaskQueryRepository
                 .where(condition)
                 .offset(offset)
                 .limit(size)
+                .fetch();
+    }
+
+    @Override
+    public List<FailedDowithTaskCountQueryDto> getFailedTaskCountsByMember(
+            LocalDateTime aggregationStartDateTime, LocalDateTime aggregationEndDateTime) {
+        DateTimeExpression<LocalDateTime> taskStartDateTime = Expressions.dateTimeTemplate(
+                LocalDateTime.class, "TIMESTAMP({0}, {1})", dowithTask.date, dowithTask.startTime);
+
+        return queryFactory
+                .select(Projections.constructor(
+                        FailedDowithTaskCountQueryDto.class,
+                        dowithTask.memberId,
+                        dowithTask.id.count(),
+                        taskStartDateTime.max(),
+                        dowithTask.createdAt.min()))
+                .from(dowithTask)
+                .where(dowithTask
+                        .status
+                        .eq(DowithTaskStatus.FAIL)
+                        .and(dowithTask.startTime.isNotNull())
+                        .and(taskStartDateTime.goe(aggregationStartDateTime))
+                        .and(taskStartDateTime.loe(aggregationEndDateTime)))
+                .groupBy(dowithTask.memberId)
+                .orderBy(
+                        dowithTask.id.count().desc(),
+                        taskStartDateTime.max().asc(),
+                        dowithTask.createdAt.min().asc(),
+                        dowithTask.memberId.asc())
                 .fetch();
     }
 }

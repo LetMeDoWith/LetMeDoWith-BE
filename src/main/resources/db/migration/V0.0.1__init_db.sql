@@ -313,7 +313,7 @@ CREATE TABLE `notification_token`
 CREATE TABLE `ranking_topic`
 (
     `id`               bigint       NOT NULL AUTO_INCREMENT,
-    `create_at`        datetime(6)           DEFAULT NULL,
+    `created_at`       datetime(6)           DEFAULT NULL,
     `created_by`       varchar(255)          DEFAULT NULL,
     `updated_at`       datetime(6)           DEFAULT NULL,
     `updated_by`       varchar(255)          DEFAULT NULL,
@@ -329,7 +329,7 @@ CREATE TABLE `ranking_topic`
 CREATE TABLE `ranking_topic_round`
 (
     `id`                   bigint      NOT NULL AUTO_INCREMENT,
-    `create_at`            datetime(6)  DEFAULT NULL,
+    `created_at`           datetime(6)  DEFAULT NULL,
     `created_by`           varchar(255) DEFAULT NULL,
     `updated_at`           datetime(6)  DEFAULT NULL,
     `updated_by`           varchar(255) DEFAULT NULL,
@@ -347,7 +347,7 @@ CREATE TABLE `ranking_topic_round`
 CREATE TABLE `ranking_entry`
 (
     `id`                     bigint      NOT NULL AUTO_INCREMENT,
-    `create_at`              datetime(6)  DEFAULT NULL,
+    `created_at`             datetime(6)  DEFAULT NULL,
     `created_by`             varchar(255) DEFAULT NULL,
     `updated_at`             datetime(6)  DEFAULT NULL,
     `updated_by`             varchar(255) DEFAULT NULL,
