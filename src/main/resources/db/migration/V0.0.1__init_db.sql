@@ -109,7 +109,7 @@ CREATE TABLE `dowith_task_success`
     `created_by`     varchar(255) DEFAULT NULL,
     `updated_at`     datetime(6)  DEFAULT NULL,
     `updated_by`     varchar(255) DEFAULT NULL,
-    `image_url`      varchar(255) DEFAULT NULL,
+    `image_url`      text         DEFAULT NULL,
     `dowith_task_id` bigint NOT NULL,
     PRIMARY KEY (`id`),
     KEY `FKg8cantau9xpnh63og64mn8svu` (`dowith_task_id`),
