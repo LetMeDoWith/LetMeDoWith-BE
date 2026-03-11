@@ -1,19 +1,12 @@
 package com.LetMeDoWith.LetMeDoWith.batch.tasklet.ranking;
 
 import com.LetMeDoWith.LetMeDoWith.batch.service.RankingBatchService;
-import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
-import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.common.enums.ranking.RankingTopicCode;
 import com.LetMeDoWith.LetMeDoWith.domain.ranking.model.RankingEntry;
 import com.LetMeDoWith.LetMeDoWith.domain.ranking.model.RankingTopic;
 import com.LetMeDoWith.LetMeDoWith.domain.ranking.model.RankingTopicRound;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskQueryRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.FailedDowithTaskCountQueryDto;
-import java.time.DayOfWeek;
-import java.time.LocalDateTime;
-import java.time.temporal.TemporalAdjusters;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.StepContribution;
@@ -23,6 +16,13 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import java.time.DayOfWeek;
+import java.time.LocalDateTime;
+import java.time.temporal.TemporalAdjusters;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @Component
 @StepScope
@@ -41,8 +41,9 @@ public class AggregateJaksimSamilerRankingTasklet implements Tasklet {
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) {
         RankingTopic rankingTopic = rankingBatchService
-                .getRankingTopic(JAKSIM_SAMILER_TOPIC_TITLE)
-                .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
+                .getRankingTopic(RankingTopicCode.JAKSIM_SAMILER)
+                .orElseThrow(() -> new RuntimeException(
+                        "RankingTopicCode " + RankingTopicCode.JAKSIM_SAMILER + "에 해당하는 RankingTopic이 존재하지 않습니다."));
 
         RankingTopicRound currentRound = rankingTopic.getCurrentRound();
         Long previousRound = currentRound == null ? null : currentRound.getRound();

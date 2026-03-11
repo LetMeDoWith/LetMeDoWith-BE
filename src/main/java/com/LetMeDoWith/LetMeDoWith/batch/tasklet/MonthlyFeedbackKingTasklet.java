@@ -1,5 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.batch.tasklet;
 
+import com.LetMeDoWith.LetMeDoWith.batch.service.RankingBatchService;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.SortDirection;
 import com.LetMeDoWith.LetMeDoWith.common.enums.ranking.RankingTopicCode;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.DowithTaskFeedbackQueryRepository;
@@ -7,13 +8,6 @@ import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.dto.CountSentFeedb
 import com.LetMeDoWith.LetMeDoWith.domain.ranking.model.RankingEntry;
 import com.LetMeDoWith.LetMeDoWith.domain.ranking.model.RankingTopic;
 import com.LetMeDoWith.LetMeDoWith.domain.ranking.model.RankingTopicRound;
-import com.LetMeDoWith.LetMeDoWith.domain.ranking.repository.RankingRepository;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.temporal.TemporalAdjusters;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.StepContribution;
@@ -24,13 +18,22 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 @Component
 @StepScope
 @RequiredArgsConstructor
 @Slf4j
 public class MonthlyFeedbackKingTasklet implements Tasklet {
 
-    private final RankingRepository rankingRepository;
+    private final RankingBatchService rankingBatchService;
+
+    //    private final RankingRepository rankingRepository;
     private final DowithTaskFeedbackQueryRepository dowithTaskFeedbackQueryRepository;
 
     @Value("#{jobParameters['executionDateTime']}")
@@ -44,19 +47,14 @@ public class MonthlyFeedbackKingTasklet implements Tasklet {
                 executionDateTime.with(TemporalAdjusters.lastDayOfMonth()).with(LocalTime.MAX);
 
         // RankingTopic 조회
-        Optional<RankingTopic> opRankingTopic = rankingRepository.getRankingTopic(RankingTopicCode.FEEDBACK_KING);
-        if (opRankingTopic.isEmpty()) {
-            log.error("RankingTopicCode {}에 해당하는 RankingTopic이 존재하지 않습니다.", RankingTopicCode.FEEDBACK_KING);
-            throw new RuntimeException(
-                    "RankingTopicCode " + RankingTopicCode.FEEDBACK_KING + "에 해당하는 RankingTopic이 존재하지 않습니다.");
-        }
+        RankingTopic rankingTopic = rankingBatchService.getRankingTopic(RankingTopicCode.FEEDBACK_KING).orElseThrow(() -> new RuntimeException(
+                "RankingTopicCode " + RankingTopicCode.FEEDBACK_KING + "에 해당하는 RankingTopic이 존재하지 않습니다."));
 
         // RankingTopic에 맞는 Ranking 기준으로 Feedback 순위 조회
         List<CountSentFeedback> countSentFeedbacks = dowithTaskFeedbackQueryRepository.getCountSentFeedbacks(
                 aggregationStartDateTime.toLocalDate(), aggregationEndDateTime.toLocalDate(), SortDirection.DESC);
 
         // RankingTopicRound insert
-        RankingTopic rankingTopic = opRankingTopic.get();
         Optional<RankingTopicRound> opLatestRankingTopicRound =
                 rankingRepository.getLatestRankingTopicRound(rankingTopic);
         Long round = 0L;
@@ -72,7 +70,7 @@ public class MonthlyFeedbackKingTasklet implements Tasklet {
             CountSentFeedback countSentFeedback = countSentFeedbacks.get(i);
             rankingEntries.add(RankingEntry.of(
                     rankingTopicRound, countSentFeedback.memberId(), i + 1L, null // TODO - 추가하기
-                    ));
+            ));
         }
 
         rankingRepository.save(rankingEntries);

@@ -1,18 +1,20 @@
 package com.LetMeDoWith.LetMeDoWith.batch.service;
 
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
+import com.LetMeDoWith.LetMeDoWith.common.enums.ranking.RankingTopicCode;
 import com.LetMeDoWith.LetMeDoWith.domain.ranking.model.RankingEntry;
 import com.LetMeDoWith.LetMeDoWith.domain.ranking.model.RankingTopic;
 import com.LetMeDoWith.LetMeDoWith.domain.ranking.model.RankingTopicRound;
 import com.LetMeDoWith.LetMeDoWith.domain.ranking.repository.RankingRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -36,13 +38,18 @@ public class RankingBatchService {
         });
     }
 
+    @Transactional(readOnly = true)
+    public Optional<RankingTopic> getRankingTopic(RankingTopicCode code) {
+        return rankingRepository.getRankingTopic(code, Yn.TRUE);
+    }
+
     /**
      * 토픽의 다음 회차를 생성해 저장한다.
      *
-     * @param rankingTopic 집계 대상 토픽
-     * @param currentRound 현재 회차(없으면 null)
+     * @param rankingTopic             집계 대상 토픽
+     * @param currentRound             현재 회차(없으면 null)
      * @param aggregationStartDateTime 집계 시작 시각
-     * @param aggregationEndDateTime 집계 종료 시각
+     * @param aggregationEndDateTime   집계 종료 시각
      * @return 신규 생성된 회차 엔티티
      */
     @Transactional
@@ -58,10 +65,10 @@ public class RankingBatchService {
     /**
      * 실패 태스크 집계 결과를 회차 엔트리로 변환한다.
      *
-     * @param topicId 랭킹 토픽 ID
-     * @param previousRound 이전 회차 번호(없으면 null 가능)
+     * @param topicId           랭킹 토픽 ID
+     * @param previousRound     이전 회차 번호(없으면 null 가능)
      * @param rankingTopicRound 집계 회차
-     * @param currentRankMap 이번 회차 순위 맵
+     * @param currentRankMap    이번 회차 순위 맵
      * @return 랭킹 엔트리 목록
      */
     @Transactional(readOnly = true)
@@ -90,7 +97,7 @@ public class RankingBatchService {
     /**
      * 토픽의 현재 회차 포인터를 갱신한다.
      *
-     * @param rankingTopic 집계 대상 토픽
+     * @param rankingTopic      집계 대상 토픽
      * @param rankingTopicRound 현재 회차
      */
     @Transactional
