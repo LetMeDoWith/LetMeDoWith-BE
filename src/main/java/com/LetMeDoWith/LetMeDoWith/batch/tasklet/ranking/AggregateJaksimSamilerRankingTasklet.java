@@ -8,6 +8,7 @@ import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.FailedDowithTaskCo
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,9 +62,15 @@ public class AggregateJaksimSamilerRankingTasklet implements Tasklet {
         //
         //        RankingTopicRound rankingTopicRound = rankingBatchService.createNextRound(
         //                rankingTopic, currentRound, aggregationStartDateTime, aggregationEndDateTime);
+        List<FailedDowithTaskCountQueryDto> failedTaskCountsByMember = new ArrayList<>();
+        try {
+            failedTaskCountsByMember = dowithTaskQueryRepository.getFailedTaskCountsByMember(
+                    aggregationStartDateTime, aggregationEndDateTime);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
 
-        List<FailedDowithTaskCountQueryDto> failedTaskCountsByMember =
-                dowithTaskQueryRepository.getFailedTaskCountsByMember(aggregationStartDateTime, aggregationEndDateTime);
         //        List<RankingEntry> rankingEntries = rankingBatchService.createRankingEntries(
         //                rankingTopic.getId(), previousRound, rankingTopicRound,
         // createCurrentRankMap(failedTaskCountsByMember));
