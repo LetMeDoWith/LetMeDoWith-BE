@@ -9,7 +9,8 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum FileNamespace {
-    DOWITH_TASK_CONFIRM("dowith_task_confirms");
+    DOWITH_TASK_CONFIRM("dowith_task_confirms"),
+    MEMBER_PROFILE("member_profiles");
 
     private final String prefix;
 }
