@@ -1,26 +1,58 @@
 package com.LetMeDoWith.LetMeDoWith.batch.service;
 
+import com.LetMeDoWith.LetMeDoWith.batch.dto.CreateRankingResult;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.common.enums.ranking.RankingTopicCode;
 import com.LetMeDoWith.LetMeDoWith.domain.ranking.model.RankingEntry;
 import com.LetMeDoWith.LetMeDoWith.domain.ranking.model.RankingTopic;
 import com.LetMeDoWith.LetMeDoWith.domain.ranking.model.RankingTopicRound;
 import com.LetMeDoWith.LetMeDoWith.domain.ranking.repository.RankingRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class RankingBatchService {
 
     private final RankingRepository rankingRepository;
+
+    @Transactional
+    public CreateRankingResult createRanking(
+            RankingTopicCode topicCode,
+            LocalDateTime aggregationStartDateTime,
+            LocalDateTime aggregationEndDateTime,
+            Map<String, Long> memberIdRankMap) {
+        // 1. RankingTopic 조회 및 이전 Round 조회
+        RankingTopic rankingTopic = this.rankingRepository
+                .getRankingTopic(topicCode, Yn.TRUE)
+                .orElseThrow(() ->
+                        new RuntimeException("RankingTopicCode " + topicCode + "에 해당하는 RankingTopic이 존재하지 않습니다."));
+        RankingTopicRound previousRound = rankingTopic.getCurrentRound();
+
+        // 2. 다음 Round 생성
+        RankingTopicRound newRound = rankingRepository.save(RankingTopicRound.nextOf(
+                rankingTopic, previousRound, aggregationStartDateTime, aggregationEndDateTime));
+
+        // 3. RankingEntries 생성
+        Map<String, Long> previousRankMap = createPreviousRankMap(rankingTopic.getId(), previousRound.getRound());
+        List<RankingEntry> rankingEntries = memberIdRankMap.entrySet().stream()
+                .map(entry -> RankingEntry.of(
+                        newRound, entry.getKey(), entry.getValue(), previousRankMap.getOrDefault(entry.getKey(), null)))
+                .toList();
+        rankingRepository.save(rankingEntries);
+
+        // 5. RankingTopic 현재 Round 업데이트
+        rankingTopic.updateCurrentRound(newRound);
+        rankingRepository.save(rankingTopic);
+
+        return new CreateRankingResult(rankingTopic, newRound, rankingEntries.size());
+    }
 
     /**
      * 활성 상태의 랭킹 토픽을 조회한다.
@@ -58,6 +90,21 @@ public class RankingBatchService {
             RankingTopicRound currentRound,
             LocalDateTime aggregationStartDateTime,
             LocalDateTime aggregationEndDateTime) {
+        return rankingRepository.save(
+                RankingTopicRound.nextOf(rankingTopic, currentRound, aggregationStartDateTime, aggregationEndDateTime));
+    }
+
+    @Transactional
+    public RankingTopicRound createTopicRound(
+            RankingTopicCode topicCode, LocalDateTime aggregationStartDateTime, LocalDateTime aggregationEndDateTime) {
+        RankingTopic rankingTopic = this.rankingRepository
+                .getRankingTopic(topicCode, Yn.TRUE)
+                .orElseThrow(() -> new RuntimeException(
+                        "RankingTopicCode " + RankingTopicCode.FEEDBACK_KING + "에 해당하는 RankingTopic이 존재하지 않습니다."));
+
+        RankingTopicRound currentRound = rankingTopic.getCurrentRound();
+        Long previousRound = currentRound == null ? null : currentRound.getRound();
+
         return rankingRepository.save(
                 RankingTopicRound.nextOf(rankingTopic, currentRound, aggregationStartDateTime, aggregationEndDateTime));
     }

@@ -59,10 +59,10 @@ public class RankingTopicRound extends BaseAuditEntity {
 
     public static RankingTopicRound nextOf(
             RankingTopic rankingTopic,
-            RankingTopicRound currentRound,
+            RankingTopicRound previousRound,
             LocalDateTime aggregationStartDateTime,
             LocalDateTime aggregationEndDateTime) {
-        Long nextRound = currentRound == null ? 1L : currentRound.getRound() + 1;
+        Long nextRound = previousRound == null ? 1L : previousRound.getRound() + 1;
         return of(rankingTopic, nextRound, aggregationStartDateTime, aggregationEndDateTime);
     }
 }

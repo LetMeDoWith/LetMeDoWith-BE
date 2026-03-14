@@ -1,6 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.batch.job.task;
 
-import com.LetMeDoWith.LetMeDoWith.batch.tasklet.MonthlyFeedbackKingTasklet;
+import com.LetMeDoWith.LetMeDoWith.batch.tasklet.ranking.MonthlyFeedbackKingTasklet;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;

@@ -1,13 +1,16 @@
-package com.LetMeDoWith.LetMeDoWith.batch.tasklet;
+package com.LetMeDoWith.LetMeDoWith.batch.tasklet.ranking;
 
 import com.LetMeDoWith.LetMeDoWith.batch.service.RankingBatchService;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.SortDirection;
 import com.LetMeDoWith.LetMeDoWith.common.enums.ranking.RankingTopicCode;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.DowithTaskFeedbackQueryRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.dto.CountSentFeedback;
-import com.LetMeDoWith.LetMeDoWith.domain.ranking.model.RankingEntry;
-import com.LetMeDoWith.LetMeDoWith.domain.ranking.model.RankingTopic;
-import com.LetMeDoWith.LetMeDoWith.domain.ranking.model.RankingTopicRound;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.TemporalAdjusters;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.StepContribution;
@@ -17,13 +20,6 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.temporal.TemporalAdjusters;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 @Component
 @StepScope
@@ -47,33 +43,32 @@ public class MonthlyFeedbackKingTasklet implements Tasklet {
                 executionDateTime.with(TemporalAdjusters.lastDayOfMonth()).with(LocalTime.MAX);
 
         // RankingTopic 조회
-        RankingTopic rankingTopic = rankingBatchService.getRankingTopic(RankingTopicCode.FEEDBACK_KING).orElseThrow(() -> new RuntimeException(
-                "RankingTopicCode " + RankingTopicCode.FEEDBACK_KING + "에 해당하는 RankingTopic이 존재하지 않습니다."));
+        //        RankingTopic rankingTopic =
+        // rankingBatchService.getRankingTopic(RankingTopicCode.FEEDBACK_KING).orElseThrow(() -> new RuntimeException(
+        //                "RankingTopicCode " + RankingTopicCode.FEEDBACK_KING + "에 해당하는 RankingTopic이 존재하지 않습니다."));
 
         // RankingTopic에 맞는 Ranking 기준으로 Feedback 순위 조회
         List<CountSentFeedback> countSentFeedbacks = dowithTaskFeedbackQueryRepository.getCountSentFeedbacks(
                 aggregationStartDateTime.toLocalDate(), aggregationEndDateTime.toLocalDate(), SortDirection.DESC);
 
         // RankingTopicRound insert
-        Optional<RankingTopicRound> opLatestRankingTopicRound =
-                rankingRepository.getLatestRankingTopicRound(rankingTopic);
-        Long round = 0L;
-        if (opLatestRankingTopicRound.isPresent()) {
-            round = opLatestRankingTopicRound.get().getRound() + 1;
-        }
-        RankingTopicRound rankingTopicRound = rankingRepository.save(
-                RankingTopicRound.of(rankingTopic, round, aggregationStartDateTime, aggregationEndDateTime));
+        //        Optional<RankingTopicRound> opLatestRankingTopicRound =
+        //                rankingRepository.getLatestRankingTopicRound(rankingTopic);
+        //        Long round = 0L;
+        //        if (opLatestRankingTopicRound.isPresent()) {
+        //            round = opLatestRankingTopicRound.get().getRound() + 1;
+        //        }
+        //        RankingTopicRound rankingTopicRound = rankingRepository.save(
+        //                RankingTopicRound.of(rankingTopic, round, aggregationStartDateTime, aggregationEndDateTime));
 
-        // RankingEntry insert
-        List<RankingEntry> rankingEntries = new ArrayList<>();
+        Map<String, Long> memberIdRankMap = new HashMap<>();
         for (int i = 0; i < countSentFeedbacks.size(); i++) {
             CountSentFeedback countSentFeedback = countSentFeedbacks.get(i);
-            rankingEntries.add(RankingEntry.of(
-                    rankingTopicRound, countSentFeedback.memberId(), i + 1L, null // TODO - 추가하기
-            ));
+            memberIdRankMap.put(countSentFeedback.memberId(), (long) i + 1);
         }
 
-        rankingRepository.save(rankingEntries);
+        rankingBatchService.createRanking(
+                RankingTopicCode.FEEDBACK_KING, aggregationStartDateTime, aggregationEndDateTime, memberIdRankMap);
 
         return RepeatStatus.FINISHED;
     }
