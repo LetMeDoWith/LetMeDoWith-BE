@@ -1,6 +1,6 @@
-package com.LetMeDoWith.LetMeDoWith.infrastructure.task.client;
+package com.LetMeDoWith.LetMeDoWith.infrastructure.file.client;
 
-import com.LetMeDoWith.LetMeDoWith.application.task.client.FileClient;
+import com.LetMeDoWith.LetMeDoWith.common.service.FileClient;
 import java.time.Duration;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,6 +19,7 @@ public class AwsS3FileClient implements FileClient {
     @Value("${cloud.aws.s3.bucketName}")
     private String bucketName;
 
+    @Override
     public String getUploadPresignedUrl(String key, Duration expires) {
         PutObjectRequest putObjectRequest =
                 PutObjectRequest.builder().bucket(bucketName).key(key).build();
