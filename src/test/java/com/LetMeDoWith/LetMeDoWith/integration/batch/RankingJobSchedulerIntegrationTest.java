@@ -3,8 +3,10 @@ package com.LetMeDoWith.LetMeDoWith.integration.batch;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.LetMeDoWith.LetMeDoWith.batch.scheduler.RankingJobScheduler;
+import com.LetMeDoWith.LetMeDoWith.batch.tasklet.ranking.AggregateJaksimSamilerRankingTasklet;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
+import com.LetMeDoWith.LetMeDoWith.common.enums.ranking.RankingTopicCode;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
 import com.LetMeDoWith.LetMeDoWith.domain.ranking.model.RankingEntry;
 import com.LetMeDoWith.LetMeDoWith.domain.ranking.model.RankingTopic;
@@ -31,9 +33,13 @@ import org.springframework.transaction.support.TransactionTemplate;
 class RankingJobSchedulerIntegrationTest extends AbstractIntegrationTest {
 
     private static final String TOPIC_TITLE = "작심삼일러";
+    private final List<Member> extraMembers = new ArrayList<>();
 
     @Autowired
     private RankingJobScheduler rankingJobScheduler;
+
+    @Autowired
+    private AggregateJaksimSamilerRankingTasklet aggregateJaksimSamilerRankingTasklet;
 
     @Autowired
     private RankingTopicJpaRepository rankingTopicJpaRepository;
@@ -54,7 +60,6 @@ class RankingJobSchedulerIntegrationTest extends AbstractIntegrationTest {
     private TransactionTemplate transactionTemplate;
 
     private RankingTopic rankingTopic;
-    private final List<Member> extraMembers = new ArrayList<>();
 
     @Override
     protected void deleteTestData() {
@@ -75,8 +80,11 @@ class RankingJobSchedulerIntegrationTest extends AbstractIntegrationTest {
 
     @Override
     protected void createTestData() {
-        rankingTopic = rankingTopicJpaRepository.save(
-                RankingTopic.builder().title(TOPIC_TITLE).description("test").build());
+        rankingTopic = rankingTopicJpaRepository.save(RankingTopic.builder()
+                .code(RankingTopicCode.JAKSIM_SAMILER)
+                .title(TOPIC_TITLE)
+                .description("test")
+                .build());
     }
 
     @Test

@@ -39,6 +39,7 @@ public class RankingJobScheduler {
         try {
             jobLauncher.run(jaksimSamilerRankingJob, jobParameters);
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("Failed to run jaksimSamilerRankingJob", e);
         }
     }
