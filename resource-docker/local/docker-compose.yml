@@ -13,8 +13,27 @@ services:
       - LMDW
     volumes:
       - mysql-data:/var/lib/mysql
-      # Mount the external volume for MySQL data storage
-      # Mount the SQL script for initialization
+
+  mysql-init:
+    image: mysql:latest
+    depends_on:
+      - mysql-db
+    entrypoint:
+      - sh
+      - -c
+      - |
+        until mysqladmin ping -h mysql-db -uroot -pletmedowith_db_adm --silent; do
+          sleep 1
+        done
+        mysql -h mysql-db -uroot -pletmedowith_db_adm -e "
+          CREATE DATABASE IF NOT EXISTS letmedowith_test
+            CHARACTER SET utf8mb4
+            COLLATE utf8mb4_0900_ai_ci;
+          GRANT ALL PRIVILEGES ON letmedowith_test.* TO 'letmedowith'@'%';
+          FLUSH PRIVILEGES;
+        "
+    networks:
+      - LMDW
 
   redis-server:
     image: redis:latest

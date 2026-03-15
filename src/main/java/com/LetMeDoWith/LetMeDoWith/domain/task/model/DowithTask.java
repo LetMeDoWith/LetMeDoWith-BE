@@ -15,8 +15,6 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
-import java.util.regex.Pattern;
 import lombok.*;
 
 @Entity
@@ -271,14 +269,7 @@ public class DowithTask extends BaseAuditEntity {
      * @param imageFileNames
      * @return
      */
-    public List<String> generateSuccessImageKey(List<String> imageFileNames) {
-
-        Pattern validExtensions = Pattern.compile("(?i)^.+\\.(jpg|jpeg|png|gif|bmp|webp)$");
-        if (imageFileNames.stream()
-                .anyMatch(name -> !validExtensions.matcher(name).matches())) {
-            throw new RestApiException(INVALID_REQUEST);
-        }
-
+    public void validateSuccessImageUploadAvailable() {
         if (!status.equals(DowithTaskStatus.WAIT)) {
             throw new RestApiException(INVALID_REQUEST);
         }
@@ -286,18 +277,6 @@ public class DowithTask extends BaseAuditEntity {
         if (SystemTimeUtil.now().isAfter(LocalDateTime.of(this.date, this.startTime))) {
             throw new RestApiException(INVALID_REQUEST);
         }
-
-        int shardIndex = (int) (this.id % 16);
-
-        List<String> successImageKeys = new ArrayList<>();
-        for (String imageFileName : imageFileNames) {
-            String timestamp =
-                    SystemTimeUtil.now().toString().replace("[:\\-T]", "").substring(0, 14) + "Z";
-            String uuid = UUID.randomUUID().toString();
-            successImageKeys.add(
-                    String.format("dowith_task_confirms/%02d/%s_%s.%s", shardIndex, timestamp, uuid, imageFileName));
-        }
-        return successImageKeys;
     }
 
     /**

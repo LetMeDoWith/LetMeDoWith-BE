@@ -1,11 +1,13 @@
 package com.LetMeDoWith.LetMeDoWith.application.task.service;
 
-import com.LetMeDoWith.LetMeDoWith.application.task.client.FileClient;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.CancelLikeSuccessDowithTaskResult;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.LikeSuccessDowithTaskResult;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.RetrieveSuccessDowithTasksResult;
+import com.LetMeDoWith.LetMeDoWith.common.dto.GenerateUploadPresignedUrlsResult;
+import com.LetMeDoWith.LetMeDoWith.common.enums.common.FileNamespace;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.common.service.PresignedUrlService;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTaskLike;
@@ -13,7 +15,6 @@ import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskLikeReposito
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskQueryRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.SuccessDowithTaskQueryDto;
-import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -31,23 +32,22 @@ public class SuccessDowithTaskService {
     private final DowithTaskRepository dowithTaskRepository;
     private final DowithTaskQueryRepository dowithTaskQueryRepository;
     private final DowithTaskLikeRepository dowithTaskLikeRepository;
-    private final FileClient fileClient;
+    private final PresignedUrlService presignedUrlService;
 
     @Lazy
     @Autowired
     private SuccessDowithTaskService self;
 
-    public List<String> generateDowithTaskSuccessImageUploadPresignedUrls(
+    public GenerateUploadPresignedUrlsResult generateDowithTaskSuccessImageUploadPresignedUrls(
             String memberId, Long dowithTaskId, List<String> imageFileNames) {
 
         DowithTask dowithTask = dowithTaskRepository
                 .getDowithTask(dowithTaskId, memberId)
                 .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
 
-        List<String> keys = dowithTask.generateSuccessImageKey(imageFileNames);
-        return keys.stream()
-                .map(key -> fileClient.getUploadPresignedUrl(key, Duration.ofSeconds(30)))
-                .toList();
+        dowithTask.validateSuccessImageUploadAvailable();
+
+        return presignedUrlService.generateUploadPresignedUrls(FileNamespace.DOWITH_TASK_CONFIRM, imageFileNames);
     }
 
     @Transactional
