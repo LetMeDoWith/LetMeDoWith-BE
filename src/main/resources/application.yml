@@ -138,7 +138,7 @@ spring:
       on-profile: test
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/letmedowith_app
+    url: jdbc:mysql://localhost:3306/letmedowith_test
   data:
     redis:
       host: localhost
@@ -156,7 +156,7 @@ spring:
     baseline-on-migrate: true
     baseline-version: 1
     enabled: false
-    url: jdbc:mysql://localhost:3306/letmedowith_app
+    url: jdbc:mysql://localhost:3306/letmedowith_test
   batch:
     jdbc:
       initialize-schema: always   # 운영은 보통 'never'로 두고 DDL 미리 반영

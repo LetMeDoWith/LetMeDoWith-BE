@@ -13,6 +13,7 @@ import com.LetMeDoWith.LetMeDoWith.application.task.service.UpdateDowithTaskServ
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiErrorResponse;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiErrorResponses;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiSuccessResponse;
+import com.LetMeDoWith.LetMeDoWith.common.dto.GenerateUploadPresignedUrlsResult;
 import com.LetMeDoWith.LetMeDoWith.common.dto.ResponseDto;
 import com.LetMeDoWith.LetMeDoWith.common.dto.ResponsePageDto;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
@@ -22,7 +23,6 @@ import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
@@ -179,15 +179,12 @@ public class DowithTaskController {
 
         String memberId = AuthUtil.getMemberId();
 
-        List<String> presignedUrls = successDowithTaskService.generateDowithTaskSuccessImageUploadPresignedUrls(
-                memberId, dowithTaskId, requestBody.imageFileNames());
+        GenerateUploadPresignedUrlsResult result =
+                successDowithTaskService.generateDowithTaskSuccessImageUploadPresignedUrls(
+                        memberId, dowithTaskId, requestBody.imageFileNames());
 
-        List<String> publicImageUrls = presignedUrls.stream()
-                .map(url -> url.contains("?") ? url.substring(0, url.indexOf('?')) : url)
-                .toList();
-
-        return ResponseUtil.createSuccessResponse(
-                new GenerateDowithTaskSuccessImageUploadPresignedUrlsResDto(publicImageUrls, presignedUrls, "POST"));
+        return ResponseUtil.createSuccessResponse(new GenerateDowithTaskSuccessImageUploadPresignedUrlsResDto(
+                result.publicImageUrls(), result.presignedUrls(), result.method()));
     }
 
     @Operation(summary = "두윗모드 Task 인증", description = "Presigned url을 통해서 업로드한 파일의 public url을 body에 담아 요청합니다.")
