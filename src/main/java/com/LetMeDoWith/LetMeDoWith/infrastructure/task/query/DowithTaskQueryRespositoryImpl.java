@@ -271,6 +271,7 @@ public class DowithTaskQueryRespositoryImpl implements DowithTaskQueryRepository
                         .goe(aggregationStartDateTime)
                         .and(taskStartDateTime.loe(aggregationEndDateTime)))
                 .groupBy(dowithTask.memberId)
+                .having(registeredTaskCount.goe(5L))
                 .fetch();
     }
 }

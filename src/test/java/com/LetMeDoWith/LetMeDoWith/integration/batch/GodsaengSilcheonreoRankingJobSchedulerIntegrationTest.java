@@ -100,6 +100,24 @@ class GodsaengSilcheonreoRankingJobSchedulerIntegrationTest extends AbstractInte
                 LocalDate.of(2026, 3, 12),
                 LocalTime.of(9, 0),
                 LocalDateTime.of(2026, 3, 12, 8, 0));
+        createTask(
+                requestMember.getId(),
+                DowithTaskStatus.SUCCESS,
+                LocalDate.of(2026, 3, 14),
+                LocalTime.of(9, 0),
+                LocalDateTime.of(2026, 3, 14, 8, 0));
+        createTask(
+                requestMember.getId(),
+                DowithTaskStatus.SUCCESS,
+                LocalDate.of(2026, 3, 16),
+                LocalTime.of(9, 0),
+                LocalDateTime.of(2026, 3, 16, 8, 0));
+        createTask(
+                requestMember.getId(),
+                DowithTaskStatus.SUCCESS,
+                LocalDate.of(2026, 3, 18),
+                LocalTime.of(9, 0),
+                LocalDateTime.of(2026, 3, 18, 8, 0));
 
         createTask(
                 memberB.getId(),
@@ -119,6 +137,18 @@ class GodsaengSilcheonreoRankingJobSchedulerIntegrationTest extends AbstractInte
                 LocalDate.of(2026, 3, 7),
                 LocalTime.of(9, 0),
                 LocalDateTime.of(2026, 3, 7, 7, 0));
+        createTask(
+                memberB.getId(),
+                DowithTaskStatus.FAIL,
+                LocalDate.of(2026, 3, 9),
+                LocalTime.of(9, 0),
+                LocalDateTime.of(2026, 3, 9, 7, 0));
+        createTask(
+                memberB.getId(),
+                DowithTaskStatus.FAIL,
+                LocalDate.of(2026, 3, 11),
+                LocalTime.of(9, 0),
+                LocalDateTime.of(2026, 3, 11, 7, 0));
 
         createTask(
                 memberC.getId(),
@@ -126,6 +156,30 @@ class GodsaengSilcheonreoRankingJobSchedulerIntegrationTest extends AbstractInte
                 LocalDate.of(2026, 3, 8),
                 LocalTime.of(9, 0),
                 LocalDateTime.of(2026, 3, 8, 7, 0));
+        createTask(
+                memberC.getId(),
+                DowithTaskStatus.SUCCESS,
+                LocalDate.of(2026, 3, 10),
+                LocalTime.of(9, 0),
+                LocalDateTime.of(2026, 3, 10, 7, 0));
+        createTask(
+                memberC.getId(),
+                DowithTaskStatus.SUCCESS,
+                LocalDate.of(2026, 3, 12),
+                LocalTime.of(9, 0),
+                LocalDateTime.of(2026, 3, 12, 7, 0));
+        createTask(
+                memberC.getId(),
+                DowithTaskStatus.SUCCESS,
+                LocalDate.of(2026, 3, 14),
+                LocalTime.of(9, 0),
+                LocalDateTime.of(2026, 3, 14, 7, 0));
+        createTask(
+                memberC.getId(),
+                DowithTaskStatus.SUCCESS,
+                LocalDate.of(2026, 3, 16),
+                LocalTime.of(9, 0),
+                LocalDateTime.of(2026, 3, 16, 7, 0));
 
         // when
         setFixedClock(LocalDateTime.of(2026, 3, 30, 2, 0));
@@ -162,7 +216,7 @@ class GodsaengSilcheonreoRankingJobSchedulerIntegrationTest extends AbstractInte
         Member memberB = createExtraMember("godsaeng-batch-rate-b");
         Member memberC = createExtraMember("godsaeng-batch-rate-c");
 
-        // requestMember: 성공 1건 / 전체 3건
+        // requestMember: 성공 2건 / 전체 6건
         createTask(
                 requestMember.getId(),
                 DowithTaskStatus.SUCCESS,
@@ -171,7 +225,7 @@ class GodsaengSilcheonreoRankingJobSchedulerIntegrationTest extends AbstractInte
                 LocalDateTime.of(2026, 3, 10, 8, 0));
         createTask(
                 requestMember.getId(),
-                DowithTaskStatus.FAIL,
+                DowithTaskStatus.SUCCESS,
                 LocalDate.of(2026, 3, 11),
                 LocalTime.of(9, 0),
                 LocalDateTime.of(2026, 3, 11, 8, 0));
@@ -181,28 +235,82 @@ class GodsaengSilcheonreoRankingJobSchedulerIntegrationTest extends AbstractInte
                 LocalDate.of(2026, 3, 12),
                 LocalTime.of(9, 0),
                 LocalDateTime.of(2026, 3, 12, 8, 0));
-
-        // memberB: 성공 2건 / 전체 2건
         createTask(
-                memberB.getId(),
-                DowithTaskStatus.SUCCESS,
+                requestMember.getId(),
+                DowithTaskStatus.FAIL,
                 LocalDate.of(2026, 3, 13),
                 LocalTime.of(9, 0),
                 LocalDateTime.of(2026, 3, 13, 8, 0));
         createTask(
-                memberB.getId(),
-                DowithTaskStatus.SUCCESS,
+                requestMember.getId(),
+                DowithTaskStatus.FAIL,
                 LocalDate.of(2026, 3, 14),
                 LocalTime.of(9, 0),
                 LocalDateTime.of(2026, 3, 14, 8, 0));
-
-        // memberC: 성공 1건 / 전체 1건
         createTask(
-                memberC.getId(),
-                DowithTaskStatus.SUCCESS,
+                requestMember.getId(),
+                DowithTaskStatus.FAIL,
                 LocalDate.of(2026, 3, 15),
                 LocalTime.of(9, 0),
                 LocalDateTime.of(2026, 3, 15, 8, 0));
+
+        // memberB: 성공 5건 / 전체 5건
+        createTask(
+                memberB.getId(),
+                DowithTaskStatus.SUCCESS,
+                LocalDate.of(2026, 3, 16),
+                LocalTime.of(9, 0),
+                LocalDateTime.of(2026, 3, 16, 8, 0));
+        createTask(
+                memberB.getId(),
+                DowithTaskStatus.SUCCESS,
+                LocalDate.of(2026, 3, 17),
+                LocalTime.of(9, 0),
+                LocalDateTime.of(2026, 3, 17, 8, 0));
+        createTask(
+                memberB.getId(),
+                DowithTaskStatus.SUCCESS,
+                LocalDate.of(2026, 3, 18),
+                LocalTime.of(9, 0),
+                LocalDateTime.of(2026, 3, 18, 8, 0));
+        createTask(
+                memberB.getId(),
+                DowithTaskStatus.SUCCESS,
+                LocalDate.of(2026, 3, 19),
+                LocalTime.of(9, 0),
+                LocalDateTime.of(2026, 3, 19, 8, 0));
+        createTask(
+                memberB.getId(),
+                DowithTaskStatus.SUCCESS,
+                LocalDate.of(2026, 3, 20),
+                LocalTime.of(9, 0),
+                LocalDateTime.of(2026, 3, 20, 8, 0));
+
+        // memberC: 성공 4건 / 전체 4건 -> 집계 대상 제외
+        createTask(
+                memberC.getId(),
+                DowithTaskStatus.SUCCESS,
+                LocalDate.of(2026, 3, 21),
+                LocalTime.of(9, 0),
+                LocalDateTime.of(2026, 3, 21, 8, 0));
+        createTask(
+                memberC.getId(),
+                DowithTaskStatus.SUCCESS,
+                LocalDate.of(2026, 3, 22),
+                LocalTime.of(9, 0),
+                LocalDateTime.of(2026, 3, 22, 8, 0));
+        createTask(
+                memberC.getId(),
+                DowithTaskStatus.SUCCESS,
+                LocalDate.of(2026, 3, 23),
+                LocalTime.of(9, 0),
+                LocalDateTime.of(2026, 3, 23, 8, 0));
+        createTask(
+                memberC.getId(),
+                DowithTaskStatus.SUCCESS,
+                LocalDate.of(2026, 3, 24),
+                LocalTime.of(9, 0),
+                LocalDateTime.of(2026, 3, 24, 8, 0));
 
         // when
         setFixedClock(LocalDateTime.of(2026, 3, 30, 2, 0));
@@ -217,10 +325,9 @@ class GodsaengSilcheonreoRankingJobSchedulerIntegrationTest extends AbstractInte
                         .sorted(Comparator.comparing(RankingEntry::getCurrentRank))
                         .toList();
 
-        assertThat(entries).hasSize(3);
+        assertThat(entries).hasSize(2);
         assertThat(entries.get(0).getMemberId()).isEqualTo(memberB.getId());
-        assertThat(entries.get(1).getMemberId()).isEqualTo(memberC.getId());
-        assertThat(entries.get(2).getMemberId()).isEqualTo(requestMember.getId());
+        assertThat(entries.get(1).getMemberId()).isEqualTo(requestMember.getId());
     }
 
     @Test
@@ -250,6 +357,24 @@ class GodsaengSilcheonreoRankingJobSchedulerIntegrationTest extends AbstractInte
                 LocalTime.of(9, 0),
                 LocalDateTime.of(2026, 4, 12, 8, 0));
         createTask(
+                requestMember.getId(),
+                DowithTaskStatus.SUCCESS,
+                LocalDate.of(2026, 4, 14),
+                LocalTime.of(9, 0),
+                LocalDateTime.of(2026, 4, 14, 8, 0));
+        createTask(
+                requestMember.getId(),
+                DowithTaskStatus.SUCCESS,
+                LocalDate.of(2026, 4, 16),
+                LocalTime.of(9, 0),
+                LocalDateTime.of(2026, 4, 16, 8, 0));
+        createTask(
+                requestMember.getId(),
+                DowithTaskStatus.SUCCESS,
+                LocalDate.of(2026, 4, 18),
+                LocalTime.of(9, 0),
+                LocalDateTime.of(2026, 4, 18, 8, 0));
+        createTask(
                 memberB.getId(),
                 DowithTaskStatus.SUCCESS,
                 LocalDate.of(2026, 4, 11),
@@ -261,6 +386,24 @@ class GodsaengSilcheonreoRankingJobSchedulerIntegrationTest extends AbstractInte
                 LocalDate.of(2026, 4, 13),
                 LocalTime.of(9, 0),
                 LocalDateTime.of(2026, 4, 13, 8, 0));
+        createTask(
+                memberB.getId(),
+                DowithTaskStatus.FAIL,
+                LocalDate.of(2026, 4, 15),
+                LocalTime.of(9, 0),
+                LocalDateTime.of(2026, 4, 15, 8, 0));
+        createTask(
+                memberB.getId(),
+                DowithTaskStatus.FAIL,
+                LocalDate.of(2026, 4, 17),
+                LocalTime.of(9, 0),
+                LocalDateTime.of(2026, 4, 17, 8, 0));
+        createTask(
+                memberB.getId(),
+                DowithTaskStatus.FAIL,
+                LocalDate.of(2026, 4, 19),
+                LocalTime.of(9, 0),
+                LocalDateTime.of(2026, 4, 19, 8, 0));
 
         // when
         setFixedClock(LocalDateTime.of(2026, 4, 27, 2, 0));
