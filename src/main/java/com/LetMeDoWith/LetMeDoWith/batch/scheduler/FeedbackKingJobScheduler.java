@@ -1,5 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.batch.scheduler;
 
+import com.LetMeDoWith.LetMeDoWith.common.util.DateTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
@@ -15,20 +16,20 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class RankingJobScheduler {
+public class FeedbackKingJobScheduler {
 
     private final JobLauncher jobLauncher;
-    private final Job jaksimSamilerRankingJob;
+    private final Job feedbackKingRankingJob;
 
     /**
      * 랭킹 집계 배치 실행 트리거.
      * 매주 월요일 02:00에 트리거하고, 마지막 월요일에만 잡을 실행한다.
      */
     @Scheduled(cron = "0 0 2 * * MON")
-    public void runJaksimSamilerRankingJob() {
+    public void feedbackKingRankingJob() {
         LocalDateTime executionDateTime = SystemTimeUtil.now();
-        if (!isLastMondayAtTwo(executionDateTime)) {
-            log.info("Skip jaksimSamilerRankingJob. executionDateTime={}", executionDateTime);
+        if (!DateTimeUtil.isLastDayOfWeekAt(executionDateTime, DayOfWeek.MONDAY, 2)) {
+            log.info("Skip monthlyFeedbackKingRankingJob. executionDateTime={}", executionDateTime);
             return;
         }
 
@@ -37,20 +38,10 @@ public class RankingJobScheduler {
                 .addLocalDateTime("executionDateTime", executionDateTime)
                 .toJobParameters();
         try {
-            jobLauncher.run(jaksimSamilerRankingJob, jobParameters);
+            jobLauncher.run(feedbackKingRankingJob, jobParameters);
         } catch (Exception e) {
             e.printStackTrace();
-            log.error("Failed to run jaksimSamilerRankingJob", e);
+            log.error("Failed to run monthlyFeedbackKingRankingJob", e);
         }
-    }
-
-    private boolean isLastMondayAtTwo(LocalDateTime targetDateTime) {
-        if (targetDateTime.getDayOfWeek() != DayOfWeek.MONDAY) {
-            return false;
-        }
-        if (targetDateTime.getHour() != 2) {
-            return false;
-        }
-        return targetDateTime.toLocalDate().plusWeeks(1).getMonth() != targetDateTime.getMonth();
     }
 }

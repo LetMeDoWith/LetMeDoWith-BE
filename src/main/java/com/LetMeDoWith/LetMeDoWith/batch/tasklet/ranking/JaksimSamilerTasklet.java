@@ -26,9 +26,7 @@ import org.springframework.stereotype.Component;
 @StepScope
 @Slf4j
 @RequiredArgsConstructor
-public class AggregateJaksimSamilerRankingTasklet implements Tasklet {
-
-    private static final String JAKSIM_SAMILER_TOPIC_TITLE = "작심삼일러";
+public class JaksimSamilerTasklet implements Tasklet {
 
     private final RankingBatchService rankingBatchService;
     private final DowithTaskQueryRepository dowithTaskQueryRepository;
@@ -38,14 +36,7 @@ public class AggregateJaksimSamilerRankingTasklet implements Tasklet {
 
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) {
-        //        RankingTopic rankingTopic = rankingBatchService
-        //                .getRankingTopic(RankingTopicCode.JAKSIM_SAMILER)
-        //                .orElseThrow(() -> new RuntimeException(
-        //                        "RankingTopicCode " + RankingTopicCode.JAKSIM_SAMILER + "에 해당하는 RankingTopic이 존재하지
-        // 않습니다."));
-        //
-        //        RankingTopicRound currentRound = rankingTopic.getCurrentRound();
-        //        Long previousRound = currentRound == null ? null : currentRound.getRound();
+
         LocalDateTime aggregationStartDateTime = executionDateTime
                 .with(TemporalAdjusters.firstDayOfMonth())
                 .withHour(0)
@@ -59,9 +50,7 @@ public class AggregateJaksimSamilerRankingTasklet implements Tasklet {
                 .withMinute(59)
                 .withSecond(59)
                 .withNano(0);
-        //
-        //        RankingTopicRound rankingTopicRound = rankingBatchService.createNextRound(
-        //                rankingTopic, currentRound, aggregationStartDateTime, aggregationEndDateTime);
+
         List<FailedDowithTaskCountQueryDto> failedTaskCountsByMember = new ArrayList<>();
         try {
             failedTaskCountsByMember = dowithTaskQueryRepository.getFailedTaskCountsByMember(
@@ -70,13 +59,6 @@ public class AggregateJaksimSamilerRankingTasklet implements Tasklet {
             e.printStackTrace();
             throw e;
         }
-
-        //        List<RankingEntry> rankingEntries = rankingBatchService.createRankingEntries(
-        //                rankingTopic.getId(), previousRound, rankingTopicRound,
-        // createCurrentRankMap(failedTaskCountsByMember));
-
-        //        rankingBatchService.saveRankingEntries(rankingEntries);
-        //        rankingBatchService.updateCurrentRound(rankingTopic, rankingTopicRound);
 
         Map<String, Long> currentRankMap = new LinkedHashMap<>();
 

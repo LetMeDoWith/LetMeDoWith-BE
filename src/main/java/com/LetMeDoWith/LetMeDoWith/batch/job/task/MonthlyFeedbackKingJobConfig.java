@@ -1,6 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.batch.job.task;
 
-import com.LetMeDoWith.LetMeDoWith.batch.tasklet.ranking.MonthlyFeedbackKingTasklet;
+import com.LetMeDoWith.LetMeDoWith.batch.tasklet.ranking.FeedbackKingTasklet;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
@@ -20,7 +20,7 @@ public class MonthlyFeedbackKingJobConfig {
 
     private static final String JOB_NAME = "monthlyFeedbackKingJob";
 
-    private final MonthlyFeedbackKingTasklet monthlyFeedbackKingTasklet;
+    private final FeedbackKingTasklet feedbackKingTasklet;
 
     private final JobRepository jobRepository;
     private final PlatformTransactionManager platformTransactionManager;
@@ -35,9 +35,9 @@ public class MonthlyFeedbackKingJobConfig {
 
     @Bean
     @JobScope
-    public Step monthlyFeedbackKingStep(MonthlyFeedbackKingTasklet monthlyFeedbackKingTasklet) {
+    public Step monthlyFeedbackKingStep(FeedbackKingTasklet feedbackKingTasklet) {
         return new StepBuilder("monthlyFeedbackKingStep", jobRepository)
-                .tasklet(monthlyFeedbackKingTasklet, platformTransactionManager)
+                .tasklet(feedbackKingTasklet, platformTransactionManager)
                 .build();
     }
 }

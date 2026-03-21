@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 @StepScope
 @RequiredArgsConstructor
 @Slf4j
-public class MonthlyFeedbackKingTasklet implements Tasklet {
+public class FeedbackKingTasklet implements Tasklet {
 
     private final RankingBatchService rankingBatchService;
 

@@ -2,8 +2,8 @@ package com.LetMeDoWith.LetMeDoWith.integration.batch;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.LetMeDoWith.LetMeDoWith.batch.scheduler.RankingJobScheduler;
-import com.LetMeDoWith.LetMeDoWith.batch.tasklet.ranking.AggregateJaksimSamilerRankingTasklet;
+import com.LetMeDoWith.LetMeDoWith.batch.scheduler.JaksimSamilerRankingJobScheduler;
+import com.LetMeDoWith.LetMeDoWith.batch.tasklet.ranking.JaksimSamilerTasklet;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
 import com.LetMeDoWith.LetMeDoWith.common.enums.ranking.RankingTopicCode;
@@ -30,16 +30,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.support.TransactionTemplate;
 
-class RankingJobSchedulerIntegrationTest extends AbstractIntegrationTest {
+class JaksimSamilerJobSchedulerTest extends AbstractIntegrationTest {
 
     private static final String TOPIC_TITLE = "작심삼일러";
     private final List<Member> extraMembers = new ArrayList<>();
 
     @Autowired
-    private RankingJobScheduler rankingJobScheduler;
+    private JaksimSamilerRankingJobScheduler jaksimSamilerRankingJobScheduler;
 
     @Autowired
-    private AggregateJaksimSamilerRankingTasklet aggregateJaksimSamilerRankingTasklet;
+    private JaksimSamilerTasklet jaksimSamilerTasklet;
 
     @Autowired
     private RankingTopicJpaRepository rankingTopicJpaRepository;
@@ -80,11 +80,8 @@ class RankingJobSchedulerIntegrationTest extends AbstractIntegrationTest {
 
     @Override
     protected void createTestData() {
-        rankingTopic = rankingTopicJpaRepository.save(RankingTopic.builder()
-                .code(RankingTopicCode.JAKSIM_SAMILER)
-                .title(TOPIC_TITLE)
-                .description("test")
-                .build());
+        rankingTopic = rankingTopicJpaRepository.save(
+                RankingTopic.ofActive(RankingTopicCode.JAKSIM_SAMILER, TOPIC_TITLE, "test"));
     }
 
     @Test
@@ -111,7 +108,7 @@ class RankingJobSchedulerIntegrationTest extends AbstractIntegrationTest {
 
         // when
         setFixedClock(LocalDateTime.of(2026, 3, 30, 2, 0));
-        rankingJobScheduler.runJaksimSamilerRankingJob();
+        jaksimSamilerRankingJobScheduler.runJaksimSamilerRankingJob();
 
         // then
         Long currentRoundId = ((Number) entityManager
@@ -146,7 +143,7 @@ class RankingJobSchedulerIntegrationTest extends AbstractIntegrationTest {
         setFixedClock(LocalDateTime.of(2026, 3, 23, 2, 0));
 
         // when
-        rankingJobScheduler.runJaksimSamilerRankingJob();
+        jaksimSamilerRankingJobScheduler.runJaksimSamilerRankingJob();
 
         // then
         assertThat(rankingTopicRoundJpaRepository.findAll()).isEmpty();
@@ -182,7 +179,7 @@ class RankingJobSchedulerIntegrationTest extends AbstractIntegrationTest {
 
         // when
         setFixedClock(LocalDateTime.of(2026, 4, 27, 2, 0));
-        rankingJobScheduler.runJaksimSamilerRankingJob();
+        jaksimSamilerRankingJobScheduler.runJaksimSamilerRankingJob();
 
         // then
         Long currentRoundId = ((Number) entityManager

@@ -1,12 +1,11 @@
 package com.LetMeDoWith.LetMeDoWith.integration.ranking;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
+import com.LetMeDoWith.LetMeDoWith.common.enums.ranking.RankingTopicCode;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
 import com.LetMeDoWith.LetMeDoWith.domain.ranking.model.RankingEntry;
 import com.LetMeDoWith.LetMeDoWith.domain.ranking.model.RankingTopic;
@@ -50,16 +49,10 @@ class RankingIntegrationTest extends AbstractIntegrationTest {
 
     @Override
     protected void createTestData() {
-        RankingTopic mainTopic = RankingTopic.builder()
-                .title("이번 주 독서왕")
-                .description("한 주 동안 가장 많이 독서한 사용자를 확인해요.")
-                .build();
+        RankingTopic mainTopic = RankingTopic.ofActive(RankingTopicCode.FEEDBACK_KING, "피드백 킹", "피드백 킹 랭킹 토픽입니다.");
         entityManager.persist(mainTopic);
 
-        RankingTopic emptyTopic = RankingTopic.builder()
-                .title("이번 주 운동왕")
-                .description("운동 루틴 완료율이 높은 사용자를 확인해요.")
-                .build();
+        RankingTopic emptyTopic = RankingTopic.ofActive(RankingTopicCode.JAKSIM_SAMILER, "작심삼일러", "작심삼일러 랭킹 토픽입니다.");
         entityManager.persist(emptyTopic);
 
         this.mainTopicId = mainTopic.getId();
