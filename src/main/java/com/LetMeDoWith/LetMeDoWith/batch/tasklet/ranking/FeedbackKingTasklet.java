@@ -42,24 +42,9 @@ public class FeedbackKingTasklet implements Tasklet {
         LocalDateTime aggregationEndDateTime =
                 executionDateTime.with(TemporalAdjusters.lastDayOfMonth()).with(LocalTime.MAX);
 
-        // RankingTopic 조회
-        //        RankingTopic rankingTopic =
-        // rankingBatchService.getRankingTopic(RankingTopicCode.FEEDBACK_KING).orElseThrow(() -> new RuntimeException(
-        //                "RankingTopicCode " + RankingTopicCode.FEEDBACK_KING + "에 해당하는 RankingTopic이 존재하지 않습니다."));
-
         // RankingTopic에 맞는 Ranking 기준으로 Feedback 순위 조회
         List<CountSentFeedback> countSentFeedbacks = dowithTaskFeedbackQueryRepository.getCountSentFeedbacks(
                 aggregationStartDateTime.toLocalDate(), aggregationEndDateTime.toLocalDate(), SortDirection.DESC);
-
-        // RankingTopicRound insert
-        //        Optional<RankingTopicRound> opLatestRankingTopicRound =
-        //                rankingRepository.getLatestRankingTopicRound(rankingTopic);
-        //        Long round = 0L;
-        //        if (opLatestRankingTopicRound.isPresent()) {
-        //            round = opLatestRankingTopicRound.get().getRound() + 1;
-        //        }
-        //        RankingTopicRound rankingTopicRound = rankingRepository.save(
-        //                RankingTopicRound.of(rankingTopic, round, aggregationStartDateTime, aggregationEndDateTime));
 
         Map<String, Long> memberIdRankMap = new HashMap<>();
         for (int i = 0; i < countSentFeedbacks.size(); i++) {

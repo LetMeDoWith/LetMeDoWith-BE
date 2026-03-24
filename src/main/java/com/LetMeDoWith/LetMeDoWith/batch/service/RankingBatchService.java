@@ -40,7 +40,8 @@ public class RankingBatchService {
                 rankingTopic, previousRound, aggregationStartDateTime, aggregationEndDateTime));
 
         // 3. RankingEntries 생성
-        Map<String, Long> previousRankMap = createPreviousRankMap(rankingTopic.getId(), previousRound.getRound());
+        Map<String, Long> previousRankMap =
+                createPreviousRankMap(rankingTopic.getId(), previousRound == null ? null : previousRound.getRound());
         List<RankingEntry> rankingEntries = memberIdRankMap.entrySet().stream()
                 .map(entry -> RankingEntry.of(
                         newRound, entry.getKey(), entry.getValue(), previousRankMap.getOrDefault(entry.getKey(), null)))

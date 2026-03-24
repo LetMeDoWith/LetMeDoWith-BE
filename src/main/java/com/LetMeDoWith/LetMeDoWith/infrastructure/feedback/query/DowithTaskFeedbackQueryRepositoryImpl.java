@@ -190,7 +190,7 @@ public class DowithTaskFeedbackQueryRepositoryImpl implements DowithTaskFeedback
                 .where(dowithTaskFeedback.createdAt.between(
                         rangeStartDate.atStartOfDay(), rangeEndDate.plusDays(1).atStartOfDay()))
                 .groupBy(dowithTaskFeedback.senderMemberId)
-                .orderBy(countOrderSpecifier)
+                .orderBy(countOrderSpecifier, dowithTaskFeedback.createdAt.min().asc())
                 .fetch();
     }
 }

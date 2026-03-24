@@ -1,6 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.batch.job.ranking;
 
-import com.LetMeDoWith.LetMeDoWith.batch.tasklet.ranking.JaksimSamilerTasklet;
+import com.LetMeDoWith.LetMeDoWith.batch.tasklet.ranking.FeedbackKingTasklet;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -24,16 +24,16 @@ public class FeedbackKingRankingJobConfig {
     private final PlatformTransactionManager platformTransactionManager;
 
     @Bean
-    public Job feedbackKingRankingJob(Step aggregateJaksimSamilerRankingStep) {
+    public Job feedbackKingRankingJob(Step aggregateFeedbackKingRankingStep) {
         return new JobBuilder(JOB_NAME, jobRepository)
                 .incrementer(new RunIdIncrementer())
-                .start(aggregateJaksimSamilerRankingStep)
+                .start(aggregateFeedbackKingRankingStep)
                 .build();
     }
 
     @Bean
     @JobScope
-    public Step aggregateFeedbackKingRankingStep(JaksimSamilerTasklet tasklet) {
+    public Step aggregateFeedbackKingRankingStep(FeedbackKingTasklet tasklet) {
         return new StepBuilder(STEP_NAME, jobRepository)
                 .tasklet(tasklet, platformTransactionManager)
                 .build();
