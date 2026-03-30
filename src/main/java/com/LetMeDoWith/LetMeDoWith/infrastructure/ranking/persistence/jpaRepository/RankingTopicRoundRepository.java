@@ -5,6 +5,6 @@ import com.LetMeDoWith.LetMeDoWith.domain.ranking.model.RankingTopicRound;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface RankingTopicRoundJpaRepository extends JpaRepository<RankingTopicRound, Long> {
-    Optional<RankingTopicRound> findByRankingTopicAndRound(RankingTopic rankingTopic, Long round);
+public interface RankingTopicRoundRepository extends JpaRepository<RankingTopicRound, Long> {
+    Optional<RankingTopicRound> findFirstByRankingTopicOrderByRoundDesc(RankingTopic rankingTopic);
 }

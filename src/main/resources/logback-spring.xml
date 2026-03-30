@@ -45,4 +45,22 @@
     </root>
 
   </springProfile>
+
+  <springProfile name="test">
+    <appender class="ch.qos.logback.core.ConsoleAppender" name="CONSOLE">
+      <encoder>
+        <pattern>${PATTERN}</pattern>
+      </encoder>
+    </appender>
+
+    <logger additivity="false" level="DEBUG" name="datasource-proxy">
+      <appender-ref ref="CONSOLE"/>
+    </logger>
+
+    <logger name="com.LetMeDoWith" level="INFO"/>
+
+    <root level="INFO">
+      <appender-ref ref="CONSOLE"/>
+    </root>
+  </springProfile>
 </configuration>

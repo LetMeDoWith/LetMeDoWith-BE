@@ -1,16 +1,21 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.feedback.query;
 
+import com.LetMeDoWith.LetMeDoWith.common.enums.common.SortDirection;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.model.QDowithTaskFeedback;
+import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.DowithTaskFeedbackQueryRepository;
+import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.dto.CountSentFeedback;
+import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.dto.DowithTaskFeedbackQueryDto;
+import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.dto.SentFeedbacksQueryDto;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.QMember;
-import com.LetMeDoWith.LetMeDoWith.infrastructure.feedback.query.dto.DowithTaskFeedbackQueryDto;
-import com.LetMeDoWith.LetMeDoWith.infrastructure.feedback.query.dto.SentFeedbacksQueryDto;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -168,5 +173,24 @@ public class DowithTaskFeedbackQueryRepositoryImpl implements DowithTaskFeedback
             result.computeIfAbsent(taskId, key -> new ArrayList<>()).add(dto);
         }
         return result;
+    }
+
+    @Override
+    public List<CountSentFeedback> getCountSentFeedbacks(
+            LocalDate rangeStartDate, LocalDate rangeEndDate, SortDirection sortDirection) {
+
+        OrderSpecifier<Long> countOrderSpecifier = sortDirection.equals(SortDirection.ASC)
+                ? dowithTaskFeedback.count().asc()
+                : dowithTaskFeedback.count().desc();
+
+        return queryFactory
+                .select(Projections.constructor(
+                        CountSentFeedback.class, dowithTaskFeedback.senderMemberId, dowithTaskFeedback.count()))
+                .from(dowithTaskFeedback)
+                .where(dowithTaskFeedback.createdAt.between(
+                        rangeStartDate.atStartOfDay(), rangeEndDate.plusDays(1).atStartOfDay()))
+                .groupBy(dowithTaskFeedback.senderMemberId)
+                .orderBy(countOrderSpecifier, dowithTaskFeedback.createdAt.min().asc())
+                .fetch();
     }
 }

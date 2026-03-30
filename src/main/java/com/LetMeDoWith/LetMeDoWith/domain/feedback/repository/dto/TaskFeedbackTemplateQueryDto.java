@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.infrastructure.feedback.query.dto;
+package com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.dto;
 
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.CountryCode;
 import io.swagger.v3.oas.annotations.media.Schema;
