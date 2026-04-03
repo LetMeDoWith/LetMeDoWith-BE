@@ -77,6 +77,7 @@ public abstract class AbstractIntegrationTest {
     void afterEach() {
         deleteTestData();
         memberJpaRepository.deleteAll();
+        SystemTimeUtil.resetClock();
     }
 
     /**
