@@ -1,6 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.batch.job.ranking;
 
-import com.LetMeDoWith.LetMeDoWith.batch.tasklet.ranking.AggregateGodsaengSilcheonreoRankingTasklet;
+import com.LetMeDoWith.LetMeDoWith.batch.tasklet.ranking.GodsaengSilcheonreoTasklet;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -33,7 +33,7 @@ public class GodsaengSilcheonreoRankingJobConfig {
 
     @Bean
     @JobScope
-    public Step aggregateGodsaengSilcheonreoRankingStep(AggregateGodsaengSilcheonreoRankingTasklet tasklet) {
+    public Step aggregateGodsaengSilcheonreoRankingStep(GodsaengSilcheonreoTasklet tasklet) {
         return new StepBuilder(STEP_NAME, jobRepository)
                 .tasklet(tasklet, platformTransactionManager)
                 .build();

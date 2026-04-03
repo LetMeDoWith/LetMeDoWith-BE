@@ -2,9 +2,10 @@ package com.LetMeDoWith.LetMeDoWith.integration.batch;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.LetMeDoWith.LetMeDoWith.batch.scheduler.RankingJobScheduler;
+import com.LetMeDoWith.LetMeDoWith.batch.scheduler.GodsaengSilcheonreoRankingJobScheduler;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
+import com.LetMeDoWith.LetMeDoWith.common.enums.ranking.RankingTopicCode;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
 import com.LetMeDoWith.LetMeDoWith.domain.ranking.model.RankingEntry;
 import com.LetMeDoWith.LetMeDoWith.domain.ranking.model.RankingTopic;
@@ -33,7 +34,7 @@ class GodsaengSilcheonreoRankingJobSchedulerIntegrationTest extends AbstractInte
     private static final String GODSAENG_TOPIC_TITLE = "갓생실천러";
 
     @Autowired
-    private RankingJobScheduler rankingJobScheduler;
+    private GodsaengSilcheonreoRankingJobScheduler rankingJobScheduler;
 
     @Autowired
     private RankingTopicJpaRepository rankingTopicJpaRepository;
@@ -75,10 +76,8 @@ class GodsaengSilcheonreoRankingJobSchedulerIntegrationTest extends AbstractInte
 
     @Override
     protected void createTestData() {
-        godsaengTopic = rankingTopicJpaRepository.save(RankingTopic.builder()
-                .title(GODSAENG_TOPIC_TITLE)
-                .description("test")
-                .build());
+        godsaengTopic = rankingTopicJpaRepository.save(
+                RankingTopic.ofActive(RankingTopicCode.GODSAENG_SILCHEONREO, GODSAENG_TOPIC_TITLE, "test"));
     }
 
     @Test
@@ -188,7 +187,7 @@ class GodsaengSilcheonreoRankingJobSchedulerIntegrationTest extends AbstractInte
         // then
         entityManager.clear();
         RankingTopicRound currentRound = rankingTopicRoundJpaRepository
-                .findByRankingTopicIdAndRound(godsaengTopic.getId(), 1L)
+                .findByRankingTopicAndRound(godsaengTopic, 1L)
                 .orElseThrow();
 
         assertThat(currentRound.getRound()).isEqualTo(1L);
@@ -412,7 +411,7 @@ class GodsaengSilcheonreoRankingJobSchedulerIntegrationTest extends AbstractInte
         // then
         entityManager.clear();
         RankingTopicRound currentRound = rankingTopicRoundJpaRepository
-                .findByRankingTopicIdAndRound(godsaengTopic.getId(), 2L)
+                .findByRankingTopicAndRound(godsaengTopic, 2L)
                 .orElseThrow();
 
         assertThat(currentRound.getRound()).isEqualTo(2L);

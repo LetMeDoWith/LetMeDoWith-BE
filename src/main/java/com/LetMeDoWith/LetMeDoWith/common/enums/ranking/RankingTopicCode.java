@@ -8,7 +8,8 @@ import lombok.Getter;
 @Getter
 public enum RankingTopicCode implements BaseEnum {
     FEEDBACK_KING("FEEDBACK_KING", "피드백 킹"),
-    JAKSIM_SAMILER("JAKSIM_SAMILER", "작심삼일러");
+    JAKSIM_SAMILER("JAKSIM_SAMILER", "작심삼일러"),
+    GODSAENG_SILCHEONREO("GODSAENG_SILCHEONREO", "갓생실천러");
 
     private final String code;
     private final String description;
