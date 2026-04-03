@@ -22,17 +22,9 @@ import org.springframework.stereotype.Component;
 public class JaksimSamilerRankingJobScheduler {
 
     private final JobLauncher jobLauncher;
-    private final Job jaksimSamilerRankingJob;
-    private final Job godsaengSilcheonreoRankingJob;
 
-    public RankingJobScheduler(
-            JobLauncher jobLauncher,
-            @Qualifier("jaksimSamilerRankingJob") Job jaksimSamilerRankingJob,
-            @Qualifier("godsaengSilcheonreoRankingJob") Job godsaengSilcheonreoRankingJob) {
-        this.jobLauncher = jobLauncher;
-        this.jaksimSamilerRankingJob = jaksimSamilerRankingJob;
-        this.godsaengSilcheonreoRankingJob = godsaengSilcheonreoRankingJob;
-    }
+    @Qualifier("jaksimSamilerRankingJob")
+    private final Job jaksimSamilerRankingJob;
 
     /**
      * 작심삼일러 랭킹 집계 배치 실행 트리거.
@@ -46,40 +38,22 @@ public class JaksimSamilerRankingJobScheduler {
             return;
         }
 
-        runJob(jaksimSamilerRankingJob, "jaksimSamilerRankingJob", executionDateTime);
-    }
-
-    /**
-     * 갓생실천러 랭킹 집계 배치 실행 트리거.
-     * 매주 월요일 02:00에 트리거하고, 마지막 월요일에만 잡을 실행한다.
-     */
-    @Scheduled(cron = "0 0 2 * * MON")
-    public void runGodsaengSilcheonreoRankingJob() {
-        LocalDateTime executionDateTime = SystemTimeUtil.now();
-        if (!isLastMondayAtTwo(executionDateTime)) {
-            log.info("Skip godsaengSilcheonreoRankingJob. executionDateTime={}", executionDateTime);
-            return;
-        }
-
-        runJob(godsaengSilcheonreoRankingJob, "godsaengSilcheonreoRankingJob", executionDateTime);
-    }
-
-    private void runJob(Job job, String jobName, LocalDateTime executionDateTime) {
         JobParameters jobParameters = new JobParametersBuilder()
                 .addLong("run.id", System.currentTimeMillis())
                 .addLocalDateTime("executionDateTime", executionDateTime)
                 .toJobParameters();
         try {
-            JobExecution jobExecution = jobLauncher.run(job, jobParameters);
-            if (jobExecution.getStatus() == BatchStatus.FAILED) {
-                Throwable failureCause = jobExecution.getAllFailureExceptions().stream()
-                        .findFirst()
-                        .orElseGet(() -> new IllegalStateException("Batch execution failed without exception."));
-                throw new IllegalStateException("Failed to run " + jobName, failureCause);
+            JobExecution jobExecution = jobLauncher.run(jaksimSamilerRankingJob, jobParameters);
+            if (jobExecution.getStatus() != BatchStatus.COMPLETED) {
+                log.error(
+                        "jaksimSamilerRankingJob finished with non-completed status. status={}, executionDateTime={}",
+                        jobExecution.getStatus(),
+                        executionDateTime);
+                throw new IllegalStateException("jaksimSamilerRankingJob failed. status=" + jobExecution.getStatus());
             }
         } catch (Exception e) {
-            log.error("Failed to run {}", jobName, e);
-            throw new IllegalStateException("Failed to run " + jobName, e);
+            log.error("Failed to run jaksimSamilerRankingJob", e);
+            throw new IllegalStateException("Failed to run jaksimSamilerRankingJob", e);
         }
     }
 }
