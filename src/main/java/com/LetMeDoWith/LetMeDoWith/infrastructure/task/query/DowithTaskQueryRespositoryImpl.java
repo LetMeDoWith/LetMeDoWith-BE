@@ -6,33 +6,22 @@ import com.LetMeDoWith.LetMeDoWith.domain.member.model.QBadge;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.QMember;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.QMemberBadge;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
-import com.LetMeDoWith.LetMeDoWith.domain.task.model.QDowithTask;
-import com.LetMeDoWith.LetMeDoWith.domain.task.model.QDowithTaskLike;
-import com.LetMeDoWith.LetMeDoWith.domain.task.model.QDowithTaskRoutine;
-import com.LetMeDoWith.LetMeDoWith.domain.task.model.QDowithTaskSuccess;
-import com.LetMeDoWith.LetMeDoWith.domain.task.model.QTaskCategory;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.*;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskQueryRepository;
-import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.DowithTaskDetailQueryDto;
-import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.DowithTaskQueryDto;
-import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.FailedDowithTaskCountQueryDto;
-import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.FeedbackAvailableDowithTasksQueryDto;
-import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.MemberTaskSuccessStatsQueryDto;
-import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.SuccessDowithTaskQueryDto;
+import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.*;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.DateTimeExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -51,6 +40,19 @@ public class DowithTaskQueryRespositoryImpl implements DowithTaskQueryRepository
     private final QMember member = QMember.member;
     private final QMemberBadge memberBadge = QMemberBadge.memberBadge;
     private final QBadge badge = QBadge.badge;
+
+    private static LocalDateTime toLocalDateTime(Object value) {
+        if (value == null) {
+            return null;
+        }
+        if (value instanceof LocalDateTime) {
+            return (LocalDateTime) value;
+        }
+        if (value instanceof Timestamp) {
+            return ((Timestamp) value).toLocalDateTime();
+        }
+        throw new IllegalArgumentException("Unsupported type: " + value.getClass());
+    }
 
     @Override
     public List<DowithTaskQueryDto> getDowithTasks(String memberId, LocalDate startDate, LocalDate endDate) {
@@ -221,16 +223,12 @@ public class DowithTaskQueryRespositoryImpl implements DowithTaskQueryRepository
     @Override
     public List<FailedDowithTaskCountQueryDto> getFailedTaskCountsByMember(
             LocalDateTime aggregationStartDateTime, LocalDateTime aggregationEndDateTime) {
+        // DATE + TIME 조합: MySQL DATETIME 반환. Connector/J 8.0.23+ 에서는 getObject() 시 LocalDateTime 반환.
         DateTimeExpression<LocalDateTime> taskStartDateTime = Expressions.dateTimeTemplate(
                 LocalDateTime.class, "TIMESTAMP({0}, {1})", dowithTask.date, dowithTask.startTime);
 
-        return queryFactory
-                .select(Projections.constructor(
-                        FailedDowithTaskCountQueryDto.class,
-                        dowithTask.memberId,
-                        dowithTask.id.count(),
-                        taskStartDateTime.max(),
-                        dowithTask.createdAt.min()))
+        List<Tuple> rows = queryFactory
+                .select(dowithTask.memberId, dowithTask.id.count(), taskStartDateTime.max(), dowithTask.createdAt.min())
                 .from(dowithTask)
                 .where(dowithTask
                         .status
@@ -245,6 +243,14 @@ public class DowithTaskQueryRespositoryImpl implements DowithTaskQueryRepository
                         dowithTask.createdAt.min().asc(),
                         dowithTask.memberId.asc())
                 .fetch();
+
+        return rows.stream()
+                .map(tuple -> new FailedDowithTaskCountQueryDto(
+                        tuple.get(dowithTask.memberId),
+                        tuple.get(dowithTask.id.count()),
+                        toLocalDateTime(tuple.get(taskStartDateTime.max())),
+                        tuple.get(dowithTask.createdAt.min())))
+                .collect(Collectors.toList());
     }
 
     @Override

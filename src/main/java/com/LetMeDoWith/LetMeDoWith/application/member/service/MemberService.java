@@ -2,9 +2,12 @@ package com.LetMeDoWith.LetMeDoWith.application.member.service;
 
 import com.LetMeDoWith.LetMeDoWith.application.member.dto.CreateSignupCompletedMemberCommand;
 import com.LetMeDoWith.LetMeDoWith.application.member.dto.MemberPersonalInfoVO;
+import com.LetMeDoWith.LetMeDoWith.common.dto.GenerateUploadPresignedUrlsResult;
+import com.LetMeDoWith.LetMeDoWith.common.enums.common.FileNamespace;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.common.service.PresignedUrlService;
 import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.auth.enums.SocialProvider;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
@@ -24,6 +27,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final MemberSettingRepository memberSettingRepository;
+    private final PresignedUrlService presignedUrlService;
 
     /**
      * (Provider, Subject) 의 조합으로 기 가입된 계정이 존재하는지 확인한다.
@@ -140,6 +144,14 @@ public class MemberService {
         memberRepository.save(member);
     }
 
+    /**
+     * 회원의 프로필 정보를 업데이트합니다.
+     *
+     * @param memberId 업데이트 대상 회원 id
+     * @param nickname 변경할 닉네임
+     * @param selfDescription 변경할 자기소개
+     * @param profileImageUrl 변경할 프로필 이미지 URL
+     */
     @Transactional
     public void updateMemberInfo(String memberId, String nickname, String selfDescription, String profileImageUrl) {
         Member member = memberRepository
@@ -149,5 +161,24 @@ public class MemberService {
         member.updateMemberInfo(nickname, selfDescription, profileImageUrl);
 
         memberRepository.save(member);
+    }
+
+    /**
+     * 회원 프로필 이미지 업로드를 위한 presigned URL을 발급합니다.
+     *
+     * <p>실제 업로드 권한 확인은 NORMAL 회원 여부만 검증하고, key 생성 및 URL 발급은 공통 서비스에 위임합니다.
+     *
+     * @param memberId 프로필 이미지를 업로드하려는 회원 id
+     * @param imageFileName 업로드할 프로필 이미지 파일명
+     * @return 프로필 이미지 업로드용 presigned URL 결과
+     */
+    public GenerateUploadPresignedUrlsResult generateMemberProfileImageUploadPresignedUrl(
+            String memberId, String imageFileName) {
+        memberRepository
+                .getMember(memberId, MemberStatus.NORMAL)
+                .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
+
+        return presignedUrlService.generateUploadPresignedUrls(
+                FileNamespace.MEMBER_PROFILE, java.util.List.of(imageFileName));
     }
 }

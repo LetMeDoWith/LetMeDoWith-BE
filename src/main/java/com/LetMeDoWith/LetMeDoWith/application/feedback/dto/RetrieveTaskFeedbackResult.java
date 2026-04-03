@@ -1,8 +1,8 @@
 package com.LetMeDoWith.LetMeDoWith.application.feedback.dto;
 
+import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.dto.DowithTaskFeedbackQueryDto;
+import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.dto.TaskFeedbackTemplateQueryDto;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.CountryCode;
-import com.LetMeDoWith.LetMeDoWith.infrastructure.feedback.query.dto.DowithTaskFeedbackQueryDto;
-import com.LetMeDoWith.LetMeDoWith.infrastructure.feedback.query.dto.TaskFeedbackTemplateQueryDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 

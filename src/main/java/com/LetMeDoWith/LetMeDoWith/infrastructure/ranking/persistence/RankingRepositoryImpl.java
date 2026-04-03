@@ -1,6 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.ranking.persistence;
 
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
+import com.LetMeDoWith.LetMeDoWith.common.enums.ranking.RankingTopicCode;
 import com.LetMeDoWith.LetMeDoWith.domain.ranking.model.RankingEntry;
 import com.LetMeDoWith.LetMeDoWith.domain.ranking.model.RankingTopic;
 import com.LetMeDoWith.LetMeDoWith.domain.ranking.model.RankingTopicRound;
@@ -20,6 +21,11 @@ class RankingRepositoryImpl implements RankingRepository {
     private final RankingTopicJpaRepository rankingTopicJpaRepository;
     private final RankingTopicRoundJpaRepository rankingTopicRoundJpaRepository;
     private final RankingEntryJpaRepository rankingEntryJpaRepository;
+
+    @Override
+    public Optional<RankingTopic> getRankingTopic(RankingTopicCode code, Yn isActive) {
+        return rankingTopicJpaRepository.findByCodeAndIsActive(code, isActive);
+    }
 
     @Override
     public Optional<RankingTopic> getRankingTopic(String title, Yn isActive) {

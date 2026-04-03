@@ -1,8 +1,10 @@
 package com.LetMeDoWith.LetMeDoWith.batch.scheduler;
 
+import com.LetMeDoWith.LetMeDoWith.common.util.DateTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.Job;
@@ -15,8 +17,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 @Slf4j
-public class RankingJobScheduler {
+public class JaksimSamilerRankingJobScheduler {
 
     private final JobLauncher jobLauncher;
     private final Job jaksimSamilerRankingJob;
@@ -38,7 +41,7 @@ public class RankingJobScheduler {
     @Scheduled(cron = "0 0 2 * * MON")
     public void runJaksimSamilerRankingJob() {
         LocalDateTime executionDateTime = SystemTimeUtil.now();
-        if (!isLastMondayAtTwo(executionDateTime)) {
+        if (!DateTimeUtil.isLastDayOfWeekAt(executionDateTime, DayOfWeek.MONDAY, 2)) {
             log.info("Skip jaksimSamilerRankingJob. executionDateTime={}", executionDateTime);
             return;
         }
@@ -78,15 +81,5 @@ public class RankingJobScheduler {
             log.error("Failed to run {}", jobName, e);
             throw new IllegalStateException("Failed to run " + jobName, e);
         }
-    }
-
-    private boolean isLastMondayAtTwo(LocalDateTime targetDateTime) {
-        if (targetDateTime.getDayOfWeek() != DayOfWeek.MONDAY) {
-            return false;
-        }
-        if (targetDateTime.getHour() != 2) {
-            return false;
-        }
-        return targetDateTime.toLocalDate().plusWeeks(1).getMonth() != targetDateTime.getMonth();
     }
 }

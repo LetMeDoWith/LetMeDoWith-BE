@@ -2,8 +2,9 @@ package com.LetMeDoWith.LetMeDoWith.infrastructure.feedback.query;
 
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.model.QTaskFeedbackTemplate;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.model.QTaskFeedbackTemplateMessage;
+import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.TaskFeedbackTemplateQueryRepository;
+import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.dto.TaskFeedbackTemplateQueryDto;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.CountryCode;
-import com.LetMeDoWith.LetMeDoWith.infrastructure.feedback.query.dto.TaskFeedbackTemplateQueryDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;

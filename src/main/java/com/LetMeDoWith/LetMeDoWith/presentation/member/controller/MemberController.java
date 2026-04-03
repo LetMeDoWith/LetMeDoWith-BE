@@ -7,6 +7,7 @@ import com.LetMeDoWith.LetMeDoWith.application.member.service.MemberService;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiErrorResponse;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiErrorResponses;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiSuccessResponse;
+import com.LetMeDoWith.LetMeDoWith.common.dto.GenerateUploadPresignedUrlsResult;
 import com.LetMeDoWith.LetMeDoWith.common.dto.ResponseDto;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
@@ -16,6 +17,8 @@ import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
 import com.LetMeDoWith.LetMeDoWith.presentation.auth.dto.CreateTokenResDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.CheckNicknameReqDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.GenerateMemberProfileImageUploadPresignedUrlReqDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.GenerateMemberProfileImageUploadPresignedUrlResDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.SignupCompleteReqDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.UpdateMemberInfoReqDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.UpdateMemberTermAgreeReqDto;
@@ -152,5 +155,21 @@ public class MemberController {
                 updateMemberInfoReqDto.selfDescription(),
                 updateMemberInfoReqDto.profileImageUrl());
         return ResponseUtil.createSuccessResponse(SuccessResponseStatus.OK);
+    }
+
+    @Operation(summary = "프로필 이미지 upload presigned url 발급")
+    @ApiSuccessResponse(description = "프로필 이미지 업로드용 presigned url 발급 성공")
+    @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")})
+    @PostMapping("/profile-image/upload-presigned-url")
+    public ResponseEntity<ResponseDto<GenerateMemberProfileImageUploadPresignedUrlResDto>>
+            generateMemberProfileImageUploadPresignedUrl(
+                    @RequestBody GenerateMemberProfileImageUploadPresignedUrlReqDto requestBody) {
+        String memberId = AuthUtil.getMemberId();
+
+        GenerateUploadPresignedUrlsResult result =
+                memberService.generateMemberProfileImageUploadPresignedUrl(memberId, requestBody.imageFileName());
+
+        return ResponseUtil.createSuccessResponse(new GenerateMemberProfileImageUploadPresignedUrlResDto(
+                result.publicImageUrls().get(0), result.presignedUrls().get(0), result.method()));
     }
 }

@@ -1,17 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.domain.ranking.model;
 
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -69,10 +59,10 @@ public class RankingTopicRound extends BaseAuditEntity {
 
     public static RankingTopicRound nextOf(
             RankingTopic rankingTopic,
-            RankingTopicRound currentRound,
+            RankingTopicRound previousRound,
             LocalDateTime aggregationStartDateTime,
             LocalDateTime aggregationEndDateTime) {
-        Long nextRound = currentRound == null ? 1L : currentRound.getRound() + 1;
+        Long nextRound = previousRound == null ? 1L : previousRound.getRound() + 1;
         return of(rankingTopic, nextRound, aggregationStartDateTime, aggregationEndDateTime);
     }
 }

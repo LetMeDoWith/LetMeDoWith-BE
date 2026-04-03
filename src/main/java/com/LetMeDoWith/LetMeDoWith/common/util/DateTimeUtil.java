@@ -1,5 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.common.util;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -43,6 +44,16 @@ public class DateTimeUtil {
 
     public static boolean isBefore(LocalTime targetTime, LocalTime standardTime) {
         return targetTime.isBefore(standardTime);
+    }
+
+    public static boolean isLastDayOfWeekAt(LocalDateTime targetDateTime, DayOfWeek dayOfWeek, int hour) {
+        if (targetDateTime.getDayOfWeek() != dayOfWeek) {
+            return false;
+        }
+        if (targetDateTime.toLocalTime().getHour() != hour) {
+            return false;
+        }
+        return targetDateTime.toLocalDate().plusWeeks(1).getMonth() != targetDateTime.getMonth();
     }
 
     public static LocalDate earlier(LocalDate date1, LocalDate date2) {
