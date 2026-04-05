@@ -14,8 +14,8 @@ import com.LetMeDoWith.LetMeDoWith.infrastructure.feedback.persistence.jpaReposi
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.DowithTaskJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.integration.AbstractIntegrationTest;
 import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.CreateDowithFeedbackReqDto;
-import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.RetrieveTaskFeedbacksResDto;
-import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.RetrieveTaskFeedbacksResDto.RetrieveTaskFeedbackDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.RetrieveDowithTaskFeedbacksResDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.RetrieveDowithTaskFeedbacksResDto.RetrieveTaskFeedbackDto;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -100,7 +100,8 @@ public class FeedbackIntegrationTest extends AbstractIntegrationTest {
                 .andExpect(status().isOk())
                 .andReturn();
         String content = retrieveResult.getResponse().getContentAsString();
-        RetrieveTaskFeedbacksResDto result = this.readPagingResponse(content, RetrieveTaskFeedbacksResDto.class);
+        RetrieveDowithTaskFeedbacksResDto result =
+                this.readPagingResponse(content, RetrieveDowithTaskFeedbacksResDto.class);
         assertThat(result.feedbacks()).isNotEmpty();
 
         RetrieveTaskFeedbackDto feedback = result.feedbacks().get(0);
@@ -136,7 +137,8 @@ public class FeedbackIntegrationTest extends AbstractIntegrationTest {
                 .andExpect(status().isOk())
                 .andReturn();
         String content = retrieveResult.getResponse().getContentAsString();
-        RetrieveTaskFeedbacksResDto result = this.readPagingResponse(content, RetrieveTaskFeedbacksResDto.class);
+        RetrieveDowithTaskFeedbacksResDto result =
+                this.readPagingResponse(content, RetrieveDowithTaskFeedbacksResDto.class);
         assertThat(result.feedbacks()).isNotEmpty();
         RetrieveTaskFeedbackDto feedback = result.feedbacks().get(0);
         assertThat(feedback.dowithTaskId()).isEqualTo(dowithTask.getId());
@@ -158,7 +160,8 @@ public class FeedbackIntegrationTest extends AbstractIntegrationTest {
                 .andExpect(status().isOk())
                 .andReturn();
         String content = retrieveResult.getResponse().getContentAsString();
-        RetrieveTaskFeedbacksResDto result = this.readPagingResponse(content, RetrieveTaskFeedbacksResDto.class);
+        RetrieveDowithTaskFeedbacksResDto result =
+                this.readPagingResponse(content, RetrieveDowithTaskFeedbacksResDto.class);
         RetrieveTaskFeedbackDto feedback = result.feedbacks().get(0);
         Long feedbackId = feedback.id();
 
@@ -172,8 +175,8 @@ public class FeedbackIntegrationTest extends AbstractIntegrationTest {
                 .andExpect(status().isOk())
                 .andReturn();
         String afterCheckContent = afterCheckResult.getResponse().getContentAsString();
-        RetrieveTaskFeedbacksResDto afterResult =
-                this.readPagingResponse(afterCheckContent, RetrieveTaskFeedbacksResDto.class);
+        RetrieveDowithTaskFeedbacksResDto afterResult =
+                this.readPagingResponse(afterCheckContent, RetrieveDowithTaskFeedbacksResDto.class);
         RetrieveTaskFeedbackDto afterFeedback = afterResult.feedbacks().get(0);
         assertThat(afterFeedback.isChecked()).isTrue();
     }

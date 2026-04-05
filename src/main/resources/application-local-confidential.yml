@@ -3,31 +3,31 @@ spring:
     activate:
       on-profile: local-confidential
   datasource:
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    username: ${DB_USERNAME:letmedowith}
+    password: ${DB_PASSWORD:letmedowith@admin#2024}
   flyway:
-    user: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    user: ${DB_USERNAME:letmedowith}
+    password: ${DB_PASSWORD:letmedowith@admin#2024}
 
 auth:
   jwt:
-    issuer: ${JWT_ISSUER}
-    secret: ${JWT_SECRET}
-    signup-duration-min: ${JWT_SIGNUP_DURATION_MIN}
-    atk-duration-min: ${JWT_ATK_DURATION_MIN} # 개발 및 테스트 용으로 180분 설정
-    rtk-duration-day: ${JWT_RTK_DURATION_DAY} # 개발 및 테스트 용으로 1일 설정
+    issuer: ${JWT_ISSUER:letMeDoWith.co.kr}
+    secret: ${JWT_SECRET:test-jwt-secret-key-for-local-test-only}
+    signup-duration-min: ${JWT_SIGNUP_DURATION_MIN:10}
+    atk-duration-min: ${JWT_ATK_DURATION_MIN:180} # 개발 및 테스트 용으로 180분 설정
+    rtk-duration-day: ${JWT_RTK_DURATION_DAY:1} # 개발 및 테스트 용으로 1일 설정
 
   oidc:
     aud:
-      kakao: ${KAKAO_CLIENT_ID}
-      google: ${GOOGLE_CLIENT_ID}
-      apple: ${APPLE_CLIENT_ID}
+      kakao: ${KAKAO_CLIENT_ID:test-kakao-client-id}
+      google: ${GOOGLE_CLIENT_ID:test-google-client-id}
+      apple: ${APPLE_CLIENT_ID:test-apple-client-id}
 
 cloud:
   aws:
-    region: ${AWS_REGION}
+    region: ${AWS_REGION:ap-northeast-2}
     credentials:
-      accessKey: ${AWS_ACCESS_KEY_ID}
-      secretKey: ${AWS_SECRET_ACCESS_KEY}
+      accessKey: ${AWS_ACCESS_KEY_ID:test-access-key}
+      secretKey: ${AWS_SECRET_ACCESS_KEY:test-secret-key}
     s3:
-      bucketName: ${AWS_S3_BUCKET_NAME}
+      bucketName: ${AWS_S3_BUCKET_NAME:test-bucket}

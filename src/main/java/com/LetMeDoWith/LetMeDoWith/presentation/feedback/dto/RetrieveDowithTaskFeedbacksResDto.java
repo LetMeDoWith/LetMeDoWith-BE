@@ -8,10 +8,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 
 @Schema(description = "잔소리 목록 조회 응답")
-public record RetrieveTaskFeedbacksResDto(@Schema(description = "잔소리 목록") List<RetrieveTaskFeedbackDto> feedbacks) {
+public record RetrieveDowithTaskFeedbacksResDto(
+        @Schema(description = "잔소리 목록") List<RetrieveTaskFeedbackDto> feedbacks) {
 
-    public static RetrieveTaskFeedbacksResDto from(RetrieveTaskFeedbackResult result) {
-        return new RetrieveTaskFeedbacksResDto(
+    public static RetrieveDowithTaskFeedbacksResDto from(RetrieveTaskFeedbackResult result) {
+        return new RetrieveDowithTaskFeedbacksResDto(
                 result.feedbacks().stream().map(RetrieveTaskFeedbackDto::from).toList());
     }
 

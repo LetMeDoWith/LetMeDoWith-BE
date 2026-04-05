@@ -8,13 +8,14 @@ import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiErrorResponse;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiErrorResponses;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiSuccessResponse;
 import com.LetMeDoWith.LetMeDoWith.common.dto.ResponseDto;
+import com.LetMeDoWith.LetMeDoWith.common.dto.ResponsePageDto;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.CountryCode;
 import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.CreateDowithFeedbackReqDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.RetrieveDowithTaskFeedbacksResDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.RetrieveTaskFeedbackTemplatesResDto;
-import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.RetrieveTaskFeedbacksResDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -45,7 +46,8 @@ public class DowithTaskFeedbackController {
                 description = "잘못된 요청입니다. (예: 잔소리 불가능한 상태에서 생성 요청하는 경우 등)")
     })
     @PostMapping("")
-    public ResponseEntity createDowithFeedback(@Valid @RequestBody CreateDowithFeedbackReqDto req) {
+    public ResponseEntity<ResponseDto<Object>> createDowithFeedback(
+            @Valid @RequestBody CreateDowithFeedbackReqDto req) {
         String memberId = AuthUtil.getMemberId();
 
         createDowithTaskFeedbackService.createDowithFeedback(
@@ -58,32 +60,34 @@ public class DowithTaskFeedbackController {
     @ApiSuccessResponse(description = "Dowith Task 잔소리 조회 성공.")
     @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST)})
     @GetMapping("/dowith-task/{dowithTaskId}")
-    public ResponseEntity retrieveDowithTaskFeedbacks(
+    public ResponseEntity<ResponsePageDto<RetrieveDowithTaskFeedbacksResDto>> retrieveDowithTaskFeedbacks(
             @PathVariable Long dowithTaskId, @ParameterObject Pageable pageable) {
         RetrieveTaskFeedbackResult result =
                 retrieveTaskFeedbackService.retrieveTaskFeedbacksByTaskId(dowithTaskId, pageable);
         return ResponseUtil.createSuccessResponse(
-                RetrieveTaskFeedbacksResDto.from(result), pageable, result.totalCount());
+                RetrieveDowithTaskFeedbacksResDto.from(result), pageable, result.totalCount());
     }
 
     @Operation(summary = "보낸 잔소리 조회", description = "유져가 보낸 잔소리 목록을 조회합니다.")
     @ApiSuccessResponse(description = "보낸 잔소리 목록 조회 성공.")
     @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST)})
     @GetMapping("/send")
-    public ResponseEntity retrieveSendFeedbacks(@ParameterObject Pageable pageable) {
+    public ResponseEntity<ResponsePageDto<RetrieveDowithTaskFeedbacksResDto>> retrieveSendFeedbacks(
+            @ParameterObject Pageable pageable) {
         RetrieveTaskFeedbackResult result = retrieveTaskFeedbackService.retrieveSendFeedbacks(pageable);
         return ResponseUtil.createSuccessResponse(
-                RetrieveTaskFeedbacksResDto.from(result), pageable, result.totalCount());
+                RetrieveDowithTaskFeedbacksResDto.from(result), pageable, result.totalCount());
     }
 
     @Operation(summary = "받은 잔소리 조회", description = "유져가 받은 잔소리 목록을 조회합니다.")
     @ApiSuccessResponse(description = "받은 잔소리 목록 조회 성공")
     @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST)})
     @GetMapping("/received")
-    public ResponseEntity retrieveReceivedFeedbacks(@ParameterObject Pageable pageable) {
+    public ResponseEntity<ResponsePageDto<RetrieveDowithTaskFeedbacksResDto>> retrieveReceivedFeedbacks(
+            @ParameterObject Pageable pageable) {
         RetrieveTaskFeedbackResult result = retrieveTaskFeedbackService.retrieveReceivedFeedbacks(pageable);
         return ResponseUtil.createSuccessResponse(
-                RetrieveTaskFeedbacksResDto.from(result), pageable, result.totalCount());
+                RetrieveDowithTaskFeedbacksResDto.from(result), pageable, result.totalCount());
     }
 
     @Operation(summary = "잔소리 템플릿 목록 조회", description = "국가 코드(CountryCode)에 따라 잔소리 템플릿 목록을 조회합니다.")
@@ -99,7 +103,7 @@ public class DowithTaskFeedbackController {
     @Operation(summary = "두윗 태스크 잔소리 확인", description = "두윗모드 잔소리를 확인합니다.")
     @ApiSuccessResponse(description = "두윗모드 잔소리 확인 성공. 본 API는 확인 성공 여부만 반환합니다.")
     @PatchMapping("/{feedbackId}/check")
-    public ResponseEntity checkDowithTaskFeedback(@PathVariable("feedbackId") Long feedbackId) {
+    public ResponseEntity<ResponseDto<Object>> checkDowithTaskFeedback(@PathVariable("feedbackId") Long feedbackId) {
         updateDowithTaskFeedbackService.checkDowithFeedbacks(List.of(feedbackId));
         return ResponseUtil.createSuccessResponse();
     }

@@ -313,6 +313,7 @@ CREATE TABLE `notification_token`
 CREATE TABLE `ranking_topic`
 (
     `id`               bigint       NOT NULL AUTO_INCREMENT,
+    `code`             varchar(255) NOT NULL,
     `created_at`       datetime(6)           DEFAULT NULL,
     `created_by`       varchar(255)          DEFAULT NULL,
     `updated_at`       datetime(6)           DEFAULT NULL,
