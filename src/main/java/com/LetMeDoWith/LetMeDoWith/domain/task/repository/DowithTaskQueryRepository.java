@@ -4,6 +4,7 @@ import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.DowithTaskDetailQu
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.DowithTaskQueryDto;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.FailedDowithTaskCountQueryDto;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.FeedbackAvailableDowithTasksQueryDto;
+import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.MemberTaskSuccessStatsQueryDto;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.SuccessDowithTaskQueryDto;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -25,5 +26,11 @@ public interface DowithTaskQueryRepository {
     List<FeedbackAvailableDowithTasksQueryDto> getFeedbackAvailableDowithTasks(Long offset, int size);
 
     List<FailedDowithTaskCountQueryDto> getFailedTaskCountsByMember(
+            LocalDateTime aggregationStartDateTime, LocalDateTime aggregationEndDateTime);
+
+    /**
+     * 집계 기간 내 수행 대상이었던 두윗을 기준으로 회원별 성공/전체 건수를 조회한다.
+     */
+    List<MemberTaskSuccessStatsQueryDto> getTaskSuccessStatsByMember(
             LocalDateTime aggregationStartDateTime, LocalDateTime aggregationEndDateTime);
 }

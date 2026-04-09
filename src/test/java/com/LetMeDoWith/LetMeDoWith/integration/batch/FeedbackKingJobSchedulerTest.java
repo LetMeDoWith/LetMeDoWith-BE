@@ -22,7 +22,6 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 public class FeedbackKingJobSchedulerTest extends AbstractIntegrationTest {
 
@@ -43,15 +42,16 @@ public class FeedbackKingJobSchedulerTest extends AbstractIntegrationTest {
     @Autowired
     private FeedbackKingJobScheduler feedbackKingJobScheduler;
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-
     private RankingTopic rankingTopic;
 
     @Override
     protected void deleteTestData() {
         rankingEntryJpaRepository.deleteAll();
         rankingEntryJpaRepository.flush();
+        List<RankingTopic> rankingTopics = rankingTopicJpaRepository.findAll();
+        rankingTopics.forEach(topic -> topic.updateCurrentRound(null));
+        rankingTopicJpaRepository.saveAll(rankingTopics);
+        rankingTopicJpaRepository.flush();
         rankingTopicJpaRepository.deleteAll();
         rankingTopicJpaRepository.flush();
         rankingTopicRoundJpaRepository.deleteAll();
@@ -81,23 +81,21 @@ public class FeedbackKingJobSchedulerTest extends AbstractIntegrationTest {
         this.setFixedClock(LocalDateTime.of(2026, 3, 20, 15, 0));
         Long dowithTaskId = 1L;
         Long taskFeedbackTemplateId = 1L;
-        List<DowithTaskFeedback> dowithTaskFeedbacks = new ArrayList<>();
         for (int i = 1; i <= 50; i++) {
             if (i >= 25 && i <= 30) {
                 // Sender25~30은 25개의 피드백을 보낸 것으로 세팅 - 동점자 처리
                 for (int j = 1; j <= 25; j++) {
                     this.setFixedClock(LocalDateTime.of(2026, 3, 21, 15, 0).plusMinutes(i));
-                    dowithTaskFeedbacks.add(
+                    dowithTaskFeedbackJpaRepository.save(
                             DowithTaskFeedback.of("sender" + i, "receiver" + j, dowithTaskId, taskFeedbackTemplateId));
                 }
             } else {
                 for (int j = 1; j <= i; j++) {
-                    dowithTaskFeedbacks.add(
+                    dowithTaskFeedbackJpaRepository.save(
                             DowithTaskFeedback.of("sender" + i, "receiver" + j, dowithTaskId, taskFeedbackTemplateId));
                 }
             }
         }
-        dowithTaskFeedbackJpaRepository.saveAll(dowithTaskFeedbacks);
 
         /**
          * 테스트 데이터 설명
@@ -133,6 +131,9 @@ public class FeedbackKingJobSchedulerTest extends AbstractIntegrationTest {
         this.setFixedClock(LocalDateTime.of(2026, 3, 30, 2, 0));
         rankingEntryJpaRepository.deleteAll();
         rankingEntryJpaRepository.flush();
+        rankingTopic.updateCurrentRound(null);
+        rankingTopicJpaRepository.save(rankingTopic);
+        rankingTopicJpaRepository.flush();
         rankingTopicRoundJpaRepository.deleteAll();
         rankingTopicRoundJpaRepository.flush();
 

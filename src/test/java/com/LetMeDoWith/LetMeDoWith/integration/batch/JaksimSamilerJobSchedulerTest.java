@@ -3,7 +3,6 @@ package com.LetMeDoWith.LetMeDoWith.integration.batch;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.LetMeDoWith.LetMeDoWith.batch.scheduler.JaksimSamilerRankingJobScheduler;
-import com.LetMeDoWith.LetMeDoWith.batch.tasklet.ranking.JaksimSamilerTasklet;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
 import com.LetMeDoWith.LetMeDoWith.common.enums.ranking.RankingTopicCode;
@@ -37,9 +36,6 @@ class JaksimSamilerJobSchedulerTest extends AbstractIntegrationTest {
 
     @Autowired
     private JaksimSamilerRankingJobScheduler jaksimSamilerRankingJobScheduler;
-
-    @Autowired
-    private JaksimSamilerTasklet jaksimSamilerTasklet;
 
     @Autowired
     private RankingTopicJpaRepository rankingTopicJpaRepository;

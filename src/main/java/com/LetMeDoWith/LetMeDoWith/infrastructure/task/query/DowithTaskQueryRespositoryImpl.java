@@ -14,6 +14,7 @@ import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.DateTimeExpression;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.sql.Timestamp;
@@ -250,5 +251,33 @@ public class DowithTaskQueryRespositoryImpl implements DowithTaskQueryRepository
                         toLocalDateTime(tuple.get(taskStartDateTime.max())),
                         tuple.get(dowithTask.createdAt.min())))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<MemberTaskSuccessStatsQueryDto> getTaskSuccessStatsByMember(
+            LocalDateTime aggregationStartDateTime, LocalDateTime aggregationEndDateTime) {
+        DateTimeExpression<LocalDateTime> taskStartDateTime = Expressions.dateTimeTemplate(
+                LocalDateTime.class, "TIMESTAMP({0}, {1})", dowithTask.date, dowithTask.startTime);
+
+        NumberExpression<Long> registeredTaskCount = dowithTask.id.count();
+        NumberExpression<Long> successTaskCount = Expressions.numberTemplate(
+                Long.class,
+                "sum(case when {0} = {1} then 1 else 0 end)",
+                dowithTask.status.stringValue(),
+                Expressions.constant(DowithTaskStatus.SUCCESS.code));
+
+        return queryFactory
+                .select(Projections.constructor(
+                        MemberTaskSuccessStatsQueryDto.class,
+                        dowithTask.memberId,
+                        registeredTaskCount,
+                        successTaskCount))
+                .from(dowithTask)
+                .where(taskStartDateTime
+                        .goe(aggregationStartDateTime)
+                        .and(taskStartDateTime.loe(aggregationEndDateTime)))
+                .groupBy(dowithTask.memberId)
+                .having(registeredTaskCount.goe(5L))
+                .fetch();
     }
 }
