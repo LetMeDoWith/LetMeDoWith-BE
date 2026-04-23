@@ -1,5 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.feedback.controller;
 
+import com.LetMeDoWith.LetMeDoWith.application.feedback.dto.RetrieveReceivedTaskFeedbackResult;
+import com.LetMeDoWith.LetMeDoWith.application.feedback.dto.RetrieveSentTaskFeedbackResult;
 import com.LetMeDoWith.LetMeDoWith.application.feedback.dto.RetrieveTaskFeedbackResult;
 import com.LetMeDoWith.LetMeDoWith.application.feedback.service.CreateDowithTaskFeedbackService;
 import com.LetMeDoWith.LetMeDoWith.application.feedback.service.RetrieveTaskFeedbackService;
@@ -15,6 +17,8 @@ import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.CountryCode;
 import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.CreateDowithFeedbackReqDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.RetrieveDowithTaskFeedbacksResDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.RetrieveReceivedDowithTaskFeedbacksResDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.RetrieveSentDowithTaskFeedbacksResDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.RetrieveTaskFeedbackTemplatesResDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -68,26 +72,28 @@ public class DowithTaskFeedbackController {
                 RetrieveDowithTaskFeedbacksResDto.from(result), pageable, result.totalCount());
     }
 
-    @Operation(summary = "보낸 잔소리 조회", description = "유져가 보낸 잔소리 목록을 조회합니다.")
+    @Operation(
+            summary = "보낸 잔소리 조회",
+            description = "유저가 보낸 잔소리 목록을 조회합니다. 잔소리 대상 두윗모드 Task의 상태(dowithTaskStatus)를 포함합니다.")
     @ApiSuccessResponse(description = "보낸 잔소리 목록 조회 성공.")
     @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST)})
     @GetMapping("/send")
-    public ResponseEntity<ResponsePageDto<RetrieveDowithTaskFeedbacksResDto>> retrieveSendFeedbacks(
+    public ResponseEntity<ResponsePageDto<RetrieveSentDowithTaskFeedbacksResDto>> retrieveSendFeedbacks(
             @ParameterObject Pageable pageable) {
-        RetrieveTaskFeedbackResult result = retrieveTaskFeedbackService.retrieveSendFeedbacks(pageable);
+        RetrieveSentTaskFeedbackResult result = retrieveTaskFeedbackService.retrieveSendFeedbacks(pageable);
         return ResponseUtil.createSuccessResponse(
-                RetrieveDowithTaskFeedbacksResDto.from(result), pageable, result.totalCount());
+                RetrieveSentDowithTaskFeedbacksResDto.from(result), pageable, result.totalCount());
     }
 
-    @Operation(summary = "받은 잔소리 조회", description = "유져가 받은 잔소리 목록을 조회합니다.")
+    @Operation(summary = "받은 잔소리 조회", description = "유저가 받은 잔소리 목록을 조회합니다. 잔소리를 받은 시각(receivedAt)을 포함합니다.")
     @ApiSuccessResponse(description = "받은 잔소리 목록 조회 성공")
     @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST)})
     @GetMapping("/received")
-    public ResponseEntity<ResponsePageDto<RetrieveDowithTaskFeedbacksResDto>> retrieveReceivedFeedbacks(
+    public ResponseEntity<ResponsePageDto<RetrieveReceivedDowithTaskFeedbacksResDto>> retrieveReceivedFeedbacks(
             @ParameterObject Pageable pageable) {
-        RetrieveTaskFeedbackResult result = retrieveTaskFeedbackService.retrieveReceivedFeedbacks(pageable);
+        RetrieveReceivedTaskFeedbackResult result = retrieveTaskFeedbackService.retrieveReceivedFeedbacks(pageable);
         return ResponseUtil.createSuccessResponse(
-                RetrieveDowithTaskFeedbacksResDto.from(result), pageable, result.totalCount());
+                RetrieveReceivedDowithTaskFeedbacksResDto.from(result), pageable, result.totalCount());
     }
 
     @Operation(summary = "잔소리 템플릿 목록 조회", description = "국가 코드(CountryCode)에 따라 잔소리 템플릿 목록을 조회합니다.")

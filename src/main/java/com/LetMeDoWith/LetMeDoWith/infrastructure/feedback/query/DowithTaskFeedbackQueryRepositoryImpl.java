@@ -6,8 +6,10 @@ import com.LetMeDoWith.LetMeDoWith.domain.feedback.model.QDowithTaskFeedback;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.DowithTaskFeedbackQueryRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.dto.CountSentFeedback;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.dto.DowithTaskFeedbackQueryDto;
+import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.dto.SentDowithTaskFeedbackQueryDto;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.dto.SentFeedbacksQueryDto;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.QMember;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.QDowithTask;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.OrderSpecifier;
@@ -31,6 +33,7 @@ public class DowithTaskFeedbackQueryRepositoryImpl implements DowithTaskFeedback
     private final JPAQueryFactory queryFactory;
     private final QDowithTaskFeedback dowithTaskFeedback = QDowithTaskFeedback.dowithTaskFeedback;
     private final QMember member = QMember.member;
+    private final QDowithTask dowithTask = QDowithTask.dowithTask;
 
     @Override
     public Long countFeedbacksByTaskId(Long taskId) {
@@ -53,13 +56,12 @@ public class DowithTaskFeedbackQueryRepositoryImpl implements DowithTaskFeedback
                         member.nickname,
                         member.profileImageUrl,
                         new CaseBuilder()
-                                .when(dowithTaskFeedback.isChecked.eq(
-                                        com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn.TRUE))
+                                .when(dowithTaskFeedback.isChecked.eq(Yn.TRUE))
                                 .then(true)
-                                .otherwise(false)))
+                                .otherwise(false),
+                        dowithTaskFeedback.createdAt))
                 .from(dowithTaskFeedback)
                 .leftJoin(member)
-                .fetchJoin()
                 .on(dowithTaskFeedback.senderMemberId.eq(member.id))
                 .where(dowithTaskFeedback.dowithTaskId.eq(taskId))
                 .orderBy(dowithTaskFeedback.createdAt.desc())
@@ -78,10 +80,10 @@ public class DowithTaskFeedbackQueryRepositoryImpl implements DowithTaskFeedback
     }
 
     @Override
-    public List<DowithTaskFeedbackQueryDto> getFeedbacksBySenderId(String senderId, Long offset, int size) {
+    public List<SentDowithTaskFeedbackQueryDto> getFeedbacksBySenderId(String senderId, Long offset, int size) {
         return queryFactory
                 .select(Projections.constructor(
-                        DowithTaskFeedbackQueryDto.class,
+                        SentDowithTaskFeedbackQueryDto.class,
                         dowithTaskFeedback.id,
                         dowithTaskFeedback.dowithTaskId,
                         dowithTaskFeedback.taskFeedbackTemplateId,
@@ -91,11 +93,13 @@ public class DowithTaskFeedbackQueryRepositoryImpl implements DowithTaskFeedback
                         new CaseBuilder()
                                 .when(dowithTaskFeedback.isChecked.eq(Yn.TRUE))
                                 .then(true)
-                                .otherwise(false)))
+                                .otherwise(false),
+                        dowithTask.status))
                 .from(dowithTaskFeedback)
                 .leftJoin(member)
-                .fetchJoin()
                 .on(dowithTaskFeedback.senderMemberId.eq(member.id))
+                .leftJoin(dowithTask)
+                .on(dowithTaskFeedback.dowithTaskId.eq(dowithTask.id))
                 .where(dowithTaskFeedback.senderMemberId.eq(senderId))
                 .orderBy(dowithTaskFeedback.createdAt.desc())
                 .offset(offset)
@@ -126,10 +130,10 @@ public class DowithTaskFeedbackQueryRepositoryImpl implements DowithTaskFeedback
                         new CaseBuilder()
                                 .when(dowithTaskFeedback.isChecked.eq(Yn.TRUE))
                                 .then(true)
-                                .otherwise(false)))
+                                .otherwise(false),
+                        dowithTaskFeedback.createdAt))
                 .from(dowithTaskFeedback)
                 .leftJoin(member)
-                .fetchJoin()
                 .on(dowithTaskFeedback.senderMemberId.eq(member.id))
                 .where(dowithTaskFeedback.receiverMemberId.eq(receiverId))
                 .orderBy(dowithTaskFeedback.createdAt.desc())
