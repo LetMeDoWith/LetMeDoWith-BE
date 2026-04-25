@@ -21,6 +21,7 @@ import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.RetrieveReceivedDow
 import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.RetrieveReceivedDowithTaskFeedbacksResDto.ReceivedFeedbackDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.RetrieveSentDowithTaskFeedbacksResDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.RetrieveSentDowithTaskFeedbacksResDto.SentFeedbackDto;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -104,7 +105,7 @@ public class FeedbackIntegrationTest extends AbstractIntegrationTest {
                         MockMvcRequestBuilders.get("/api/v1/feedbacks/dowith-task/" + dowithTask.getId()))
                 .andExpect(status().isOk())
                 .andReturn();
-        String content = retrieveResult.getResponse().getContentAsString();
+        String content = retrieveResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
         RetrieveDowithTaskFeedbacksResDto result =
                 this.readPagingResponse(content, RetrieveDowithTaskFeedbacksResDto.class);
         assertThat(result.feedbacks()).isNotEmpty();
@@ -141,7 +142,7 @@ public class FeedbackIntegrationTest extends AbstractIntegrationTest {
                         MockMvcRequestBuilders.get("/api/v1/feedbacks/dowith-task/" + dowithTask.getId()))
                 .andExpect(status().isOk())
                 .andReturn();
-        String content = retrieveResult.getResponse().getContentAsString();
+        String content = retrieveResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
         RetrieveDowithTaskFeedbacksResDto result =
                 this.readPagingResponse(content, RetrieveDowithTaskFeedbacksResDto.class);
         assertThat(result.feedbacks()).isNotEmpty();
@@ -162,13 +163,15 @@ public class FeedbackIntegrationTest extends AbstractIntegrationTest {
                 .andExpect(status().isOk())
                 .andReturn();
         RetrieveSentDowithTaskFeedbacksResDto result = this.readPagingResponse(
-                retrieveResult.getResponse().getContentAsString(), RetrieveSentDowithTaskFeedbacksResDto.class);
+                retrieveResult.getResponse().getContentAsString(StandardCharsets.UTF_8),
+                RetrieveSentDowithTaskFeedbacksResDto.class);
 
         assertThat(result.feedbacks()).isNotEmpty();
         SentFeedbackDto feedback = result.feedbacks().get(0);
         assertThat(feedback.dowithTaskId()).isEqualTo(dowithTask.getId());
         assertThat(feedback.dowithTaskStatus()).isEqualTo(DowithTaskStatus.WAIT);
         assertThat(feedback.taskFeedbackTemplate().id()).isEqualTo(template1.getId());
+        assertThat(feedback.dowithTaskTitle()).isEqualTo("테스트 태스크");
     }
 
     @Test
@@ -183,13 +186,15 @@ public class FeedbackIntegrationTest extends AbstractIntegrationTest {
                 .andExpect(status().isOk())
                 .andReturn();
         RetrieveReceivedDowithTaskFeedbacksResDto result = this.readPagingResponse(
-                retrieveResult.getResponse().getContentAsString(), RetrieveReceivedDowithTaskFeedbacksResDto.class);
+                retrieveResult.getResponse().getContentAsString(StandardCharsets.UTF_8),
+                RetrieveReceivedDowithTaskFeedbacksResDto.class);
 
         assertThat(result.feedbacks()).isNotEmpty();
         ReceivedFeedbackDto feedback = result.feedbacks().get(0);
         assertThat(feedback.dowithTaskId()).isEqualTo(dowithTask.getId());
         assertThat(feedback.receivedAt()).isNotNull();
         assertThat(feedback.taskFeedbackTemplate().id()).isEqualTo(template1.getId());
+        assertThat(feedback.dowithTaskTitle()).isEqualTo("테스트 태스크");
     }
 
     @Test
@@ -206,7 +211,7 @@ public class FeedbackIntegrationTest extends AbstractIntegrationTest {
                         MockMvcRequestBuilders.get("/api/v1/feedbacks/dowith-task/" + dowithTask.getId()))
                 .andExpect(status().isOk())
                 .andReturn();
-        String content = retrieveResult.getResponse().getContentAsString();
+        String content = retrieveResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
         RetrieveDowithTaskFeedbacksResDto result =
                 this.readPagingResponse(content, RetrieveDowithTaskFeedbacksResDto.class);
         RetrieveTaskFeedbackDto feedback = result.feedbacks().get(0);
@@ -221,7 +226,7 @@ public class FeedbackIntegrationTest extends AbstractIntegrationTest {
                         MockMvcRequestBuilders.get("/api/v1/feedbacks/dowith-task/" + dowithTask.getId()))
                 .andExpect(status().isOk())
                 .andReturn();
-        String afterCheckContent = afterCheckResult.getResponse().getContentAsString();
+        String afterCheckContent = afterCheckResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
         RetrieveDowithTaskFeedbacksResDto afterResult =
                 this.readPagingResponse(afterCheckContent, RetrieveDowithTaskFeedbacksResDto.class);
         RetrieveTaskFeedbackDto afterFeedback = afterResult.feedbacks().get(0);

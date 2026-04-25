@@ -15,6 +15,7 @@ public record RetrieveTaskFeedbackResult(Long totalCount, List<TaskFeedbackDto> 
                 .map(feedback -> new TaskFeedbackDto(
                         feedback.id(),
                         feedback.dowithTaskId(),
+                        feedback.dowithTaskTitle(),
                         feedback.senderId(),
                         feedback.senderNickname(),
                         feedback.senderProfileImageUrl(),
@@ -31,6 +32,7 @@ public record RetrieveTaskFeedbackResult(Long totalCount, List<TaskFeedbackDto> 
     public record TaskFeedbackDto(
             @Schema(description = "잔소리 ID", example = "1") Long id,
             @Schema(description = "두윗모드 Task ID", example = "12345") Long dowithTaskId,
+            @Schema(description = "두윗모드 Task 제목", example = "저녁 러닝하기") String dowithTaskTitle,
             @Schema(description = "잔소리 보낸사람 ID", example = "(TSID)") String senderId,
             @Schema(description = "잔소리 받는사람 닉네임", example = "feedbackSender123") String senderNickname,
             @Schema(description = "잔소리 받는사람 프로필 이미지 URL", example = "https://example.com/profile.jpg")
