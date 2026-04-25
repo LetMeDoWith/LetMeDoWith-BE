@@ -7,6 +7,7 @@ import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.model.TaskFeedbackTemplate;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.model.TaskFeedbackTemplateMessage;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.CountryCode;
+import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.feedback.persistence.jpaRepository.DowithTaskFeedbackJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.feedback.persistence.jpaRepository.TaskFeedbackTemplateJpaRepository;
@@ -16,6 +17,10 @@ import com.LetMeDoWith.LetMeDoWith.integration.AbstractIntegrationTest;
 import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.CreateDowithFeedbackReqDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.RetrieveDowithTaskFeedbacksResDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.RetrieveDowithTaskFeedbacksResDto.RetrieveTaskFeedbackDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.RetrieveReceivedDowithTaskFeedbacksResDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.RetrieveReceivedDowithTaskFeedbacksResDto.ReceivedFeedbackDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.RetrieveSentDowithTaskFeedbacksResDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.RetrieveSentDowithTaskFeedbacksResDto.SentFeedbackDto;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -142,6 +147,48 @@ public class FeedbackIntegrationTest extends AbstractIntegrationTest {
         assertThat(result.feedbacks()).isNotEmpty();
         RetrieveTaskFeedbackDto feedback = result.feedbacks().get(0);
         assertThat(feedback.dowithTaskId()).isEqualTo(dowithTask.getId());
+        assertThat(feedback.taskFeedbackTemplate().id()).isEqualTo(template1.getId());
+    }
+
+    @Test
+    @DisplayName("[SUCCESS] 보낸 잔소리 조회 - dowithTaskStatus 포함")
+    void retrieveSentFeedbacks_success() throws Exception {
+        this.request(MockMvcRequestBuilders.post("/api/v1/feedbacks")
+                        .content(writeRequestBodyAsString(
+                                new CreateDowithFeedbackReqDto(dowithTask.getId(), template1.getId()))))
+                .andExpect(status().isOk());
+
+        MvcResult retrieveResult = this.request(MockMvcRequestBuilders.get("/api/v1/feedbacks/send"))
+                .andExpect(status().isOk())
+                .andReturn();
+        RetrieveSentDowithTaskFeedbacksResDto result = this.readPagingResponse(
+                retrieveResult.getResponse().getContentAsString(), RetrieveSentDowithTaskFeedbacksResDto.class);
+
+        assertThat(result.feedbacks()).isNotEmpty();
+        SentFeedbackDto feedback = result.feedbacks().get(0);
+        assertThat(feedback.dowithTaskId()).isEqualTo(dowithTask.getId());
+        assertThat(feedback.dowithTaskStatus()).isEqualTo(DowithTaskStatus.WAIT);
+        assertThat(feedback.taskFeedbackTemplate().id()).isEqualTo(template1.getId());
+    }
+
+    @Test
+    @DisplayName("[SUCCESS] 받은 잔소리 조회 - receivedAt 포함")
+    void retrieveReceivedFeedbacks_success() throws Exception {
+        this.request(MockMvcRequestBuilders.post("/api/v1/feedbacks")
+                        .content(writeRequestBodyAsString(
+                                new CreateDowithFeedbackReqDto(dowithTask.getId(), template1.getId()))))
+                .andExpect(status().isOk());
+
+        MvcResult retrieveResult = this.request(MockMvcRequestBuilders.get("/api/v1/feedbacks/received"))
+                .andExpect(status().isOk())
+                .andReturn();
+        RetrieveReceivedDowithTaskFeedbacksResDto result = this.readPagingResponse(
+                retrieveResult.getResponse().getContentAsString(), RetrieveReceivedDowithTaskFeedbacksResDto.class);
+
+        assertThat(result.feedbacks()).isNotEmpty();
+        ReceivedFeedbackDto feedback = result.feedbacks().get(0);
+        assertThat(feedback.dowithTaskId()).isEqualTo(dowithTask.getId());
+        assertThat(feedback.receivedAt()).isNotNull();
         assertThat(feedback.taskFeedbackTemplate().id()).isEqualTo(template1.getId());
     }
 

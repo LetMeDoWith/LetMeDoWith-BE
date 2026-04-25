@@ -1,11 +1,14 @@
 package com.LetMeDoWith.LetMeDoWith.application.feedback.service;
 
+import com.LetMeDoWith.LetMeDoWith.application.feedback.dto.RetrieveReceivedTaskFeedbackResult;
+import com.LetMeDoWith.LetMeDoWith.application.feedback.dto.RetrieveSentTaskFeedbackResult;
 import com.LetMeDoWith.LetMeDoWith.application.feedback.dto.RetrieveTaskFeedbackResult;
 import com.LetMeDoWith.LetMeDoWith.application.feedback.dto.RetrieveTaskFeedbackTemplatesResult;
 import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.DowithTaskFeedbackQueryRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.TaskFeedbackTemplateQueryRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.dto.DowithTaskFeedbackQueryDto;
+import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.dto.SentDowithTaskFeedbackQueryDto;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.dto.TaskFeedbackTemplateQueryDto;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.CountryCode;
 import java.util.List;
@@ -42,18 +45,17 @@ public class RetrieveTaskFeedbackService {
      *
      * @return
      */
-    public RetrieveTaskFeedbackResult retrieveSendFeedbacks(Pageable pageable) {
+    public RetrieveSentTaskFeedbackResult retrieveSendFeedbacks(Pageable pageable) {
 
         String memberId = AuthUtil.getMemberId();
-        CountryCode countryCode = CountryCode.KR;
 
         Long totalCount = dowithTaskFeedbackQueryRepository.countFeedbacksBySenderId(memberId);
-        List<DowithTaskFeedbackQueryDto> feedbackDtos = dowithTaskFeedbackQueryRepository.getFeedbacksBySenderId(
+        List<SentDowithTaskFeedbackQueryDto> feedbackDtos = dowithTaskFeedbackQueryRepository.getFeedbacksBySenderId(
                 memberId, pageable.getOffset(), pageable.getPageSize());
         List<TaskFeedbackTemplateQueryDto> feedbackTemplates =
-                taskFeedbackTemplateQueryRepository.getAllTaskFeedbackTemplates(countryCode);
+                taskFeedbackTemplateQueryRepository.getAllTaskFeedbackTemplates(CountryCode.KR);
 
-        return RetrieveTaskFeedbackResult.of(totalCount, feedbackDtos, feedbackTemplates);
+        return RetrieveSentTaskFeedbackResult.of(totalCount, feedbackDtos, feedbackTemplates);
     }
 
     /**
@@ -61,18 +63,17 @@ public class RetrieveTaskFeedbackService {
      *
      * @return
      */
-    public RetrieveTaskFeedbackResult retrieveReceivedFeedbacks(Pageable pageable) {
+    public RetrieveReceivedTaskFeedbackResult retrieveReceivedFeedbacks(Pageable pageable) {
 
         String memberId = AuthUtil.getMemberId();
-        CountryCode countryCode = CountryCode.KR;
 
         Long totalCount = dowithTaskFeedbackQueryRepository.countFeedbacksByReceiverId(memberId);
         List<DowithTaskFeedbackQueryDto> feedbackDtos = dowithTaskFeedbackQueryRepository.getFeedbacksByReceiverId(
                 memberId, pageable.getOffset(), pageable.getPageSize());
         List<TaskFeedbackTemplateQueryDto> feedbackTemplates =
-                taskFeedbackTemplateQueryRepository.getAllTaskFeedbackTemplates(countryCode);
+                taskFeedbackTemplateQueryRepository.getAllTaskFeedbackTemplates(CountryCode.KR);
 
-        return RetrieveTaskFeedbackResult.of(totalCount, feedbackDtos, feedbackTemplates);
+        return RetrieveReceivedTaskFeedbackResult.of(totalCount, feedbackDtos, feedbackTemplates);
     }
 
     /**
