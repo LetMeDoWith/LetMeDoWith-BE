@@ -51,6 +51,7 @@ public class DowithTaskFeedbackQueryRepositoryImpl implements DowithTaskFeedback
                         DowithTaskFeedbackQueryDto.class,
                         dowithTaskFeedback.id,
                         dowithTaskFeedback.dowithTaskId,
+                        dowithTask.title,
                         dowithTaskFeedback.taskFeedbackTemplateId,
                         member.id,
                         member.nickname,
@@ -63,6 +64,8 @@ public class DowithTaskFeedbackQueryRepositoryImpl implements DowithTaskFeedback
                 .from(dowithTaskFeedback)
                 .leftJoin(member)
                 .on(dowithTaskFeedback.senderMemberId.eq(member.id))
+                .leftJoin(dowithTask)
+                .on(dowithTaskFeedback.dowithTaskId.eq(dowithTask.id))
                 .where(dowithTaskFeedback.dowithTaskId.eq(taskId))
                 .orderBy(dowithTaskFeedback.createdAt.desc())
                 .offset(offset)
@@ -86,6 +89,7 @@ public class DowithTaskFeedbackQueryRepositoryImpl implements DowithTaskFeedback
                         SentDowithTaskFeedbackQueryDto.class,
                         dowithTaskFeedback.id,
                         dowithTaskFeedback.dowithTaskId,
+                        dowithTask.title,
                         dowithTaskFeedback.taskFeedbackTemplateId,
                         member.id,
                         member.nickname,
@@ -123,6 +127,7 @@ public class DowithTaskFeedbackQueryRepositoryImpl implements DowithTaskFeedback
                         DowithTaskFeedbackQueryDto.class,
                         dowithTaskFeedback.id,
                         dowithTaskFeedback.dowithTaskId,
+                        dowithTask.title,
                         dowithTaskFeedback.taskFeedbackTemplateId,
                         member.id,
                         member.nickname,
@@ -135,6 +140,8 @@ public class DowithTaskFeedbackQueryRepositoryImpl implements DowithTaskFeedback
                 .from(dowithTaskFeedback)
                 .leftJoin(member)
                 .on(dowithTaskFeedback.senderMemberId.eq(member.id))
+                .leftJoin(dowithTask)
+                .on(dowithTaskFeedback.dowithTaskId.eq(dowithTask.id))
                 .where(dowithTaskFeedback.receiverMemberId.eq(receiverId))
                 .orderBy(dowithTaskFeedback.createdAt.desc())
                 .offset(offset)

@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public record SentDowithTaskFeedbackQueryDto(
         @Schema(description = "잔소리 ID", example = "1") Long id,
         @Schema(description = "두윗모드 Task ID", example = "12345") Long dowithTaskId,
+        @Schema(description = "두윗모드 Task 제목", example = "저녁 러닝하기") String dowithTaskTitle,
         @Schema(description = "잔소리 템플릿 ID", example = "67890") Long taskFeedbackTemplateId,
         @Schema(description = "잔소리 보낸사람 ID", example = "(TSID)") String senderId,
         @Schema(description = "잔소리 보낸사람 닉네임", example = "feedbackSender123") String senderNickname,
