@@ -7,12 +7,14 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
-public record RetrieveFeedbackAvailableDowithTasksResult(List<FeedbackAvailableDowithTaskDto> dowithTasks) {
+public record RetrieveFeedbackAvailableDowithTasksResult(
+        Long totalCount, List<FeedbackAvailableDowithTaskDto> dowithTasks) {
 
-    public static RetrieveFeedbackAvailableDowithTasksResult from(List<FeedbackAvailableDowithTasksQueryDto> dto) {
+    public static RetrieveFeedbackAvailableDowithTasksResult from(
+            Long totalCount, List<FeedbackAvailableDowithTasksQueryDto> dto) {
         List<FeedbackAvailableDowithTaskDto> dowithTasks =
                 dto.stream().map(FeedbackAvailableDowithTaskDto::from).toList();
-        return new RetrieveFeedbackAvailableDowithTasksResult(dowithTasks);
+        return new RetrieveFeedbackAvailableDowithTasksResult(totalCount, dowithTasks);
     }
 
     public record FeedbackAvailableDowithTaskDto(
