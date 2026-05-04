@@ -1,10 +1,8 @@
 package com.LetMeDoWith.LetMeDoWith.domain.feedback.repository;
 
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.SortDirection;
-import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.dto.CountSentFeedback;
-import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.dto.DowithTaskFeedbackQueryDto;
-import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.dto.SentDowithTaskFeedbackQueryDto;
-import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.dto.SentFeedbacksQueryDto;
+import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.dto.*;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -29,4 +27,6 @@ public interface DowithTaskFeedbackQueryRepository {
 
     List<CountSentFeedback> getCountSentFeedbacks(
             LocalDate rangeStartDate, LocalDate rangeEndDate, SortDirection sortDirection);
+
+    List<AggregateTaskFeedbacksQueryDto> aggregateTaskFeedbacks(Long taskId);
 }

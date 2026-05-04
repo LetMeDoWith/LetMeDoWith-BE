@@ -20,12 +20,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @Tag(name = "DowithTask Feedback", description = "잔소리")
@@ -40,10 +41,10 @@ public class DowithTaskFeedbackController {
     @Operation(summary = "두윗 태스크 잔소리 생성", description = "두윗모드 잔소리를 생성합니다.")
     @ApiSuccessResponse(description = "두윗모드 잔소리 생성 성공. 본 API는 생성 성공 여부만 반환합니다.")
     @ApiErrorResponses({
-        @ApiErrorResponse(status = FailResponseStatus.MEMBER_NOT_EXIST, description = "존재하지 않는 회원입니다."),
-        @ApiErrorResponse(
-                status = FailResponseStatus.INVALID_REQUEST,
-                description = "잘못된 요청입니다. (예: 잔소리 불가능한 상태에서 생성 요청하는 경우 등)")
+            @ApiErrorResponse(status = FailResponseStatus.MEMBER_NOT_EXIST, description = "존재하지 않는 회원입니다."),
+            @ApiErrorResponse(
+                    status = FailResponseStatus.INVALID_REQUEST,
+                    description = "잘못된 요청입니다. (예: 잔소리 불가능한 상태에서 생성 요청하는 경우 등)")
     })
     @PostMapping("")
     public ResponseEntity<ResponseDto<Object>> createDowithFeedback(
@@ -64,22 +65,20 @@ public class DowithTaskFeedbackController {
             @Parameter(description = "두윗 Task ID", example = "1") @PathVariable Long dowithTaskId,
             @ParameterObject Pageable pageable) {
         RetrieveTaskFeedbackResult result =
-                retrieveTaskFeedbackService.retrieveTaskFeedbacksByTaskId(dowithTaskId, pageable);
+                retrieveTaskFeedbackService.retrieveTaskReceivedFeedbacks(dowithTaskId, pageable);
         return ResponseUtil.createSuccessResponse(
                 RetrieveDowithTaskFeedbacksResDto.from(result), pageable, result.totalCount());
     }
 
-    //    @Operation(summary = "Dowith Task 잔소리 집계", description = "Dowith Task에 보내진 잔소리를 집계하여 템플릿별로 몇 번씩 사용되었는지
-    // 조회합니다.")
-    //    @ApiSuccessResponse(description = "Dowith Task 잔소리 집계 조회 성공.")
-    //    @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST)})
-    //    @GetMapping("/dowith-task/{dowithTaskId}/aggregate")
-    //    public ResponseEntity<ResponseDto<AggregateDowithTaskFeedbacksResDto>> aggregateDowithTaskFeedbacks(
-    //            @PathVariable Long dowithTaskId) {
-    //        AggregateDowithTaskFeedbacksResDto resDto = AggregateDowithTaskFeedbacksResDto.from(
-    //                retrieveTaskFeedbackService.aggregateTaskFeedbacksByTaskId(dowithTaskId));
-    //        return ResponseUtil.createSuccessResponse(resDto);
-    //    }
+    @Operation(summary = "Dowith Task 잔소리 집계", description = "Dowith Task에 보내진 잔소리를 집계하여 템플릿별로 몇 번씩 사용되었는지 조회합니다.")
+    @ApiSuccessResponse(description = "Dowith Task 잔소리 집계 조회 성공.")
+    @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST)})
+    @GetMapping("/dowith-task/{dowithTaskId}/aggregate")
+    public ResponseEntity<ResponseDto<AggregateDowithTaskFeedbacksResDto>> retrieveTaskFeedbackAggregate(@PathVariable Long dowithTaskId) {
+        AggregateDowithTaskFeedbacksResDto resDto = AggregateDowithTaskFeedbacksResDto.from(
+                retrieveTaskFeedbackService.retrieveTaskReceivedFeedbackAggregate(dowithTaskId));
+        return ResponseUtil.createSuccessResponse(resDto);
+    }
 
     @Operation(
             summary = "보낸 잔소리 조회",

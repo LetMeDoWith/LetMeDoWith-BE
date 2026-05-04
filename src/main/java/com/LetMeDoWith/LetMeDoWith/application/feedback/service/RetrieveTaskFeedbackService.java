@@ -1,9 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.application.feedback.service;
 
-import com.LetMeDoWith.LetMeDoWith.application.feedback.dto.RetrieveReceivedTaskFeedbackResult;
-import com.LetMeDoWith.LetMeDoWith.application.feedback.dto.RetrieveSentTaskFeedbackResult;
-import com.LetMeDoWith.LetMeDoWith.application.feedback.dto.RetrieveTaskFeedbackResult;
-import com.LetMeDoWith.LetMeDoWith.application.feedback.dto.RetrieveTaskFeedbackTemplatesResult;
+import com.LetMeDoWith.LetMeDoWith.application.feedback.dto.*;
 import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.DowithTaskFeedbackQueryRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.TaskFeedbackTemplateQueryRepository;
@@ -11,10 +8,11 @@ import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.dto.DowithTaskFeed
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.dto.SentDowithTaskFeedbackQueryDto;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.dto.TaskFeedbackTemplateQueryDto;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.CountryCode;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +28,7 @@ public class RetrieveTaskFeedbackService {
      * @param pageable
      * @return
      */
-    public RetrieveTaskFeedbackResult retrieveTaskFeedbacksByTaskId(Long dowithTaskId, Pageable pageable) {
+    public RetrieveTaskFeedbackResult retrieveTaskReceivedFeedbacks(Long dowithTaskId, Pageable pageable) {
 
         Long totalCount = dowithTaskFeedbackQueryRepository.countFeedbacksByTaskId(dowithTaskId);
         List<DowithTaskFeedbackQueryDto> feedbackDtos = dowithTaskFeedbackQueryRepository.getFeedbacksByTaskId(
@@ -41,21 +39,13 @@ public class RetrieveTaskFeedbackService {
     }
 
     /**
-     * 보낸 잔소리 목록 조회
+     * Dowith Task 잔소리 집계 조회
+     * 잔소리 템플릿별로 몇 번씩 사용되었는지 조회합니다.
      *
-     * @return
+     * @param dowithTaskId
      */
-    public RetrieveSentTaskFeedbackResult retrieveSendFeedbacks(Pageable pageable) {
-
-        String memberId = AuthUtil.getMemberId();
-
-        Long totalCount = dowithTaskFeedbackQueryRepository.countFeedbacksBySenderId(memberId);
-        List<SentDowithTaskFeedbackQueryDto> feedbackDtos = dowithTaskFeedbackQueryRepository.getFeedbacksBySenderId(
-                memberId, pageable.getOffset(), pageable.getPageSize());
-        List<TaskFeedbackTemplateQueryDto> feedbackTemplates =
-                taskFeedbackTemplateQueryRepository.getAllTaskFeedbackTemplates(CountryCode.KR);
-
-        return RetrieveSentTaskFeedbackResult.of(totalCount, feedbackDtos, feedbackTemplates);
+    public RetrieveTaskFeedbackAggregate retrieveTaskReceivedFeedbackAggregate(Long dowithTaskId) {
+        dowithTaskFeedbackQueryRepository.aggregateTaskFeedbacks(dowithTaskId);
     }
 
     /**
@@ -77,6 +67,24 @@ public class RetrieveTaskFeedbackService {
     }
 
     /**
+     * 보낸 잔소리 목록 조회
+     *
+     * @return
+     */
+    public RetrieveSentTaskFeedbackResult retrieveSendFeedbacks(Pageable pageable) {
+
+        String memberId = AuthUtil.getMemberId();
+
+        Long totalCount = dowithTaskFeedbackQueryRepository.countFeedbacksBySenderId(memberId);
+        List<SentDowithTaskFeedbackQueryDto> feedbackDtos = dowithTaskFeedbackQueryRepository.getFeedbacksBySenderId(
+                memberId, pageable.getOffset(), pageable.getPageSize());
+        List<TaskFeedbackTemplateQueryDto> feedbackTemplates =
+                taskFeedbackTemplateQueryRepository.getAllTaskFeedbackTemplates(CountryCode.KR);
+
+        return RetrieveSentTaskFeedbackResult.of(totalCount, feedbackDtos, feedbackTemplates);
+    }
+
+    /**
      * 잔소리 템플릿 조회
      *
      * @param countryCode
@@ -86,4 +94,6 @@ public class RetrieveTaskFeedbackService {
         return RetrieveTaskFeedbackTemplatesResult.of(
                 taskFeedbackTemplateQueryRepository.getAllTaskFeedbackTemplates(countryCode));
     }
+
+
 }
