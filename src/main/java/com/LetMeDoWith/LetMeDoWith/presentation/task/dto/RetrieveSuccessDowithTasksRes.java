@@ -4,7 +4,9 @@ import com.LetMeDoWith.LetMeDoWith.application.task.dto.RetrieveSuccessDowithTas
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 
-public record RetrieveSuccessDowithTasksRes(List<SuccessDowithTask> successDowithTasks) {
+@Schema(description = "인증 완료된 두윗 Task 목록 조회 응답")
+public record RetrieveSuccessDowithTasksRes(
+        @Schema(description = "성공 인증이 등록된 두윗 Task 목록") List<SuccessDowithTask> successDowithTasks) {
 
     public static RetrieveSuccessDowithTasksRes from(RetrieveSuccessDowithTasksResult result) {
         List<SuccessDowithTask> successDowithTasks = result.successDowithTasks().stream()
@@ -20,6 +22,7 @@ public record RetrieveSuccessDowithTasksRes(List<SuccessDowithTask> successDowit
         return new RetrieveSuccessDowithTasksRes(successDowithTasks);
     }
 
+    @Schema(description = "인증 완료 두윗 Task 한 건")
     public record SuccessDowithTask(
             @Schema(description = "Task ID", example = "1") Long id,
             @Schema(description = "제목", example = "아침 먹기") String title,

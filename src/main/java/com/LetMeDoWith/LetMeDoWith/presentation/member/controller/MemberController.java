@@ -157,7 +157,9 @@ public class MemberController {
         return ResponseUtil.createSuccessResponse(SuccessResponseStatus.OK);
     }
 
-    @Operation(summary = "프로필 이미지 upload presigned url 발급")
+    @Operation(
+            summary = "프로필 이미지 upload presigned url 발급",
+            description = "프로필 이미지 업로드에 사용할 presigned URL과 업로드 후 공개 URL을 발급합니다.")
     @ApiSuccessResponse(description = "프로필 이미지 업로드용 presigned url 발급 성공")
     @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")})
     @PostMapping("/profile-image/upload-presigned-url")

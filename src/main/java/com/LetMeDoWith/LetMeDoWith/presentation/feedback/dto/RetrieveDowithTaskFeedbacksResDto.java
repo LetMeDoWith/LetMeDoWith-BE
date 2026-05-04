@@ -16,6 +16,7 @@ public record RetrieveDowithTaskFeedbacksResDto(
                 result.feedbacks().stream().map(RetrieveTaskFeedbackDto::from).toList());
     }
 
+    @Schema(description = "두윗 Task에 달린 잔소리 한 건")
     public record RetrieveTaskFeedbackDto(
             @Schema(description = "잔소리 ID", example = "1") Long id,
             @Schema(description = "두윗모드 Task ID", example = "12345") Long dowithTaskId,
