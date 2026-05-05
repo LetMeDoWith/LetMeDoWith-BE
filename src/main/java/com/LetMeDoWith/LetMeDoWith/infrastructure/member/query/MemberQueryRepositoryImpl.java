@@ -7,6 +7,7 @@ import com.LetMeDoWith.LetMeDoWith.domain.member.repository.dto.MemberDowithQuer
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.QDowithTask;
 import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -30,12 +31,14 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
                         qMember.nickname,
                         qMember.selfDescription,
                         qMember.profileImageUrl,
-                        qDowithTask.id.count()))
+                        JPAExpressions.select(qDowithTask.id.count())
+                                .from(qDowithTask)
+                                .where(qDowithTask
+                                        .memberId
+                                        .eq(qMember.id)
+                                        .and(qDowithTask.status.eq(DowithTaskStatus.SUCCESS)))))
                 .from(qMember)
-                .leftJoin(qDowithTask)
-                .on(qDowithTask.memberId.eq(qMember.id).and(qDowithTask.status.eq(DowithTaskStatus.SUCCESS)))
                 .where(qMember.id.eq(memberId).and(qMember.status.eq(MemberStatus.NORMAL)))
-                .groupBy(qMember.id)
                 .fetchOne();
 
         return Optional.ofNullable(result);
