@@ -73,9 +73,9 @@ public class DowithTaskFeedbackController {
     @ApiSuccessResponse(description = "Dowith Task 잔소리 집계 조회 성공.")
     @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST)})
     @GetMapping("/dowith-task/{dowithTaskId}/aggregate")
-    public ResponseEntity<ResponseDto<AggregateDowithTaskFeedbacksResDto>> retrieveTaskFeedbackAggregate(
+    public ResponseEntity<ResponseDto<RetrieveTaskFeedbackAggregateResDto>> retrieveTaskFeedbackAggregate(
             @PathVariable Long dowithTaskId) {
-        AggregateDowithTaskFeedbacksResDto resDto = AggregateDowithTaskFeedbacksResDto.from(
+        RetrieveTaskFeedbackAggregateResDto resDto = RetrieveTaskFeedbackAggregateResDto.from(
                 retrieveTaskFeedbackService.retrieveTaskReceivedFeedbackAggregate(dowithTaskId));
         return ResponseUtil.createSuccessResponse(resDto);
     }

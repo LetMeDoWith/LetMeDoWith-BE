@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
+import com.LetMeDoWith.LetMeDoWith.domain.feedback.model.DowithTaskFeedback;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.model.TaskFeedbackTemplate;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.model.TaskFeedbackTemplateMessage;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.CountryCode;
@@ -14,17 +15,16 @@ import com.LetMeDoWith.LetMeDoWith.infrastructure.feedback.persistence.jpaReposi
 import com.LetMeDoWith.LetMeDoWith.infrastructure.feedback.persistence.jpaRepository.TaskFeedbackTemplateMessageJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.DowithTaskJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.integration.AbstractIntegrationTest;
-import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.CreateDowithFeedbackReqDto;
-import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.RetrieveDowithTaskFeedbacksResDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.*;
 import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.RetrieveDowithTaskFeedbacksResDto.RetrieveTaskFeedbackDto;
-import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.RetrieveReceivedDowithTaskFeedbacksResDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.RetrieveReceivedDowithTaskFeedbacksResDto.ReceivedFeedbackDto;
-import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.RetrieveSentDowithTaskFeedbacksResDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.RetrieveSentDowithTaskFeedbacksResDto.SentFeedbackDto;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -231,5 +231,53 @@ public class FeedbackIntegrationTest extends AbstractIntegrationTest {
                 this.readPagingResponse(afterCheckContent, RetrieveDowithTaskFeedbacksResDto.class);
         RetrieveTaskFeedbackDto afterFeedback = afterResult.feedbacks().get(0);
         assertThat(afterFeedback.isChecked()).isTrue();
+    }
+
+    @Test
+    @DisplayName("[SUCCESS] 잔소리 집계 조회")
+    void aggregateTaskFeedbacks_success() throws Exception {
+        // given
+        // Template1 잔소리 10개
+        List<DowithTaskFeedback> feedbacks = new ArrayList<>();
+        int senderIdx = 1;
+        for (int i = 0; i < 10; i++) {
+            feedbacks.add(DowithTaskFeedback.of(
+                    "senderId" + senderIdx, requestMember.getId(), dowithTask.getId(), template1.getId()));
+            senderIdx++;
+        }
+
+        // Template2 잔소리 5개
+        for (int i = 0; i < 5; i++) {
+            feedbacks.add(DowithTaskFeedback.of(
+                    "senderId" + senderIdx, requestMember.getId(), dowithTask.getId(), template2.getId()));
+            senderIdx++;
+        }
+
+        feedbackRepo.saveAll(feedbacks);
+        feedbackRepo.flush();
+
+        // when
+        MvcResult mvcResult = this.request(MockMvcRequestBuilders.get(
+                        "/api/v1/feedbacks/dowith-task/" + dowithTask.getId() + "/aggregate"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        RetrieveTaskFeedbackAggregateResDto result = this.readResponse(
+                mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8),
+                RetrieveTaskFeedbackAggregateResDto.class);
+
+        // then
+        assertThat(result.aggregates()).hasSize(2);
+        RetrieveTaskFeedbackAggregateResDto.AggregateDto aggregate1 = result.aggregates().stream()
+                .filter(agg -> agg.feedbackTemplateId().equals(template1.getId()))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("템플릿1 집계 결과 없음"));
+        assertThat(aggregate1.count()).isEqualTo(10);
+
+        RetrieveTaskFeedbackAggregateResDto.AggregateDto aggregate2 = result.aggregates().stream()
+                .filter(agg -> agg.feedbackTemplateId().equals(template2.getId()))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("템플릿2 집계 결과 없음"));
+        assertThat(aggregate2.count()).isEqualTo(5);
     }
 }
