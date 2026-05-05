@@ -4,6 +4,7 @@ import com.LetMeDoWith.LetMeDoWith.application.feedback.dto.*;
 import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.DowithTaskFeedbackQueryRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.TaskFeedbackTemplateQueryRepository;
+import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.dto.AggregateTaskFeedbacksQueryDto;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.dto.DowithTaskFeedbackQueryDto;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.dto.SentDowithTaskFeedbackQueryDto;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.dto.TaskFeedbackTemplateQueryDto;
@@ -44,8 +45,9 @@ public class RetrieveTaskFeedbackService {
      *
      * @param dowithTaskId
      */
-    public RetrieveTaskFeedbackAggregate retrieveTaskReceivedFeedbackAggregate(Long dowithTaskId) {
-        dowithTaskFeedbackQueryRepository.aggregateTaskFeedbacks(dowithTaskId);
+    public RetrieveTaskFeedbackAggregateResult retrieveTaskReceivedFeedbackAggregate(Long dowithTaskId) {
+        List<AggregateTaskFeedbacksQueryDto> results = dowithTaskFeedbackQueryRepository.aggregateTaskFeedbacks(dowithTaskId);
+        return RetrieveTaskFeedbackAggregateResult.from(results);
     }
 
     /**
