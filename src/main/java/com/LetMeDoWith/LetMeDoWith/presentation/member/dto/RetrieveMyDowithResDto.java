@@ -7,7 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public record RetrieveMyDowithResDto(
         @Schema(description = "회원 ID") String memberId,
         @Schema(description = "닉네임") String nickname,
-        @Schema(description = "상태 메세지") String description,
+        @Schema(description = "상태 메세지") String selfDescription,
         @Schema(description = "프로필 이미지 URL") String profileImageUrl,
         @Schema(description = "전체 기간 성공한 두윗 갯수") Long successDowithCount) {
 
