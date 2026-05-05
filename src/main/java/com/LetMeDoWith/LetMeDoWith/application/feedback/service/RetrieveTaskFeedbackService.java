@@ -9,11 +9,10 @@ import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.dto.DowithTaskFeed
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.dto.SentDowithTaskFeedbackQueryDto;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.dto.TaskFeedbackTemplateQueryDto;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.CountryCode;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -46,7 +45,8 @@ public class RetrieveTaskFeedbackService {
      * @param dowithTaskId
      */
     public RetrieveTaskFeedbackAggregateResult retrieveTaskReceivedFeedbackAggregate(Long dowithTaskId) {
-        List<AggregateTaskFeedbacksQueryDto> results = dowithTaskFeedbackQueryRepository.aggregateTaskFeedbacks(dowithTaskId);
+        List<AggregateTaskFeedbacksQueryDto> results =
+                dowithTaskFeedbackQueryRepository.aggregateTaskFeedbacks(dowithTaskId);
         return RetrieveTaskFeedbackAggregateResult.from(results);
     }
 
@@ -96,6 +96,4 @@ public class RetrieveTaskFeedbackService {
         return RetrieveTaskFeedbackTemplatesResult.of(
                 taskFeedbackTemplateQueryRepository.getAllTaskFeedbackTemplates(countryCode));
     }
-
-
 }

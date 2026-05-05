@@ -3,7 +3,6 @@ package com.LetMeDoWith.LetMeDoWith.application.feedback.dto;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.dto.DowithTaskFeedbackQueryDto;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.dto.TaskFeedbackTemplateQueryDto;
 import io.swagger.v3.oas.annotations.media.Schema;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -38,9 +37,8 @@ public record RetrieveReceivedTaskFeedbackResult(Long totalCount, List<ReceivedT
             @Schema(description = "잔소리 보낸사람 ID", example = "(TSID)") String senderId,
             @Schema(description = "잔소리 보낸사람 닉네임", example = "feedbackSender123") String senderNickname,
             @Schema(description = "잔소리 보낸사람 프로필 이미지 URL", example = "https://example.com/profile.jpg")
-            String senderProfileImageUrl,
+                    String senderProfileImageUrl,
             @Schema(description = "잔소리 확인여부", example = "false") Boolean isChecked,
             @Schema(description = "잔소리 받은 시각") LocalDateTime receivedAt,
-            @Schema(description = "잔소리 템플릿") TaskFeedbackTemplateDto taskFeedbackTemplate) {
-    }
+            @Schema(description = "잔소리 템플릿") TaskFeedbackTemplateDto taskFeedbackTemplate) {}
 }

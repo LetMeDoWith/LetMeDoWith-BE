@@ -20,13 +20,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @Tag(name = "DowithTask Feedback", description = "잔소리")
@@ -41,10 +40,10 @@ public class DowithTaskFeedbackController {
     @Operation(summary = "두윗 태스크 잔소리 생성", description = "두윗모드 잔소리를 생성합니다.")
     @ApiSuccessResponse(description = "두윗모드 잔소리 생성 성공. 본 API는 생성 성공 여부만 반환합니다.")
     @ApiErrorResponses({
-            @ApiErrorResponse(status = FailResponseStatus.MEMBER_NOT_EXIST, description = "존재하지 않는 회원입니다."),
-            @ApiErrorResponse(
-                    status = FailResponseStatus.INVALID_REQUEST,
-                    description = "잘못된 요청입니다. (예: 잔소리 불가능한 상태에서 생성 요청하는 경우 등)")
+        @ApiErrorResponse(status = FailResponseStatus.MEMBER_NOT_EXIST, description = "존재하지 않는 회원입니다."),
+        @ApiErrorResponse(
+                status = FailResponseStatus.INVALID_REQUEST,
+                description = "잘못된 요청입니다. (예: 잔소리 불가능한 상태에서 생성 요청하는 경우 등)")
     })
     @PostMapping("")
     public ResponseEntity<ResponseDto<Object>> createDowithFeedback(
@@ -74,7 +73,8 @@ public class DowithTaskFeedbackController {
     @ApiSuccessResponse(description = "Dowith Task 잔소리 집계 조회 성공.")
     @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST)})
     @GetMapping("/dowith-task/{dowithTaskId}/aggregate")
-    public ResponseEntity<ResponseDto<AggregateDowithTaskFeedbacksResDto>> retrieveTaskFeedbackAggregate(@PathVariable Long dowithTaskId) {
+    public ResponseEntity<ResponseDto<AggregateDowithTaskFeedbacksResDto>> retrieveTaskFeedbackAggregate(
+            @PathVariable Long dowithTaskId) {
         AggregateDowithTaskFeedbacksResDto resDto = AggregateDowithTaskFeedbacksResDto.from(
                 retrieveTaskFeedbackService.retrieveTaskReceivedFeedbackAggregate(dowithTaskId));
         return ResponseUtil.createSuccessResponse(resDto);
