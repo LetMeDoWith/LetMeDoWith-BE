@@ -45,8 +45,12 @@ public class CreateDowithTaskFeedbackService {
         long feedbackCount = dowithTaskFeedbackRepository.countBySenderAndTask(dowithTaskId, senderId);
         Optional<DowithTaskFeedback> latestFeedback = dowithTaskFeedbackRepository.getLatest(dowithTaskId, senderId);
 
-        if (!feedbackCreationPolicy.isAvailable(feedbackCount, latestFeedback, SystemTimeUtil.now())
-                || !dowithTask.isFeedbackAvailable()) {
+        if (!dowithTask.isFeedbackAvailable()) {
+            throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
+        }
+
+        if (!feedbackCreationPolicy.isAvailable(feedbackCount, latestFeedback, SystemTimeUtil.now())) {
+            // TODO: 잔소리 재생성 제한에 걸린 경우 응답 코드 결정 후 적절한 FailResponseStatus로 교체
             throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
         }
 
