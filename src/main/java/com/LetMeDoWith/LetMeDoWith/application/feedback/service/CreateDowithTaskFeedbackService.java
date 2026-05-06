@@ -5,7 +5,7 @@ import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.model.DowithTaskFeedback;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.DowithTaskFeedbackRepository;
-import com.LetMeDoWith.LetMeDoWith.domain.feedback.service.FeedbackCreationPolicy;
+import com.LetMeDoWith.LetMeDoWith.domain.feedback.service.FeedbackResendPolicy;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
 import com.LetMeDoWith.LetMeDoWith.domain.member.repository.MemberRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
@@ -22,7 +22,7 @@ public class CreateDowithTaskFeedbackService {
     private final DowithTaskFeedbackRepository dowithTaskFeedbackRepository;
     private final MemberRepository memberRepository;
     private final DowithTaskRepository dowithTaskRepository;
-    private final FeedbackCreationPolicy feedbackCreationPolicy;
+    private final FeedbackResendPolicy feedbackResendPolicy;
 
     /**
      * DowithTask에 대한 잔소리를 생성한다.
@@ -49,7 +49,7 @@ public class CreateDowithTaskFeedbackService {
             throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
         }
 
-        if (!feedbackCreationPolicy.isAvailable(feedbackCount, latestFeedback, SystemTimeUtil.now())) {
+        if (!feedbackResendPolicy.canResend(feedbackCount, latestFeedback, SystemTimeUtil.now())) {
             // TODO: 잔소리 재생성 제한에 걸린 경우 응답 코드 결정 후 적절한 FailResponseStatus로 교체
             throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
         }
