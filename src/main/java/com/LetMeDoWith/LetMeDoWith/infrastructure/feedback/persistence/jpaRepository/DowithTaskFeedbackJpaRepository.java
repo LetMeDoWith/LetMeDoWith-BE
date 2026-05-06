@@ -10,6 +10,8 @@ public interface DowithTaskFeedbackJpaRepository extends JpaRepository<DowithTas
     Optional<DowithTaskFeedback> findTopByDowithTaskIdAndSenderMemberIdOrderByCreatedAtDesc(
             Long dowithTaskId, String senderMemberId);
 
+    long countByDowithTaskIdAndSenderMemberId(Long dowithTaskId, String senderMemberId);
+
     List<DowithTaskFeedback> findAllByDowithTaskId(Long dowithTaskId);
 
     List<DowithTaskFeedback> findAllByDowithTaskIdInAndReceiverMemberId(

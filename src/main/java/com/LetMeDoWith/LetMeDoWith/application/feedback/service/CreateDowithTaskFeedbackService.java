@@ -42,12 +42,11 @@ public class CreateDowithTaskFeedbackService {
                 .getDowithTask(dowithTaskId)
                 .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
 
+        long feedbackCount = dowithTaskFeedbackRepository.countBySenderAndTask(dowithTaskId, senderId);
         Optional<DowithTaskFeedback> latestFeedback = dowithTaskFeedbackRepository.getLatest(dowithTaskId, senderId);
 
-        if (!feedbackCreationPolicy.isAdditionalFeedbackAvailable(latestFeedback, SystemTimeUtil.now())
+        if (!feedbackCreationPolicy.isAvailable(feedbackCount, latestFeedback, SystemTimeUtil.now())
                 || !dowithTask.isFeedbackAvailable()) {
-
-            // 피드백 생성 조건을 만족하지 못하는 경우
             throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
         }
 

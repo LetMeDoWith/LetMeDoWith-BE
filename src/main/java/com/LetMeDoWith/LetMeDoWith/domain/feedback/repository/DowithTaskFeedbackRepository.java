@@ -10,6 +10,8 @@ public interface DowithTaskFeedbackRepository {
 
     Optional<DowithTaskFeedback> getLatest(Long dowithTaskId, String senderId);
 
+    long countBySenderAndTask(Long dowithTaskId, String senderId);
+
     List<DowithTaskFeedback> getFeedbacks(List<Long> dowithTaskFeedbackIds);
 
     List<DowithTaskFeedback> getFeedbacks(List<Long> dowithTaskIds, String receiverId);

@@ -117,17 +117,38 @@ public class FeedbackIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @DisplayName("[FAIL] 잔소리 생성 - 1시간 경과 후 시도")
-    void createFeedback_fail_timeOver() throws Exception {
+    @DisplayName("[SUCCESS] 잔소리 생성 - 5회 이내 연속 요청 허용")
+    void createFeedback_success_withinFreeThreshold() throws Exception {
         CreateDowithFeedbackReqDto req = new CreateDowithFeedbackReqDto(dowithTask.getId(), template1.getId());
-        ResultActions resultActions =
-                this.request(MockMvcRequestBuilders.post("/api/v1/feedbacks").content(writeRequestBodyAsString(req)));
+        for (int i = 0; i < 5; i++) {
+            this.request(MockMvcRequestBuilders.post("/api/v1/feedbacks").content(writeRequestBodyAsString(req)))
+                    .andExpect(status().isOk());
+        }
+    }
 
-        setFixedClock(FIXED_CLOCK_TIME.plusMinutes(1));
+    @Test
+    @DisplayName("[FAIL] 잔소리 생성 - 5회 초과 후 1분 이내 재시도")
+    void createFeedback_fail_withinOneMinuteAfterThreshold() throws Exception {
+        CreateDowithFeedbackReqDto req = new CreateDowithFeedbackReqDto(dowithTask.getId(), template1.getId());
+        for (int i = 0; i < 5; i++) {
+            this.request(MockMvcRequestBuilders.post("/api/v1/feedbacks").content(writeRequestBodyAsString(req)))
+                    .andExpect(status().isOk());
+        }
+        this.request(MockMvcRequestBuilders.post("/api/v1/feedbacks").content(writeRequestBodyAsString(req)))
+                .andExpect(status().isBadRequest());
+    }
 
-        ResultActions resultActionsAfter =
-                this.request(MockMvcRequestBuilders.post("/api/v1/feedbacks").content(writeRequestBodyAsString(req)));
-        resultActionsAfter.andExpect(status().isBadRequest());
+    @Test
+    @DisplayName("[SUCCESS] 잔소리 생성 - 5회 초과 후 1분 경과 시 허용")
+    void createFeedback_success_afterOneMinuteFromThreshold() throws Exception {
+        CreateDowithFeedbackReqDto req = new CreateDowithFeedbackReqDto(dowithTask.getId(), template1.getId());
+        for (int i = 0; i < 5; i++) {
+            this.request(MockMvcRequestBuilders.post("/api/v1/feedbacks").content(writeRequestBodyAsString(req)))
+                    .andExpect(status().isOk());
+        }
+        setFixedClock(FIXED_CLOCK_TIME.plusMinutes(1).plusSeconds(1));
+        this.request(MockMvcRequestBuilders.post("/api/v1/feedbacks").content(writeRequestBodyAsString(req)))
+                .andExpect(status().isOk());
     }
 
     @Test
