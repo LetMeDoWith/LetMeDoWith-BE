@@ -25,6 +25,8 @@ public interface DowithTaskQueryRepository {
 
     List<FeedbackAvailableDowithTasksQueryDto> getFeedbackAvailableDowithTasks(Long offset, int size);
 
+    Long countFeedbackAvailableDowithTasks();
+
     List<FailedDowithTaskCountQueryDto> getFailedTaskCountsByMember(
             LocalDateTime aggregationStartDateTime, LocalDateTime aggregationEndDateTime);
 
