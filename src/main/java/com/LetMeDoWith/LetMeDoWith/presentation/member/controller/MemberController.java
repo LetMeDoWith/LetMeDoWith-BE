@@ -19,6 +19,7 @@ import com.LetMeDoWith.LetMeDoWith.presentation.auth.dto.CreateTokenResDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.CheckNicknameReqDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.GenerateMemberProfileImageUploadPresignedUrlReqDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.GenerateMemberProfileImageUploadPresignedUrlResDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.RetrieveMyDowithResDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.SignupCompleteReqDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.UpdateMemberInfoReqDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.UpdateMemberTermAgreeReqDto;
@@ -27,7 +28,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -171,5 +174,24 @@ public class MemberController {
 
         return ResponseUtil.createSuccessResponse(new GenerateMemberProfileImageUploadPresignedUrlResDto(
                 result.publicImageUrls().get(0), result.presignedUrls().get(0), result.method()));
+    }
+
+    @Operation(summary = "내 마이두윗 정보 조회", description = "내 기본 정보와 전체 기간 성공한 두윗 갯수를 조회합니다.")
+    @ApiSuccessResponse(description = "내 마이두윗 정보 조회 성공")
+    @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.MEMBER_NOT_EXIST)})
+    @GetMapping("/me/my-dowith")
+    public ResponseEntity<ResponseDto<RetrieveMyDowithResDto>> retrieveMyDowithInfo() {
+        String memberId = AuthUtil.getMemberId();
+        return ResponseUtil.createSuccessResponse(
+                RetrieveMyDowithResDto.from(memberService.retrieveMyDowithInfo(memberId)));
+    }
+
+    @Operation(summary = "특정 멤버의 마이두윗 정보 조회", description = "특정 멤버의 기본 정보와 전체 기간 성공한 두윗 갯수를 조회합니다.")
+    @ApiSuccessResponse(description = "마이두윗 정보 조회 성공")
+    @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.MEMBER_NOT_EXIST)})
+    @GetMapping("/{memberId}/my-dowith")
+    public ResponseEntity<ResponseDto<RetrieveMyDowithResDto>> retrieveMemberDowithInfo(@PathVariable String memberId) {
+        return ResponseUtil.createSuccessResponse(
+                RetrieveMyDowithResDto.from(memberService.retrieveMyDowithInfo(memberId)));
     }
 }

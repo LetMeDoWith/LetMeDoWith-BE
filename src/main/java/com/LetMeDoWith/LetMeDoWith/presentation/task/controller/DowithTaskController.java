@@ -112,7 +112,7 @@ public class DowithTaskController {
         @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우"),
         //        @ApiErrorResponse(
         //                status = FailResponseStatus.DOWITH_TASK_CREATE_COUNT_EXCEED,
-        //                description = "일일 두윗모드 Task 등록 가능 개수를 초과한 경우")
+        //                selfDescription = "일일 두윗모드 Task 등록 가능 개수를 초과한 경우")
     })
     @PutMapping("/{dowithTaskId}")
     public ResponseEntity<ResponseDto<Object>> updateDowithTask(
@@ -132,7 +132,7 @@ public class DowithTaskController {
         @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우"),
         //        @ApiErrorResponse(
         //                status = FailResponseStatus.DOWITH_TASK_CREATE_COUNT_EXCEED,
-        //                description = "일일 두윗모드 Task 등록 가능 개수를 초과한 경우")
+        //                selfDescription = "일일 두윗모드 Task 등록 가능 개수를 초과한 경우")
     })
     @PutMapping("/{dowithTaskId}/with-routine")
     public ResponseEntity<ResponseDto<Object>> updateDowithTaskWithRoutine(
