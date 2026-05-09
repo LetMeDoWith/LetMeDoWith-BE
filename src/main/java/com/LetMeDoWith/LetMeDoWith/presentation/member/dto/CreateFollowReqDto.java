@@ -6,4 +6,5 @@ import lombok.Builder;
 @Schema(description = "팔로우 등록 요청")
 @Builder
 public record CreateFollowReqDto(
-        @Schema(description = "팔로우할 대상 회원 ID (TSID)", example = "01234567890123456789012345") String followMemberId) {}
+        @Schema(description = "팔로우할 대상 회원 ID (TSID)", example = "01J0C7R5Z5X1Y") String followMemberId) {
+}
