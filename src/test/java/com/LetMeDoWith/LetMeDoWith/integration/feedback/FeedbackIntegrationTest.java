@@ -262,19 +262,19 @@ public class FeedbackIntegrationTest extends AbstractIntegrationTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        RetrieveTaskFeedbackAggregateResDto result = this.readResponse(
+        RetrieveTaskFeedbackAggregateCountResDto result = this.readResponse(
                 mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8),
-                RetrieveTaskFeedbackAggregateResDto.class);
+                RetrieveTaskFeedbackAggregateCountResDto.class);
 
         // then
         assertThat(result.aggregates()).hasSize(2);
-        RetrieveTaskFeedbackAggregateResDto.AggregateDto aggregate1 = result.aggregates().stream()
+        RetrieveTaskFeedbackAggregateCountResDto.AggregateDto aggregate1 = result.aggregates().stream()
                 .filter(agg -> agg.feedbackTemplateId().equals(template1.getId()))
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("템플릿1 집계 결과 없음"));
         assertThat(aggregate1.count()).isEqualTo(10);
 
-        RetrieveTaskFeedbackAggregateResDto.AggregateDto aggregate2 = result.aggregates().stream()
+        RetrieveTaskFeedbackAggregateCountResDto.AggregateDto aggregate2 = result.aggregates().stream()
                 .filter(agg -> agg.feedbackTemplateId().equals(template2.getId()))
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("템플릿2 집계 결과 없음"));

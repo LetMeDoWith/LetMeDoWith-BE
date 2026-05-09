@@ -44,10 +44,10 @@ public class RetrieveTaskFeedbackService {
      *
      * @param dowithTaskId
      */
-    public RetrieveTaskFeedbackAggregateResult retrieveTaskReceivedFeedbackAggregate(Long dowithTaskId) {
+    public RetrieveTaskFeedbackAggregateCountResult retrieveTaskReceivedFeedbackAggregateCount(Long dowithTaskId) {
         List<AggregateTaskFeedbacksQueryDto> results =
                 dowithTaskFeedbackQueryRepository.aggregateTaskFeedbacks(dowithTaskId);
-        return RetrieveTaskFeedbackAggregateResult.from(results);
+        return RetrieveTaskFeedbackAggregateCountResult.from(results);
     }
 
     /**
