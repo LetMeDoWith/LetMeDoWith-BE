@@ -2,7 +2,7 @@ package com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto;
 
 import com.LetMeDoWith.LetMeDoWith.application.feedback.dto.RetrieveReceivedTaskFeedbackResult;
 import com.LetMeDoWith.LetMeDoWith.application.feedback.dto.RetrieveReceivedTaskFeedbackResult.ReceivedTaskFeedbackDto;
-import com.LetMeDoWith.LetMeDoWith.application.feedback.dto.RetrieveTaskFeedbackResult.TaskFeedbackTemplateDto;
+import com.LetMeDoWith.LetMeDoWith.application.feedback.dto.TaskFeedbackTemplateDto;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.CountryCode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;

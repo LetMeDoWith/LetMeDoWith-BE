@@ -6,9 +6,18 @@ import com.LetMeDoWith.LetMeDoWith.domain.member.model.QBadge;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.QMember;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.QMemberBadge;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
-import com.LetMeDoWith.LetMeDoWith.domain.task.model.*;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.QDowithTask;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.QDowithTaskLike;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.QDowithTaskRoutine;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.QDowithTaskSuccess;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.QTaskCategory;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskQueryRepository;
-import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.*;
+import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.DowithTaskDetailQueryDto;
+import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.DowithTaskQueryDto;
+import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.FailedDowithTaskCountQueryDto;
+import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.FeedbackAvailableDowithTasksQueryDto;
+import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.MemberTaskSuccessStatsQueryDto;
+import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.SuccessDowithTaskQueryDto;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
@@ -21,7 +30,11 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -167,32 +180,6 @@ public class DowithTaskQueryRespositoryImpl implements DowithTaskQueryRepository
 
     @Override
     public List<FeedbackAvailableDowithTasksQueryDto> getFeedbackAvailableDowithTasks(Long offset, int size) {
-
-        LocalDateTime now = SystemTimeUtil.now();
-
-        LocalDate today = now.toLocalDate();
-        LocalTime nowTime = now.toLocalTime();
-
-        LocalDateTime startRangeDateTime = now.minusMinutes(59).minusSeconds(59);
-        LocalDate startRangeDate = startRangeDateTime.toLocalDate();
-        LocalTime startRangeTime = startRangeDateTime.toLocalTime();
-
-        BooleanBuilder condition = new BooleanBuilder();
-        condition.and(dowithTask.status.eq(DowithTaskStatus.WAIT));
-
-        if (today.equals(startRangeDate)) {
-            // Case 1: 범위 시작과 끝이 같은 날짜인 경우
-            condition.and(dowithTask
-                    .date
-                    .eq(today)
-                    .and(dowithTask.startTime.gt(startRangeTime))
-                    .and(dowithTask.startTime.loe(nowTime)));
-        } else {
-            // Case 2: 날짜가 걸쳐있는 경우 (자정 직후)
-            condition.and((dowithTask.date.eq(startRangeDate).and(dowithTask.startTime.gt(startRangeTime)))
-                    .or(dowithTask.date.eq(today).and(dowithTask.startTime.loe(nowTime))));
-        }
-
         return queryFactory
                 .select(Projections.constructor(
                         FeedbackAvailableDowithTasksQueryDto.class,
@@ -214,10 +201,19 @@ public class DowithTaskQueryRespositoryImpl implements DowithTaskQueryRepository
                 .on(memberBadge.memberId.eq(member.id).and(memberBadge.isMain.eq(Yn.TRUE)))
                 .leftJoin(badge)
                 .on(badge.id.eq(memberBadge.badge.id))
-                .where(condition)
+                .where(buildFeedbackAvailableCondition())
                 .offset(offset)
                 .limit(size)
                 .fetch();
+    }
+
+    @Override
+    public Long countFeedbackAvailableDowithTasks() {
+        return queryFactory
+                .select(dowithTask.count())
+                .from(dowithTask)
+                .where(buildFeedbackAvailableCondition())
+                .fetchOne();
     }
 
     @Override
@@ -279,5 +275,34 @@ public class DowithTaskQueryRespositoryImpl implements DowithTaskQueryRepository
                 .groupBy(dowithTask.memberId)
                 .having(registeredTaskCount.goe(5L))
                 .fetch();
+    }
+
+    private BooleanBuilder buildFeedbackAvailableCondition() {
+        LocalDateTime now = SystemTimeUtil.now();
+
+        LocalDate today = now.toLocalDate();
+        LocalTime nowTime = now.toLocalTime();
+
+        LocalDateTime startRangeDateTime = now.minusMinutes(59).minusSeconds(59);
+        LocalDate startRangeDate = startRangeDateTime.toLocalDate();
+        LocalTime startRangeTime = startRangeDateTime.toLocalTime();
+
+        BooleanBuilder condition = new BooleanBuilder();
+        condition.and(dowithTask.status.eq(DowithTaskStatus.WAIT));
+
+        if (today.equals(startRangeDate)) {
+            // Case 1: 범위 시작과 끝이 같은 날짜인 경우
+            condition.and(dowithTask
+                    .date
+                    .eq(today)
+                    .and(dowithTask.startTime.gt(startRangeTime))
+                    .and(dowithTask.startTime.loe(nowTime)));
+        } else {
+            // Case 2: 날짜가 걸쳐있는 경우 (자정 직후)
+            condition.and((dowithTask.date.eq(startRangeDate).and(dowithTask.startTime.gt(startRangeTime)))
+                    .or(dowithTask.date.eq(today).and(dowithTask.startTime.loe(nowTime))));
+        }
+
+        return condition;
     }
 }

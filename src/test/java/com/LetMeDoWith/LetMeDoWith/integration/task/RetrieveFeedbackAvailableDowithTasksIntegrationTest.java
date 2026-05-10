@@ -144,8 +144,8 @@ public class RetrieveFeedbackAvailableDowithTasksIntegrationTest extends Abstrac
         ResponsePageDto<RetrieveFeedbackAvailableDowithTasksResDto> pageResponse = requestFeedbackAvailablePage(0, 20);
         RetrieveFeedbackAvailableDowithTasksResDto response = pageResponse.data();
 
-        assertThat(pageResponse.totalCount()).isEqualTo(-1L);
-        assertThat(pageResponse.totalPage()).isEqualTo(0);
+        assertThat(pageResponse.totalCount()).isEqualTo(3L);
+        assertThat(pageResponse.totalPage()).isEqualTo(1);
 
         List<RetrieveFeedbackAvailableDowithTaskResDto> tasks = response.dowithTasks();
         List<Long> ids = tasks.stream()
@@ -183,8 +183,8 @@ public class RetrieveFeedbackAvailableDowithTasksIntegrationTest extends Abstrac
         ResponsePageDto<RetrieveFeedbackAvailableDowithTasksResDto> pageResponse = requestFeedbackAvailablePage(0, 20);
         RetrieveFeedbackAvailableDowithTasksResDto response = pageResponse.data();
 
-        assertThat(pageResponse.totalCount()).isEqualTo(-1L);
-        assertThat(pageResponse.totalPage()).isEqualTo(0);
+        assertThat(pageResponse.totalCount()).isEqualTo(2L);
+        assertThat(pageResponse.totalPage()).isEqualTo(1);
 
         List<Long> ids = response.dowithTasks().stream()
                 .map(RetrieveFeedbackAvailableDowithTaskResDto::id)
@@ -208,7 +208,7 @@ public class RetrieveFeedbackAvailableDowithTasksIntegrationTest extends Abstrac
         ResponsePageDto<RetrieveFeedbackAvailableDowithTasksResDto> pageResponse = requestFeedbackAvailablePage(0, 20);
         RetrieveFeedbackAvailableDowithTasksResDto response = pageResponse.data();
 
-        assertThat(pageResponse.totalCount()).isEqualTo(-1L);
+        assertThat(pageResponse.totalCount()).isEqualTo(0L);
         assertThat(pageResponse.totalPage()).isEqualTo(0);
         assertThat(response.dowithTasks()).isEmpty();
     }
@@ -221,10 +221,10 @@ public class RetrieveFeedbackAvailableDowithTasksIntegrationTest extends Abstrac
         ResponsePageDto<RetrieveFeedbackAvailableDowithTasksResDto> page0 = requestFeedbackAvailablePage(0, 2);
         ResponsePageDto<RetrieveFeedbackAvailableDowithTasksResDto> page1 = requestFeedbackAvailablePage(1, 2);
 
-        assertThat(page0.totalCount()).isEqualTo(-1L);
-        assertThat(page1.totalCount()).isEqualTo(-1L);
-        assertThat(page0.totalPage()).isEqualTo(0);
-        assertThat(page1.totalPage()).isEqualTo(0);
+        assertThat(page0.totalCount()).isEqualTo(3L);
+        assertThat(page1.totalCount()).isEqualTo(3L);
+        assertThat(page0.totalPage()).isEqualTo(2);
+        assertThat(page1.totalPage()).isEqualTo(2);
 
         assertThat(page0.data().dowithTasks()).hasSize(2);
         assertThat(page1.data().dowithTasks()).hasSize(1);

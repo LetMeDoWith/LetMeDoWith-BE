@@ -9,6 +9,7 @@ import java.time.LocalTime;
 import java.util.Set;
 import lombok.Builder;
 
+@Schema(description = "투두 Task 단건 조회 응답")
 @Builder
 public record RetrieveTodoTaskResDto(
         @Schema(description = "Task ID", example = "1") Long id,

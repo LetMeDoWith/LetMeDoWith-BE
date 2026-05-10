@@ -4,7 +4,12 @@ import com.LetMeDoWith.LetMeDoWith.application.task.dto.CancelLikeSuccessDowithT
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.LikeSuccessDowithTaskResult;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.RetrieveDowithTaskResult;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.RetrieveFeedbackAvailableDowithTasksResult;
-import com.LetMeDoWith.LetMeDoWith.application.task.service.*;
+import com.LetMeDoWith.LetMeDoWith.application.task.service.CreateDowithTaskService;
+import com.LetMeDoWith.LetMeDoWith.application.task.service.DeleteDowithTaskService;
+import com.LetMeDoWith.LetMeDoWith.application.task.service.RetrieveTaskService;
+import com.LetMeDoWith.LetMeDoWith.application.task.service.SuccessDowithTaskService;
+import com.LetMeDoWith.LetMeDoWith.application.task.service.TaskSummaryService;
+import com.LetMeDoWith.LetMeDoWith.application.task.service.UpdateDowithTaskService;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiErrorResponse;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiErrorResponses;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiSuccessResponse;
@@ -14,8 +19,21 @@ import com.LetMeDoWith.LetMeDoWith.common.dto.ResponsePageDto;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
-import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.*;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.CancelLikeDowithTaskResDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.CreateDowithTaskReqDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.GenerateDowithTaskSuccessImageUploadPresignedUrlsReqDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.GenerateDowithTaskSuccessImageUploadPresignedUrlsResDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.GetRemainedDowithTaskCountRes;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.LikeDowithTaskResDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.RetrieveDowithTaskResDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.RetrieveFeedbackAvailableDowithTasksResDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.RetrieveSuccessDowithTasksRes;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.SuccessDowithTaskReqDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.UpdateDowithTaskReqDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.UpdateDowithTaskRoutineReqDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.UpdateDowithTaskWithRoutineReqDto;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +41,14 @@ import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Dowith Task", description = "두윗모드 테스크")
 @RestController
@@ -38,16 +63,18 @@ public class DowithTaskController {
     private final RetrieveTaskService retrieveTaskService;
     private final TaskSummaryService taskSummaryService;
 
-    @Operation(summary = "두윗모드 Task 조회")
+    @Operation(summary = "두윗모드 Task 조회", description = "두윗모드 Task 단건 상세를 조회합니다.")
     @ApiSuccessResponse(description = "두윗모드 Task 조회 성공")
     @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")})
     @GetMapping("/{dowithTaskId}")
-    public ResponseEntity<ResponseDto<RetrieveDowithTaskResDto>> retrieveDowithTask(@PathVariable Long dowithTaskId) {
+    public ResponseEntity<ResponseDto<RetrieveDowithTaskResDto>> retrieveDowithTask(
+            @Parameter(description = "두윗 Task ID", example = "1") @PathVariable Long dowithTaskId) {
         RetrieveDowithTaskResult result = this.retrieveTaskService.retrieveDowithTask(dowithTaskId);
         return ResponseUtil.createSuccessResponse(RetrieveDowithTaskResDto.from(result));
     }
 
-    @Operation(summary = "성공 Dowith Task 조회 (인증 사진 조회)")
+    @Operation(summary = "성공 Dowith Task 조회 (인증 사진 조회)", description = "인증이 완료된 두윗 Task 목록을 페이징 조회합니다.")
+    @ApiSuccessResponse(description = "성공 인증 두윗 Task 목록 조회 성공")
     @GetMapping("/success")
     public ResponseEntity<ResponsePageDto<RetrieveSuccessDowithTasksRes>> retrieveSuccessDowithTasks(
             @ParameterObject Pageable pageable) {
@@ -85,11 +112,12 @@ public class DowithTaskController {
         @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우"),
         //        @ApiErrorResponse(
         //                status = FailResponseStatus.DOWITH_TASK_CREATE_COUNT_EXCEED,
-        //                description = "일일 두윗모드 Task 등록 가능 개수를 초과한 경우")
+        //                selfDescription = "일일 두윗모드 Task 등록 가능 개수를 초과한 경우")
     })
     @PutMapping("/{dowithTaskId}")
     public ResponseEntity<ResponseDto<Object>> updateDowithTask(
-            @PathVariable Long dowithTaskId, @RequestBody UpdateDowithTaskReqDto requestBody) {
+            @Parameter(description = "두윗 Task ID", example = "1") @PathVariable Long dowithTaskId,
+            @RequestBody UpdateDowithTaskReqDto requestBody) {
 
         updateDowithTaskService.updateDowithTask(requestBody.toCommand(dowithTaskId));
         return ResponseUtil.createSuccessResponse();
@@ -105,11 +133,12 @@ public class DowithTaskController {
         @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우"),
         //        @ApiErrorResponse(
         //                status = FailResponseStatus.DOWITH_TASK_CREATE_COUNT_EXCEED,
-        //                description = "일일 두윗모드 Task 등록 가능 개수를 초과한 경우")
+        //                selfDescription = "일일 두윗모드 Task 등록 가능 개수를 초과한 경우")
     })
     @PutMapping("/{dowithTaskId}/with-routine")
     public ResponseEntity<ResponseDto<Object>> updateDowithTaskWithRoutine(
-            @PathVariable Long dowithTaskId, @RequestBody UpdateDowithTaskWithRoutineReqDto requestBody) {
+            @Parameter(description = "두윗 Task ID", example = "1") @PathVariable Long dowithTaskId,
+            @RequestBody UpdateDowithTaskWithRoutineReqDto requestBody) {
 
         updateDowithTaskService.updateDowithTaskWithRoutine(requestBody.toCommand(dowithTaskId));
         return ResponseUtil.createSuccessResponse();
@@ -126,7 +155,8 @@ public class DowithTaskController {
     })
     @PutMapping("/{dowithTaskId}/routine")
     public ResponseEntity<ResponseDto<Object>> updateDowithTaskRoutine(
-            @PathVariable Long dowithTaskId, @RequestBody UpdateDowithTaskRoutineReqDto requestBody) {
+            @Parameter(description = "두윗 Task ID", example = "1") @PathVariable Long dowithTaskId,
+            @RequestBody UpdateDowithTaskRoutineReqDto requestBody) {
 
         updateDowithTaskService.updateRoutine(requestBody.toCommand(dowithTaskId));
 
@@ -137,7 +167,8 @@ public class DowithTaskController {
     @ApiSuccessResponse(description = "두윗모드 Task 삭제 성공")
     @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")})
     @DeleteMapping("/{dowithTaskId}")
-    public ResponseEntity deleteDowithTask(@PathVariable Long dowithTaskId) {
+    public ResponseEntity deleteDowithTask(
+            @Parameter(description = "두윗 Task ID", example = "1") @PathVariable Long dowithTaskId) {
 
         deleteDowithTaskService.delete(AuthUtil.getMemberId(), dowithTaskId);
 
@@ -148,14 +179,17 @@ public class DowithTaskController {
     @ApiSuccessResponse(description = "두윗모드 Task(Routine 포함) 삭제 성공")
     @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")})
     @DeleteMapping("/{dowithTaskId}/with-routine")
-    public ResponseEntity<ResponseDto<Object>> deleteDowithTaskWithRoutine(@PathVariable Long dowithTaskId) {
+    public ResponseEntity<ResponseDto<Object>> deleteDowithTaskWithRoutine(
+            @Parameter(description = "두윗 Task ID", example = "1") @PathVariable Long dowithTaskId) {
 
         deleteDowithTaskService.deleteWithRoutines(AuthUtil.getMemberId(), dowithTaskId);
 
         return ResponseUtil.createSuccessResponse();
     }
 
-    @Operation(summary = "두윗모드 Task 인증 이미지 upload presigned url 발급")
+    @Operation(
+            summary = "두윗모드 Task 인증 이미지 upload presigned url 발급",
+            description = "인증 사진 업로드용 presigned URL을 발급합니다. 요청한 파일명 개수만큼 URL이 반환되며, method에 따라 각 URL로 이미지를 업로드합니다.")
     @ApiSuccessResponse(
             description =
                     "요청 시의 imageFileNames 수 만큼 presigned url이 발급됩니다. method를 참고하여 presigned url 하나당 이미지 하나를 http request 하여 업로드합니다.")
@@ -163,7 +197,7 @@ public class DowithTaskController {
     @PostMapping("/{dowithTaskId}/success/image/upload-presigned-url")
     public ResponseEntity<ResponseDto<GenerateDowithTaskSuccessImageUploadPresignedUrlsResDto>>
             generateDowithTaskSuccessImageUploadPresignedUrls(
-                    @PathVariable Long dowithTaskId,
+                    @Parameter(description = "두윗 Task ID", example = "1") @PathVariable Long dowithTaskId,
                     @RequestBody GenerateDowithTaskSuccessImageUploadPresignedUrlsReqDto requestBody) {
 
         String memberId = AuthUtil.getMemberId();
@@ -181,7 +215,8 @@ public class DowithTaskController {
     @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")})
     @PostMapping("/{dowithTaskId}/success")
     public ResponseEntity<ResponseDto<Object>> successDowithTask(
-            @PathVariable Long dowithTaskId, @RequestBody SuccessDowithTaskReqDto requestBody) {
+            @Parameter(description = "두윗 Task ID", example = "1") @PathVariable Long dowithTaskId,
+            @RequestBody SuccessDowithTaskReqDto requestBody) {
 
         String memberId = AuthUtil.getMemberId();
 
@@ -194,7 +229,8 @@ public class DowithTaskController {
     @ApiSuccessResponse(description = "두윗모드 Task 좋아요")
     @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")})
     @PostMapping("/{dowithTaskId}/like")
-    public ResponseEntity<ResponseDto<LikeDowithTaskResDto>> likeDowithTask(@PathVariable Long dowithTaskId) {
+    public ResponseEntity<ResponseDto<LikeDowithTaskResDto>> likeDowithTask(
+            @Parameter(description = "두윗 Task ID", example = "1") @PathVariable Long dowithTaskId) {
         String memberId = AuthUtil.getMemberId();
         LikeSuccessDowithTaskResult result = successDowithTaskService.likeSuccessDowithTask(memberId, dowithTaskId);
         return ResponseUtil.createSuccessResponse(
@@ -206,7 +242,7 @@ public class DowithTaskController {
     @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")})
     @DeleteMapping("/{dowithTaskId}/like")
     public ResponseEntity<ResponseDto<CancelLikeDowithTaskResDto>> cancelLikeDowithTask(
-            @PathVariable Long dowithTaskId) {
+            @Parameter(description = "두윗 Task ID", example = "1") @PathVariable Long dowithTaskId) {
         String memberId = AuthUtil.getMemberId();
         CancelLikeSuccessDowithTaskResult result =
                 successDowithTaskService.cancelLikeSuccessDowithTask(memberId, dowithTaskId);
@@ -223,7 +259,7 @@ public class DowithTaskController {
         return ResponseUtil.createSuccessResponse(new GetRemainedDowithTaskCountRes(remainedDowithTaskCount));
     }
 
-    @Operation(summary = "잔소리 가능한 두윗 태스크 목록 조회")
+    @Operation(summary = "잔소리 가능한 두윗 태스크 목록 조회", description = "잔소리를 보낼 수 있는 두윗 Task 목록을 페이징 조회합니다.")
     @ApiSuccessResponse(description = "잔소리 가능한 두윗 태스크 목록 조회 성공")
     @GetMapping("/feedback-available")
     public ResponseEntity<ResponsePageDto<RetrieveFeedbackAvailableDowithTasksResDto>>
@@ -233,6 +269,6 @@ public class DowithTaskController {
                 retrieveTaskService.retrieveFeedbackAvailableDowithTasks(pageable);
 
         return ResponseUtil.createSuccessResponse(
-                RetrieveFeedbackAvailableDowithTasksResDto.from(result), pageable, -1L);
+                RetrieveFeedbackAvailableDowithTasksResDto.from(result), pageable, result.totalCount());
     }
 }

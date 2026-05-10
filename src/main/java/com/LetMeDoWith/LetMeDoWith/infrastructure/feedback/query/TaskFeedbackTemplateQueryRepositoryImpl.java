@@ -29,6 +29,7 @@ public class TaskFeedbackTemplateQueryRepositoryImpl implements TaskFeedbackTemp
                         TaskFeedbackTemplateQueryDto.class,
                         qTaskFeedbackTemplate.id,
                         qTaskFeedbackTemplateMessage.language,
+                        qTaskFeedbackTemplateMessage.name,
                         qTaskFeedbackTemplateMessage.message,
                         qTaskFeedbackTemplate.emojiUrl))
                 .from(qTaskFeedbackTemplate)
