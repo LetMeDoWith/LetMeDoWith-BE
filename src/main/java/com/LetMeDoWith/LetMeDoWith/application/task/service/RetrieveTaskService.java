@@ -93,7 +93,8 @@ public class RetrieveTaskService {
 
         // 1. Task 리스트 조회
         List<FeedbackAvailableDowithTasksQueryDto> feedbackAvailableDowithTasks =
-                dowithTaskQueryRepository.getFeedbackAvailableDowithTasks(pageable.getOffset(), pageable.getPageSize());
+                dowithTaskQueryRepository.getFeedbackAvailableDowithTasks(
+                        pageable.getOffset(), pageable.getPageSize(), memberId);
 
         if (feedbackAvailableDowithTasks.isEmpty()) {
             return RetrieveFeedbackAvailableDowithTasksResult.from(0L, feedbackAvailableDowithTasks);
@@ -122,6 +123,6 @@ public class RetrieveTaskService {
                 .toList();
 
         return RetrieveFeedbackAvailableDowithTasksResult.from(
-                dowithTaskQueryRepository.countFeedbackAvailableDowithTasks(), tasks);
+                dowithTaskQueryRepository.countFeedbackAvailableDowithTasks(memberId), tasks);
     }
 }
