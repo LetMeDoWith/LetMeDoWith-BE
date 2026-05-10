@@ -11,7 +11,11 @@ import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.DowithTaskFeedback
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.dto.SentFeedbacksQueryDto;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskQueryRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TodoTaskQueryRepository;
-import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.*;
+import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.DowithTaskDetailQueryDto;
+import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.DowithTaskQueryDto;
+import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.FeedbackAvailableDowithTasksQueryDto;
+import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.TodoTaskDetailQueryDto;
+import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.TodoTaskQueryDto;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.Year;
@@ -92,7 +96,7 @@ public class RetrieveTaskService {
                 dowithTaskQueryRepository.getFeedbackAvailableDowithTasks(pageable.getOffset(), pageable.getPageSize());
 
         if (feedbackAvailableDowithTasks.isEmpty()) {
-            return RetrieveFeedbackAvailableDowithTasksResult.from(feedbackAvailableDowithTasks);
+            return RetrieveFeedbackAvailableDowithTasksResult.from(0L, feedbackAvailableDowithTasks);
         }
 
         List<Long> taskIds = feedbackAvailableDowithTasks.stream()
@@ -117,6 +121,7 @@ public class RetrieveTaskService {
                 })
                 .toList();
 
-        return RetrieveFeedbackAvailableDowithTasksResult.from(tasks);
+        return RetrieveFeedbackAvailableDowithTasksResult.from(
+                dowithTaskQueryRepository.countFeedbackAvailableDowithTasks(), tasks);
     }
 }

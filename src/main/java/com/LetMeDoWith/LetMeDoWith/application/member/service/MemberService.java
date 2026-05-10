@@ -2,6 +2,7 @@ package com.LetMeDoWith.LetMeDoWith.application.member.service;
 
 import com.LetMeDoWith.LetMeDoWith.application.member.dto.CreateSignupCompletedMemberCommand;
 import com.LetMeDoWith.LetMeDoWith.application.member.dto.MemberPersonalInfoVO;
+import com.LetMeDoWith.LetMeDoWith.application.member.dto.RetrieveMyDowithResult;
 import com.LetMeDoWith.LetMeDoWith.common.dto.GenerateUploadPresignedUrlsResult;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.FileNamespace;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
@@ -12,6 +13,7 @@ import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.auth.enums.SocialProvider;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.MemberAlarmSetting;
+import com.LetMeDoWith.LetMeDoWith.domain.member.repository.MemberQueryRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.member.repository.MemberRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.member.repository.MemberSettingRepository;
 import java.util.Optional;
@@ -27,6 +29,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final MemberSettingRepository memberSettingRepository;
+    private final MemberQueryRepository memberQueryRepository;
     private final PresignedUrlService presignedUrlService;
 
     /**
@@ -147,8 +150,8 @@ public class MemberService {
     /**
      * 회원의 프로필 정보를 업데이트합니다.
      *
-     * @param memberId 업데이트 대상 회원 id
-     * @param nickname 변경할 닉네임
+     * @param memberId        업데이트 대상 회원 id
+     * @param nickname        변경할 닉네임
      * @param selfDescription 변경할 자기소개
      * @param profileImageUrl 변경할 프로필 이미지 URL
      */
@@ -168,7 +171,7 @@ public class MemberService {
      *
      * <p>실제 업로드 권한 확인은 NORMAL 회원 여부만 검증하고, key 생성 및 URL 발급은 공통 서비스에 위임합니다.
      *
-     * @param memberId 프로필 이미지를 업로드하려는 회원 id
+     * @param memberId      프로필 이미지를 업로드하려는 회원 id
      * @param imageFileName 업로드할 프로필 이미지 파일명
      * @return 프로필 이미지 업로드용 presigned URL 결과
      */
@@ -180,5 +183,18 @@ public class MemberService {
 
         return presignedUrlService.generateUploadPresignedUrls(
                 FileNamespace.MEMBER_PROFILE, java.util.List.of(imageFileName));
+    }
+
+    /**
+     * 회원의 마이두윗 정보를 조회합니다.
+     *
+     * @param memberId 마이두윗을 조회하려는 회원 id
+     * @return 마이두윗 정보
+     */
+    public RetrieveMyDowithResult retrieveMyDowithInfo(String memberId) {
+        return memberQueryRepository
+                .getMyDowithInfo(memberId)
+                .map(RetrieveMyDowithResult::from)
+                .orElseThrow(() -> new RestApiException(FailResponseStatus.MEMBER_NOT_EXIST));
     }
 }
