@@ -269,12 +269,7 @@ public class DowithTask extends BaseAuditEntity {
      * @return
      */
     public void validateSuccessImageUploadAvailable() {
-        if (!status.equals(DowithTaskStatus.WAIT)) {
-            throw new RestApiException(INVALID_REQUEST);
-        }
-
-        if (SystemTimeUtil.now()
-                .isAfter(LocalDateTime.of(this.date, this.startTime).plusHours(1))) {
+        if (!isSuccessAvailable()) {
             throw new RestApiException(INVALID_REQUEST);
         }
     }
@@ -286,11 +281,7 @@ public class DowithTask extends BaseAuditEntity {
      */
     public void success(List<String> imageUrls) {
 
-        if (!status.equals(DowithTaskStatus.WAIT)) {
-            throw new RestApiException(INVALID_REQUEST);
-        }
-
-        if (SystemTimeUtil.now().isAfter(LocalDateTime.of(this.date, this.startTime))) {
+        if (!isSuccessAvailable()) {
             throw new RestApiException(INVALID_REQUEST);
         }
 
@@ -304,6 +295,17 @@ public class DowithTask extends BaseAuditEntity {
 
         this.status = DowithTaskStatus.SUCCESS;
         this.successDateTime = SystemTimeUtil.now();
+    }
+
+    /**
+     * 두윗모드 Task 성공 적용 가능 여부 확인
+     *
+     * @return
+     */
+    private boolean isSuccessAvailable() {
+        return status.equals(DowithTaskStatus.WAIT)
+                && SystemTimeUtil.now()
+                        .isBefore(LocalDateTime.of(this.date, this.startTime).plusHours(1));
     }
 
     public void deleteRoutine() {
