@@ -152,6 +152,7 @@ public class FeedbackIntegrationTest extends AbstractIntegrationTest {
         RetrieveTaskFeedbackDto feedback = result.feedbacks().get(0);
         assertThat(feedback.dowithTaskId()).isEqualTo(dowithTask.getId());
         assertThat(feedback.taskFeedbackTemplate().id()).isEqualTo(template1.getId());
+        assertThat(feedback.taskFeedbackTemplate().name()).isEqualTo(templateMessage1.getName());
         assertThat(feedback.isChecked()).isFalse();
     }
 
@@ -213,6 +214,7 @@ public class FeedbackIntegrationTest extends AbstractIntegrationTest {
         RetrieveTaskFeedbackDto feedback = result.feedbacks().get(0);
         assertThat(feedback.dowithTaskId()).isEqualTo(dowithTask.getId());
         assertThat(feedback.taskFeedbackTemplate().id()).isEqualTo(template1.getId());
+        assertThat(feedback.taskFeedbackTemplate().name()).isEqualTo(templateMessage1.getName());
     }
 
     @Test
@@ -281,6 +283,7 @@ public class FeedbackIntegrationTest extends AbstractIntegrationTest {
         assertThat(feedback.dowithTaskId()).isEqualTo(dowithTask.getId());
         assertThat(feedback.dowithTaskStatus()).isEqualTo(DowithTaskStatus.WAIT);
         assertThat(feedback.taskFeedbackTemplate().id()).isEqualTo(template1.getId());
+        assertThat(feedback.taskFeedbackTemplate().name()).isEqualTo(templateMessage1.getName());
         assertThat(feedback.dowithTaskTitle()).isEqualTo("테스트 태스크");
     }
 
@@ -304,6 +307,7 @@ public class FeedbackIntegrationTest extends AbstractIntegrationTest {
         assertThat(feedback.dowithTaskId()).isEqualTo(dowithTask.getId());
         assertThat(feedback.receivedAt()).isNotNull();
         assertThat(feedback.taskFeedbackTemplate().id()).isEqualTo(template1.getId());
+        assertThat(feedback.taskFeedbackTemplate().name()).isEqualTo(templateMessage1.getName());
         assertThat(feedback.dowithTaskTitle()).isEqualTo("테스트 태스크");
     }
 

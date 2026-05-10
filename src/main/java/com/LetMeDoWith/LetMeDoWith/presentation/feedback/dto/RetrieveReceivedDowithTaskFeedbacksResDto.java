@@ -46,12 +46,12 @@ public record RetrieveReceivedDowithTaskFeedbacksResDto(
     public record ReceivedFeedbackTemplateDto(
             @Schema(description = "잔소리 템플릿 ID", example = "1") Long id,
             @Schema(description = "잔소리 템플릿 언어", example = "ko") CountryCode language,
-            @Schema(description = "잔소리 템플릿 메시지", example = "잔소리 템플릿 메시지") String message,
+            @Schema(description = "잔소리명", example = "잔소리명") String name,
             @Schema(description = "잔소리 템플릿 이모지 URL", example = "https://example.com/emoji.png") String emojiUrl) {
 
         public static ReceivedFeedbackTemplateDto from(TaskFeedbackTemplateDto template) {
             return new ReceivedFeedbackTemplateDto(
-                    template.id(), template.language(), template.message(), template.emojiUrl());
+                    template.id(), template.language(), template.name(), template.emojiUrl());
         }
     }
 }
