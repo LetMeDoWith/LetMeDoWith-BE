@@ -15,6 +15,7 @@ import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TodoTask;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -70,7 +71,8 @@ public class TodoTaskController {
     })
     @PutMapping("/{todoTaskId}")
     public ResponseEntity updateSingleTodoTask(
-            @PathVariable Long todoTaskId, @RequestBody UpdateTodoTaskReqDto request) {
+            @Parameter(description = "투두 Task ID", example = "1") @PathVariable Long todoTaskId,
+            @RequestBody UpdateTodoTaskReqDto request) {
         String memberId = AuthUtil.getMemberId();
 
         TaskRoutineCondition routineCondition = null;
@@ -104,7 +106,8 @@ public class TodoTaskController {
     })
     @PutMapping("/{todoTaskId}/with-routine")
     public ResponseEntity updateTodoTaskWithRoutine(
-            @PathVariable Long todoTaskId, @RequestBody UpdateTodoTaskWithRoutineReqDto request) {
+            @Parameter(description = "투두 Task ID", example = "1") @PathVariable Long todoTaskId,
+            @RequestBody UpdateTodoTaskWithRoutineReqDto request) {
         String memberId = AuthUtil.getMemberId();
 
         updateTodoTaskService.updateTodoTaskWithRoutine(request.toCommand(todoTaskId));
@@ -119,7 +122,8 @@ public class TodoTaskController {
     })
     @PutMapping("/{todoTaskId}/routine")
     public ResponseEntity updateTodoTaskRoutine(
-            @PathVariable Long todoTaskId, @RequestBody UpdateTodoTaskRoutineReqDto request) {
+            @Parameter(description = "투두 Task ID", example = "1") @PathVariable Long todoTaskId,
+            @RequestBody UpdateTodoTaskRoutineReqDto request) {
         String memberId = AuthUtil.getMemberId();
 
         UpdateTodoTaskRoutineCommand command = UpdateTodoTaskRoutineCommand.of(
@@ -140,7 +144,8 @@ public class TodoTaskController {
         @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청입니다."),
     })
     @PatchMapping("/{todoTaskId}/success")
-    public ResponseEntity<ResponseDto<Long>> successTodoTask(@PathVariable Long todoTaskId) {
+    public ResponseEntity<ResponseDto<Long>> successTodoTask(
+            @Parameter(description = "투두 Task ID", example = "1") @PathVariable Long todoTaskId) {
         String memberId = AuthUtil.getMemberId();
         TodoTask completeTodoTask = updateTodoTaskService.successTodoTask(memberId, todoTaskId);
         return ResponseUtil.createSuccessResponse(completeTodoTask.getId());
@@ -152,7 +157,8 @@ public class TodoTaskController {
         @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청입니다."),
     })
     @PatchMapping("/{todoTaskId}/wait")
-    public ResponseEntity<ResponseDto<Long>> waitTodoTask(@PathVariable Long todoTaskId) {
+    public ResponseEntity<ResponseDto<Long>> waitTodoTask(
+            @Parameter(description = "투두 Task ID", example = "1") @PathVariable Long todoTaskId) {
         String memberId = AuthUtil.getMemberId();
         TodoTask waitTodoTask = updateTodoTaskService.waitTodoTask(memberId, todoTaskId);
         return ResponseUtil.createSuccessResponse(waitTodoTask.getId());
@@ -164,7 +170,8 @@ public class TodoTaskController {
     @ApiErrorResponses({
         @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청입니다."),
     })
-    public ResponseEntity deleteTodoTask(@PathVariable Long todoTaskId) {
+    public ResponseEntity deleteTodoTask(
+            @Parameter(description = "투두 Task ID", example = "1") @PathVariable Long todoTaskId) {
         String memberId = AuthUtil.getMemberId();
 
         deleteTodoTaskService.deleteTodoTask(memberId, todoTaskId);
@@ -177,7 +184,8 @@ public class TodoTaskController {
     @ApiErrorResponses({
         @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청입니다."),
     })
-    public ResponseEntity deleteTodoTaskWithRoutine(@PathVariable Long todoTaskId) {
+    public ResponseEntity deleteTodoTaskWithRoutine(
+            @Parameter(description = "투두 Task ID", example = "1") @PathVariable Long todoTaskId) {
         String memberId = AuthUtil.getMemberId();
 
         deleteTodoTaskService.deleteTodoTasksWithRoutine(memberId, todoTaskId);
@@ -187,7 +195,8 @@ public class TodoTaskController {
     @Operation(summary = "투두 태스크 단일 조회", description = "1개의 TodoTask 정보를 조회합니다.")
     @ApiSuccessResponse(description = "1개의 TodoTask 정보 및 루틴 정보를 반환")
     @GetMapping("/{todoTaskId}")
-    public ResponseEntity<ResponseDto<RetrieveTodoTaskResDto>> retrieveSingleTodoTask(@PathVariable Long todoTaskId) {
+    public ResponseEntity<ResponseDto<RetrieveTodoTaskResDto>> retrieveSingleTodoTask(
+            @Parameter(description = "투두 Task ID", example = "1") @PathVariable Long todoTaskId) {
         RetrieveTodoTaskResult result = retrieveTaskService.retrieveTodoTask(todoTaskId);
 
         return ResponseUtil.createSuccessResponse(RetrieveTodoTaskResDto.from(result));

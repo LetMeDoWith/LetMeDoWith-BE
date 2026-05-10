@@ -8,7 +8,9 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum FailResponseStatus {
 
-    /** 400 BAD Request Error 클라이언트 요청에 대한 오류 */
+    /**
+     * 400 BAD Request Error 클라이언트 요청에 대한 오류
+     */
     // BAD_REQUEST("BAD_REQUEST", "E200", HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
     INVALID_PARAM_ERROR("INVALID_PARAM_ERROR", "E201", HttpStatus.BAD_REQUEST, "요청 파라미터가 잘못되었습니다."),
 
@@ -49,7 +51,12 @@ public enum FailResponseStatus {
             "DOWITH_TASK_ATTENDACE_REWARD_EXCEED", "E231", HttpStatus.BAD_REQUEST, "출석 보상은 하루에 한 번만 지급 가능합니다."),
     DOWITH_TASK_NOT_AVAIL_DATE("DOWITH_TASK_NOT_AVAIL_DATE", "E246", HttpStatus.BAD_REQUEST, "등록 불가한 날짜입니다."),
 
-    /** 401 UnAuthorized Error 인증 관련 오류 */
+    /* Feedback 관련 Exception - E25X */
+    FEEDBACK_SENDING_UNAVAILABLE("FEEDBACK_SENDING_UNAVAILABLE", "E250", HttpStatus.BAD_REQUEST, "아직 잔소리를 보낼 수 없습니다."),
+
+    /**
+     * 401 UnAuthorized Error 인증 관련 오류
+     */
     UNAUTHORIZED("UNAUTHORIZED", "E300", HttpStatus.UNAUTHORIZED, "인가된 회원이 아닙니다."),
     ATK_NOT_EXIST("ATK_NOT_EXIST", "E301", HttpStatus.UNAUTHORIZED, "엑세스 토큰이 존재하지 않습니다."),
     TOKEN_EXPIRED("TOKEN_EXPIRED", "E302", HttpStatus.UNAUTHORIZED, "만료된 토큰입니다."),
@@ -77,7 +84,9 @@ public enum FailResponseStatus {
             HttpStatus.UNAUTHORIZED,
             "OpenID Connect ID Token의 공개키를 찾을 수 없습니다."),
 
-    /** 500 Interal Server Error 서버 내부 오류 및 서버 관리자의 조치로 인한 오류 */
+    /**
+     * 500 Interal Server Error 서버 내부 오류 및 서버 관리자의 조치로 인한 오류
+     */
     INTERNAL_SERVER_ERROR("INTERNAL_SERVER_ERROR", "E400", HttpStatus.INTERNAL_SERVER_ERROR, "내부 서버 에러입니다. 다시 시도하세요."),
     CODE_ENUM_NOT_EXIST("CODE_ENUM_NOT_EXIST", "E401", HttpStatus.INTERNAL_SERVER_ERROR, "코드에 대응되는 Enum이 존재하지 않습니다."),
 

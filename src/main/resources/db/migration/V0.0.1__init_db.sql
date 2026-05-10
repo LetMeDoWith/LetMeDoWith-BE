@@ -409,6 +409,7 @@ CREATE TABLE `task_feedback_template_message`
     `updated_at`                datetime(6)  DEFAULT NULL,
     `updated_by`                varchar(255) DEFAULT NULL,
     `language`                  varchar(255) NOT NULL,
+    `name`                      varchar(255) NOT NULL,
     `message`                   varchar(255) NOT NULL,
     `task_feedback_template_id` bigint       NOT NULL,
     PRIMARY KEY (`id`),

@@ -8,6 +8,7 @@ import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.member.query.dto.MemberBadgeQueryDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.RetrieveBadgesInfoResDto;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -43,7 +44,8 @@ public class BadgeController {
 
     @Operation(summary = "대표 뱃지 등록", description = "특정 뱃지를 유져의 대표 뱃지로 등록합니다.")
     @PutMapping("/{badgeId}/main")
-    public ResponseEntity updateMainBadge(@PathVariable Long badgeId) {
+    public ResponseEntity updateMainBadge(
+            @Parameter(description = "대표로 등록할 뱃지 ID", example = "1") @PathVariable Long badgeId) {
 
         String memberId = AuthUtil.getMemberId();
         badgeService.updateMainBadge(memberId, badgeId);

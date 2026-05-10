@@ -25,6 +25,11 @@ public class DowithTaskFeedbackRepositoryImpl implements DowithTaskFeedbackRepos
     }
 
     @Override
+    public long countBySenderAndTask(Long dowithTaskId, String senderId) {
+        return repository.countByDowithTaskIdAndSenderMemberId(dowithTaskId, senderId);
+    }
+
+    @Override
     public List<DowithTaskFeedback> getFeedbacks(List<Long> dowithTaskFeedbackIds) {
         return repository.findAllById(dowithTaskFeedbackIds);
     }

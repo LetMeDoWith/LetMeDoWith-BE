@@ -2,7 +2,7 @@ package com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto;
 
 import com.LetMeDoWith.LetMeDoWith.application.feedback.dto.RetrieveTaskFeedbackResult;
 import com.LetMeDoWith.LetMeDoWith.application.feedback.dto.RetrieveTaskFeedbackResult.TaskFeedbackDto;
-import com.LetMeDoWith.LetMeDoWith.application.feedback.dto.RetrieveTaskFeedbackResult.TaskFeedbackTemplateDto;
+import com.LetMeDoWith.LetMeDoWith.application.feedback.dto.TaskFeedbackTemplateDto;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.CountryCode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
@@ -16,6 +16,7 @@ public record RetrieveDowithTaskFeedbacksResDto(
                 result.feedbacks().stream().map(RetrieveTaskFeedbackDto::from).toList());
     }
 
+    @Schema(description = "두윗 Task에 달린 잔소리 한 건")
     public record RetrieveTaskFeedbackDto(
             @Schema(description = "잔소리 ID", example = "1") Long id,
             @Schema(description = "두윗모드 Task ID", example = "12345") Long dowithTaskId,

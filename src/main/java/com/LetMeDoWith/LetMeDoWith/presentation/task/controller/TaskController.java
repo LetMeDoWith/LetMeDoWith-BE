@@ -10,6 +10,7 @@ import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.RetrieveTasksResDto;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.time.Month;
 import java.time.Year;
@@ -35,7 +36,8 @@ public class TaskController {
     })
     @GetMapping("")
     public ResponseEntity<ResponseDto<RetrieveTasksResDto>> retrieveMonthTasks(
-            @RequestParam(value = "year") int year, @RequestParam(value = "month") int month) {
+            @Parameter(description = "조회 연도", example = "2026") @RequestParam(value = "year") int year,
+            @Parameter(description = "조회 월 (1–12)", example = "5") @RequestParam(value = "month") int month) {
 
         RetrieveTasksResult result = retrieveTaskService.retrieveMonthTasks(Year.of(year), Month.of(month));
 

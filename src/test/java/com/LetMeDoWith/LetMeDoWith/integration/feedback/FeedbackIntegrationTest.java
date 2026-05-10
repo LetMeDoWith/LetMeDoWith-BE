@@ -3,8 +3,10 @@ package com.LetMeDoWith.LetMeDoWith.integration.feedback;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.LetMeDoWith.LetMeDoWith.common.dto.FailResponseDto;
 import com.LetMeDoWith.LetMeDoWith.common.dto.ResponsePageDto;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
+import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.model.DowithTaskFeedback;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.model.TaskFeedbackTemplate;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.model.TaskFeedbackTemplateMessage;
@@ -16,18 +18,17 @@ import com.LetMeDoWith.LetMeDoWith.infrastructure.feedback.persistence.jpaReposi
 import com.LetMeDoWith.LetMeDoWith.infrastructure.feedback.persistence.jpaRepository.TaskFeedbackTemplateMessageJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.DowithTaskJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.integration.AbstractIntegrationTest;
-import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.CreateDowithFeedbackReqDto;
-import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.RetrieveDowithTaskFeedbacksResDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.*;
 import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.RetrieveDowithTaskFeedbacksResDto.RetrieveTaskFeedbackDto;
-import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.RetrieveReceivedDowithTaskFeedbacksResDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.RetrieveReceivedDowithTaskFeedbacksResDto.ReceivedFeedbackDto;
-import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.RetrieveSentDowithTaskFeedbacksResDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.RetrieveSentDowithTaskFeedbacksResDto.SentFeedbackDto;
 import com.fasterxml.jackson.databind.JavaType;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,6 +81,7 @@ public class FeedbackIntegrationTest extends AbstractIntegrationTest {
                 .build());
         templateMessage1 = templateMessageRepository.save(TaskFeedbackTemplateMessage.builder()
                 .taskFeedbackTemplate(template1)
+                .name("발신자에게 보이는 메시지1")
                 .message("잔소리 메시지1")
                 .language(TEST_LANGUAGE)
                 .build());
@@ -91,9 +93,43 @@ public class FeedbackIntegrationTest extends AbstractIntegrationTest {
                 .build());
         templateMessage2 = templateMessageRepository.save(TaskFeedbackTemplateMessage.builder()
                 .taskFeedbackTemplate(template2)
+                .name("발신자에게 보이는 메시지2")
                 .message("잔소리 메시지2")
                 .language(TEST_LANGUAGE)
                 .build());
+    }
+
+    @Test
+    @DisplayName("[SUCCESS] 잔소리 템플릿 조회")
+    void retrieveFeedbackTemplates_success() throws Exception {
+        // given
+
+        // when
+        MvcResult mvcResult = this.request(MockMvcRequestBuilders.get("/api/v1/feedbacks/templates")
+                        .param("language", TEST_LANGUAGE.name()))
+                .andExpect(status().isOk())
+                .andReturn();
+        String content = mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
+        RetrieveTaskFeedbackTemplatesResDto result =
+                this.readResponse(content, RetrieveTaskFeedbackTemplatesResDto.class);
+
+        // then
+        assertThat(result.templates()).hasSize(2);
+        FeedbackTemplateDto dto1 = result.templates().stream()
+                .filter(t -> t.id().equals(template1.getId()))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("템플릿1 결과 없음"));
+        assertThat(dto1.name()).isEqualTo(templateMessage1.getName());
+        assertThat(dto1.message()).isEqualTo(templateMessage1.getMessage());
+        assertThat(dto1.emojiUrl()).isEqualTo(template1.getEmojiUrl());
+
+        FeedbackTemplateDto dto2 = result.templates().stream()
+                .filter(t -> t.id().equals(template2.getId()))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("템플릿2 결과 없음"));
+        assertThat(dto2.name()).isEqualTo(templateMessage2.getName());
+        assertThat(dto2.message()).isEqualTo(templateMessage2.getMessage());
+        assertThat(dto2.emojiUrl()).isEqualTo(template2.getEmojiUrl());
     }
 
     @Test
@@ -120,17 +156,42 @@ public class FeedbackIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @DisplayName("[FAIL] 잔소리 생성 - 1시간 경과 후 시도")
-    void createFeedback_fail_timeOver() throws Exception {
+    @DisplayName("[SUCCESS] 잔소리 생성 - 5회 이내 연속 요청 허용")
+    void createFeedback_success_withinFreeThreshold() throws Exception {
         CreateDowithFeedbackReqDto req = new CreateDowithFeedbackReqDto(dowithTask.getId(), template1.getId());
-        ResultActions resultActions =
-                this.request(MockMvcRequestBuilders.post("/api/v1/feedbacks").content(writeRequestBodyAsString(req)));
+        for (int i = 0; i < 5; i++) {
+            this.request(MockMvcRequestBuilders.post("/api/v1/feedbacks").content(writeRequestBodyAsString(req)))
+                    .andExpect(status().isOk());
+        }
+    }
 
-        setFixedClock(FIXED_CLOCK_TIME.plusMinutes(1));
+    @Test
+    @DisplayName("[FAIL] 잔소리 생성 - 5회 초과 후 1분 이내 재시도")
+    void createFeedback_fail_withinOneMinuteAfterThreshold() throws Exception {
+        CreateDowithFeedbackReqDto req = new CreateDowithFeedbackReqDto(dowithTask.getId(), template1.getId());
+        for (int i = 0; i < 5; i++) {
+            this.request(MockMvcRequestBuilders.post("/api/v1/feedbacks").content(writeRequestBodyAsString(req)))
+                    .andExpect(status().isOk());
+        }
+        ResultActions failResult = this.request(
+                        MockMvcRequestBuilders.post("/api/v1/feedbacks").content(writeRequestBodyAsString(req)))
+                .andExpect(status().isBadRequest());
+        FailResponseDto failResponse = this.readFailResponse(failResult);
+        assertThat(failResponse.statusCode())
+                .isEqualTo(FailResponseStatus.FEEDBACK_SENDING_UNAVAILABLE.getStatusCode());
+    }
 
-        ResultActions resultActionsAfter =
-                this.request(MockMvcRequestBuilders.post("/api/v1/feedbacks").content(writeRequestBodyAsString(req)));
-        resultActionsAfter.andExpect(status().isBadRequest());
+    @Test
+    @DisplayName("[SUCCESS] 잔소리 생성 - 5회 초과 후 1분 경과 시 허용")
+    void createFeedback_success_afterOneMinuteFromThreshold() throws Exception {
+        CreateDowithFeedbackReqDto req = new CreateDowithFeedbackReqDto(dowithTask.getId(), template1.getId());
+        for (int i = 0; i < 5; i++) {
+            this.request(MockMvcRequestBuilders.post("/api/v1/feedbacks").content(writeRequestBodyAsString(req)))
+                    .andExpect(status().isOk());
+        }
+        setFixedClock(FIXED_CLOCK_TIME.plusMinutes(1).plusSeconds(1));
+        this.request(MockMvcRequestBuilders.post("/api/v1/feedbacks").content(writeRequestBodyAsString(req)))
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -280,5 +341,53 @@ public class FeedbackIntegrationTest extends AbstractIntegrationTest {
                 this.readPagingResponse(afterCheckContent, RetrieveDowithTaskFeedbacksResDto.class);
         RetrieveTaskFeedbackDto afterFeedback = afterResult.feedbacks().get(0);
         assertThat(afterFeedback.isChecked()).isTrue();
+    }
+
+    @Test
+    @DisplayName("[SUCCESS] 잔소리 집계 조회")
+    void aggregateTaskFeedbacks_success() throws Exception {
+        // given
+        // Template1 잔소리 10개
+        List<DowithTaskFeedback> feedbacks = new ArrayList<>();
+        int senderIdx = 1;
+        for (int i = 0; i < 10; i++) {
+            feedbacks.add(DowithTaskFeedback.of(
+                    "senderId" + senderIdx, requestMember.getId(), dowithTask.getId(), template1.getId()));
+            senderIdx++;
+        }
+
+        // Template2 잔소리 5개
+        for (int i = 0; i < 5; i++) {
+            feedbacks.add(DowithTaskFeedback.of(
+                    "senderId" + senderIdx, requestMember.getId(), dowithTask.getId(), template2.getId()));
+            senderIdx++;
+        }
+
+        feedbackRepo.saveAll(feedbacks);
+        feedbackRepo.flush();
+
+        // when
+        MvcResult mvcResult = this.request(MockMvcRequestBuilders.get(
+                        "/api/v1/feedbacks/dowith-task/" + dowithTask.getId() + "/aggregate"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        RetrieveTaskFeedbackAggregateCountResDto result = this.readResponse(
+                mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8),
+                RetrieveTaskFeedbackAggregateCountResDto.class);
+
+        // then
+        assertThat(result.aggregates()).hasSize(2);
+        RetrieveTaskFeedbackAggregateCountResDto.AggregateDto aggregate1 = result.aggregates().stream()
+                .filter(agg -> agg.feedbackTemplateId().equals(template1.getId()))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("템플릿1 집계 결과 없음"));
+        assertThat(aggregate1.count()).isEqualTo(10);
+
+        RetrieveTaskFeedbackAggregateCountResDto.AggregateDto aggregate2 = result.aggregates().stream()
+                .filter(agg -> agg.feedbackTemplateId().equals(template2.getId()))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("템플릿2 집계 결과 없음"));
+        assertThat(aggregate2.count()).isEqualTo(5);
     }
 }
