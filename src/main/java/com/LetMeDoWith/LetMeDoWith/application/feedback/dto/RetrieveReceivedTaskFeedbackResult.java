@@ -21,7 +21,7 @@ public record RetrieveReceivedTaskFeedbackResult(Long totalCount, List<ReceivedT
                         feedback.senderProfileImageUrl(),
                         feedback.isChecked(),
                         feedback.receivedAt(),
-                        RetrieveTaskFeedbackResult.TaskFeedbackTemplateDto.from(templates.stream()
+                        TaskFeedbackTemplateDto.from(templates.stream()
                                 .filter(template -> template.id().equals(feedback.taskFeedbackTemplateId()))
                                 .findFirst()
                                 .get())))
@@ -40,5 +40,5 @@ public record RetrieveReceivedTaskFeedbackResult(Long totalCount, List<ReceivedT
                     String senderProfileImageUrl,
             @Schema(description = "잔소리 확인여부", example = "false") Boolean isChecked,
             @Schema(description = "잔소리 받은 시각") LocalDateTime receivedAt,
-            @Schema(description = "잔소리 템플릿") RetrieveTaskFeedbackResult.TaskFeedbackTemplateDto taskFeedbackTemplate) {}
+            @Schema(description = "잔소리 템플릿") TaskFeedbackTemplateDto taskFeedbackTemplate) {}
 }

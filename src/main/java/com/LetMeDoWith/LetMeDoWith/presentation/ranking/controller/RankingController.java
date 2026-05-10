@@ -10,6 +10,7 @@ import com.LetMeDoWith.LetMeDoWith.presentation.ranking.dto.RetrieveMyRankingRes
 import com.LetMeDoWith.LetMeDoWith.presentation.ranking.dto.RetrieveRankingTopicsResDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.ranking.dto.RetrieveRankingsResDto;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +39,10 @@ public class RankingController {
     @ApiSuccessResponse(description = "랭킹 상세 조회 성공")
     @GetMapping("/topic/{topicId}")
     public ResponseEntity<ResponseDto<RetrieveRankingsResDto>> retrieveRankings(
-            @PathVariable Long topicId, @RequestParam Long round, @RequestParam(defaultValue = "5") Integer size) {
+            @Parameter(description = "랭킹 주제 ID", example = "1") @PathVariable Long topicId,
+            @Parameter(description = "조회할 랭킹 라운드", example = "3") @RequestParam Long round,
+            @Parameter(description = "상위 N명까지 조회 (기본 5)", example = "5") @RequestParam(defaultValue = "5")
+                    Integer size) {
         if (size < 1) {
             throw new RestApiException(FailResponseStatus.INVALID_PARAM_ERROR);
         }
@@ -50,7 +54,8 @@ public class RankingController {
     @ApiSuccessResponse(description = "내 랭킹 조회 성공")
     @GetMapping("/topic/{topicId}/me")
     public ResponseEntity<ResponseDto<RetrieveMyRankingResDto>> retrieveMyRanking(
-            @PathVariable Long topicId, @RequestParam Long round) {
+            @Parameter(description = "랭킹 주제 ID", example = "1") @PathVariable Long topicId,
+            @Parameter(description = "조회할 랭킹 라운드", example = "3") @RequestParam Long round) {
         return ResponseUtil.createSuccessResponse(
                 RetrieveMyRankingResDto.from(retrieveRankingService.retrieveMyRanking(topicId, round)));
     }

@@ -21,15 +21,21 @@ public record CreateRefreshTokenResDto(
                 .build();
     }
 
+    @Schema(description = "Access Token 정보")
     @Builder
-    public record AccessTokenDto(String token, LocalDateTime expireAt) {
+    public record AccessTokenDto(
+            @Schema(description = "JWT Access Token") String token,
+            @Schema(description = "만료 일시") LocalDateTime expireAt) {
         public static AccessTokenDto from(AccessToken accessToken) {
             return new AccessTokenDto(accessToken.getToken(), accessToken.getExpireAt());
         }
     }
 
+    @Schema(description = "Refresh Token 정보")
     @Builder
-    public record RefreshTokenDto(String token, LocalDateTime expireAt) {
+    public record RefreshTokenDto(
+            @Schema(description = "JWT Refresh Token") String token,
+            @Schema(description = "만료 일시") LocalDateTime expireAt) {
         public static RefreshTokenDto from(RefreshToken refreshToken) {
             return new RefreshTokenDto(refreshToken.getToken(), refreshToken.calculateExpireAt());
         }

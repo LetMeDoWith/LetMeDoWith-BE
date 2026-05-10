@@ -4,10 +4,7 @@ import com.LetMeDoWith.LetMeDoWith.common.enums.common.SortDirection;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.model.QDowithTaskFeedback;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.DowithTaskFeedbackQueryRepository;
-import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.dto.CountSentFeedback;
-import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.dto.DowithTaskFeedbackQueryDto;
-import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.dto.SentDowithTaskFeedbackQueryDto;
-import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.dto.SentFeedbacksQueryDto;
+import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.dto.*;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.QMember;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.QDowithTask;
 import com.querydsl.core.Tuple;
@@ -202,6 +199,20 @@ public class DowithTaskFeedbackQueryRepositoryImpl implements DowithTaskFeedback
                         rangeStartDate.atStartOfDay(), rangeEndDate.plusDays(1).atStartOfDay()))
                 .groupBy(dowithTaskFeedback.senderMemberId)
                 .orderBy(countOrderSpecifier, dowithTaskFeedback.createdAt.min().asc())
+                .fetch();
+    }
+
+    @Override
+    public List<AggregateTaskFeedbacksQueryDto> aggregateTaskFeedbacks(Long taskId) {
+
+        return queryFactory
+                .select(Projections.constructor(
+                        AggregateTaskFeedbacksQueryDto.class,
+                        dowithTaskFeedback.taskFeedbackTemplateId,
+                        dowithTaskFeedback.count()))
+                .from(dowithTaskFeedback)
+                .where(dowithTaskFeedback.dowithTaskId.eq(taskId))
+                .groupBy(dowithTaskFeedback.taskFeedbackTemplateId)
                 .fetch();
     }
 }
