@@ -1,10 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.task.query;
 
-import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
-import com.LetMeDoWith.LetMeDoWith.domain.member.model.QBadge;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.QMember;
-import com.LetMeDoWith.LetMeDoWith.domain.member.model.QMemberBadge;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.QDowithTask;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.QDowithTaskLike;
@@ -51,8 +48,6 @@ public class DowithTaskQueryRespositoryImpl implements DowithTaskQueryRepository
     private final QTaskCategory taskCategory = QTaskCategory.taskCategory;
     private final QDowithTaskLike dowithTaskLike = QDowithTaskLike.dowithTaskLike;
     private final QMember member = QMember.member;
-    private final QMemberBadge memberBadge = QMemberBadge.memberBadge;
-    private final QBadge badge = QBadge.badge;
 
     private static LocalDateTime toLocalDateTime(Object value) {
         if (value == null) {
@@ -187,7 +182,7 @@ public class DowithTaskQueryRespositoryImpl implements DowithTaskQueryRepository
                         dowithTask.id,
                         dowithTask.memberId,
                         member.nickname,
-                        badge.imageUrl,
+                        member.profileImageUrl,
                         dowithTask.title,
                         dowithTask.status.stringValue(),
                         dowithTask.date,
@@ -198,10 +193,6 @@ public class DowithTaskQueryRespositoryImpl implements DowithTaskQueryRepository
                 .from(dowithTask)
                 .leftJoin(member)
                 .on(member.id.eq(dowithTask.memberId))
-                .leftJoin(memberBadge)
-                .on(memberBadge.memberId.eq(member.id).and(memberBadge.isMain.eq(Yn.TRUE)))
-                .leftJoin(badge)
-                .on(badge.id.eq(memberBadge.badge.id))
                 .where(buildFeedbackAvailableCondition(), dowithTask.memberId.ne(excludeMemberId))
                 .offset(offset)
                 .limit(size)
