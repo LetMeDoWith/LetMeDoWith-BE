@@ -1,0 +1,43 @@
+group_id: GRP-<id>
+source_plan:
+  path: <path-to-plan-artifact>
+  task_ids:
+    - TASK-<id>
+completed_tasks:
+  - task_id: TASK-<id>
+    status: completed
+    summary: <what was finished>
+deferred_tasks:
+  - task_id: TASK-<id>
+    reason: <why it was deferred>
+changed_components:
+  - component_id: CMP-<id>
+    status: created-or-modified
+    summary: <what changed in this component>
+changed_files:
+  - path: <file-path>
+    summary: <file-level delta>
+key_decisions:
+  - <decision made during implementation>
+plan_drift:
+  drifted: false
+  notes:
+    - <note if implementation diverged from the plan>
+interfaces_ready:
+  - type: <endpoint|service-method|repository-contract|dto|domain-behavior|other>
+    name: <stable interface name>
+    summary: <what downstream groups can rely on>
+delta_constraints:
+  - <group-specific caution for downstream work>
+validation:
+  executed:
+    - <command or check actually run>
+  pending:
+    - <checks not yet run>
+open_items:
+  - <remaining issue or follow-up item>
+next_group:
+  recommended_focus:
+    - TASK-<id>
+  notes:
+    - <what the next group should know>

@@ -58,6 +58,4 @@ samLocalEnvVars.json
 ### AI collaboration framework docs ###
 /docs
 /.cursor
-/.agents/
 /AGENTS.md
-/CLAUDE.md

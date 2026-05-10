@@ -55,7 +55,7 @@ public abstract class AbstractIntegrationTest {
     protected MemberJpaRepository memberJpaRepository;
 
     @Autowired
-    ObjectMapper objectMapper;
+    protected ObjectMapper objectMapper;
 
     @Autowired
     MockMvc mockMvc;
