@@ -7,6 +7,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public record TaskFeedbackTemplateQueryDto(
         @Schema(description = "잔소리 템플릿 ID", example = "1") Long id,
         @Schema(description = "잔소리 언어", example = "KR") CountryCode language,
-        @Schema(description = "잔소리 발신자에게 보이는 메시지", example = "") String senderDisplayMessage,
+        @Schema(description = "잔소리명", example = "") String name,
         @Schema(description = "잔소리 메시지", example = "{username} 오늘도 열심히 하셨나요?") String message,
         @Schema(description = "잔소리 이모지 URL", example = "https://example.com/emoji.png") String emojiUrl) {}

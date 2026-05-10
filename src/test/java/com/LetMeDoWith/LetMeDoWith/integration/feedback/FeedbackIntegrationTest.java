@@ -77,7 +77,7 @@ public class FeedbackIntegrationTest extends AbstractIntegrationTest {
                 .build());
         templateMessage1 = templateMessageRepository.save(TaskFeedbackTemplateMessage.builder()
                 .taskFeedbackTemplate(template1)
-                .senderDisplayMessage("발신자에게 보이는 메시지1")
+                .name("발신자에게 보이는 메시지1")
                 .message("잔소리 메시지1")
                 .language(TEST_LANGUAGE)
                 .build());
@@ -89,7 +89,7 @@ public class FeedbackIntegrationTest extends AbstractIntegrationTest {
                 .build());
         templateMessage2 = templateMessageRepository.save(TaskFeedbackTemplateMessage.builder()
                 .taskFeedbackTemplate(template2)
-                .senderDisplayMessage("발신자에게 보이는 메시지2")
+                .name("발신자에게 보이는 메시지2")
                 .message("잔소리 메시지2")
                 .language(TEST_LANGUAGE)
                 .build());
@@ -115,7 +115,7 @@ public class FeedbackIntegrationTest extends AbstractIntegrationTest {
                 .filter(t -> t.id().equals(template1.getId()))
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("템플릿1 결과 없음"));
-        assertThat(dto1.senderDisplayMessage()).isEqualTo(templateMessage1.getSenderDisplayMessage());
+        assertThat(dto1.name()).isEqualTo(templateMessage1.getName());
         assertThat(dto1.message()).isEqualTo(templateMessage1.getMessage());
         assertThat(dto1.emojiUrl()).isEqualTo(template1.getEmojiUrl());
 
@@ -123,7 +123,7 @@ public class FeedbackIntegrationTest extends AbstractIntegrationTest {
                 .filter(t -> t.id().equals(template2.getId()))
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("템플릿2 결과 없음"));
-        assertThat(dto2.senderDisplayMessage()).isEqualTo(templateMessage2.getSenderDisplayMessage());
+        assertThat(dto2.name()).isEqualTo(templateMessage2.getName());
         assertThat(dto2.message()).isEqualTo(templateMessage2.getMessage());
         assertThat(dto2.emojiUrl()).isEqualTo(template2.getEmojiUrl());
     }

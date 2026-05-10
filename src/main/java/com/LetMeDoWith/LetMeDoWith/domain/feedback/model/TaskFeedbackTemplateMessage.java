@@ -25,8 +25,8 @@ public class TaskFeedbackTemplateMessage extends BaseAuditEntity {
     @JoinColumn(name = "task_feedback_template_id", nullable = false)
     private TaskFeedbackTemplate taskFeedbackTemplate;
 
-    @Column(name = "sender_display_message", nullable = false)
-    private String senderDisplayMessage;
+    @Column(name = "name", nullable = false)
+    private String name;
 
     @Column(name = "message", nullable = false)
     private String message;

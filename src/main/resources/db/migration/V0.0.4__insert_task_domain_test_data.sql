@@ -45,7 +45,7 @@ INSERT INTO task_feedback_template (id, emoji_url, title, description, is_active
 VALUES (1, 'http://test.emoji.url', '칭찬', '잘했어요!', 'Y', NOW(), NOW(), 'system', 'system');
 
 -- 3. 테스트용 피드백 템플릿 메시지 생성 (id=1)
-INSERT INTO task_feedback_template_message (id, task_feedback_template_id, sender_display_message, message, language,
+INSERT INTO task_feedback_template_message (id, task_feedback_template_id, name, message, language,
                                             created_at, updated_at,
                                             created_by, updated_by)
 VALUES (1, 1, '잘했어요!', '{username}님, 정말 잘했어요!', 'KR', NOW(), NOW(), 'system', 'system');
