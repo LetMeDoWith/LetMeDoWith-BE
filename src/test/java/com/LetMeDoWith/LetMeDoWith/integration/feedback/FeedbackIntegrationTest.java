@@ -3,7 +3,9 @@ package com.LetMeDoWith.LetMeDoWith.integration.feedback;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.LetMeDoWith.LetMeDoWith.common.dto.ResponsePageDto;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
+import com.LetMeDoWith.LetMeDoWith.domain.feedback.model.DowithTaskFeedback;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.model.TaskFeedbackTemplate;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.model.TaskFeedbackTemplateMessage;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.CountryCode;
@@ -21,6 +23,7 @@ import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.RetrieveReceivedDow
 import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.RetrieveReceivedDowithTaskFeedbacksResDto.ReceivedFeedbackDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.RetrieveSentDowithTaskFeedbacksResDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.RetrieveSentDowithTaskFeedbacksResDto.SentFeedbackDto;
+import com.fasterxml.jackson.databind.JavaType;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -87,7 +90,7 @@ public class FeedbackIntegrationTest extends AbstractIntegrationTest {
                 .isActive(Yn.TRUE)
                 .build());
         templateMessage2 = templateMessageRepository.save(TaskFeedbackTemplateMessage.builder()
-                .taskFeedbackTemplate(template1)
+                .taskFeedbackTemplate(template2)
                 .message("잔소리 메시지2")
                 .language(TEST_LANGUAGE)
                 .build());
@@ -149,6 +152,52 @@ public class FeedbackIntegrationTest extends AbstractIntegrationTest {
         RetrieveTaskFeedbackDto feedback = result.feedbacks().get(0);
         assertThat(feedback.dowithTaskId()).isEqualTo(dowithTask.getId());
         assertThat(feedback.taskFeedbackTemplate().id()).isEqualTo(template1.getId());
+    }
+
+    @Test
+    @DisplayName("[SUCCESS] 잔소리 조회 - templateId 필터 적용 시 해당 템플릿만 조회")
+    void retrieveFeedbackByTaskId_withTemplateFilter_success() throws Exception {
+        // 서비스 제약(sender 쿨다운)을 우회해 template1·template2 잔소리를 각각 직접 저장
+        feedbackRepo.save(
+                DowithTaskFeedback.of("sender-a", requestMember.getId(), dowithTask.getId(), template1.getId()));
+        feedbackRepo.save(
+                DowithTaskFeedback.of("sender-b", requestMember.getId(), dowithTask.getId(), template2.getId()));
+
+        MvcResult retrieveResult = this.request(
+                        MockMvcRequestBuilders.get("/api/v1/feedbacks/dowith-task/" + dowithTask.getId())
+                                .param("feedbackTemplateId", template1.getId().toString()))
+                .andExpect(status().isOk())
+                .andReturn();
+        RetrieveDowithTaskFeedbacksResDto result = this.readPagingResponse(
+                retrieveResult.getResponse().getContentAsString(StandardCharsets.UTF_8),
+                RetrieveDowithTaskFeedbacksResDto.class);
+
+        assertThat(result.feedbacks()).hasSize(1);
+        assertThat(result.feedbacks().get(0).taskFeedbackTemplate().id()).isEqualTo(template1.getId());
+    }
+
+    @Test
+    @DisplayName("[SUCCESS] 잔소리 조회 - templateId 필터 적용 시 totalCount도 필터 기준으로 반환")
+    void retrieveFeedbackByTaskId_withTemplateFilter_totalCountFiltered() throws Exception {
+        // 서비스 제약(sender 쿨다운)을 우회해 template1·template2 잔소리를 각각 직접 저장
+        feedbackRepo.save(
+                DowithTaskFeedback.of("sender-a", requestMember.getId(), dowithTask.getId(), template1.getId()));
+        feedbackRepo.save(
+                DowithTaskFeedback.of("sender-b", requestMember.getId(), dowithTask.getId(), template2.getId()));
+
+        MvcResult retrieveResult = this.request(
+                        MockMvcRequestBuilders.get("/api/v1/feedbacks/dowith-task/" + dowithTask.getId())
+                                .param("feedbackTemplateId", template2.getId().toString()))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String content = retrieveResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
+        JavaType type = objectMapper
+                .getTypeFactory()
+                .constructParametricType(ResponsePageDto.class, RetrieveDowithTaskFeedbacksResDto.class);
+        ResponsePageDto<RetrieveDowithTaskFeedbacksResDto> response = objectMapper.readValue(content, type);
+
+        assertThat(response.totalCount()).isEqualTo(1L);
     }
 
     @Test

@@ -65,9 +65,12 @@ public class DowithTaskFeedbackController {
     @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST)})
     @GetMapping("/dowith-task/{dowithTaskId}")
     public ResponseEntity<ResponsePageDto<RetrieveDowithTaskFeedbacksResDto>> retrieveDowithTaskFeedbacks(
-            @PathVariable Long dowithTaskId, @ParameterObject Pageable pageable) {
+            @PathVariable Long dowithTaskId,
+            @Parameter(description = "잔소리 템플릿 ID (optional). 지정 시 해당 템플릿의 잔소리만 조회합니다.") @RequestParam(required = false)
+                    Long feedbackTemplateId,
+            @ParameterObject Pageable pageable) {
         RetrieveTaskFeedbackResult result =
-                retrieveTaskFeedbackService.retrieveTaskFeedbacksByTaskId(dowithTaskId, pageable);
+                retrieveTaskFeedbackService.retrieveTaskFeedbacksByTaskId(dowithTaskId, pageable, feedbackTemplateId);
         return ResponseUtil.createSuccessResponse(
                 RetrieveDowithTaskFeedbacksResDto.from(result), pageable, result.totalCount());
     }

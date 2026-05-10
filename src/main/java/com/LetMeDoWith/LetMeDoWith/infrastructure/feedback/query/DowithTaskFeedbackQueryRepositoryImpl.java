@@ -14,9 +14,11 @@ import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import jakarta.annotation.Nullable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,16 +38,17 @@ public class DowithTaskFeedbackQueryRepositoryImpl implements DowithTaskFeedback
     private final QDowithTask dowithTask = QDowithTask.dowithTask;
 
     @Override
-    public Long countFeedbacksByTaskId(Long taskId) {
+    public Long countFeedbacksByTaskId(Long taskId, @Nullable Long templateId) {
         return queryFactory
                 .select(Wildcard.count)
                 .from(dowithTaskFeedback)
-                .where(dowithTaskFeedback.dowithTaskId.eq(taskId))
+                .where(dowithTaskFeedback.dowithTaskId.eq(taskId), templateIdEq(templateId))
                 .fetchOne();
     }
 
     @Override
-    public List<DowithTaskFeedbackQueryDto> getFeedbacksByTaskId(Long taskId, Long offset, int size) {
+    public List<DowithTaskFeedbackQueryDto> getFeedbacksByTaskId(
+            Long taskId, @Nullable Long templateId, Long offset, int size) {
         return queryFactory
                 .select(Projections.constructor(
                         DowithTaskFeedbackQueryDto.class,
@@ -66,7 +69,7 @@ public class DowithTaskFeedbackQueryRepositoryImpl implements DowithTaskFeedback
                 .on(dowithTaskFeedback.senderMemberId.eq(member.id))
                 .leftJoin(dowithTask)
                 .on(dowithTaskFeedback.dowithTaskId.eq(dowithTask.id))
-                .where(dowithTaskFeedback.dowithTaskId.eq(taskId))
+                .where(dowithTaskFeedback.dowithTaskId.eq(taskId), templateIdEq(templateId))
                 .orderBy(dowithTaskFeedback.createdAt.desc())
                 .offset(offset)
                 .limit(size)
@@ -203,5 +206,9 @@ public class DowithTaskFeedbackQueryRepositoryImpl implements DowithTaskFeedback
                 .groupBy(dowithTaskFeedback.senderMemberId)
                 .orderBy(countOrderSpecifier, dowithTaskFeedback.createdAt.min().asc())
                 .fetch();
+    }
+
+    private BooleanExpression templateIdEq(@Nullable Long templateId) {
+        return templateId != null ? dowithTaskFeedback.taskFeedbackTemplateId.eq(templateId) : null;
     }
 }
