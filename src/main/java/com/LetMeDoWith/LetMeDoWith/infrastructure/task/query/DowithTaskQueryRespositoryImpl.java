@@ -179,7 +179,8 @@ public class DowithTaskQueryRespositoryImpl implements DowithTaskQueryRepository
     }
 
     @Override
-    public List<FeedbackAvailableDowithTasksQueryDto> getFeedbackAvailableDowithTasks(Long offset, int size) {
+    public List<FeedbackAvailableDowithTasksQueryDto> getFeedbackAvailableDowithTasks(
+            Long offset, int size, String excludeMemberId) {
         return queryFactory
                 .select(Projections.constructor(
                         FeedbackAvailableDowithTasksQueryDto.class,
@@ -201,18 +202,18 @@ public class DowithTaskQueryRespositoryImpl implements DowithTaskQueryRepository
                 .on(memberBadge.memberId.eq(member.id).and(memberBadge.isMain.eq(Yn.TRUE)))
                 .leftJoin(badge)
                 .on(badge.id.eq(memberBadge.badge.id))
-                .where(buildFeedbackAvailableCondition())
+                .where(buildFeedbackAvailableCondition(), dowithTask.memberId.ne(excludeMemberId))
                 .offset(offset)
                 .limit(size)
                 .fetch();
     }
 
     @Override
-    public Long countFeedbackAvailableDowithTasks() {
+    public Long countFeedbackAvailableDowithTasks(String excludeMemberId) {
         return queryFactory
                 .select(dowithTask.count())
                 .from(dowithTask)
-                .where(buildFeedbackAvailableCondition())
+                .where(buildFeedbackAvailableCondition(), dowithTask.memberId.ne(excludeMemberId))
                 .fetchOne();
     }
 

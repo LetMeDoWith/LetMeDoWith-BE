@@ -23,9 +23,10 @@ public interface DowithTaskQueryRepository {
 
     Map<Long, Long> countDowithTaskLikes(Set<Long> dowithTaskIds);
 
-    List<FeedbackAvailableDowithTasksQueryDto> getFeedbackAvailableDowithTasks(Long offset, int size);
+    List<FeedbackAvailableDowithTasksQueryDto> getFeedbackAvailableDowithTasks(
+            Long offset, int size, String excludeMemberId);
 
-    Long countFeedbackAvailableDowithTasks();
+    Long countFeedbackAvailableDowithTasks(String excludeMemberId);
 
     List<FailedDowithTaskCountQueryDto> getFailedTaskCountsByMember(
             LocalDateTime aggregationStartDateTime, LocalDateTime aggregationEndDateTime);

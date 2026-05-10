@@ -53,6 +53,7 @@ public class RetrieveFeedbackAvailableDowithTasksIntegrationTest extends Abstrac
     private DowithTask taskInRange1;
     private DowithTask taskInRange2;
     private DowithTask taskInRange3;
+    private DowithTask taskMyOwnInRange;
     private DowithTask taskBoundaryExcluded;
     private DowithTask taskFutureExcluded;
     private DowithTask taskSuccessExcluded;
@@ -61,6 +62,7 @@ public class RetrieveFeedbackAvailableDowithTasksIntegrationTest extends Abstrac
     private DowithTask taskPrevDayBoundaryExcluded;
     private DowithTask taskTodayInRange;
     private DowithTask taskTodayFutureExcluded;
+    private DowithTask taskMyOwnMidnightInRange;
 
     @Override
     protected void deleteTestData() {
@@ -93,38 +95,44 @@ public class RetrieveFeedbackAvailableDowithTasksIntegrationTest extends Abstrac
         taskInRange1 =
                 DowithTask.of(otherMember.getId(), null, "inRange1", LocalDate.of(2024, 3, 1), LocalTime.of(9, 31));
         taskInRange2 =
-                DowithTask.of(requestMember.getId(), null, "inRange2", LocalDate.of(2024, 3, 1), LocalTime.of(9, 45));
+                DowithTask.of(otherMember.getId(), null, "inRange2", LocalDate.of(2024, 3, 1), LocalTime.of(9, 45));
         taskInRange3 =
-                DowithTask.of(requestMember.getId(), null, "inRange3", LocalDate.of(2024, 3, 1), LocalTime.of(10, 30));
+                DowithTask.of(otherMember.getId(), null, "inRange3", LocalDate.of(2024, 3, 1), LocalTime.of(10, 30));
+        taskMyOwnInRange = DowithTask.of(
+                requestMember.getId(), null, "myOwnInRange", LocalDate.of(2024, 3, 1), LocalTime.of(9, 50));
         taskBoundaryExcluded = DowithTask.of(
-                requestMember.getId(), null, "boundaryExcluded", LocalDate.of(2024, 3, 1), LocalTime.of(9, 30));
+                otherMember.getId(), null, "boundaryExcluded", LocalDate.of(2024, 3, 1), LocalTime.of(9, 30));
         taskFutureExcluded = DowithTask.of(
-                requestMember.getId(), null, "futureExcluded", LocalDate.of(2024, 3, 1), LocalTime.of(10, 31));
+                otherMember.getId(), null, "futureExcluded", LocalDate.of(2024, 3, 1), LocalTime.of(10, 31));
 
         taskSuccessExcluded = DowithTask.of(
-                requestMember.getId(), null, "successExcluded", LocalDate.of(2024, 3, 1), LocalTime.of(10, 0));
+                otherMember.getId(), null, "successExcluded", LocalDate.of(2024, 3, 1), LocalTime.of(10, 0));
         taskSuccessExcluded.success(List.of("https://example.com/success1.jpg"));
 
         taskPrevDayInRange = DowithTask.of(
-                requestMember.getId(), null, "prevDayInRange", LocalDate.of(2024, 3, 1), LocalTime.of(23, 40));
+                otherMember.getId(), null, "prevDayInRange", LocalDate.of(2024, 3, 1), LocalTime.of(23, 40));
         taskPrevDayBoundaryExcluded = DowithTask.of(
-                requestMember.getId(), null, "prevDayBoundaryExcluded", LocalDate.of(2024, 3, 1), LocalTime.of(23, 30));
-        taskTodayInRange = DowithTask.of(
-                requestMember.getId(), null, "todayInRange", LocalDate.of(2024, 3, 2), LocalTime.of(0, 20));
+                otherMember.getId(), null, "prevDayBoundaryExcluded", LocalDate.of(2024, 3, 1), LocalTime.of(23, 30));
+        taskTodayInRange =
+                DowithTask.of(otherMember.getId(), null, "todayInRange", LocalDate.of(2024, 3, 2), LocalTime.of(0, 20));
         taskTodayFutureExcluded = DowithTask.of(
-                requestMember.getId(), null, "todayFutureExcluded", LocalDate.of(2024, 3, 2), LocalTime.of(0, 40));
+                otherMember.getId(), null, "todayFutureExcluded", LocalDate.of(2024, 3, 2), LocalTime.of(0, 40));
+        taskMyOwnMidnightInRange = DowithTask.of(
+                requestMember.getId(), null, "myOwnMidnightInRange", LocalDate.of(2024, 3, 1), LocalTime.of(23, 35));
 
         dowithTaskJpaRepository.saveAll(List.of(
                 taskInRange1,
                 taskInRange2,
                 taskInRange3,
+                taskMyOwnInRange,
                 taskBoundaryExcluded,
                 taskFutureExcluded,
                 taskSuccessExcluded,
                 taskPrevDayInRange,
                 taskPrevDayBoundaryExcluded,
                 taskTodayInRange,
-                taskTodayFutureExcluded));
+                taskTodayFutureExcluded,
+                taskMyOwnMidnightInRange));
 
         DowithTaskFeedback feedback1 = DowithTaskFeedback.of(
                 requestMember.getId(), taskInRange1.getMemberId(), taskInRange1.getId(), template.getId());
@@ -155,6 +163,7 @@ public class RetrieveFeedbackAvailableDowithTasksIntegrationTest extends Abstrac
         assertThat(ids).contains(taskInRange1.getId(), taskInRange2.getId(), taskInRange3.getId());
         assertThat(ids)
                 .doesNotContain(
+                        taskMyOwnInRange.getId(),
                         taskBoundaryExcluded.getId(),
                         taskFutureExcluded.getId(),
                         taskSuccessExcluded.getId(),
@@ -193,11 +202,25 @@ public class RetrieveFeedbackAvailableDowithTasksIntegrationTest extends Abstrac
         assertThat(ids).contains(taskPrevDayInRange.getId(), taskTodayInRange.getId());
         assertThat(ids)
                 .doesNotContain(
+                        taskMyOwnMidnightInRange.getId(),
                         taskPrevDayBoundaryExcluded.getId(),
                         taskTodayFutureExcluded.getId(),
                         taskInRange1.getId(),
                         taskInRange2.getId(),
                         taskInRange3.getId());
+    }
+
+    @Test
+    @DisplayName("[SUCCESS] 잔소리 가능 두윗 목록 조회 - 내가 만든 두윗 제외")
+    void retrieveFeedbackAvailableDowithTasks_excludeMyOwn() throws Exception {
+        setFixedClock(LocalDateTime.of(2024, 3, 1, 10, 30, 0));
+
+        ResponsePageDto<RetrieveFeedbackAvailableDowithTasksResDto> pageResponse = requestFeedbackAvailablePage(0, 20);
+        List<Long> ids = pageResponse.data().dowithTasks().stream()
+                .map(RetrieveFeedbackAvailableDowithTaskResDto::id)
+                .toList();
+
+        assertThat(ids).doesNotContain(taskMyOwnInRange.getId());
     }
 
     @Test
