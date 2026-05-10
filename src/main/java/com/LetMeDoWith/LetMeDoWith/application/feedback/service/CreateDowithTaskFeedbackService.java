@@ -5,7 +5,7 @@ import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.model.DowithTaskFeedback;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.DowithTaskFeedbackRepository;
-import com.LetMeDoWith.LetMeDoWith.domain.feedback.service.FeedbackCreationPolicy;
+import com.LetMeDoWith.LetMeDoWith.domain.feedback.service.FeedbackSendPolicy;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
 import com.LetMeDoWith.LetMeDoWith.domain.member.repository.MemberRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
@@ -22,7 +22,7 @@ public class CreateDowithTaskFeedbackService {
     private final DowithTaskFeedbackRepository dowithTaskFeedbackRepository;
     private final MemberRepository memberRepository;
     private final DowithTaskRepository dowithTaskRepository;
-    private final FeedbackCreationPolicy feedbackCreationPolicy;
+    private final FeedbackSendPolicy feedbackSendPolicy;
 
     /**
      * DowithTask에 대한 잔소리를 생성한다.
@@ -42,13 +42,15 @@ public class CreateDowithTaskFeedbackService {
                 .getDowithTask(dowithTaskId)
                 .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
 
+        long feedbackCount = dowithTaskFeedbackRepository.countBySenderAndTask(dowithTaskId, senderId);
         Optional<DowithTaskFeedback> latestFeedback = dowithTaskFeedbackRepository.getLatest(dowithTaskId, senderId);
 
-        if (!feedbackCreationPolicy.isAdditionalFeedbackAvailable(latestFeedback, SystemTimeUtil.now())
-                || !dowithTask.isFeedbackAvailable()) {
-
-            // 피드백 생성 조건을 만족하지 못하는 경우
+        if (!dowithTask.isFeedbackAvailable()) {
             throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
+        }
+
+        if (!feedbackSendPolicy.canSend(feedbackCount, latestFeedback, SystemTimeUtil.now())) {
+            throw new RestApiException(FailResponseStatus.FEEDBACK_SENDING_UNAVAILABLE);
         }
 
         dowithTaskFeedbackRepository.save(

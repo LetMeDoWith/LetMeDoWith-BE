@@ -2,6 +2,7 @@ package com.LetMeDoWith.LetMeDoWith.integration;
 
 import com.LetMeDoWith.LetMeDoWith.application.auth.provider.AccessTokenProvider;
 import com.LetMeDoWith.LetMeDoWith.application.auth.provider.RefreshTokenProvider;
+import com.LetMeDoWith.LetMeDoWith.common.dto.FailResponseDto;
 import com.LetMeDoWith.LetMeDoWith.common.dto.ResponseDto;
 import com.LetMeDoWith.LetMeDoWith.common.dto.ResponsePageDto;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.Gender;
@@ -208,6 +209,17 @@ public abstract class AbstractIntegrationTest {
             return responseDto.data();
         } catch (Exception e) {
             log.error("readResponse error", e);
+            Assertions.fail("Response 변환 중 에러 발생" + e.getMessage());
+            return null;
+        }
+    }
+
+    public FailResponseDto readFailResponse(ResultActions resultActions) {
+        try {
+            String responseBody = resultActions.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+            return objectMapper.readValue(responseBody, FailResponseDto.class);
+        } catch (Exception e) {
+            log.error("readFailResponse error", e);
             Assertions.fail("Response 변환 중 에러 발생" + e.getMessage());
             return null;
         }

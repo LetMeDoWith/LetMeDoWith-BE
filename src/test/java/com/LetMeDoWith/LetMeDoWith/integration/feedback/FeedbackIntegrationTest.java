@@ -3,7 +3,9 @@ package com.LetMeDoWith.LetMeDoWith.integration.feedback;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.LetMeDoWith.LetMeDoWith.common.dto.FailResponseDto;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
+import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.model.DowithTaskFeedback;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.model.TaskFeedbackTemplate;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.model.TaskFeedbackTemplateMessage;
@@ -152,17 +154,42 @@ public class FeedbackIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @DisplayName("[FAIL] 잔소리 생성 - 1시간 경과 후 시도")
-    void createFeedback_fail_timeOver() throws Exception {
+    @DisplayName("[SUCCESS] 잔소리 생성 - 5회 이내 연속 요청 허용")
+    void createFeedback_success_withinFreeThreshold() throws Exception {
         CreateDowithFeedbackReqDto req = new CreateDowithFeedbackReqDto(dowithTask.getId(), template1.getId());
-        ResultActions resultActions =
-                this.request(MockMvcRequestBuilders.post("/api/v1/feedbacks").content(writeRequestBodyAsString(req)));
+        for (int i = 0; i < 5; i++) {
+            this.request(MockMvcRequestBuilders.post("/api/v1/feedbacks").content(writeRequestBodyAsString(req)))
+                    .andExpect(status().isOk());
+        }
+    }
 
-        setFixedClock(FIXED_CLOCK_TIME.plusMinutes(1));
+    @Test
+    @DisplayName("[FAIL] 잔소리 생성 - 5회 초과 후 1분 이내 재시도")
+    void createFeedback_fail_withinOneMinuteAfterThreshold() throws Exception {
+        CreateDowithFeedbackReqDto req = new CreateDowithFeedbackReqDto(dowithTask.getId(), template1.getId());
+        for (int i = 0; i < 5; i++) {
+            this.request(MockMvcRequestBuilders.post("/api/v1/feedbacks").content(writeRequestBodyAsString(req)))
+                    .andExpect(status().isOk());
+        }
+        ResultActions failResult = this.request(
+                        MockMvcRequestBuilders.post("/api/v1/feedbacks").content(writeRequestBodyAsString(req)))
+                .andExpect(status().isBadRequest());
+        FailResponseDto failResponse = this.readFailResponse(failResult);
+        assertThat(failResponse.statusCode())
+                .isEqualTo(FailResponseStatus.FEEDBACK_SENDING_UNAVAILABLE.getStatusCode());
+    }
 
-        ResultActions resultActionsAfter =
-                this.request(MockMvcRequestBuilders.post("/api/v1/feedbacks").content(writeRequestBodyAsString(req)));
-        resultActionsAfter.andExpect(status().isBadRequest());
+    @Test
+    @DisplayName("[SUCCESS] 잔소리 생성 - 5회 초과 후 1분 경과 시 허용")
+    void createFeedback_success_afterOneMinuteFromThreshold() throws Exception {
+        CreateDowithFeedbackReqDto req = new CreateDowithFeedbackReqDto(dowithTask.getId(), template1.getId());
+        for (int i = 0; i < 5; i++) {
+            this.request(MockMvcRequestBuilders.post("/api/v1/feedbacks").content(writeRequestBodyAsString(req)))
+                    .andExpect(status().isOk());
+        }
+        setFixedClock(FIXED_CLOCK_TIME.plusMinutes(1).plusSeconds(1));
+        this.request(MockMvcRequestBuilders.post("/api/v1/feedbacks").content(writeRequestBodyAsString(req)))
+                .andExpect(status().isOk());
     }
 
     @Test
