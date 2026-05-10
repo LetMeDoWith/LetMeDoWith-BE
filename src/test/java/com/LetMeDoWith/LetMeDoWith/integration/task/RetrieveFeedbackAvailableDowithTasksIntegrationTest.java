@@ -83,6 +83,7 @@ public class RetrieveFeedbackAvailableDowithTasksIntegrationTest extends Abstrac
                 .gender(Gender.FEMALE)
                 .dateOfBirth(LocalDate.of(1995, 11, 4))
                 .type(MemberType.USER)
+                .profileImageUrl("https://example.com/profile.png")
                 .build());
 
         template = taskFeedbackTemplateJpaRepository.save(TaskFeedbackTemplate.builder()
@@ -171,6 +172,7 @@ public class RetrieveFeedbackAvailableDowithTasksIntegrationTest extends Abstrac
                         taskTodayInRange.getId());
 
         RetrieveFeedbackAvailableDowithTaskResDto inRange1 = findById(tasks, taskInRange1.getId());
+        assertThat(inRange1.profileImageUrl()).isEqualTo(otherMember.getProfileImageUrl());
         assertThat(inRange1.feedbackCount()).isEqualTo(2);
         assertThat(inRange1.myFeedbacks()).hasSize(1);
         assertThat(inRange1.myFeedbacks().get(0).templateId()).isEqualTo(template.getId());
