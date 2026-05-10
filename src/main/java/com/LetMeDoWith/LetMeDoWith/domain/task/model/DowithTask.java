@@ -266,7 +266,6 @@ public class DowithTask extends BaseAuditEntity {
     /**
      * 인증 이미지 키 생성
      *
-     * @param imageFileNames
      * @return
      */
     public void validateSuccessImageUploadAvailable() {
@@ -274,7 +273,8 @@ public class DowithTask extends BaseAuditEntity {
             throw new RestApiException(INVALID_REQUEST);
         }
 
-        if (SystemTimeUtil.now().isAfter(LocalDateTime.of(this.date, this.startTime))) {
+        if (SystemTimeUtil.now()
+                .isAfter(LocalDateTime.of(this.date, this.startTime).plusHours(1))) {
             throw new RestApiException(INVALID_REQUEST);
         }
     }
