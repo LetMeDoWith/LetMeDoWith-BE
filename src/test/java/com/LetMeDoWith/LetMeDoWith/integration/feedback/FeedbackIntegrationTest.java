@@ -3,7 +3,9 @@ package com.LetMeDoWith.LetMeDoWith.integration.feedback;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.LetMeDoWith.LetMeDoWith.common.dto.FailResponseDto;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
+import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.model.DowithTaskFeedback;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.model.TaskFeedbackTemplate;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.model.TaskFeedbackTemplateMessage;
@@ -169,8 +171,12 @@ public class FeedbackIntegrationTest extends AbstractIntegrationTest {
             this.request(MockMvcRequestBuilders.post("/api/v1/feedbacks").content(writeRequestBodyAsString(req)))
                     .andExpect(status().isOk());
         }
-        this.request(MockMvcRequestBuilders.post("/api/v1/feedbacks").content(writeRequestBodyAsString(req)))
+        ResultActions failResult = this.request(
+                        MockMvcRequestBuilders.post("/api/v1/feedbacks").content(writeRequestBodyAsString(req)))
                 .andExpect(status().isBadRequest());
+        FailResponseDto failResponse = this.readFailResponse(failResult);
+        assertThat(failResponse.statusCode())
+                .isEqualTo(FailResponseStatus.FEEDBACK_SENDING_UNAVAILABLE.getStatusCode());
     }
 
     @Test

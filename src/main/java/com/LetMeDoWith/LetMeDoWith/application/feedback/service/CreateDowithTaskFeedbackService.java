@@ -50,8 +50,7 @@ public class CreateDowithTaskFeedbackService {
         }
 
         if (!feedbackSendPolicy.canSend(feedbackCount, latestFeedback, SystemTimeUtil.now())) {
-            // TODO: 잔소리 재생성 제한에 걸린 경우 응답 코드 결정 후 적절한 FailResponseStatus로 교체
-            throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
+            throw new RestApiException(FailResponseStatus.FEEDBACK_SENDING_UNAVAILABLE);
         }
 
         dowithTaskFeedbackRepository.save(
