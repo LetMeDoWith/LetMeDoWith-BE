@@ -77,6 +77,7 @@ public class FeedbackIntegrationTest extends AbstractIntegrationTest {
                 .build());
         templateMessage1 = templateMessageRepository.save(TaskFeedbackTemplateMessage.builder()
                 .taskFeedbackTemplate(template1)
+                .senderDisplayMessage("발신자에게 보이는 메시지1")
                 .message("잔소리 메시지1")
                 .language(TEST_LANGUAGE)
                 .build());
@@ -87,10 +88,44 @@ public class FeedbackIntegrationTest extends AbstractIntegrationTest {
                 .isActive(Yn.TRUE)
                 .build());
         templateMessage2 = templateMessageRepository.save(TaskFeedbackTemplateMessage.builder()
-                .taskFeedbackTemplate(template1)
+                .taskFeedbackTemplate(template2)
+                .senderDisplayMessage("발신자에게 보이는 메시지2")
                 .message("잔소리 메시지2")
                 .language(TEST_LANGUAGE)
                 .build());
+    }
+
+    @Test
+    @DisplayName("[SUCCESS] 잔소리 템플릿 조회")
+    void retrieveFeedbackTemplates_success() throws Exception {
+        // given
+
+        // when
+        MvcResult mvcResult = this.request(MockMvcRequestBuilders.get("/api/v1/feedbacks/templates")
+                        .param("language", TEST_LANGUAGE.name()))
+                .andExpect(status().isOk())
+                .andReturn();
+        String content = mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
+        RetrieveTaskFeedbackTemplatesResDto result =
+                this.readResponse(content, RetrieveTaskFeedbackTemplatesResDto.class);
+
+        // then
+        assertThat(result.templates()).hasSize(2);
+        FeedbackTemplateDto dto1 = result.templates().stream()
+                .filter(t -> t.id().equals(template1.getId()))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("템플릿1 결과 없음"));
+        assertThat(dto1.senderDisplayMessage()).isEqualTo(templateMessage1.getSenderDisplayMessage());
+        assertThat(dto1.message()).isEqualTo(templateMessage1.getMessage());
+        assertThat(dto1.emojiUrl()).isEqualTo(template1.getEmojiUrl());
+
+        FeedbackTemplateDto dto2 = result.templates().stream()
+                .filter(t -> t.id().equals(template2.getId()))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("템플릿2 결과 없음"));
+        assertThat(dto2.senderDisplayMessage()).isEqualTo(templateMessage2.getSenderDisplayMessage());
+        assertThat(dto2.message()).isEqualTo(templateMessage2.getMessage());
+        assertThat(dto2.emojiUrl()).isEqualTo(template2.getEmojiUrl());
     }
 
     @Test

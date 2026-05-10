@@ -9,7 +9,8 @@ public record RetrieveTaskFeedbackTemplatesResult(List<TaskFeedbackTemplateDto> 
 
     public static RetrieveTaskFeedbackTemplatesResult of(List<TaskFeedbackTemplateQueryDto> templates) {
         List<TaskFeedbackTemplateDto> dtos = templates.stream()
-                .map(t -> new TaskFeedbackTemplateDto(t.id(), t.language(), t.message(), t.emojiUrl()))
+                .map(t -> new TaskFeedbackTemplateDto(
+                        t.id(), t.language(), t.senderDisplayMessage(), t.message(), t.emojiUrl()))
                 .toList();
         return new RetrieveTaskFeedbackTemplatesResult(dtos);
     }
