@@ -25,6 +25,7 @@ import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.GenerateDowithTaskSucce
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.GenerateDowithTaskSuccessImageUploadPresignedUrlsResDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.GetRemainedDowithTaskCountRes;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.LikeDowithTaskResDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.RetrieveDowithTaskLikeCountResDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.RetrieveDowithTaskResDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.RetrieveFeedbackAvailableDowithTasksResDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.RetrieveSuccessDowithTasksRes;
@@ -223,6 +224,16 @@ public class DowithTaskController {
         successDowithTaskService.successDowithTask(memberId, dowithTaskId, requestBody.publicImageUrls());
 
         return ResponseUtil.createSuccessResponse();
+    }
+
+    @Operation(summary = "두윗모드 Task 좋아요 수 조회", description = "두윗모드 Task의 현재 좋아요 수를 조회합니다.")
+    @ApiSuccessResponse(description = "두윗모드 Task 좋아요 수 조회 성공")
+    @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")})
+    @GetMapping("/{dowithTaskId}/like/count")
+    public ResponseEntity<ResponseDto<RetrieveDowithTaskLikeCountResDto>> retrieveDowithTaskLikeCount(
+            @Parameter(description = "두윗 Task ID", example = "1") @PathVariable Long dowithTaskId) {
+        long likeCount = successDowithTaskService.retrieveSuccessDowithTaskLikeCount(dowithTaskId);
+        return ResponseUtil.createSuccessResponse(new RetrieveDowithTaskLikeCountResDto(likeCount));
     }
 
     @Operation(summary = "두윗모드 Task 좋아요", description = "두윗모드 Task에 좋아요를 합니다.")

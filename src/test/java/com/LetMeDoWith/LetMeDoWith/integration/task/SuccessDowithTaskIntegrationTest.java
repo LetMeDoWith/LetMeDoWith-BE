@@ -41,6 +41,7 @@ public class SuccessDowithTaskIntegrationTest extends AbstractIntegrationTest {
     private static final String GET_CONFIRM_UPLOAD_PRESIGNED_URL =
             BASE_URL + "/{id}/success/image/upload-presigned-url";
     private static final String LIKE_SUCCESS_DOWITH_TASK_URL = BASE_URL + "/{id}/like";
+    private static final String LIKE_COUNT_SUCCESS_DOWITH_TASK_URL = BASE_URL + "/{id}/like/count";
 
     @Autowired
     private DowithTaskJpaRepository dowithTaskJpaRepository;
@@ -289,6 +290,27 @@ public class SuccessDowithTaskIntegrationTest extends AbstractIntegrationTest {
                 assertThat(task.likeCount()).isEqualTo(0L);
             }
         }
+    }
+
+    @Test
+    @DisplayName("성공한 DowithTask 좋아요 수 조회")
+    void retrieveSuccessDowithTaskLikeCount() throws Exception {
+        Long successDowithTaskId = this.successDowithTasks.get(0).getId();
+        Long noLikeDowithTaskId = this.successDowithTasks.get(2).getId();
+
+        ResultActions withLikesResult = this.request(get(LIKE_COUNT_SUCCESS_DOWITH_TASK_URL, successDowithTaskId));
+        ResultActions withoutLikesResult = this.request(get(LIKE_COUNT_SUCCESS_DOWITH_TASK_URL, noLikeDowithTaskId));
+
+        withLikesResult.andExpect(status().isOk());
+        withoutLikesResult.andExpect(status().isOk());
+
+        RetrieveDowithTaskLikeCountResDto withLikesResponse =
+                this.readResponse(withLikesResult, RetrieveDowithTaskLikeCountResDto.class);
+        RetrieveDowithTaskLikeCountResDto withoutLikesResponse =
+                this.readResponse(withoutLikesResult, RetrieveDowithTaskLikeCountResDto.class);
+
+        assertThat(withLikesResponse.likeCount()).isEqualTo(2L);
+        assertThat(withoutLikesResponse.likeCount()).isEqualTo(0L);
     }
 
     @Test
