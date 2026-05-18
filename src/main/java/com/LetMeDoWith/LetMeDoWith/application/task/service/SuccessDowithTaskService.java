@@ -105,6 +105,19 @@ public class SuccessDowithTaskService {
         return new LikeSuccessDowithTaskResult(isAlreadyLiked, likeCount);
     }
 
+    /**
+     * 성공 DowithTask 좋아요 수 조회
+     *
+     * @param dowithTaskId 두윗 Task ID
+     */
+    public long retrieveSuccessDowithTaskLikeCount(Long dowithTaskId) {
+        dowithTaskRepository
+                .getDowithTask(dowithTaskId)
+                .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
+
+        return dowithTaskLikeRepository.countDowithTaskLikesByDowithTaskId(dowithTaskId);
+    }
+
     @Transactional
     public CancelLikeSuccessDowithTaskResult cancelLikeSuccessDowithTask(String memberId, Long dowithTaskId) {
         dowithTaskRepository
