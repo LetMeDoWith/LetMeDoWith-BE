@@ -1,5 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.infrastructure.task.query;
 
+import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.QMember;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
@@ -10,6 +11,7 @@ import com.LetMeDoWith.LetMeDoWith.domain.task.model.QDowithTaskSuccess;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.QTaskCategory;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskQueryRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.DowithTaskDetailQueryDto;
+import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.DowithTaskLikeMemberQueryDto;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.DowithTaskQueryDto;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.FailedDowithTaskCountQueryDto;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.FeedbackAvailableDowithTasksQueryDto;
@@ -18,6 +20,7 @@ import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.SuccessDowithTaskQ
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.DateTimeExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
@@ -161,16 +164,57 @@ public class DowithTaskQueryRespositoryImpl implements DowithTaskQueryRepository
 
     @Override
     public Map<Long, Long> countDowithTaskLikes(Set<Long> dowithTaskIds) {
+        if (dowithTaskIds == null || dowithTaskIds.isEmpty()) {
+            return Collections.emptyMap();
+        }
         return queryFactory
-                .select(dowithTask.id, dowithTaskLike.count())
+                .select(dowithTaskLike.dowithTask.id, dowithTaskLike.count())
                 .from(dowithTaskLike)
-                .where(dowithTaskLike.dowithTask.id.in(dowithTaskIds))
+                .join(member)
+                .on(member.id.eq(dowithTaskLike.memberId))
+                .where(dowithTaskLike.dowithTask.id.in(dowithTaskIds), dowithTaskLikerMemberIsNormal())
                 .groupBy(dowithTaskLike.dowithTask.id)
                 .fetch()
                 .stream()
-                .collect(Collectors.toMap(tuple -> tuple.get(dowithTask.id), tuple -> Optional.ofNullable(
-                                tuple.get(dowithTaskLike.count()))
-                        .orElse(0L)));
+                .collect(
+                        Collectors.toMap(tuple -> tuple.get(dowithTaskLike.dowithTask.id), tuple -> Optional.ofNullable(
+                                        tuple.get(dowithTaskLike.count()))
+                                .orElse(0L)));
+    }
+
+    @Override
+    public long countDowithTaskLikes(Long dowithTaskId) {
+        Long cnt = queryFactory
+                .select(dowithTaskLike.count())
+                .from(dowithTaskLike)
+                .join(member)
+                .on(member.id.eq(dowithTaskLike.memberId))
+                .where(dowithTaskLike.dowithTask.id.eq(dowithTaskId), dowithTaskLikerMemberIsNormal())
+                .fetchOne();
+        return cnt != null ? cnt : 0L;
+    }
+
+    @Override
+    public List<DowithTaskLikeMemberQueryDto> getDowithTaskLikers(Long dowithTaskId, int offset, int limit) {
+        return queryFactory
+                .select(Projections.constructor(
+                        DowithTaskLikeMemberQueryDto.class,
+                        dowithTaskLike.id,
+                        dowithTaskLike.memberId,
+                        member.nickname,
+                        member.profileImageUrl))
+                .from(dowithTaskLike)
+                .join(member)
+                .on(member.id.eq(dowithTaskLike.memberId))
+                .where(dowithTaskLike.dowithTask.id.eq(dowithTaskId), dowithTaskLikerMemberIsNormal())
+                .orderBy(dowithTaskLike.id.desc())
+                .offset(offset)
+                .limit(limit)
+                .fetch();
+    }
+
+    private BooleanExpression dowithTaskLikerMemberIsNormal() {
+        return member.status.eq(MemberStatus.NORMAL);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.domain.task.repository;
 
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.DowithTaskDetailQueryDto;
+import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.DowithTaskLikeMemberQueryDto;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.DowithTaskQueryDto;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.FailedDowithTaskCountQueryDto;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.FeedbackAvailableDowithTasksQueryDto;
@@ -21,7 +22,13 @@ public interface DowithTaskQueryRepository {
 
     List<SuccessDowithTaskQueryDto> getSuccessDowithTasks(String requestMemberId, int offset, int limit);
 
+    /** 과제별 좋아요 수. 단건 카운트({@link #countDowithTaskLikes(Long)})와 동일하게 {@code MemberStatus.NORMAL} 회원 좋아요만 집계한다. */
     Map<Long, Long> countDowithTaskLikes(Set<Long> dowithTaskIds);
+
+    /** 단건 카운트. 집계 기준은 {@link #countDowithTaskLikes(java.util.Set)} 와 동일하다. */
+    long countDowithTaskLikes(Long dowithTaskId);
+
+    List<DowithTaskLikeMemberQueryDto> getDowithTaskLikers(Long dowithTaskId, int offset, int limit);
 
     List<FeedbackAvailableDowithTasksQueryDto> getFeedbackAvailableDowithTasks(
             Long offset, int size, String excludeMemberId);
