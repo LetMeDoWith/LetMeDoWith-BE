@@ -314,6 +314,28 @@ public class SuccessDowithTaskIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @DisplayName("성공한 DowithTask 좋아요 회원 목록 조회 (페이징, 최신순)")
+    void retrieveSuccessDowithTaskLikers() throws Exception {
+        Long successDowithTaskId = this.successDowithTasks.get(0).getId();
+
+        ResultActions result = this.request(get(LIKE_SUCCESS_DOWITH_TASK_URL, successDowithTaskId)
+                .param("page", "0")
+                .param("size", "10"));
+
+        result.andExpect(status().isOk()).andExpect(jsonPath("$.totalCount").value(2));
+
+        String responseBody = result.andReturn().getResponse().getContentAsString();
+        RetrieveDowithTaskLikersResDto pageData =
+                this.readPagingResponse(responseBody, RetrieveDowithTaskLikersResDto.class);
+
+        assertThat(pageData.likers().size()).isEqualTo(2);
+        assertThat(pageData.likers().get(0).memberId()).isEqualTo(this.member2.getId());
+        assertThat(pageData.likers().get(0).nickname()).isEqualTo("test2");
+        assertThat(pageData.likers().get(1).memberId()).isEqualTo(this.member1.getId());
+        assertThat(pageData.likers().get(1).nickname()).isEqualTo("test1");
+    }
+
+    @Test
     @DisplayName("성공한 DowithTask 좋아요 테스트 - 이미 좋아요한 경우에 멱등성 보장")
     void likeSuccessDowithTask() throws Exception {
         // Given

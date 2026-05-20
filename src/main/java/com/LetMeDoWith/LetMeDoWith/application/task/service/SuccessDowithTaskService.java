@@ -2,6 +2,7 @@ package com.LetMeDoWith.LetMeDoWith.application.task.service;
 
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.CancelLikeSuccessDowithTaskResult;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.LikeSuccessDowithTaskResult;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.RetrieveDowithTaskLikersResult;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.RetrieveSuccessDowithTasksResult;
 import com.LetMeDoWith.LetMeDoWith.common.dto.GenerateUploadPresignedUrlsResult;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.FileNamespace;
@@ -116,6 +117,18 @@ public class SuccessDowithTaskService {
                 .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
 
         return dowithTaskLikeRepository.countDowithTaskLikesByDowithTaskId(dowithTaskId);
+    }
+
+    public RetrieveDowithTaskLikersResult retrieveDowithTaskLikers(Long dowithTaskId, Pageable pageable) {
+        dowithTaskRepository
+                .getDowithTask(dowithTaskId)
+                .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
+
+        long totalCount = dowithTaskQueryRepository.countDowithTaskLikes(dowithTaskId);
+        int offset = (int) pageable.getOffset();
+        int limit = pageable.getPageSize();
+        return RetrieveDowithTaskLikersResult.of(
+                totalCount, dowithTaskQueryRepository.getDowithTaskLikers(dowithTaskId, offset, limit));
     }
 
     @Transactional

@@ -2,6 +2,7 @@ package com.LetMeDoWith.LetMeDoWith.presentation.task.controller;
 
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.CancelLikeSuccessDowithTaskResult;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.LikeSuccessDowithTaskResult;
+import com.LetMeDoWith.LetMeDoWith.application.task.dto.RetrieveDowithTaskLikersResult;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.RetrieveDowithTaskResult;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.RetrieveFeedbackAvailableDowithTasksResult;
 import com.LetMeDoWith.LetMeDoWith.application.task.service.CreateDowithTaskService;
@@ -26,6 +27,7 @@ import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.GenerateDowithTaskSucce
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.GetRemainedDowithTaskCountRes;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.LikeDowithTaskResDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.RetrieveDowithTaskLikeCountResDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.RetrieveDowithTaskLikersResDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.RetrieveDowithTaskResDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.RetrieveFeedbackAvailableDowithTasksResDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.RetrieveSuccessDowithTasksRes;
@@ -234,6 +236,20 @@ public class DowithTaskController {
             @Parameter(description = "두윗 Task ID", example = "1") @PathVariable Long dowithTaskId) {
         long likeCount = successDowithTaskService.retrieveSuccessDowithTaskLikeCount(dowithTaskId);
         return ResponseUtil.createSuccessResponse(new RetrieveDowithTaskLikeCountResDto(likeCount));
+    }
+
+    @Operation(summary = "두윗모드 Task 좋아요 회원 목록 조회", description = "해당 두윗 Task에 좋아요를 남긴 회원 목록을 최신순(id 내림차순)으로 페이징 조회합니다.")
+    @ApiSuccessResponse(description = "두윗모드 Task 좋아요 회원 목록 조회 성공")
+    @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")})
+    @GetMapping("/{dowithTaskId}/like")
+    public ResponseEntity<ResponsePageDto<RetrieveDowithTaskLikersResDto>> retrieveDowithTaskLikers(
+            @Parameter(description = "두윗 Task ID", example = "1") @PathVariable Long dowithTaskId,
+            @ParameterObject @PageableDefault(size = 20) Pageable pageable) {
+
+        RetrieveDowithTaskLikersResult result =
+                successDowithTaskService.retrieveDowithTaskLikers(dowithTaskId, pageable);
+        return ResponseUtil.createSuccessResponse(
+                RetrieveDowithTaskLikersResDto.from(result), pageable, result.totalCount());
     }
 
     @Operation(summary = "두윗모드 Task 좋아요", description = "두윗모드 Task에 좋아요를 합니다.")
