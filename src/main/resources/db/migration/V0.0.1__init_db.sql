@@ -269,8 +269,10 @@ CREATE TABLE `notification`
     `body`                       text         NOT NULL,
     `confirm_date_time`          datetime(6)  DEFAULT NULL,
     `deep_link`                  text,
+    `image_url`                  text,
     `confirmed_yn`               varchar(255) NOT NULL,
     `member_id`                  varchar(255) NOT NULL,
+    `type`                       varchar(255) NOT NULL,
     `notification_template_code` varchar(255) DEFAULT NULL,
     `title`                      text         NOT NULL,
     PRIMARY KEY (`id`)

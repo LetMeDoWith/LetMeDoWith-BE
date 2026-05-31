@@ -2,6 +2,7 @@ package com.LetMeDoWith.LetMeDoWith.domain.notification.model;
 
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
+import com.LetMeDoWith.LetMeDoWith.common.enums.notification.NotificationType;
 import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
@@ -23,6 +24,9 @@ public class Notification extends BaseAuditEntity {
     @Column(name = "member_id", nullable = false)
     private String memberId;
 
+    @Column(name = "type", nullable = false)
+    private NotificationType type;
+
     @Column(name = "title", nullable = false, columnDefinition = "TEXT")
     private String title;
 
@@ -31,6 +35,9 @@ public class Notification extends BaseAuditEntity {
 
     @Column(name = "deep_link", nullable = true, columnDefinition = "TEXT")
     private String deepLink;
+
+    @Column(name = "image_url", nullable = true, columnDefinition = "TEXT")
+    private String imageUrl;
 
     @Column(name = "confirmed_yn", nullable = false)
     private Yn isConfirmed;
@@ -43,17 +50,34 @@ public class Notification extends BaseAuditEntity {
 
     public static Notification of(
             String memberId, String title, String body, String deepLink, String notificationTemplateCode) {
+        return of(memberId, NotificationType.NORMAL, title, body, deepLink, null, notificationTemplateCode, Yn.FALSE);
+    }
+
+    public static Notification of(
+            String memberId,
+            NotificationType type,
+            String title,
+            String body,
+            String deepLink,
+            String imageUrl,
+            String notificationTemplateCode,
+            Yn isConfirmed) {
         return Notification.builder()
                 .memberId(memberId)
+                .type(type)
                 .title(title)
                 .body(body)
                 .deepLink(deepLink)
+                .imageUrl(imageUrl)
                 .notificationTemplateCode(notificationTemplateCode)
-                .isConfirmed(Yn.FALSE)
+                .isConfirmed(isConfirmed)
                 .build();
     }
 
     public void confirm() {
+        if (Yn.TRUE.equals(this.isConfirmed)) {
+            return;
+        }
         this.confirmDateTime = SystemTimeUtil.now();
         this.isConfirmed = Yn.TRUE;
     }
