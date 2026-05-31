@@ -5,14 +5,14 @@ import com.LetMeDoWith.LetMeDoWith.domain.notification.repository.dto.Notificati
 import java.time.LocalDateTime;
 import java.util.List;
 
-public record RetrieveNotificationsResult(Long totalCount, List<RetrieveNotificationResult> notifications) {
+public record RetrieveNotificationsResult(Long totalCount, List<Notification> notifications) {
 
     public static RetrieveNotificationsResult from(Long totalCount, List<NotificationQueryDto> rows) {
         return new RetrieveNotificationsResult(
-                totalCount, rows.stream().map(RetrieveNotificationResult::from).toList());
+                totalCount, rows.stream().map(Notification::from).toList());
     }
 
-    public record RetrieveNotificationResult(
+    public record Notification(
             Long notificationId,
             String title,
             String body,
@@ -21,8 +21,8 @@ public record RetrieveNotificationsResult(Long totalCount, List<RetrieveNotifica
             boolean isConfirmed,
             LocalDateTime createdAt) {
 
-        public static RetrieveNotificationResult from(NotificationQueryDto row) {
-            return new RetrieveNotificationResult(
+        public static Notification from(NotificationQueryDto row) {
+            return new Notification(
                     row.id(),
                     row.title(),
                     row.body(),

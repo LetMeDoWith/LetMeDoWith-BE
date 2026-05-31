@@ -1,23 +1,20 @@
 package com.LetMeDoWith.LetMeDoWith.presentation.notification.dto;
 
 import com.LetMeDoWith.LetMeDoWith.application.notification.dto.RetrieveNotificationsResult;
-import com.LetMeDoWith.LetMeDoWith.application.notification.dto.RetrieveNotificationsResult.RetrieveNotificationResult;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Schema(description = "알림 목록 조회 응답")
-public record RetrieveNotificationsResDto(
-        @Schema(description = "알림 목록") List<RetrieveNotificationItemResDto> notifications) {
+public record RetrieveNotificationsResDto(@Schema(description = "알림 목록") List<Notification> notifications) {
 
     public static RetrieveNotificationsResDto from(RetrieveNotificationsResult result) {
-        return new RetrieveNotificationsResDto(result.notifications().stream()
-                .map(RetrieveNotificationItemResDto::from)
-                .toList());
+        return new RetrieveNotificationsResDto(
+                result.notifications().stream().map(Notification::from).toList());
     }
 
     @Schema(name = "NotificationItem", description = "알림 한 건")
-    public record RetrieveNotificationItemResDto(
+    public record Notification(
             @Schema(description = "알림 ID", example = "1") Long notificationId,
             @Schema(description = "제목", example = "기윤님, 뭐해 안할거야?") String title,
             @Schema(description = "본문", example = "두윗을 빠르게 완료하고 사진을 인증해주세요") String body,
@@ -26,8 +23,8 @@ public record RetrieveNotificationsResDto(
             @Schema(description = "확인 여부", example = "true") boolean isConfirmed,
             @Schema(description = "생성일시") LocalDateTime createdAt) {
 
-        public static RetrieveNotificationItemResDto from(RetrieveNotificationResult result) {
-            return new RetrieveNotificationItemResDto(
+        public static Notification from(RetrieveNotificationsResult.Notification result) {
+            return new Notification(
                     result.notificationId(),
                     result.title(),
                     result.body(),

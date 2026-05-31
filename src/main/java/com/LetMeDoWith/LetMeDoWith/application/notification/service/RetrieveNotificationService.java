@@ -20,7 +20,6 @@ public class RetrieveNotificationService {
         Long totalCount = notificationQueryRepository.countNotifications(memberId, type);
         List<NotificationQueryDto> notifications = notificationQueryRepository.getNotifications(
                 memberId, type, pageable.getOffset(), pageable.getPageSize());
-
         return RetrieveNotificationsResult.from(totalCount, notifications);
     }
 }

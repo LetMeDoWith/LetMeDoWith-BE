@@ -75,6 +75,9 @@ public class Notification extends BaseAuditEntity {
     }
 
     public void confirm() {
+        if (Yn.TRUE.equals(this.isConfirmed)) {
+            return;
+        }
         this.confirmDateTime = SystemTimeUtil.now();
         this.isConfirmed = Yn.TRUE;
     }
