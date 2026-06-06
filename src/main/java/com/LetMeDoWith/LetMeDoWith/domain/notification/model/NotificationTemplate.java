@@ -33,7 +33,7 @@ public class NotificationTemplate extends BaseAuditEntity {
     @Column(name = "body", nullable = false, columnDefinition = "TEXT")
     private String body;
 
-    @Column(name = "app_deep_link", nullable = true, columnDefinition = "TEXT")
+    @Column(name = "app_deep_link", nullable = false, columnDefinition = "TEXT")
     private String appDeepLink;
 
     public static NotificationTemplate of(String code, String title, String body, String deepLink) {
@@ -46,6 +46,9 @@ public class NotificationTemplate extends BaseAuditEntity {
     }
 
     public String parseTitle(Map<String, String> params) {
+
+        if (params == null) return this.title;
+
         String titleTemplate = this.title;
 
         Pattern pattern = Pattern.compile("\\{\\{(.*?)\\}\\}");
@@ -57,6 +60,8 @@ public class NotificationTemplate extends BaseAuditEntity {
         }
 
         if (!params.keySet().containsAll(keySet)) {
+            // TODO - 추후 로깅 제대로 된다면, 해당 부분에 Error 로깅 및 alarm 필요
+            // TODO - return title 하고
             throw new RestApiException(FailResponseStatus.INTERNAL_SERVER_ERROR);
         }
 
@@ -70,6 +75,9 @@ public class NotificationTemplate extends BaseAuditEntity {
     }
 
     public String parseBody(Map<String, String> params) {
+
+        if (params == null) return this.body;
+
         String bodyTemplate = this.body;
 
         Pattern pattern = Pattern.compile("\\{\\{(.*?)\\}\\}");
@@ -81,6 +89,8 @@ public class NotificationTemplate extends BaseAuditEntity {
         }
 
         if (!params.keySet().containsAll(keySet)) {
+            // TODO - 추후 로깅 제대로 된다면, 해당 부분에 Error 로깅 및 alarm 필요
+            // TODO - return title 하고
             throw new RestApiException(FailResponseStatus.INTERNAL_SERVER_ERROR);
         }
 

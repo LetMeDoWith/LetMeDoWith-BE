@@ -2,6 +2,7 @@ package com.LetMeDoWith.LetMeDoWith.infrastructure.member.persistence.jpaReposit
 
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,4 +18,6 @@ public interface MemberJpaRepository extends JpaRepository<Member, String>, QMem
     List<Member> findAllByStatusIn(List<MemberStatus> memberStatuses);
 
     List<Member> findAllByNicknameAndStatusIn(String nickname, List<MemberStatus> memberStatuses);
+
+    List<Member> findAllByIdInAndStatus(Collection<String> ids, MemberStatus status);
 }

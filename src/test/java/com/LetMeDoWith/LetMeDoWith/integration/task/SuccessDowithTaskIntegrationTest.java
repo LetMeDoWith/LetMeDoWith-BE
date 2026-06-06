@@ -8,16 +8,23 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.Gender;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
+import com.LetMeDoWith.LetMeDoWith.common.enums.notification.NotificationType;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
+import com.LetMeDoWith.LetMeDoWith.domain.notification.model.NotificationTemplate;
+import com.LetMeDoWith.LetMeDoWith.domain.notification.model.NotificationToken;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTaskLike;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskCategory;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.notification.persistence.jpaRepository.NotificationTemplateJpaRepository;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.notification.persistence.jpaRepository.NotificationTokenJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.DowithTaskJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.DowithTaskLikeJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.TaskCategoryJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.integration.AbstractIntegrationTest;
+import com.LetMeDoWith.LetMeDoWith.presentation.notification.dto.RetrieveNotificationsResDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.*;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -43,6 +50,11 @@ public class SuccessDowithTaskIntegrationTest extends AbstractIntegrationTest {
     private static final String LIKE_SUCCESS_DOWITH_TASK_URL = BASE_URL + "/{id}/like";
     private static final String LIKE_COUNT_SUCCESS_DOWITH_TASK_URL = BASE_URL + "/{id}/like/count";
 
+    private static final String NOTIFICATION_TEMPLATE_CODE = "LIKE_RECEIVED";
+    // TODO - 테스트 FCM 토큰 generator에서 발급 받은 토큰 세팅
+    private static final String REGISTERED_FCM_TOKEN =
+            "fx5STrP_eh7XIRNiVvNBk_:APA91bHpJ_SvZQTs8SK-Hkl5d8vChDEb2_njBRp-uLtzWU-3_s5W9aoL6OprShJG-ZIU4oSSDD4cfvB0jKb8xUcjvLWyVvhDkiM9DhsdrxhKa0wwrDwx-YI";
+
     @Autowired
     private DowithTaskJpaRepository dowithTaskJpaRepository;
 
@@ -51,6 +63,12 @@ public class SuccessDowithTaskIntegrationTest extends AbstractIntegrationTest {
 
     @Autowired
     private DowithTaskLikeJpaRepository dowithTaskLikeJpaRepository;
+
+    @Autowired
+    private NotificationTokenJpaRepository notificationTokenJpaRepository;
+
+    @Autowired
+    private NotificationTemplateJpaRepository notificationTemplateJpaRepository;
 
     @Value("${cloud.aws.s3.bucketName}")
     private String bucketName;
@@ -74,6 +92,11 @@ public class SuccessDowithTaskIntegrationTest extends AbstractIntegrationTest {
 
     @Override
     protected void createTestData() {
+
+        notificationTokenJpaRepository.save(NotificationToken.of(this.requestMember.getId(), REGISTERED_FCM_TOKEN));
+        notificationTemplateJpaRepository.save(NotificationTemplate.of(
+                NOTIFICATION_TEMPLATE_CODE, "공감을 받았어요", "{{senderNickname}}님이 도리 인증에 공감했어요", "letmedowith://test"));
+
         taskCategory = taskCategoryJpaRepository.save(TaskCategory.of(
                 "test", TaskCategory.TaskCategoryCreationType.COMMON, "test", this.requestMember.getId()));
         this.setFixedClock(LocalDateTime.of(2024, 3, 1, 13, 0));
@@ -360,6 +383,25 @@ public class SuccessDowithTaskIntegrationTest extends AbstractIntegrationTest {
 
         long likeCount = dowithTaskLikeJpaRepository.countByDowithTask_Id(successDowithTaskId);
         assertThat(likeCount).isEqualTo(3L);
+
+        // receiver(DowithTask 소유자 = requestMember)가 알림 목록 API로 LIKE_RECEIVED 알림을 확인 가능
+        // - 첫 like는 sendNotification(isSavingHistory=true)을 트리거 → Notification 적재
+        // - 두번째 like는 isAlreadyLiked=true라 notification 트리거되지 않음
+        // → 적재된 알림 1건이 receiver의 NORMAL 알림 목록에 보여야 함
+        var notificationResult = this.request(MockMvcRequestBuilders.get("/api/v1/notifications")
+                        .param("type", NotificationType.NORMAL.getCode())
+                        .param("page", "0")
+                        .param("size", "10"))
+                .andExpect(status().isOk())
+                .andReturn();
+        RetrieveNotificationsResDto notificationsResDto = this.readPagingResponse(
+                notificationResult.getResponse().getContentAsString(StandardCharsets.UTF_8),
+                RetrieveNotificationsResDto.class);
+        assertThat(notificationsResDto.notifications().size()).isEqualTo(1);
+        assertThat(notificationsResDto.notifications().get(0).title()).isEqualTo("공감을 받았어요");
+        assertThat(notificationsResDto.notifications().get(0).body()).isEqualTo("test님이 도리 인증에 공감했어요");
+        assertThat(notificationsResDto.notifications().get(0).deepLink()).isEqualTo("letmedowith://test");
+        assertThat(notificationsResDto.notifications().get(0).isConfirmed()).isFalse();
     }
 
     @Test
