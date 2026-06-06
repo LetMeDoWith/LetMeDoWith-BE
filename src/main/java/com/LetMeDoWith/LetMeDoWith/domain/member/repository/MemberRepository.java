@@ -22,6 +22,8 @@ public interface MemberRepository {
 
     List<Member> getMembers(String nickname, List<MemberStatus> memberStatuses);
 
+    List<Member> getMembers(List<String> memberIds, MemberStatus memberStatus);
+
     Optional<Member> getMember(SocialProvider provider, String subject);
 
     void delete(Member member);

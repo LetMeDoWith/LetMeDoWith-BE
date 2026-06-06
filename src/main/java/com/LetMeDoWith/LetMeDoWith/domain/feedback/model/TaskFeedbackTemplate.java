@@ -3,12 +3,7 @@ package com.LetMeDoWith.LetMeDoWith.domain.feedback.model;
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.domain.AggregateRoot;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -39,4 +34,7 @@ public class TaskFeedbackTemplate extends BaseAuditEntity {
 
     @Column(name = "is_active", nullable = false)
     private Yn isActive;
+
+    @Column(name = "notification_template_code", nullable = false)
+    private String notificationTemplateCode;
 }

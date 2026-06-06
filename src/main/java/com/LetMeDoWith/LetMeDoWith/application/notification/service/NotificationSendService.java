@@ -1,15 +1,21 @@
 package com.LetMeDoWith.LetMeDoWith.application.notification.service;
 
 import com.LetMeDoWith.LetMeDoWith.application.notification.client.MessageServerClient;
+import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
+import com.LetMeDoWith.LetMeDoWith.domain.member.repository.MemberRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.notification.model.Notification;
 import com.LetMeDoWith.LetMeDoWith.domain.notification.model.NotificationTemplate;
 import com.LetMeDoWith.LetMeDoWith.domain.notification.model.NotificationToken;
 import com.LetMeDoWith.LetMeDoWith.domain.notification.repository.NotificationRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.notification.repository.NotificationTemplateRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.notification.repository.NotificationTokenRepository;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -25,13 +31,45 @@ public class NotificationSendService {
     private final NotificationTokenRepository notificationTokenRepository;
     private final NotificationTemplateRepository notificationTemplateRepository;
 
+    private final MemberRepository memberRepository;
+
     @Async
     @Transactional
     public void sendNotification(
-            String memberId, String templateCode, Map<String, String> titleParams, Map<String, String> bodyParams) {
+            String receiverMemberId,
+            String templateCode,
+            Map<String, String> titleParams,
+            Map<String, String> bodyParams,
+            boolean isSavingHistory) {
+        doSend(receiverMemberId, templateCode, titleParams, bodyParams, isSavingHistory);
+    }
+
+    @Async
+    @Transactional
+    public void sendNotification(
+            String senderMemberId, String receiverMemberId, String templateCode, boolean isSavingHistory) {
+
+        List<Member> members =
+                memberRepository.getMembers(List.of(senderMemberId, receiverMemberId), MemberStatus.NORMAL);
+
+        Map<String, Member> memberMap = members.stream().collect(Collectors.toMap(Member::getId, Function.identity()));
+
+        Map<String, String> paramsMap = Map.of(
+                "senderNickname", memberMap.get(senderMemberId).getNickname(),
+                "receiverNickname", memberMap.get(receiverMemberId).getNickname());
+
+        doSend(receiverMemberId, templateCode, paramsMap, paramsMap, isSavingHistory);
+    }
+
+    private void doSend(
+            String receiverMemberId,
+            String templateCode,
+            Map<String, String> titleParams,
+            Map<String, String> bodyParams,
+            boolean isSavingHistory) {
 
         NotificationToken notificationToken = notificationTokenRepository
-                .getNotificationToken(memberId)
+                .getNotificationToken(receiverMemberId)
                 .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
         if (!notificationToken.isExpired()) throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
 
@@ -46,19 +84,20 @@ public class NotificationSendService {
                 title,
                 body,
                 notificationTemplate.getAppDeepLink(),
-                () -> this.saveNotification(memberId, title, body, notificationTemplate.getAppDeepLink(), templateCode),
-                () -> this.expireToken(memberId));
+                isSavingHistory
+                        ? () -> saveNotification(
+                                receiverMemberId, title, body, notificationTemplate.getAppDeepLink(), templateCode)
+                        : () -> {},
+                () -> expireToken(receiverMemberId));
     }
 
-    @Transactional
-    protected void saveNotification(
+    private void saveNotification(
             String memberId, String title, String body, String deeplink, String notificationTemplateCode) {
 
-        this.notificationRepository.save(Notification.of(memberId, title, body, deeplink, notificationTemplateCode));
+        notificationRepository.save(Notification.of(memberId, title, body, deeplink, notificationTemplateCode));
     }
 
-    @Transactional
-    protected void expireToken(String memberId) {
+    private void expireToken(String memberId) {
 
         NotificationToken notificationToken = notificationTokenRepository
                 .getNotificationToken(memberId)

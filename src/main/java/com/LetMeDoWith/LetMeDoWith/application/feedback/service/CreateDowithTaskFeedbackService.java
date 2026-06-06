@@ -1,12 +1,14 @@
 package com.LetMeDoWith.LetMeDoWith.application.feedback.service;
 
+import com.LetMeDoWith.LetMeDoWith.application.notification.service.NotificationSendService;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.model.DowithTaskFeedback;
+import com.LetMeDoWith.LetMeDoWith.domain.feedback.model.TaskFeedbackTemplate;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.DowithTaskFeedbackRepository;
+import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.TaskFeedbackTemplateRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.service.FeedbackSendPolicy;
-import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
 import com.LetMeDoWith.LetMeDoWith.domain.member.repository.MemberRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskRepository;
@@ -19,7 +21,10 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class CreateDowithTaskFeedbackService {
 
+    private final NotificationSendService notificationSendService;
+
     private final DowithTaskFeedbackRepository dowithTaskFeedbackRepository;
+    private final TaskFeedbackTemplateRepository taskFeedbackTemplateRepository;
     private final MemberRepository memberRepository;
     private final DowithTaskRepository dowithTaskRepository;
     private final FeedbackSendPolicy feedbackSendPolicy;
@@ -34,12 +39,12 @@ public class CreateDowithTaskFeedbackService {
     @Transactional
     public void createDowithFeedback(String senderId, Long dowithTaskId, Long taskFeedbackTemplateId) {
 
-        Member sender = memberRepository
-                .getNormalStatusMember(senderId)
-                .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
-
         DowithTask dowithTask = dowithTaskRepository
                 .getDowithTask(dowithTaskId)
+                .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
+
+        TaskFeedbackTemplate taskFeedbackTemplate = taskFeedbackTemplateRepository
+                .getTaskFeedbackTemplate(taskFeedbackTemplateId)
                 .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
 
         long feedbackCount = dowithTaskFeedbackRepository.countBySenderAndTask(dowithTaskId, senderId);
@@ -54,6 +59,9 @@ public class CreateDowithTaskFeedbackService {
         }
 
         dowithTaskFeedbackRepository.save(
-                DowithTaskFeedback.of(sender.getId(), dowithTask.getMemberId(), dowithTaskId, taskFeedbackTemplateId));
+                DowithTaskFeedback.of(senderId, dowithTask.getMemberId(), dowithTaskId, taskFeedbackTemplateId));
+
+        notificationSendService.sendNotification(
+                senderId, dowithTask.getMemberId(), taskFeedbackTemplate.getNotificationTemplateCode(), false);
     }
 }

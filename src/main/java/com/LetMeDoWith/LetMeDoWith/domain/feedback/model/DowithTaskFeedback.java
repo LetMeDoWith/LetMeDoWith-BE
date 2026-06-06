@@ -3,14 +3,10 @@ package com.LetMeDoWith.LetMeDoWith.domain.feedback.model;
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.domain.AggregateRoot;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -19,6 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @AggregateRoot
+@Getter
 public class DowithTaskFeedback extends BaseAuditEntity {
 
     @Id
@@ -53,7 +50,9 @@ public class DowithTaskFeedback extends BaseAuditEntity {
                 .build();
     }
 
-    /** 피드백을 확인 상태로 변경한다. */
+    /**
+     * 피드백을 확인 상태로 변경한다.
+     */
     public void check() {
         this.isChecked = Yn.TRUE;
     }

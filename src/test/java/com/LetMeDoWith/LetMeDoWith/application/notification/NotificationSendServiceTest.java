@@ -68,7 +68,7 @@ public class NotificationSendServiceTest {
         this.notificationTemplate = notificationTemplateJpaRepository.save(NotificationTemplate.of(
                 "TEST_TEMPLATE",
                 "테스트 {{testName}}",
-                "안녕하세요 {{nickName}}님! 오늘 날씨는 {{weather}}이빈다. 테스트 입니다",
+                "안녕하세요 {{nickName}}님! 오늘 날씨는 {{weather}}입니다. 테스트 입니다",
                 "letmedowith://test"));
     }
 
@@ -86,13 +86,15 @@ public class NotificationSendServiceTest {
         // given
         this.notificationToken =
                 notificationTokenJpaRepository.save(NotificationToken.of(member.getId(), REGISTERED_FCM_TOKEN));
+        String weather = "맑음";
 
         // when
         notificationSendService.sendNotification(
                 member.getId(),
                 notificationTemplate.getCode(),
                 Map.of("testName", "테스트 이름"),
-                Map.of("nickName", member.getNickname(), "weather", "맑음"));
+                Map.of("nickName", member.getNickname(), "weather", "맑음"),
+                true);
         Thread.sleep(1000); // 비동기 처리로 인해 DB에 저장되는 시간이 필요할 수 있음
         Optional<Notification> opNotification = notificationJpaRepository.findByMemberId(member.getId());
 
@@ -101,7 +103,8 @@ public class NotificationSendServiceTest {
         Notification notification = opNotification.get();
         assertThat(notification.getMemberId()).isEqualTo(member.getId());
         assertThat(notification.getTitle()).isEqualTo("테스트 테스트 이름");
-        assertThat(notification.getBody()).isEqualTo("안녕하세요 " + member.getNickname() + "님! 테스트 입니다");
+        assertThat(notification.getBody())
+                .isEqualTo("안녕하세요 " + member.getNickname() + "님! 오늘 날씨는 " + weather + "입니다. 테스트 입니다");
         assertThat(notification.getDeepLink()).isEqualTo("letmedowith://test");
     }
 
@@ -117,7 +120,8 @@ public class NotificationSendServiceTest {
                     member.getId(),
                     notificationTemplate.getCode(),
                     Map.of("testName", "테스트 이름"),
-                    Map.of("nickName", member.getNickname(), "weather", "맑음"));
+                    Map.of("nickName", member.getNickname(), "weather", "맑음"),
+                    true);
         } catch (Exception e) {
             assertThat(e).isInstanceOf(RuntimeException.class);
         }
@@ -145,7 +149,8 @@ public class NotificationSendServiceTest {
                     member.getId(),
                     notificationTemplate.getCode(),
                     Map.of("wrongKey", "테스트 이름"),
-                    Map.of("nickName", member.getNickname()));
+                    Map.of("nickName", member.getNickname()),
+                    true);
             Thread.sleep(1000);
         } catch (RestApiException e) {
             assertThat(e.getStatus()).isEqualTo(FailResponseStatus.INTERNAL_SERVER_ERROR);
@@ -164,7 +169,8 @@ public class NotificationSendServiceTest {
                     member.getId(),
                     notificationTemplate.getCode(),
                     Map.of("testName", "테스트 이름"),
-                    Map.of("nickName", member.getNickname()));
+                    Map.of("nickName", member.getNickname()),
+                    true);
             Thread.sleep(1000);
         } catch (RestApiException e) {
             assertThat(e.getStatus()).isEqualTo(FailResponseStatus.INTERNAL_SERVER_ERROR);

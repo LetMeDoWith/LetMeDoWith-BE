@@ -3,10 +3,8 @@ package com.LetMeDoWith.LetMeDoWith.integration.feedback;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.LetMeDoWith.LetMeDoWith.common.dto.FailResponseDto;
 import com.LetMeDoWith.LetMeDoWith.common.dto.ResponsePageDto;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
-import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.model.DowithTaskFeedback;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.model.TaskFeedbackTemplate;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.model.TaskFeedbackTemplateMessage;
@@ -33,10 +31,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-public class FeedbackIntegrationTest extends AbstractIntegrationTest {
+public class RetrieveFeedbackIntegrationTest extends AbstractIntegrationTest {
 
     private static final LocalDateTime FIXED_CLOCK_TIME = LocalDateTime.of(2024, 3, 1, 10, 0);
     private static final LocalDate TEST_DATE = LocalDate.of(2024, 3, 1);
@@ -78,6 +75,7 @@ public class FeedbackIntegrationTest extends AbstractIntegrationTest {
                 .title("잔소리 템플릿1")
                 .description("설명")
                 .isActive(Yn.TRUE)
+                .notificationTemplateCode("TEST_TEMPLATE")
                 .build());
         templateMessage1 = templateMessageRepository.save(TaskFeedbackTemplateMessage.builder()
                 .taskFeedbackTemplate(template1)
@@ -90,6 +88,7 @@ public class FeedbackIntegrationTest extends AbstractIntegrationTest {
                 .title("잔소리 템플릿2")
                 .description("설2")
                 .isActive(Yn.TRUE)
+                .notificationTemplateCode("TEST_TEMPLATE")
                 .build());
         templateMessage2 = templateMessageRepository.save(TaskFeedbackTemplateMessage.builder()
                 .taskFeedbackTemplate(template2)
@@ -130,69 +129,6 @@ public class FeedbackIntegrationTest extends AbstractIntegrationTest {
         assertThat(dto2.name()).isEqualTo(templateMessage2.getName());
         assertThat(dto2.message()).isEqualTo(templateMessage2.getMessage());
         assertThat(dto2.emojiUrl()).isEqualTo(template2.getEmojiUrl());
-    }
-
-    @Test
-    @DisplayName("[SUCCESS] 잔소리 생성")
-    void createFeedback_success() throws Exception {
-        CreateDowithFeedbackReqDto req = new CreateDowithFeedbackReqDto(dowithTask.getId(), template1.getId());
-        ResultActions resultActions =
-                this.request(MockMvcRequestBuilders.post("/api/v1/feedbacks").content(writeRequestBodyAsString(req)));
-        resultActions.andExpect(status().isOk());
-        // CQRS 조회로 생성 검증
-        MvcResult retrieveResult = this.request(
-                        MockMvcRequestBuilders.get("/api/v1/feedbacks/dowith-task/" + dowithTask.getId()))
-                .andExpect(status().isOk())
-                .andReturn();
-        String content = retrieveResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
-        RetrieveDowithTaskFeedbacksResDto result =
-                this.readPagingResponse(content, RetrieveDowithTaskFeedbacksResDto.class);
-        assertThat(result.feedbacks()).isNotEmpty();
-
-        RetrieveTaskFeedbackDto feedback = result.feedbacks().get(0);
-        assertThat(feedback.dowithTaskId()).isEqualTo(dowithTask.getId());
-        assertThat(feedback.taskFeedbackTemplate().id()).isEqualTo(template1.getId());
-        assertThat(feedback.taskFeedbackTemplate().name()).isEqualTo(templateMessage1.getName());
-        assertThat(feedback.isChecked()).isFalse();
-    }
-
-    @Test
-    @DisplayName("[SUCCESS] 잔소리 생성 - 5회 이내 연속 요청 허용")
-    void createFeedback_success_withinFreeThreshold() throws Exception {
-        CreateDowithFeedbackReqDto req = new CreateDowithFeedbackReqDto(dowithTask.getId(), template1.getId());
-        for (int i = 0; i < 5; i++) {
-            this.request(MockMvcRequestBuilders.post("/api/v1/feedbacks").content(writeRequestBodyAsString(req)))
-                    .andExpect(status().isOk());
-        }
-    }
-
-    @Test
-    @DisplayName("[FAIL] 잔소리 생성 - 5회 초과 후 1분 이내 재시도")
-    void createFeedback_fail_withinOneMinuteAfterThreshold() throws Exception {
-        CreateDowithFeedbackReqDto req = new CreateDowithFeedbackReqDto(dowithTask.getId(), template1.getId());
-        for (int i = 0; i < 5; i++) {
-            this.request(MockMvcRequestBuilders.post("/api/v1/feedbacks").content(writeRequestBodyAsString(req)))
-                    .andExpect(status().isOk());
-        }
-        ResultActions failResult = this.request(
-                        MockMvcRequestBuilders.post("/api/v1/feedbacks").content(writeRequestBodyAsString(req)))
-                .andExpect(status().isBadRequest());
-        FailResponseDto failResponse = this.readFailResponse(failResult);
-        assertThat(failResponse.statusCode())
-                .isEqualTo(FailResponseStatus.FEEDBACK_SENDING_UNAVAILABLE.getStatusCode());
-    }
-
-    @Test
-    @DisplayName("[SUCCESS] 잔소리 생성 - 5회 초과 후 1분 경과 시 허용")
-    void createFeedback_success_afterOneMinuteFromThreshold() throws Exception {
-        CreateDowithFeedbackReqDto req = new CreateDowithFeedbackReqDto(dowithTask.getId(), template1.getId());
-        for (int i = 0; i < 5; i++) {
-            this.request(MockMvcRequestBuilders.post("/api/v1/feedbacks").content(writeRequestBodyAsString(req)))
-                    .andExpect(status().isOk());
-        }
-        setFixedClock(FIXED_CLOCK_TIME.plusMinutes(1).plusSeconds(1));
-        this.request(MockMvcRequestBuilders.post("/api/v1/feedbacks").content(writeRequestBodyAsString(req)))
-                .andExpect(status().isOk());
     }
 
     @Test

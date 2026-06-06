@@ -1,5 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.application.task.service;
 
+import com.LetMeDoWith.LetMeDoWith.application.notification.service.NotificationSendService;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.CancelLikeSuccessDowithTaskResult;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.LikeSuccessDowithTaskResult;
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.RetrieveDowithTaskLikersResult;
@@ -34,6 +35,7 @@ public class SuccessDowithTaskService {
     private final DowithTaskQueryRepository dowithTaskQueryRepository;
     private final DowithTaskLikeRepository dowithTaskLikeRepository;
     private final PresignedUrlService presignedUrlService;
+    private final NotificationSendService notificationSendService;
 
     @Lazy
     @Autowired
@@ -103,6 +105,11 @@ public class SuccessDowithTaskService {
         isAlreadyLiked = savedRowCount == 0; // 저장된 행이 없으면 이미 좋아요가 존재하는 상태
 
         long likeCount = dowithTaskLikeRepository.countDowithTaskLikesByDowithTaskId(dowithTaskId);
+
+        if (!isAlreadyLiked) {
+            notificationSendService.sendNotification(memberId, dowithTask.getMemberId(), "LIKE_RECEIVED", true);
+        }
+
         return new LikeSuccessDowithTaskResult(isAlreadyLiked, likeCount);
     }
 

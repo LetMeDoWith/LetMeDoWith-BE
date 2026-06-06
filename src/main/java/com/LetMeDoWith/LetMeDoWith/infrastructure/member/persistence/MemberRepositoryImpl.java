@@ -45,6 +45,11 @@ public class MemberRepositoryImpl implements MemberRepository {
     }
 
     @Override
+    public List<Member> getMembers(List<String> memberIds, MemberStatus memberStatus) {
+        return memberJpaRepository.findAllByIdInAndStatus(memberIds, memberStatus);
+    }
+
+    @Override
     public Member save(Member member) {
         if (member.getTermAgree() != null) {
             termAgreeJpaRepository.save(member.getTermAgree());
