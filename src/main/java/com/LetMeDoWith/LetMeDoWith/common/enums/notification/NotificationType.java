@@ -11,6 +11,7 @@ import lombok.Getter;
 @JsonDeserialize(using = NotificationTypeConverter.class)
 public enum NotificationType implements BaseEnum {
     NORMAL("NORMAL", "일반"),
+    FEEDBACK("FEEDBACK", "잡도리"),
     EVENT("EVENT", "이벤트"),
     ;
 

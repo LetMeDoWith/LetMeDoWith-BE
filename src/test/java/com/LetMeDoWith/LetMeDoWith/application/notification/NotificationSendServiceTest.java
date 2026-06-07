@@ -6,6 +6,7 @@ import com.LetMeDoWith.LetMeDoWith.application.notification.service.Notification
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.Gender;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
+import com.LetMeDoWith.LetMeDoWith.common.enums.notification.NotificationType;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
@@ -94,7 +95,7 @@ public class NotificationSendServiceTest {
                 notificationTemplate.getCode(),
                 Map.of("testName", "테스트 이름"),
                 Map.of("nickName", member.getNickname(), "weather", "맑음"),
-                true);
+                NotificationType.NORMAL);
         Thread.sleep(1000); // 비동기 처리로 인해 DB에 저장되는 시간이 필요할 수 있음
         Optional<Notification> opNotification = notificationJpaRepository.findByMemberId(member.getId());
 
@@ -121,7 +122,7 @@ public class NotificationSendServiceTest {
                     notificationTemplate.getCode(),
                     Map.of("testName", "테스트 이름"),
                     Map.of("nickName", member.getNickname(), "weather", "맑음"),
-                    true);
+                    NotificationType.NORMAL);
         } catch (Exception e) {
             assertThat(e).isInstanceOf(RuntimeException.class);
         }
@@ -150,7 +151,7 @@ public class NotificationSendServiceTest {
                     notificationTemplate.getCode(),
                     Map.of("wrongKey", "테스트 이름"),
                     Map.of("nickName", member.getNickname()),
-                    true);
+                    NotificationType.NORMAL);
             Thread.sleep(1000);
         } catch (RestApiException e) {
             assertThat(e.getStatus()).isEqualTo(FailResponseStatus.INTERNAL_SERVER_ERROR);
@@ -170,7 +171,7 @@ public class NotificationSendServiceTest {
                     notificationTemplate.getCode(),
                     Map.of("testName", "테스트 이름"),
                     Map.of("nickName", member.getNickname()),
-                    true);
+                    NotificationType.NORMAL);
             Thread.sleep(1000);
         } catch (RestApiException e) {
             assertThat(e.getStatus()).isEqualTo(FailResponseStatus.INTERNAL_SERVER_ERROR);

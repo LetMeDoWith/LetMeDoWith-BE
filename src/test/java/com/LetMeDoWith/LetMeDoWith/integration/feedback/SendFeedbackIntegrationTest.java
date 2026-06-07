@@ -8,11 +8,13 @@ import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.Gender;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
+import com.LetMeDoWith.LetMeDoWith.common.enums.notification.NotificationType;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.model.DowithTaskFeedback;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.model.TaskFeedbackTemplate;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.model.TaskFeedbackTemplateMessage;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
+import com.LetMeDoWith.LetMeDoWith.domain.notification.model.Notification;
 import com.LetMeDoWith.LetMeDoWith.domain.notification.model.NotificationTemplate;
 import com.LetMeDoWith.LetMeDoWith.domain.notification.model.NotificationToken;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.CountryCode;
@@ -149,8 +151,8 @@ public class SendFeedbackIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @DisplayName("[SUCCESS] 잔소리 전송 - DowithTaskFeedback 적재 & Notification 미적재")
-    void sendFeedback_success_persistsFeedbackOnly() throws Exception {
+    @DisplayName("[SUCCESS] 잔소리 전송 - DowithTaskFeedback & Notification 적재")
+    void sendFeedback_success_persistsFeedbackAndNotification() throws Exception {
         // given
         CreateDowithFeedbackReqDto req = new CreateDowithFeedbackReqDto(dowithTask.getId(), template1.getId());
 
@@ -168,8 +170,15 @@ public class SendFeedbackIntegrationTest extends AbstractIntegrationTest {
         assertThat(saved.getReceiverMemberId()).isEqualTo(receiver.getId());
         assertThat(saved.getIsChecked()).isEqualTo(Yn.FALSE);
 
-        // then - Notification 미적재 (createDowithFeedback이 isSavingHistory=false로 호출)
-        assertThat(notificationRepository.findAll()).isEmpty();
+        // then - Notification 적재 (모든 잔소리는 FCM 발송 + DB 저장)
+        List<Notification> notifications = notificationRepository.findAll();
+        assertThat(notifications).hasSize(1);
+        Notification savedNotification = notifications.get(0);
+        assertThat(savedNotification.getMemberId()).isEqualTo(receiver.getId());
+        assertThat(savedNotification.getType()).isEqualTo(NotificationType.FEEDBACK);
+        assertThat(savedNotification.getNotificationTemplateCode()).isEqualTo(NOTIFICATION_TEMPLATE_CODE_1);
+        assertThat(savedNotification.getDeepLink()).isEqualTo(TEST_DEEP_LINK);
+        assertThat(savedNotification.getIsConfirmed()).isEqualTo(Yn.FALSE);
     }
 
     @Test
@@ -186,7 +195,11 @@ public class SendFeedbackIntegrationTest extends AbstractIntegrationTest {
         assertThat(feedbackRepo.findAll()).hasSize(1);
         assertThat(feedbackRepo.countByDowithTaskIdAndSenderMemberId(dowithTask.getId(), requestMember.getId()))
                 .isEqualTo(1);
-        assertThat(notificationRepository.findAll()).isEmpty();
+
+        List<Notification> notifications = notificationRepository.findAll();
+        assertThat(notifications).hasSize(1);
+        assertThat(notifications.get(0).getNotificationTemplateCode()).isEqualTo(NOTIFICATION_TEMPLATE_CODE_2);
+        assertThat(notifications.get(0).getType()).isEqualTo(NotificationType.FEEDBACK);
     }
 
     @Test

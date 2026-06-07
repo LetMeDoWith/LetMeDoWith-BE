@@ -2,6 +2,7 @@ package com.LetMeDoWith.LetMeDoWith.application.notification.service;
 
 import com.LetMeDoWith.LetMeDoWith.application.notification.client.MessageServerClient;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
+import com.LetMeDoWith.LetMeDoWith.common.enums.notification.NotificationType;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
@@ -40,14 +41,14 @@ public class NotificationSendService {
             String templateCode,
             Map<String, String> titleParams,
             Map<String, String> bodyParams,
-            boolean isSavingHistory) {
-        doSend(receiverMemberId, templateCode, titleParams, bodyParams, isSavingHistory);
+            NotificationType notificationType) {
+        doSend(receiverMemberId, templateCode, titleParams, bodyParams, notificationType);
     }
 
     @Async
     @Transactional
     public void sendNotification(
-            String senderMemberId, String receiverMemberId, String templateCode, boolean isSavingHistory) {
+            String senderMemberId, String receiverMemberId, String templateCode, NotificationType notificationType) {
 
         List<Member> members =
                 memberRepository.getMembers(List.of(senderMemberId, receiverMemberId), MemberStatus.NORMAL);
@@ -58,7 +59,7 @@ public class NotificationSendService {
                 "senderNickname", memberMap.get(senderMemberId).getNickname(),
                 "receiverNickname", memberMap.get(receiverMemberId).getNickname());
 
-        doSend(receiverMemberId, templateCode, paramsMap, paramsMap, isSavingHistory);
+        doSend(receiverMemberId, templateCode, paramsMap, paramsMap, notificationType);
     }
 
     private void doSend(
@@ -66,7 +67,7 @@ public class NotificationSendService {
             String templateCode,
             Map<String, String> titleParams,
             Map<String, String> bodyParams,
-            boolean isSavingHistory) {
+            NotificationType notificationType) {
 
         NotificationToken notificationToken = notificationTokenRepository
                 .getNotificationToken(receiverMemberId)
@@ -83,18 +84,28 @@ public class NotificationSendService {
                 notificationToken.getToken(),
                 title,
                 body,
+                notificationTemplate.getImage(),
                 notificationTemplate.getAppDeepLink(),
-                isSavingHistory
-                        ? () -> saveNotification(
-                                receiverMemberId, title, body, notificationTemplate.getAppDeepLink(), templateCode)
-                        : () -> {},
+                () -> saveNotification(
+                        receiverMemberId,
+                        title,
+                        body,
+                        notificationTemplate.getAppDeepLink(),
+                        templateCode,
+                        notificationType),
                 () -> expireToken(receiverMemberId));
     }
 
     private void saveNotification(
-            String memberId, String title, String body, String deeplink, String notificationTemplateCode) {
+            String memberId,
+            String title,
+            String body,
+            String deeplink,
+            String notificationTemplateCode,
+            NotificationType notificationType) {
 
-        notificationRepository.save(Notification.of(memberId, title, body, deeplink, notificationTemplateCode));
+        notificationRepository.save(
+                Notification.of(memberId, title, body, deeplink, notificationTemplateCode, notificationType));
     }
 
     private void expireToken(String memberId) {

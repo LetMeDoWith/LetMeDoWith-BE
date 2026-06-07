@@ -2,6 +2,7 @@ package com.LetMeDoWith.LetMeDoWith.common.util;
 
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
+import com.LetMeDoWith.LetMeDoWith.common.holders.AuthContextHolder;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -57,10 +58,6 @@ public class AuthUtil {
     }
 
     public String getMemberId() {
-
-        HttpServletRequest request =
-                ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-        Object memberId = request.getAttribute("memberId");
-        return memberId == null ? null : memberId.toString();
+        return AuthContextHolder.getMemberId();
     }
 }
