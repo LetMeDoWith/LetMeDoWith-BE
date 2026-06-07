@@ -10,21 +10,30 @@ import java.util.List;
 public record RetrieveReceivedTaskFeedbackResult(Long totalCount, List<ReceivedTaskFeedbackDto> feedbacks) {
 
     public static RetrieveReceivedTaskFeedbackResult of(
-            Long totalCount, List<DowithTaskFeedbackQueryDto> feedbacks, List<TaskFeedbackTemplateQueryDto> templates) {
+            Long totalCount,
+            List<DowithTaskFeedbackQueryDto> feedbacks,
+            List<TaskFeedbackTemplateQueryDto> templates,
+            String receiverNickname) {
         List<ReceivedTaskFeedbackDto> feedbackDtos = feedbacks.stream()
-                .map(feedback -> new ReceivedTaskFeedbackDto(
-                        feedback.id(),
-                        feedback.dowithTaskId(),
-                        feedback.dowithTaskTitle(),
-                        feedback.senderId(),
-                        feedback.senderNickname(),
-                        feedback.senderProfileImageUrl(),
-                        feedback.isChecked(),
-                        feedback.receivedAt(),
-                        TaskFeedbackTemplateDto.from(templates.stream()
-                                .filter(template -> template.id().equals(feedback.taskFeedbackTemplateId()))
-                                .findFirst()
-                                .get())))
+                .map(feedback -> {
+                    TaskFeedbackTemplateDto template = TaskFeedbackTemplateDto.from(templates.stream()
+                            .filter(t -> t.id().equals(feedback.taskFeedbackTemplateId()))
+                            .findFirst()
+                            .get());
+                    String parsedMessage = template.message()
+                            .replace("{{receiverNickname}}", receiverNickname != null ? receiverNickname : "");
+                    return new ReceivedTaskFeedbackDto(
+                            feedback.id(),
+                            feedback.dowithTaskId(),
+                            feedback.dowithTaskTitle(),
+                            feedback.senderId(),
+                            feedback.senderNickname(),
+                            feedback.senderProfileImageUrl(),
+                            feedback.isChecked(),
+                            feedback.receivedAt(),
+                            parsedMessage,
+                            template);
+                })
                 .toList();
 
         return new RetrieveReceivedTaskFeedbackResult(totalCount, feedbackDtos);
@@ -40,5 +49,6 @@ public record RetrieveReceivedTaskFeedbackResult(Long totalCount, List<ReceivedT
                     String senderProfileImageUrl,
             @Schema(description = "잔소리 확인여부", example = "false") Boolean isChecked,
             @Schema(description = "잔소리 받은 시각") LocalDateTime receivedAt,
+            @Schema(description = "받는사람(나) 닉네임이 치환된 잔소리 메시지", example = "홍길동 오늘도 달렸나요?") String parsedMessage,
             @Schema(description = "잔소리 템플릿") TaskFeedbackTemplateDto taskFeedbackTemplate) {}
 }

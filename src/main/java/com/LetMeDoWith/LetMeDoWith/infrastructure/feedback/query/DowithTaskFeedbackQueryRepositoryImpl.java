@@ -101,7 +101,7 @@ public class DowithTaskFeedbackQueryRepositoryImpl implements DowithTaskFeedback
                         dowithTask.status))
                 .from(dowithTaskFeedback)
                 .leftJoin(member)
-                .on(dowithTaskFeedback.senderMemberId.eq(member.id))
+                .on(dowithTaskFeedback.receiverMemberId.eq(member.id))
                 .leftJoin(dowithTask)
                 .on(dowithTaskFeedback.dowithTaskId.eq(dowithTask.id))
                 .where(dowithTaskFeedback.senderMemberId.eq(senderId))

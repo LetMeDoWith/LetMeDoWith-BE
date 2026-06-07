@@ -1,6 +1,8 @@
 package com.LetMeDoWith.LetMeDoWith.application.feedback.service;
 
 import com.LetMeDoWith.LetMeDoWith.application.feedback.dto.*;
+import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
+import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.DowithTaskFeedbackQueryRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.TaskFeedbackTemplateQueryRepository;
@@ -8,6 +10,7 @@ import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.dto.AggregateTaskF
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.dto.DowithTaskFeedbackQueryDto;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.dto.SentDowithTaskFeedbackQueryDto;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.dto.TaskFeedbackTemplateQueryDto;
+import com.LetMeDoWith.LetMeDoWith.domain.member.repository.MemberRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.CountryCode;
 import jakarta.annotation.Nullable;
 import java.util.List;
@@ -21,6 +24,7 @@ public class RetrieveTaskFeedbackService {
 
     private final DowithTaskFeedbackQueryRepository dowithTaskFeedbackQueryRepository;
     private final TaskFeedbackTemplateQueryRepository taskFeedbackTemplateQueryRepository;
+    private final MemberRepository memberRepository;
 
     /**
      * DowithTask가 받은 잔소리 목록 조회
@@ -62,13 +66,18 @@ public class RetrieveTaskFeedbackService {
 
         String memberId = AuthUtil.getMemberId();
 
+        String receiverNickname = memberRepository
+                .getNormalStatusMember(memberId)
+                .orElseThrow(() -> new RestApiException(FailResponseStatus.MEMBER_NOT_EXIST))
+                .getNickname();
+
         Long totalCount = dowithTaskFeedbackQueryRepository.countFeedbacksByReceiverId(memberId);
         List<DowithTaskFeedbackQueryDto> feedbackDtos = dowithTaskFeedbackQueryRepository.getFeedbacksByReceiverId(
                 memberId, pageable.getOffset(), pageable.getPageSize());
         List<TaskFeedbackTemplateQueryDto> feedbackTemplates =
                 taskFeedbackTemplateQueryRepository.getAllTaskFeedbackTemplates(CountryCode.KR);
 
-        return RetrieveReceivedTaskFeedbackResult.of(totalCount, feedbackDtos, feedbackTemplates);
+        return RetrieveReceivedTaskFeedbackResult.of(totalCount, feedbackDtos, feedbackTemplates, receiverNickname);
     }
 
     /**
