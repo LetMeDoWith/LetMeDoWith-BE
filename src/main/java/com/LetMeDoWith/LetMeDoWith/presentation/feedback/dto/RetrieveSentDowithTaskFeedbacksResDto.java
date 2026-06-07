@@ -27,6 +27,7 @@ public record RetrieveSentDowithTaskFeedbacksResDto(
                     String receiverProfileImageUrl,
             @Schema(description = "잔소리 확인여부", example = "false") Boolean isChecked,
             @Schema(description = "잔소리 대상 두윗모드 Task 상태", example = "WAIT") DowithTaskStatus dowithTaskStatus,
+            @Schema(description = "받는사람 닉네임이 치환된 잔소리 메시지", example = "홍길동 오늘도 달렸나요?") String parsedMessage,
             @Schema(description = "잔소리 템플릿") SentFeedbackTemplateDto taskFeedbackTemplate) {
 
         public static SentFeedbackDto from(SentTaskFeedbackDto feedback) {
@@ -39,6 +40,7 @@ public record RetrieveSentDowithTaskFeedbacksResDto(
                     feedback.receiverProfileImageUrl(),
                     feedback.isChecked(),
                     feedback.dowithTaskStatus(),
+                    feedback.parsedMessage(),
                     SentFeedbackTemplateDto.from(feedback.taskFeedbackTemplate()));
         }
     }

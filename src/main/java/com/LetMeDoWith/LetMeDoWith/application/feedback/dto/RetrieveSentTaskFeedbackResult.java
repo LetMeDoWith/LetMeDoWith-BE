@@ -14,19 +14,27 @@ public record RetrieveSentTaskFeedbackResult(Long totalCount, List<SentTaskFeedb
             List<SentDowithTaskFeedbackQueryDto> feedbacks,
             List<TaskFeedbackTemplateQueryDto> templates) {
         List<SentTaskFeedbackDto> feedbackDtos = feedbacks.stream()
-                .map(feedback -> new SentTaskFeedbackDto(
-                        feedback.id(),
-                        feedback.dowithTaskId(),
-                        feedback.dowithTaskTitle(),
-                        feedback.receiverId(),
-                        feedback.receiverNickname(),
-                        feedback.receiverProfileImageUrl(),
-                        feedback.isChecked(),
-                        feedback.dowithTaskStatus(),
-                        TaskFeedbackTemplateDto.from(templates.stream()
-                                .filter(template -> template.id().equals(feedback.taskFeedbackTemplateId()))
-                                .findFirst()
-                                .get())))
+                .map(feedback -> {
+                    TaskFeedbackTemplateDto template = TaskFeedbackTemplateDto.from(templates.stream()
+                            .filter(t -> t.id().equals(feedback.taskFeedbackTemplateId()))
+                            .findFirst()
+                            .get());
+                    String parsedMessage = template.message()
+                            .replace(
+                                    "{{receiverNickname}}",
+                                    feedback.receiverNickname() != null ? feedback.receiverNickname() : "");
+                    return new SentTaskFeedbackDto(
+                            feedback.id(),
+                            feedback.dowithTaskId(),
+                            feedback.dowithTaskTitle(),
+                            feedback.receiverId(),
+                            feedback.receiverNickname(),
+                            feedback.receiverProfileImageUrl(),
+                            feedback.isChecked(),
+                            feedback.dowithTaskStatus(),
+                            parsedMessage,
+                            template);
+                })
                 .toList();
 
         return new RetrieveSentTaskFeedbackResult(totalCount, feedbackDtos);
@@ -42,5 +50,6 @@ public record RetrieveSentTaskFeedbackResult(Long totalCount, List<SentTaskFeedb
                     String receiverProfileImageUrl,
             @Schema(description = "잔소리 확인여부", example = "false") Boolean isChecked,
             @Schema(description = "잔소리 대상 두윗모드 Task 상태", example = "WAIT") DowithTaskStatus dowithTaskStatus,
+            @Schema(description = "받는사람 닉네임이 치환된 잔소리 메시지", example = "홍길동 오늘도 달렸나요?") String parsedMessage,
             @Schema(description = "잔소리 템플릿") TaskFeedbackTemplateDto taskFeedbackTemplate) {}
 }
