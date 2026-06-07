@@ -52,10 +52,11 @@ public class Notification extends BaseAuditEntity {
             String memberId,
             String title,
             String body,
+            String imageUrl,
             String deepLink,
             String notificationTemplateCode,
             NotificationType notificationType) {
-        return of(memberId, notificationType, title, body, deepLink, null, notificationTemplateCode, Yn.FALSE);
+        return of(memberId, notificationType, title, body, deepLink, imageUrl, notificationTemplateCode, Yn.FALSE);
     }
 
     public static Notification of(

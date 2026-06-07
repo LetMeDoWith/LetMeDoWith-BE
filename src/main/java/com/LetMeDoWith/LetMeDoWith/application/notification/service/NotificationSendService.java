@@ -77,21 +77,22 @@ public class NotificationSendService {
         NotificationTemplate notificationTemplate = notificationTemplateRepository
                 .getNotificationTemplate(templateCode)
                 .orElseThrow(() -> new RestApiException(FailResponseStatus.INVALID_REQUEST));
-        String title = notificationTemplate.parseTitle(titleParams);
-        String body = notificationTemplate.parseBody(bodyParams);
+        String parsedTitle = notificationTemplate.parseTitle(titleParams);
+        String parsedBody = notificationTemplate.parseBody(bodyParams);
 
         messageServerClient.sendMessage(
                 notificationToken.getToken(),
-                title,
-                body,
-                notificationTemplate.getImage(),
+                parsedTitle,
+                parsedBody,
+                notificationTemplate.getImageUrl(),
                 notificationTemplate.getAppDeepLink(),
                 () -> saveNotification(
                         receiverMemberId,
-                        title,
-                        body,
+                        parsedTitle,
+                        parsedBody,
+                        notificationTemplate.getImageUrl(),
                         notificationTemplate.getAppDeepLink(),
-                        templateCode,
+                        notificationTemplate.getCode(),
                         notificationType),
                 () -> expireToken(receiverMemberId));
     }
@@ -100,12 +101,13 @@ public class NotificationSendService {
             String memberId,
             String title,
             String body,
+            String imageUrl,
             String deeplink,
             String notificationTemplateCode,
             NotificationType notificationType) {
 
         notificationRepository.save(
-                Notification.of(memberId, title, body, deeplink, notificationTemplateCode, notificationType));
+                Notification.of(memberId, title, body, imageUrl, deeplink, notificationTemplateCode, notificationType));
     }
 
     private void expireToken(String memberId) {

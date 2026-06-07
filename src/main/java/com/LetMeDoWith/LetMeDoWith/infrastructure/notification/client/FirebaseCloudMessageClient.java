@@ -24,12 +24,14 @@ public class FirebaseCloudMessageClient implements MessageServerClient {
             String appDeepLink,
             Runnable onSuccess,
             Runnable onFailureByExpiredToken) {
+        Notification.Builder notificationBuilder =
+                Notification.builder().setTitle(title).setBody(body);
+        if (image != null && !image.isBlank()) {
+            notificationBuilder.setImage(image);
+        }
+
         Message message = Message.builder()
-                .setNotification(Notification.builder()
-                        .setTitle(title)
-                        .setBody(body)
-                        .setImage(null)
-                        .build())
+                .setNotification(notificationBuilder.build())
                 .putData("deepLink", appDeepLink)
                 .setToken(token)
                 .build();
