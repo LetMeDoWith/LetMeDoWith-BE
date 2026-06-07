@@ -7,6 +7,7 @@ import com.LetMeDoWith.LetMeDoWith.application.task.dto.RetrieveDowithTaskLikers
 import com.LetMeDoWith.LetMeDoWith.application.task.dto.RetrieveSuccessDowithTasksResult;
 import com.LetMeDoWith.LetMeDoWith.common.dto.GenerateUploadPresignedUrlsResult;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.FileNamespace;
+import com.LetMeDoWith.LetMeDoWith.common.enums.notification.NotificationType;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.service.PresignedUrlService;
@@ -107,7 +108,8 @@ public class SuccessDowithTaskService {
         long likeCount = dowithTaskLikeRepository.countDowithTaskLikesByDowithTaskId(dowithTaskId);
 
         if (!isAlreadyLiked) {
-            notificationSendService.sendNotification(memberId, dowithTask.getMemberId(), "LIKE_RECEIVED", true);
+            notificationSendService.sendNotification(
+                    memberId, dowithTask.getMemberId(), "LIKE_RECEIVED", NotificationType.NORMAL);
         }
 
         return new LikeSuccessDowithTaskResult(isAlreadyLiked, likeCount);

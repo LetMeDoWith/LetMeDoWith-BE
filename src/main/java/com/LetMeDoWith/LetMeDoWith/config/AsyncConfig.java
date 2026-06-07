@@ -1,5 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.config;
 
+import com.LetMeDoWith.LetMeDoWith.common.holders.AuthContextHolder;
 import com.LetMeDoWith.LetMeDoWith.common.holders.TimeZoneContextHolder;
 import java.time.ZoneId;
 import java.util.Arrays;
@@ -49,14 +50,17 @@ public class AsyncConfig implements AsyncConfigurer {
         public Runnable decorate(Runnable runnable) {
             RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
             ZoneId timeZone = TimeZoneContextHolder.getTimeZone();
+            String memberId = AuthContextHolder.getMemberId();
             return () -> {
                 try {
                     RequestContextHolder.setRequestAttributes(requestAttributes);
                     TimeZoneContextHolder.setTimeZone(timeZone);
+                    AuthContextHolder.setMemberId(memberId);
                     runnable.run();
                 } finally {
                     RequestContextHolder.resetRequestAttributes();
                     TimeZoneContextHolder.clearTimeZoneHolder();
+                    AuthContextHolder.clearMemberIdHolder();
                 }
             };
         }

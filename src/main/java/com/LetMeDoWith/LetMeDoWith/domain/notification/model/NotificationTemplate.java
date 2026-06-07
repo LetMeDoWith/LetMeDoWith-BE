@@ -27,11 +27,14 @@ public class NotificationTemplate extends BaseAuditEntity {
     @Column(name = "code", nullable = false, unique = true)
     private String code;
 
-    @Column(name = "title", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "title", nullable = false, length = 255)
     private String title;
 
     @Column(name = "body", nullable = false, columnDefinition = "TEXT")
     private String body;
+
+    @Column(name = "image", nullable = true, columnDefinition = "TEXT")
+    private String image;
 
     @Column(name = "app_deep_link", nullable = false, columnDefinition = "TEXT")
     private String appDeepLink;
