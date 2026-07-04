@@ -35,6 +35,7 @@ public class FirebaseCloudMessageClient implements MessageServerClient {
                 .putData("deepLink", appDeepLink)
                 .setToken(token)
                 .build();
+
         try {
             String send = firebaseMessaging.send(message);
             log.info("Firebase Cloud Messaging sent successfully: {}", send);

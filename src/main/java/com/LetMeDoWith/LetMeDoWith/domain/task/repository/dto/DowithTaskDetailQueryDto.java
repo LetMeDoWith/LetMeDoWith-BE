@@ -22,7 +22,7 @@ public record DowithTaskDetailQueryDto(
         String cycle,
         Set<Integer> patterns,
         Boolean isExcludeHolidays,
-        int feedBackCount) {
+        Long feedBackCount) {
 
     public DowithTaskDetailQueryDto(
             Long id,
@@ -39,7 +39,7 @@ public record DowithTaskDetailQueryDto(
             TaskRoutineCycle cycle,
             TaskRoutinePattern pattern,
             Boolean isExcludeHolidays,
-            int feedBackCount) {
+            Long feedBackCount) {
         this(
                 id,
                 taskCategoryId,

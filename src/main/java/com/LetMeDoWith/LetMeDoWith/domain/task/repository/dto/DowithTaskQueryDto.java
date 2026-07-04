@@ -15,7 +15,7 @@ public record DowithTaskQueryDto(
         LocalTime startTime,
         String successImageUrl,
         boolean isRoutine,
-        int feedBackCount) {
+        Long feedBackCount) {
 
     public DowithTaskQueryDto(
             Long id,
@@ -27,7 +27,7 @@ public record DowithTaskQueryDto(
             LocalTime startTime,
             String successImageUrl,
             DowithTaskRoutine dowithTaskRoutine,
-            int feedBackCount) {
+            Long feedBackCount) {
         this(
                 id,
                 taskCategoryId,

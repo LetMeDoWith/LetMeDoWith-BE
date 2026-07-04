@@ -62,6 +62,7 @@ CREATE TABLE `dowith_task`
     `title`                  varchar(255) NOT NULL,
     `dowith_task_routine_id` bigint       DEFAULT NULL,
     PRIMARY KEY (`id`),
+    KEY `idx_task_member_date` (`member_id`, `date`),
     KEY `FKkjm1t4jam94wtf486023jdaam` (`dowith_task_routine_id`),
     CONSTRAINT `FKkjm1t4jam94wtf486023jdaam` FOREIGN KEY (`dowith_task_routine_id`) REFERENCES `dowith_task_routine` (`id`)
 ) ENGINE = InnoDB
@@ -80,7 +81,8 @@ CREATE TABLE `dowith_task_feedback`
     `receiver_member_id`        varchar(255) NOT NULL,
     `sender_member_id`          varchar(255) NOT NULL,
     `task_feedback_template_id` bigint       NOT NULL,
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    KEY `idx_feedback_task_id` (`dowith_task_id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
