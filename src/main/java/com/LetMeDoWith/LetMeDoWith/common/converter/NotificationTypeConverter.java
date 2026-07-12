@@ -1,6 +1,5 @@
-package com.LetMeDoWith.LetMeDoWith.infrastructure.notification.converter;
+package com.LetMeDoWith.LetMeDoWith.common.converter;
 
-import com.LetMeDoWith.LetMeDoWith.common.converter.AbstractCombinedEnumConverter;
 import com.LetMeDoWith.LetMeDoWith.common.enums.notification.NotificationType;
 import jakarta.persistence.Converter;
 

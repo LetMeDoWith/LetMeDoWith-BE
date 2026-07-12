@@ -1,7 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.common.enums.notification;
 
+import com.LetMeDoWith.LetMeDoWith.common.converter.NotificationTypeConverter;
 import com.LetMeDoWith.LetMeDoWith.common.enums.BaseEnum;
-import com.LetMeDoWith.LetMeDoWith.infrastructure.notification.converter.NotificationTypeConverter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

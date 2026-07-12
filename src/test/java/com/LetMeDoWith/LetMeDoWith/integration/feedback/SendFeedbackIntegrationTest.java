@@ -8,6 +8,7 @@ import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.Gender;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
+import com.LetMeDoWith.LetMeDoWith.common.enums.notification.NotificationTemplateCode;
 import com.LetMeDoWith.LetMeDoWith.common.enums.notification.NotificationType;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.model.DowithTaskFeedback;
@@ -114,19 +115,24 @@ public class SendFeedbackIntegrationTest extends AbstractIntegrationTest {
                 dowithTaskRepository.save(DowithTask.of(receiver.getId(), null, "테스트 태스크", TEST_DATE, TEST_START_TIME));
 
         notificationTemplateRepository.save(NotificationTemplate.of(
-                NOTIFICATION_TEMPLATE_CODE_1,
+                NotificationTemplateCode.FEEDBACK_RECEIVED,
+                NotificationType.NORMAL,
                 "{{senderNickname}}의 잡도리를 받았어요",
                 "{{receiverNickname}}, 아직도 안했구나?",
                 TEST_DEEP_LINK));
         notificationTemplateRepository.save(NotificationTemplate.of(
-                NOTIFICATION_TEMPLATE_CODE_2, "{{senderNickname}}의 잡도리를 받았어요", "너 혹시 잡도리 수집중이니?", TEST_DEEP_LINK));
+                NotificationTemplateCode.LIKE_RECEIVED,
+                NotificationType.NORMAL,
+                "{{senderNickname}}의 잡도리를 받았어요",
+                "너 혹시 잡도리 수집중이니?",
+                TEST_DEEP_LINK));
 
         template1 = templateRepository.save(TaskFeedbackTemplate.builder()
                 .emojiUrl(TEST_EMOJI_URL)
                 .title("잔소리 템플릿1")
                 .description("설명1")
                 .isActive(Yn.TRUE)
-                .notificationTemplateCode(NOTIFICATION_TEMPLATE_CODE_1)
+                .notificationTemplateCode(NotificationTemplateCode.FEEDBACK_RECEIVED)
                 .build());
         templateMessage1 = templateMessageRepository.save(TaskFeedbackTemplateMessage.builder()
                 .taskFeedbackTemplate(template1)
@@ -140,7 +146,7 @@ public class SendFeedbackIntegrationTest extends AbstractIntegrationTest {
                 .title("잔소리 템플릿2")
                 .description("설명2")
                 .isActive(Yn.TRUE)
-                .notificationTemplateCode(NOTIFICATION_TEMPLATE_CODE_2)
+                .notificationTemplateCode(NotificationTemplateCode.LIKE_RECEIVED)
                 .build());
         templateMessageRepository.save(TaskFeedbackTemplateMessage.builder()
                 .taskFeedbackTemplate(template2)

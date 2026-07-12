@@ -2,6 +2,7 @@ package com.LetMeDoWith.LetMeDoWith.domain.feedback.model;
 
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
+import com.LetMeDoWith.LetMeDoWith.common.enums.notification.NotificationTemplateCode;
 import com.LetMeDoWith.LetMeDoWith.domain.AggregateRoot;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -36,5 +37,5 @@ public class TaskFeedbackTemplate extends BaseAuditEntity {
     private Yn isActive;
 
     @Column(name = "notification_template_code", nullable = false)
-    private String notificationTemplateCode;
+    private NotificationTemplateCode notificationTemplateCode;
 }

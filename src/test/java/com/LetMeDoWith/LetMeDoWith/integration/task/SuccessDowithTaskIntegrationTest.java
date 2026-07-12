@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.Gender;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
+import com.LetMeDoWith.LetMeDoWith.common.enums.notification.NotificationTemplateCode;
 import com.LetMeDoWith.LetMeDoWith.common.enums.notification.NotificationType;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
 import com.LetMeDoWith.LetMeDoWith.domain.notification.model.NotificationTemplate;
@@ -50,7 +51,7 @@ public class SuccessDowithTaskIntegrationTest extends AbstractIntegrationTest {
     private static final String LIKE_SUCCESS_DOWITH_TASK_URL = BASE_URL + "/{id}/like";
     private static final String LIKE_COUNT_SUCCESS_DOWITH_TASK_URL = BASE_URL + "/{id}/like/count";
 
-    private static final String NOTIFICATION_TEMPLATE_CODE = "LIKE_RECEIVED";
+    private static final NotificationTemplateCode NOTIFICATION_TEMPLATE_CODE = NotificationTemplateCode.LIKE_RECEIVED;
     // TODO - 테스트 FCM 토큰 generator에서 발급 받은 토큰 세팅
     private static final String REGISTERED_FCM_TOKEN =
             "fx5STrP_eh7XIRNiVvNBk_:APA91bHpJ_SvZQTs8SK-Hkl5d8vChDEb2_njBRp-uLtzWU-3_s5W9aoL6OprShJG-ZIU4oSSDD4cfvB0jKb8xUcjvLWyVvhDkiM9DhsdrxhKa0wwrDwx-YI";
@@ -95,7 +96,11 @@ public class SuccessDowithTaskIntegrationTest extends AbstractIntegrationTest {
 
         notificationTokenJpaRepository.save(NotificationToken.of(this.requestMember.getId(), REGISTERED_FCM_TOKEN));
         notificationTemplateJpaRepository.save(NotificationTemplate.of(
-                NOTIFICATION_TEMPLATE_CODE, "공감을 받았어요", "{{senderNickname}}님이 도리 인증에 공감했어요", "letmedowith://test"));
+                NOTIFICATION_TEMPLATE_CODE,
+                NotificationType.NORMAL,
+                "공감을 받았어요",
+                "{{senderNickname}}님이 도리 인증에 공감했어요",
+                "letmedowith://test"));
 
         taskCategory = taskCategoryJpaRepository.save(TaskCategory.of(
                 "test", TaskCategory.TaskCategoryCreationType.COMMON, "test", this.requestMember.getId()));

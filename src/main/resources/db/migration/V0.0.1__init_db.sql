@@ -292,9 +292,10 @@ CREATE TABLE `notification_template`
     `app_deep_link` text,
     `body`          text         NOT NULL,
     `code`          varchar(255) NOT NULL,
+    `type`          varchar(255) NOT NULL,
+    `image_url`     text,
     `title`         text         NOT NULL,
-    PRIMARY KEY (`id`),
-    UNIQUE KEY `UK_78ljxu1rtyj29qj8a3bao9bfx` (`code`)
+    PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
@@ -391,15 +392,16 @@ CREATE TABLE `task_category`
 
 CREATE TABLE `task_feedback_template`
 (
-    `id`          bigint       NOT NULL AUTO_INCREMENT,
-    `created_at`  datetime(6)  DEFAULT NULL,
-    `created_by`  varchar(255) DEFAULT NULL,
-    `updated_at`  datetime(6)  DEFAULT NULL,
-    `updated_by`  varchar(255) DEFAULT NULL,
-    `description` varchar(255) NOT NULL,
-    `emoji_url`   varchar(255) NOT NULL,
-    `is_active`   varchar(255) NOT NULL,
-    `title`       varchar(255) NOT NULL,
+    `id`                        bigint       NOT NULL AUTO_INCREMENT,
+    `created_at`                datetime(6)  DEFAULT NULL,
+    `created_by`                varchar(255) DEFAULT NULL,
+    `updated_at`                datetime(6)  DEFAULT NULL,
+    `updated_by`                varchar(255) DEFAULT NULL,
+    `description`               varchar(255) NOT NULL,
+    `emoji_url`                 varchar(255) NOT NULL,
+    `is_active`                 varchar(255) NOT NULL,
+    `notification_template_code` varchar(255) NOT NULL,
+    `title`                     varchar(255) NOT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4

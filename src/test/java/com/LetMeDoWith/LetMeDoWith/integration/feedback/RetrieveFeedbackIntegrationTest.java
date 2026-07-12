@@ -5,15 +5,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.LetMeDoWith.LetMeDoWith.common.dto.ResponsePageDto;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
+import com.LetMeDoWith.LetMeDoWith.common.enums.notification.NotificationTemplateCode;
+import com.LetMeDoWith.LetMeDoWith.common.enums.notification.NotificationType;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.model.DowithTaskFeedback;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.model.TaskFeedbackTemplate;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.model.TaskFeedbackTemplateMessage;
+import com.LetMeDoWith.LetMeDoWith.domain.notification.model.NotificationTemplate;
+import com.LetMeDoWith.LetMeDoWith.domain.notification.model.NotificationToken;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.CountryCode;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.feedback.persistence.jpaRepository.DowithTaskFeedbackJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.feedback.persistence.jpaRepository.TaskFeedbackTemplateJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.feedback.persistence.jpaRepository.TaskFeedbackTemplateMessageJpaRepository;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.notification.persistence.jpaRepository.NotificationTemplateJpaRepository;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.notification.persistence.jpaRepository.NotificationTokenJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.DowithTaskJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.integration.AbstractIntegrationTest;
 import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.*;
@@ -40,6 +46,9 @@ public class RetrieveFeedbackIntegrationTest extends AbstractIntegrationTest {
     private static final LocalTime TEST_START_TIME = LocalTime.of(10, 0);
     private static final String TEST_EMOJI_URL = "https://example.com/emoji.png";
     private static final CountryCode TEST_LANGUAGE = CountryCode.KR;
+    // TODO - 테스트 FCM 토큰 generator에서 발급 받은 토큰 세팅
+    private static final String REGISTERED_FCM_TOKEN =
+            "fx5STrP_eh7XIRNiVvNBk_:APA91bHpJ_SvZQTs8SK-Hkl5d8vChDEb2_njBRp-uLtzWU-3_s5W9aoL6OprShJG-ZIU4oSSDD4cfvB0jKb8xUcjvLWyVvhDkiM9DhsdrxhKa0wwrDwx-YI";
 
     @Autowired
     private DowithTaskJpaRepository dowithTaskRepository;
@@ -53,9 +62,17 @@ public class RetrieveFeedbackIntegrationTest extends AbstractIntegrationTest {
     @Autowired
     private DowithTaskFeedbackJpaRepository feedbackRepo;
 
+    @Autowired
+    private NotificationTemplateJpaRepository notificationTemplateRepository;
+
+    @Autowired
+    private NotificationTokenJpaRepository notificationTokenRepository;
+
     private DowithTask dowithTask;
     private TaskFeedbackTemplate template1, template2;
     private TaskFeedbackTemplateMessage templateMessage1, templateMessage2;
+    private NotificationTemplate notificationTemplate;
+    private NotificationToken notificationToken;
 
     @Override
     protected void deleteTestData() {
@@ -63,6 +80,8 @@ public class RetrieveFeedbackIntegrationTest extends AbstractIntegrationTest {
         templateMessageRepository.deleteAll();
         templateRepository.deleteAll();
         dowithTaskRepository.deleteAll();
+        notificationTemplateRepository.deleteAll();
+        notificationTokenRepository.deleteAll();
     }
 
     @Override
@@ -70,12 +89,20 @@ public class RetrieveFeedbackIntegrationTest extends AbstractIntegrationTest {
         setFixedClock(FIXED_CLOCK_TIME);
         dowithTask = dowithTaskRepository.save(
                 DowithTask.of(requestMember.getId(), null, "테스트 태스크", TEST_DATE, TEST_START_TIME));
+        notificationToken =
+                notificationTokenRepository.save(NotificationToken.of(requestMember.getId(), REGISTERED_FCM_TOKEN));
+        notificationTemplate = notificationTemplateRepository.save(NotificationTemplate.of(
+                NotificationTemplateCode.FEEDBACK_RECEIVED,
+                NotificationType.FEEDBACK,
+                "{{senderNickname}}의 잡도리를 받았어요",
+                "{{receiverNickname}}, 아직도 안했구나?",
+                "letmedowith://home"));
         template1 = templateRepository.save(TaskFeedbackTemplate.builder()
                 .emojiUrl(TEST_EMOJI_URL)
                 .title("잔소리 템플릿1")
                 .description("설명")
                 .isActive(Yn.TRUE)
-                .notificationTemplateCode("TEST_TEMPLATE")
+                .notificationTemplateCode(NotificationTemplateCode.FEEDBACK_RECEIVED)
                 .build());
         templateMessage1 = templateMessageRepository.save(TaskFeedbackTemplateMessage.builder()
                 .taskFeedbackTemplate(template1)
@@ -88,7 +115,7 @@ public class RetrieveFeedbackIntegrationTest extends AbstractIntegrationTest {
                 .title("잔소리 템플릿2")
                 .description("설2")
                 .isActive(Yn.TRUE)
-                .notificationTemplateCode("TEST_TEMPLATE")
+                .notificationTemplateCode(NotificationTemplateCode.FEEDBACK_RECEIVED)
                 .build());
         templateMessage2 = templateMessageRepository.save(TaskFeedbackTemplateMessage.builder()
                 .taskFeedbackTemplate(template2)
