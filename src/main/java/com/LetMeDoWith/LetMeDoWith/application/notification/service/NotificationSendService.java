@@ -76,7 +76,7 @@ public class NotificationSendService {
             NotificationTemplateCode templateCode,
             List<String> receiverMemberIds,
             Map<String, String> titleParams,
-            Map<String, String> bodyParams,
+            List<Map<String, String>> bodyParams,
             List<Map<String, String>> deeplinkParams) {
         return doSends(templateCode, receiverMemberIds, titleParams, bodyParams, deeplinkParams);
     }
@@ -88,8 +88,9 @@ public class NotificationSendService {
             Map<String, String> bodyParams) {
 
         MessageResolveStrategy strategy = messageResolveStrategyResolver.resolve(templateCode);
-        List<MessageContentVo> messageContents =
-                strategy.resolve(templateCode, List.of(receiverMemberId), titleParams, bodyParams, List.of(Map.of()));
+        List<Map<String, String>> bodyParamsList = bodyParams == null ? null : List.of(bodyParams);
+        List<MessageContentVo> messageContents = strategy.resolve(
+                templateCode, List.of(receiverMemberId), titleParams, bodyParamsList, List.of(Map.of()));
 
         if (messageContents.isEmpty()) {
             throw new RestApiException(FailResponseStatus.INVALID_REQUEST);
@@ -117,7 +118,7 @@ public class NotificationSendService {
             NotificationTemplateCode templateCode,
             List<String> receiverMemberIds,
             Map<String, String> titleParams,
-            Map<String, String> bodyParams,
+            List<Map<String, String>> bodyParams,
             List<Map<String, String>> deeplinkParams) {
 
         if (receiverMemberIds.isEmpty()) {

@@ -15,7 +15,8 @@ public enum NotificationTemplateCode implements BaseEnum {
     NUDGE_DORI_COMPLETE_10M("NUDGE_DORI_COMPLETE_10M", "도리 Todo 재촉 (10분 경과)"),
     NUDGE_DORI_COMPLETE_30M("NUDGE_DORI_COMPLETE_30M", "도리 Todo 재촉 (30분 경과)"),
     NUDGE_DORI_COMPLETE_50M("NUDGE_DORI_COMPLETE_50M", "도리 Todo 재촉 (50분 경과)"),
-    ;
+    NUDGE_DORI_START("NUDGE_DORI_START", "도리 Todo 시작 재촉 (10분전)"),
+    NUDGE_TODO_START("NUDGE_TODO_START", "Todo 시작 재촉 (10분전)");
 
     private final String code;
     private final String description;

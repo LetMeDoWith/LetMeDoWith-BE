@@ -7,12 +7,11 @@ import com.LetMeDoWith.LetMeDoWith.domain.notification.model.NotificationTemplat
 import com.LetMeDoWith.LetMeDoWith.domain.notification.model.NotificationToken;
 import com.LetMeDoWith.LetMeDoWith.domain.notification.repository.NotificationTemplateRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.notification.repository.NotificationTokenRepository;
+import java.util.*;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -32,7 +31,7 @@ public class SimpleTemplateMessageResolveStrategy implements MessageResolveStrat
             NotificationTemplateCode templateCode,
             List<String> receiverMemberIds,
             Map<String, String> titleParams,
-            Map<String, String> bodyParams,
+            List<Map<String, String>> bodyParams,
             List<Map<String, String>> deeplinkParams) {
 
         Set<String> uniqueMemberIds = new HashSet<>(receiverMemberIds);
@@ -50,7 +49,6 @@ public class SimpleTemplateMessageResolveStrategy implements MessageResolveStrat
                 .getNotificationTemplate(templateCode)
                 .orElseThrow(() -> new RestApiException(FailResponseStatus.INTERNAL_SERVER_ERROR));
         String parsedTitle = notificationTemplate.parseTitle(titleParams);
-        String parsedBody = notificationTemplate.parseBody(bodyParams);
         String imageUrl = notificationTemplate.getImageUrl();
 
         List<MessageContentVo> messageContents = new ArrayList<>();
@@ -59,12 +57,14 @@ public class SimpleTemplateMessageResolveStrategy implements MessageResolveStrat
             NotificationToken notificationToken = notificationTokenMap.get(memberId);
             if (notificationToken == null) continue;
 
-            Map<String, String> deeplinkParam = deeplinkParams.isEmpty() ? Map.of() : deeplinkParams.get(i);
+            Map<String, String> bodyParam = (bodyParams == null || bodyParams.isEmpty()) ? null : bodyParams.get(i);
+            Map<String, String> deeplinkParam =
+                    (deeplinkParams == null || deeplinkParams.isEmpty()) ? null : deeplinkParams.get(i);
             messageContents.add(new MessageContentVo(
                     memberId,
                     notificationToken.getToken(),
                     parsedTitle,
-                    parsedBody,
+                    notificationTemplate.parseBody(bodyParam),
                     notificationTemplate.parseDeepLink(deeplinkParam),
                     imageUrl,
                     notificationTemplate.getType()));

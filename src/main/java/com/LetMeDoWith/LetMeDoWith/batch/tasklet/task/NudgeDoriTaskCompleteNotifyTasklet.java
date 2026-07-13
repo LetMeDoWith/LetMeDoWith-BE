@@ -4,6 +4,11 @@ import com.LetMeDoWith.LetMeDoWith.application.notification.dto.SendNotification
 import com.LetMeDoWith.LetMeDoWith.application.notification.service.NotificationSendService;
 import com.LetMeDoWith.LetMeDoWith.common.enums.notification.NotificationTemplateCode;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -16,17 +21,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.List;
-import java.util.Map;
-
 @Slf4j
 @Component
 @StepScope
 @RequiredArgsConstructor
-public class NudgeDoriTaskCompleteTasklet implements Tasklet {
+public class NudgeDoriTaskCompleteNotifyTasklet implements Tasklet {
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -88,7 +87,7 @@ public class NudgeDoriTaskCompleteTasklet implements Tasklet {
                 .toList();
 
         SendNotificationResult sendNotificationResult = notificationSendService.sendNotifications(
-                delayedMinutes.getNotificationTemplateCode(), receiverMemberIds, Map.of(), Map.of(), deeplinkParams);
+                delayedMinutes.getNotificationTemplateCode(), receiverMemberIds, null, null, deeplinkParams);
 
         if (!sendNotificationResult.failedMemberIds().isEmpty()) {
             for (NudgeDoriTaskTarget target : nudgeTargets) {
@@ -125,6 +124,5 @@ public class NudgeDoriTaskCompleteTasklet implements Tasklet {
         }
     }
 
-    public record NudgeDoriTaskTarget(Long dowithTaskId, String dowithTaskTitle, String memberId, String nickname) {
-    }
+    public record NudgeDoriTaskTarget(Long dowithTaskId, String dowithTaskTitle, String memberId, String nickname) {}
 }

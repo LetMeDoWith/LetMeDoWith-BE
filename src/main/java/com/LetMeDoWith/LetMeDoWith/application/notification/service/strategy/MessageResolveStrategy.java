@@ -8,13 +8,13 @@ public interface MessageResolveStrategy {
     boolean supports(NotificationTemplateCode templateCode);
 
     /**
-     * receiverMemberIds와 deeplinkParams는 순서(index)로 매칭된다.
-     * deeplinkParams가 비어있으면 모든 수신자에 대해 deeplink 파라미터 없이 처리한다.
+     * receiverMemberIds와 bodyParams, deeplinkParams는 순서(index)로 매칭된다.
+     * titleParams, bodyParams, deeplinkParams는 null 또는 빈 값이면 해당 파라미터 치환 없이 처리한다.
      */
     List<MessageContentVo> resolve(
             NotificationTemplateCode templateCode,
             List<String> receiverMemberIds,
             Map<String, String> titleParams,
-            Map<String, String> bodyParams,
+            List<Map<String, String>> bodyParams,
             List<Map<String, String>> deeplinkParams);
 }
