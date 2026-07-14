@@ -1,6 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.batch.job.task;
 
-import com.LetMeDoWith.LetMeDoWith.batch.tasklet.UpdateFailDowithTaskTasklet;
+import com.LetMeDoWith.LetMeDoWith.batch.tasklet.task.UpdateFailDowithTaskTasklet;
 import javax.sql.DataSource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

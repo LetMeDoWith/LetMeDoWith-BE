@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.batch.tasklet;
+package com.LetMeDoWith.LetMeDoWith.batch.tasklet.task;
 
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
 import java.sql.Timestamp;

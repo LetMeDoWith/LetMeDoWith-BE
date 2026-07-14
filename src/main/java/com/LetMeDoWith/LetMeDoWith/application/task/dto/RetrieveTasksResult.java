@@ -73,5 +73,5 @@ public record RetrieveTasksResult(List<TodoTaskDto> todoTasks, List<DowithTaskDt
             LocalTime startTime,
             List<String> successImageUrls,
             boolean isRoutine,
-            int feedBackCount) {}
+            Long feedBackCount) {}
 }

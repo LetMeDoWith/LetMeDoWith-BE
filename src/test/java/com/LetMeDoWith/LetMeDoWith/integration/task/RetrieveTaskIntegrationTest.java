@@ -6,11 +6,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.LetMeDoWith.LetMeDoWith.common.util.DateTimeUtil;
 import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
+import com.LetMeDoWith.LetMeDoWith.domain.feedback.model.DowithTaskFeedback;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.TaskRoutineCycle;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskCategory;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TodoTask;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TodoTaskRoutineRepository;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.feedback.persistence.jpaRepository.DowithTaskFeedbackJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.DowithTaskJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.TaskCategoryJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.TodoTaskJpaRepository;
@@ -47,11 +49,15 @@ public class RetrieveTaskIntegrationTest extends AbstractIntegrationTest {
     @Autowired
     TaskCategoryJpaRepository taskCategoryJpaRepository;
 
+    @Autowired
+    DowithTaskFeedbackJpaRepository dowithTaskFeedbackJpaRepository;
+
     private TaskCategory taskCategory1, taskCategory2;
     private TodoTask todoTask1, todoTask2, todoTask3;
     private DowithTask dowithTask1, dowithTask2, dowithTask3;
 
     protected void deleteTestData() {
+        dowithTaskFeedbackJpaRepository.deleteAll();
         todoTaskJpaRepository.deleteAll();
         dowithTaskJpaRepository.deleteAll();
         taskCategoryJpaRepository.deleteAll();
@@ -125,6 +131,13 @@ public class RetrieveTaskIntegrationTest extends AbstractIntegrationTest {
         dowithTask3.success(List.of("https://example.com/image1.jpg", "https://example.com/image2.jpg"));
 
         dowithTaskJpaRepository.saveAll(List.of(dowithTask1, dowithTask2, dowithTask3));
+
+        // 3. DowithTaskFeedback - dowithTask1: 2개, dowithTask2: 1개, dowithTask3: 0개
+        String feedbackSenderId = "feedback-sender-member";
+        dowithTaskFeedbackJpaRepository.saveAll(List.of(
+                DowithTaskFeedback.of(feedbackSenderId, this.requestMember.getId(), dowithTask1.getId(), 1L),
+                DowithTaskFeedback.of(feedbackSenderId, this.requestMember.getId(), dowithTask1.getId(), 1L),
+                DowithTaskFeedback.of(feedbackSenderId, this.requestMember.getId(), dowithTask2.getId(), 1L)));
     }
 
     @Test
@@ -179,6 +192,7 @@ public class RetrieveTaskIntegrationTest extends AbstractIntegrationTest {
                         .value(DateTimeUtil.toFormatString(dowithTask1.getStartTime())))
                 .andExpect(jsonPath("$.data.dowithTasks[0].successImageUrls").doesNotExist())
                 .andExpect(jsonPath("$.data.dowithTasks[0].isRoutine").value(true))
+                .andExpect(jsonPath("$.data.dowithTasks[0].feedBackCount").value(2))
                 .andExpect(jsonPath("$.data.dowithTasks[1].id").value(dowithTask2.getId()))
                 .andExpect(jsonPath("$.data.dowithTasks[1].taskCategoryId").value(taskCategory2.getId()))
                 .andExpect(jsonPath("$.data.dowithTasks[1].taskCategoryName").value(taskCategory2.getTitle()))
@@ -191,6 +205,7 @@ public class RetrieveTaskIntegrationTest extends AbstractIntegrationTest {
                         .value(DateTimeUtil.toFormatString(dowithTask2.getStartTime())))
                 .andExpect(jsonPath("$.data.dowithTasks[1].successImageUrls").doesNotExist())
                 .andExpect(jsonPath("$.data.dowithTasks[1].isRoutine").value(false))
+                .andExpect(jsonPath("$.data.dowithTasks[1].feedBackCount").value(1))
                 .andExpect(jsonPath("$.data.dowithTasks[2].id").value(dowithTask3.getId()))
                 .andExpect(jsonPath("$.data.dowithTasks[2].taskCategoryId").value(taskCategory1.getId()))
                 .andExpect(jsonPath("$.data.dowithTasks[2].taskCategoryName").value(taskCategory1.getTitle()))
@@ -205,7 +220,8 @@ public class RetrieveTaskIntegrationTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.data.dowithTasks[2].successImageUrls")
                         .value(Matchers.is(
                                 List.of("https://example.com/image1.jpg", "https://example.com/image2.jpg"))))
-                .andExpect(jsonPath("$.data.dowithTasks[2].isRoutine").value(false));
+                .andExpect(jsonPath("$.data.dowithTasks[2].isRoutine").value(false))
+                .andExpect(jsonPath("$.data.dowithTasks[2].feedBackCount").value(0));
     }
 
     @Test
@@ -235,7 +251,8 @@ public class RetrieveTaskIntegrationTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.data.routineCondition.cycle")
                         .value(dowithTask1.getRoutine().getCycle().getCode()))
                 .andExpect(jsonPath("$.data.routineCondition.pattern").doesNotExist())
-                .andExpect(jsonPath("$.data.routineCondition.isExcludeHolidays").value(false));
+                .andExpect(jsonPath("$.data.routineCondition.isExcludeHolidays").value(false))
+                .andExpect(jsonPath("$.data.feedBackCount").value(2));
     }
 
     @Test

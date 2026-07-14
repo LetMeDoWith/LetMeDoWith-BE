@@ -62,6 +62,7 @@ CREATE TABLE `dowith_task`
     `title`                  varchar(255) NOT NULL,
     `dowith_task_routine_id` bigint       DEFAULT NULL,
     PRIMARY KEY (`id`),
+    KEY `idx_task_member_date` (`member_id`, `date`),
     KEY `FKkjm1t4jam94wtf486023jdaam` (`dowith_task_routine_id`),
     CONSTRAINT `FKkjm1t4jam94wtf486023jdaam` FOREIGN KEY (`dowith_task_routine_id`) REFERENCES `dowith_task_routine` (`id`)
 ) ENGINE = InnoDB
@@ -80,7 +81,8 @@ CREATE TABLE `dowith_task_feedback`
     `receiver_member_id`        varchar(255) NOT NULL,
     `sender_member_id`          varchar(255) NOT NULL,
     `task_feedback_template_id` bigint       NOT NULL,
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    KEY `idx_feedback_task_id` (`dowith_task_id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
@@ -290,9 +292,10 @@ CREATE TABLE `notification_template`
     `app_deep_link` text,
     `body`          text         NOT NULL,
     `code`          varchar(255) NOT NULL,
+    `type`          varchar(255) NOT NULL,
+    `image_url`     text,
     `title`         text         NOT NULL,
-    PRIMARY KEY (`id`),
-    UNIQUE KEY `UK_78ljxu1rtyj29qj8a3bao9bfx` (`code`)
+    PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
@@ -389,15 +392,16 @@ CREATE TABLE `task_category`
 
 CREATE TABLE `task_feedback_template`
 (
-    `id`          bigint       NOT NULL AUTO_INCREMENT,
-    `created_at`  datetime(6)  DEFAULT NULL,
-    `created_by`  varchar(255) DEFAULT NULL,
-    `updated_at`  datetime(6)  DEFAULT NULL,
-    `updated_by`  varchar(255) DEFAULT NULL,
-    `description` varchar(255) NOT NULL,
-    `emoji_url`   varchar(255) NOT NULL,
-    `is_active`   varchar(255) NOT NULL,
-    `title`       varchar(255) NOT NULL,
+    `id`                        bigint       NOT NULL AUTO_INCREMENT,
+    `created_at`                datetime(6)  DEFAULT NULL,
+    `created_by`                varchar(255) DEFAULT NULL,
+    `updated_at`                datetime(6)  DEFAULT NULL,
+    `updated_by`                varchar(255) DEFAULT NULL,
+    `description`               varchar(255) NOT NULL,
+    `emoji_url`                 varchar(255) NOT NULL,
+    `is_active`                 varchar(255) NOT NULL,
+    `notification_template_code` varchar(255) NOT NULL,
+    `title`                     varchar(255) NOT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4

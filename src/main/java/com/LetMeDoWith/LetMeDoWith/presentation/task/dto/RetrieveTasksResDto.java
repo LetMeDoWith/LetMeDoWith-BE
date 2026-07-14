@@ -65,5 +65,5 @@ public record RetrieveTasksResDto(List<TodoTaskDto> todoTasks, List<DowithTaskDt
             @Schema(description = "인증 이미지 URL", defaultValue = "https://example.com/image.jpg")
                     List<String> successImageUrls,
             @Schema(description = "루틴설정여부", defaultValue = "false") Boolean isRoutine,
-            @Schema(description = "피드백 개수", defaultValue = "5") int feedBackCount) {}
+            @Schema(description = "피드백 개수", defaultValue = "5") Long feedBackCount) {}
 }

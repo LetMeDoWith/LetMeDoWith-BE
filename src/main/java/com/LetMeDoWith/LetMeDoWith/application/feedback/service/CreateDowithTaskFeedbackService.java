@@ -1,7 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.application.feedback.service;
 
 import com.LetMeDoWith.LetMeDoWith.application.notification.service.NotificationSendService;
-import com.LetMeDoWith.LetMeDoWith.common.enums.notification.NotificationType;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
@@ -62,10 +61,7 @@ public class CreateDowithTaskFeedbackService {
         dowithTaskFeedbackRepository.save(
                 DowithTaskFeedback.of(senderId, dowithTask.getMemberId(), dowithTaskId, taskFeedbackTemplateId));
 
-        notificationSendService.sendNotification(
-                senderId,
-                dowithTask.getMemberId(),
-                taskFeedbackTemplate.getNotificationTemplateCode(),
-                NotificationType.FEEDBACK);
+        notificationSendService.sendNotificationAsync(
+                taskFeedbackTemplate.getNotificationTemplateCode(), senderId, dowithTask.getMemberId());
     }
 }

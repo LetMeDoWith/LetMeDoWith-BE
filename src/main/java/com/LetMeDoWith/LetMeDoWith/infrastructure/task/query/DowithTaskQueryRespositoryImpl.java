@@ -2,23 +2,15 @@ package com.LetMeDoWith.LetMeDoWith.infrastructure.task.query;
 
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.util.SystemTimeUtil;
+import com.LetMeDoWith.LetMeDoWith.domain.feedback.model.QDowithTaskFeedback;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.QMember;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
-import com.LetMeDoWith.LetMeDoWith.domain.task.model.QDowithTask;
-import com.LetMeDoWith.LetMeDoWith.domain.task.model.QDowithTaskLike;
-import com.LetMeDoWith.LetMeDoWith.domain.task.model.QDowithTaskRoutine;
-import com.LetMeDoWith.LetMeDoWith.domain.task.model.QDowithTaskSuccess;
-import com.LetMeDoWith.LetMeDoWith.domain.task.model.QTaskCategory;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.*;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskQueryRepository;
-import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.DowithTaskDetailQueryDto;
-import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.DowithTaskLikeMemberQueryDto;
-import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.DowithTaskQueryDto;
-import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.FailedDowithTaskCountQueryDto;
-import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.FeedbackAvailableDowithTasksQueryDto;
-import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.MemberTaskSuccessStatsQueryDto;
-import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.SuccessDowithTaskQueryDto;
+import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.*;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.DateTimeExpression;
@@ -30,11 +22,7 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -48,6 +36,7 @@ public class DowithTaskQueryRespositoryImpl implements DowithTaskQueryRepository
     private final QDowithTask dowithTask = QDowithTask.dowithTask;
     private final QDowithTaskRoutine dowithTaskRoutine = QDowithTaskRoutine.dowithTaskRoutine;
     private final QDowithTaskSuccess dowithTaskSuccess = QDowithTaskSuccess.dowithTaskSuccess;
+    private final QDowithTaskFeedback dowithTaskFeedback = QDowithTaskFeedback.dowithTaskFeedback;
     private final QTaskCategory taskCategory = QTaskCategory.taskCategory;
     private final QDowithTaskLike dowithTaskLike = QDowithTaskLike.dowithTaskLike;
     private final QMember member = QMember.member;
@@ -79,12 +68,11 @@ public class DowithTaskQueryRespositoryImpl implements DowithTaskQueryRepository
                         dowithTask.startTime,
                         dowithTaskSuccess.imageUrl,
                         dowithTaskRoutine,
-                        Expressions.constant(0) // TODO -
-                        // 추후
-                        // FeedBack
-                        // 개발시
-                        // 추가
-                        ))
+                        ExpressionUtils.as(
+                                JPAExpressions.select(dowithTaskFeedback.count())
+                                        .from(dowithTaskFeedback)
+                                        .where(dowithTaskFeedback.dowithTaskId.eq(dowithTask.id)),
+                                "feedBackCount")))
                 .from(dowithTask)
                 .leftJoin(taskCategory)
                 .on(dowithTask.taskCategoryId.eq(taskCategory.id))
@@ -115,12 +103,11 @@ public class DowithTaskQueryRespositoryImpl implements DowithTaskQueryRepository
                         dowithTaskRoutine.cycle,
                         dowithTaskRoutine.pattern,
                         dowithTaskRoutine.isExcludeHolidays,
-                        Expressions.constant(0) // TODO -
-                        // 추후
-                        // FeedBack
-                        // 개발시
-                        // 추가
-                        ))
+                        ExpressionUtils.as(
+                                JPAExpressions.select(dowithTaskFeedback.count())
+                                        .from(dowithTaskFeedback)
+                                        .where(dowithTaskFeedback.dowithTaskId.eq(dowithTask.id)),
+                                "feedBackCount")))
                 .from(dowithTask)
                 .leftJoin(taskCategory)
                 .on(dowithTask.taskCategoryId.eq(taskCategory.id))

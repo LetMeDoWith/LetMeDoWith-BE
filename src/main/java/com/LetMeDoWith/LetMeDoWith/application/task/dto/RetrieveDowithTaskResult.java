@@ -21,7 +21,7 @@ public record RetrieveDowithTaskResult(
         @Schema(description = "시작 시각", defaultValue = "11:30:00") LocalTime startTime,
         @Schema(description = "인증 사진", defaultValue = "[\"https:image\"]") List<String> successImageUrls,
         @Schema(description = "루틴 반복 조건") DowithTaskRoutine routine,
-        @Schema(description = "잔소리 개수", defaultValue = "102") int feedBackCount) {
+        @Schema(description = "잔소리 개수", defaultValue = "102") Long feedBackCount) {
     public static RetrieveDowithTaskResult from(DowithTaskDetailQueryDto dto) {
         return RetrieveDowithTaskResult.builder()
                 .id(dto.id())

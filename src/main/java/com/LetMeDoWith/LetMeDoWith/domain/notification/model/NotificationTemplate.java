@@ -1,6 +1,8 @@
 package com.LetMeDoWith.LetMeDoWith.domain.notification.model;
 
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
+import com.LetMeDoWith.LetMeDoWith.common.enums.notification.NotificationTemplateCode;
+import com.LetMeDoWith.LetMeDoWith.common.enums.notification.NotificationType;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import jakarta.persistence.*;
@@ -24,8 +26,11 @@ public class NotificationTemplate extends BaseAuditEntity {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "code", nullable = false, unique = true)
-    private String code;
+    @Column(name = "code", nullable = false)
+    private NotificationTemplateCode code;
+
+    @Column(name = "type", nullable = false)
+    private NotificationType type;
 
     @Column(name = "title", nullable = false, length = 255)
     private String title;
@@ -39,9 +44,11 @@ public class NotificationTemplate extends BaseAuditEntity {
     @Column(name = "app_deep_link", nullable = false, columnDefinition = "TEXT")
     private String appDeepLink;
 
-    public static NotificationTemplate of(String code, String title, String body, String deepLink) {
+    public static NotificationTemplate of(
+            NotificationTemplateCode code, NotificationType type, String title, String body, String deepLink) {
         return NotificationTemplate.builder()
                 .code(code)
+                .type(type)
                 .title(title)
                 .body(body)
                 .appDeepLink(deepLink)
@@ -49,42 +56,23 @@ public class NotificationTemplate extends BaseAuditEntity {
     }
 
     public String parseTitle(Map<String, String> params) {
-
-        if (params == null) return this.title;
-
-        String titleTemplate = this.title;
-
-        Pattern pattern = Pattern.compile("\\{\\{(.*?)\\}\\}");
-        Matcher matcher = pattern.matcher(titleTemplate);
-
-        Set<String> keySet = new HashSet<>();
-        while (matcher.find()) {
-            keySet.add(matcher.group(1));
-        }
-
-        if (!params.keySet().containsAll(keySet)) {
-            // TODO - 추후 로깅 제대로 된다면, 해당 부분에 Error 로깅 및 alarm 필요
-            // TODO - return title 하고
-            throw new RestApiException(FailResponseStatus.INTERNAL_SERVER_ERROR);
-        }
-
-        for (Map.Entry<String, String> entry : params.entrySet()) {
-            String key = entry.getKey();
-            String value = entry.getValue();
-            titleTemplate = titleTemplate.replace("{{" + key + "}}", value);
-        }
-
-        return titleTemplate;
+        return parse(this.title, params);
     }
 
     public String parseBody(Map<String, String> params) {
+        return parse(this.body, params);
+    }
 
-        if (params == null) return this.body;
+    public String parseDeepLink(Map<String, String> params) {
+        return parse(this.appDeepLink, params);
+    }
 
-        String bodyTemplate = this.body;
+    private String parse(String template, Map<String, String> params) {
+
+        if (params == null) return template;
 
         Pattern pattern = Pattern.compile("\\{\\{(.*?)\\}\\}");
-        Matcher matcher = pattern.matcher(bodyTemplate);
+        Matcher matcher = pattern.matcher(template);
 
         Set<String> keySet = new HashSet<>();
         while (matcher.find()) {
@@ -97,12 +85,13 @@ public class NotificationTemplate extends BaseAuditEntity {
             throw new RestApiException(FailResponseStatus.INTERNAL_SERVER_ERROR);
         }
 
+        String parsed = template;
         for (Map.Entry<String, String> entry : params.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
-            bodyTemplate = bodyTemplate.replace("{{" + key + "}}", value);
+            parsed = parsed.replace("{{" + key + "}}", value);
         }
 
-        return bodyTemplate;
+        return parsed;
     }
 }
