@@ -1,8 +1,5 @@
 package com.LetMeDoWith.LetMeDoWith.integration.feedback;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.LetMeDoWith.LetMeDoWith.common.dto.FailResponseDto;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.Gender;
@@ -31,17 +28,21 @@ import com.LetMeDoWith.LetMeDoWith.integration.AbstractIntegrationTest;
 import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.CreateDowithFeedbackReqDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.RetrieveDowithTaskFeedbacksResDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.RetrieveDowithTaskFeedbacksResDto.RetrieveTaskFeedbackDto;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class SendFeedbackIntegrationTest extends AbstractIntegrationTest {
 
@@ -115,7 +116,7 @@ public class SendFeedbackIntegrationTest extends AbstractIntegrationTest {
                 dowithTaskRepository.save(DowithTask.of(receiver.getId(), null, "테스트 태스크", TEST_DATE, TEST_START_TIME));
 
         notificationTemplateRepository.save(NotificationTemplate.of(
-                NotificationTemplateCode.FEEDBACK_RECEIVED,
+                NotificationTemplateCode.FEEDBACK_RECEIVED_1,
                 NotificationType.NORMAL,
                 "{{senderNickname}}의 잡도리를 받았어요",
                 "{{receiverNickname}}, 아직도 안했구나?",
@@ -132,7 +133,7 @@ public class SendFeedbackIntegrationTest extends AbstractIntegrationTest {
                 .title("잔소리 템플릿1")
                 .description("설명1")
                 .isActive(Yn.TRUE)
-                .notificationTemplateCode(NotificationTemplateCode.FEEDBACK_RECEIVED)
+                .notificationTemplateCode(NotificationTemplateCode.FEEDBACK_RECEIVED_1)
                 .build());
         templateMessage1 = templateMessageRepository.save(TaskFeedbackTemplateMessage.builder()
                 .taskFeedbackTemplate(template1)

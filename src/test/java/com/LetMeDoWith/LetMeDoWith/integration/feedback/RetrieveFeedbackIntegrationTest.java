@@ -1,8 +1,5 @@
 package com.LetMeDoWith.LetMeDoWith.integration.feedback;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.LetMeDoWith.LetMeDoWith.common.dto.ResponsePageDto;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.common.enums.notification.NotificationTemplateCode;
@@ -27,17 +24,21 @@ import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.RetrieveDowithTaskF
 import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.RetrieveReceivedDowithTaskFeedbacksResDto.ReceivedFeedbackDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.RetrieveSentDowithTaskFeedbacksResDto.SentFeedbackDto;
 import com.fasterxml.jackson.databind.JavaType;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class RetrieveFeedbackIntegrationTest extends AbstractIntegrationTest {
 
@@ -92,7 +93,7 @@ public class RetrieveFeedbackIntegrationTest extends AbstractIntegrationTest {
         notificationToken =
                 notificationTokenRepository.save(NotificationToken.of(requestMember.getId(), REGISTERED_FCM_TOKEN));
         notificationTemplate = notificationTemplateRepository.save(NotificationTemplate.of(
-                NotificationTemplateCode.FEEDBACK_RECEIVED,
+                NotificationTemplateCode.FEEDBACK_RECEIVED_1,
                 NotificationType.FEEDBACK,
                 "{{senderNickname}}의 잡도리를 받았어요",
                 "{{receiverNickname}}, 아직도 안했구나?",
@@ -102,7 +103,7 @@ public class RetrieveFeedbackIntegrationTest extends AbstractIntegrationTest {
                 .title("잔소리 템플릿1")
                 .description("설명")
                 .isActive(Yn.TRUE)
-                .notificationTemplateCode(NotificationTemplateCode.FEEDBACK_RECEIVED)
+                .notificationTemplateCode(NotificationTemplateCode.FEEDBACK_RECEIVED_1)
                 .build());
         templateMessage1 = templateMessageRepository.save(TaskFeedbackTemplateMessage.builder()
                 .taskFeedbackTemplate(template1)
@@ -115,7 +116,7 @@ public class RetrieveFeedbackIntegrationTest extends AbstractIntegrationTest {
                 .title("잔소리 템플릿2")
                 .description("설2")
                 .isActive(Yn.TRUE)
-                .notificationTemplateCode(NotificationTemplateCode.FEEDBACK_RECEIVED)
+                .notificationTemplateCode(NotificationTemplateCode.FEEDBACK_RECEIVED_1)
                 .build());
         templateMessage2 = templateMessageRepository.save(TaskFeedbackTemplateMessage.builder()
                 .taskFeedbackTemplate(template2)

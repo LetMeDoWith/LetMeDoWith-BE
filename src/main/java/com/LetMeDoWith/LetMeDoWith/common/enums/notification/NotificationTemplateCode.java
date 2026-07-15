@@ -10,7 +10,10 @@ import lombok.Getter;
 @AllArgsConstructor
 @JsonDeserialize(using = NotificationTemplateCodeConverter.class)
 public enum NotificationTemplateCode implements BaseEnum {
-    FEEDBACK_RECEIVED("FEEDBACK_RECEIVED", "잡도리"),
+    FEEDBACK_RECEIVED_1("FEEDBACK_RECEIVED_1", "잡도리1"),
+    FEEDBACK_RECEIVED_2("FEEDBACK_RECEIVED_2", "잡도리2"),
+    FEEDBACK_RECEIVED_3("FEEDBACK_RECEIVED_3", "잡도리3"),
+    FEEDBACK_RECEIVED_4("FEEDBACK_RECEIVED_4", "잡도리4"),
     LIKE_RECEIVED("LIKE_RECEIVED", "공감"),
     NUDGE_DORI_COMPLETE_10M("NUDGE_DORI_COMPLETE_10M", "도리 Todo 재촉 (10분 경과)"),
     NUDGE_DORI_COMPLETE_30M("NUDGE_DORI_COMPLETE_30M", "도리 Todo 재촉 (30분 경과)"),

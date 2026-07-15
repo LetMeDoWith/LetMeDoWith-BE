@@ -1,7 +1,5 @@
 package com.LetMeDoWith.LetMeDoWith.application.notification;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import com.LetMeDoWith.LetMeDoWith.application.notification.service.NotificationSendService;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.Gender;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
@@ -18,15 +16,18 @@ import com.LetMeDoWith.LetMeDoWith.infrastructure.member.persistence.jpaReposito
 import com.LetMeDoWith.LetMeDoWith.infrastructure.notification.persistence.jpaRepository.NotificationJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.notification.persistence.jpaRepository.NotificationTemplateJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.notification.persistence.jpaRepository.NotificationTokenJpaRepository;
-import java.time.LocalDate;
-import java.util.Map;
-import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.time.LocalDate;
+import java.util.Map;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 public class NotificationSendServiceTest {
@@ -68,7 +69,7 @@ public class NotificationSendServiceTest {
                 .type(MemberType.USER)
                 .build());
         this.notificationTemplate = notificationTemplateJpaRepository.save(NotificationTemplate.of(
-                NotificationTemplateCode.FEEDBACK_RECEIVED,
+                NotificationTemplateCode.FEEDBACK_RECEIVED_1,
                 NotificationType.NORMAL,
                 "테스트 {{testName}}",
                 "안녕하세요 {{nickName}}님! 오늘 날씨는 {{weather}}입니다. 테스트 입니다",
