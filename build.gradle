@@ -5,6 +5,7 @@ plugins {
     id "org.flywaydb.flyway" version "10.9.0"
     id "com.bmuschko.docker-remote-api" version "9.4.0"
     id "com.diffplug.spotless" version "7.0.3"
+    id "io.sentry.jvm.gradle" version "6.15.0"
 }
 
 group = 'com.LetMeDoWith'
@@ -35,6 +36,17 @@ spotless {
         // 끝부분 New Line 처리
         endWithNewline()
     }
+}
+
+sentry {
+    // Generates a JVM (Java, Kotlin, etc.) source bundle and uploads your source code to Sentry.
+    // This enables source context, allowing you to see your source
+    // code as part of your stack traces in Sentry.
+    includeSourceContext = true
+
+    org = "teamdowith"
+    projectName = "jobdori"
+    authToken = System.getenv("SENTRY_AUTH_TOKEN")
 }
 
 java {
@@ -133,6 +145,9 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-batch")
 
     testImplementation 'org.springframework.batch:spring-batch-test'
+
+    // Sentry
+    implementation 'io.sentry:sentry-async-profiler:8.49.0'
 
 
     // localStack for AWS

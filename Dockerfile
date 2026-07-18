@@ -23,16 +23,17 @@ FROM bellsoft/liberica-openjdk-alpine:17
 
 WORKDIR /app
 
-# 타임존 & JVM 옵션 (GC 로그, 힙덤프, JFR)
 ENV TZ=Asia/Seoul
 ENV JAVA_TOOL_OPTIONS="-Duser.timezone=Asia/Seoul -XX:+UseContainerSupport -Xmx1024m"
 
-# 빌드 스테이지에서 생성된 JAR 파일 복사
-# bootJar로 생성된 jar는 build/libs에 위치함. 정확한 파일명을 모르더라도 패턴 매칭 사용
+# Sentry OpenTelemetry Agent 다운로드
+# ⚠️ 버전은 build.gradle의 Sentry SDK 버전과 반드시 동일하게 맞춰야 함 (버전 불일치 시 8.6.0+ 부터는 init에서 예외 발생)
+ARG SENTRY_AGENT_VERSION=8.49.0
+RUN wget -O sentry-opentelemetry-agent.jar \
+    https://repo1.maven.org/maven2/io/sentry/sentry-opentelemetry-agent/${SENTRY_AGENT_VERSION}/sentry-opentelemetry-agent-${SENTRY_AGENT_VERSION}.jar
+
 COPY --from=builder /project/build/libs/*SNAPSHOT.jar LetMeDoWith.jar
 
-# 포트 오픈
 EXPOSE 8080
 
-# 실행
-ENTRYPOINT ["java", "-jar", "LetMeDoWith.jar"]
+ENTRYPOINT ["java", "-javaagent:/app/sentry-opentelemetry-agent.jar", "-jar", "LetMeDoWith.jar"]
