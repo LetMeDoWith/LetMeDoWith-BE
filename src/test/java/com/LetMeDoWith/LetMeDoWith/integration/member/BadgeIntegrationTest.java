@@ -12,17 +12,20 @@ import com.LetMeDoWith.LetMeDoWith.common.enums.member.BadgeStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.Gender;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
+import com.LetMeDoWith.LetMeDoWith.common.enums.task.TaskCompleteLevel;
 import com.LetMeDoWith.LetMeDoWith.domain.auth.model.AccessToken;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.Badge;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.MemberBadge;
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskSummary;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.member.persistence.jpaRepository.BadgeJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.member.persistence.jpaRepository.MemberBadgeJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.member.persistence.jpaRepository.MemberJpaRepository;
-import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.UpdateMainBadgeReqDto;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.TaskSummaryJpaRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,6 +36,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -42,11 +46,11 @@ import org.springframework.util.MultiValueMap;
 
 @Slf4j
 @SpringBootTest
-@ActiveProfiles("local")
+@ActiveProfiles("test")
 @AutoConfigureMockMvc
 public class BadgeIntegrationTest {
 
-    static final String BASE_URL = "/api/v1/member/badge";
+    static final String BASE_URL = "/api/v1/members/badges";
     static final String RETRIEVE_BADGES_INFO_URL = "";
     static final String UPDATE_MAIN_BADGE = "/main";
 
@@ -68,8 +72,16 @@ public class BadgeIntegrationTest {
     @Autowired
     MemberBadgeJpaRepository memberBadgeJpaRepository;
 
+    @Autowired
+    TaskSummaryJpaRepository taskSummaryJpaRepository;
+
+    @Autowired
+    JdbcTemplate jdbcTemplate;
+
     Member member;
     Member lazyMember;
+    TaskSummary memberTaskSummary;
+    TaskSummary lazyMemberTaskSummary;
     AccessToken memberAccessToken;
     AccessToken lazyMemberAccessToken;
 
@@ -102,6 +114,14 @@ public class BadgeIntegrationTest {
                 .type(MemberType.USER)
                 .build());
 
+        memberTaskSummary = taskSummaryJpaRepository.save(TaskSummary.of(member.getId()));
+        lazyMemberTaskSummary = taskSummaryJpaRepository.save(TaskSummary.of(lazyMember.getId()));
+        // lazyMember는 Lazy 뱃지 획득 레벨(BAD)이어야 하는데, 도메인 상 공개된 방법이 없어 컬럼을 직접 갱신한다.
+        jdbcTemplate.update(
+                "UPDATE task_summary SET task_complete_level = ? WHERE member_id = ?",
+                TaskCompleteLevel.BAD.getCode(),
+                lazyMember.getId());
+
         memberAccessToken = accessTokenProvider.generateToken(member.getId());
         lazyMemberAccessToken = accessTokenProvider.generateToken(lazyMember.getId());
     }
@@ -109,9 +129,12 @@ public class BadgeIntegrationTest {
     @AfterEach
     void afterEach() {
 
-        memberBadgeJpaRepository.deleteAll();
-        badgeJpaRepository.deleteAll();
-        memberJpaRepository.deleteAll();
+        // 로컬 프로필(공유 DB) 대상 테스트이므로, 이 테스트가 만든 데이터만 정확히 지운다.
+        // repository.deleteAll()로 테이블 전체를 지우면 다른 데이터가 참조 중인 행까지 건드려 FK 위반이 날 수 있다.
+        memberBadgeJpaRepository.deleteAll(List.of(memberBadge1, memberBadge2, memberBadge3));
+        badgeJpaRepository.deleteAll(List.of(badge1, badge2, badge3, badge4));
+        taskSummaryJpaRepository.deleteAll(List.of(memberTaskSummary, lazyMemberTaskSummary));
+        memberJpaRepository.deleteAll(List.of(member, lazyMember));
     }
 
     private ResultActions requestRetrieveBadgesInfo(AccessToken accessToken) throws Exception {
@@ -127,18 +150,16 @@ public class BadgeIntegrationTest {
                 .andDo(System.out::println);
     }
 
-    private ResultActions requestUpdateMainBadge(AccessToken accessToken, UpdateMainBadgeReqDto requestBody)
-            throws Exception {
+    private ResultActions requestUpdateMainBadge(AccessToken accessToken, Long badgeId) throws Exception {
 
         MultiValueMap<String, String> headerMap = new LinkedMultiValueMap<>();
         headerMap.add("AUTHORIZATION", "Bearer" + accessToken.getToken());
 
-        return mockMvc.perform(MockMvcRequestBuilders.put(BASE_URL + UPDATE_MAIN_BADGE)
+        return mockMvc.perform(MockMvcRequestBuilders.put(BASE_URL + "/" + badgeId + UPDATE_MAIN_BADGE)
                         .headers(new HttpHeaders(headerMap))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .content(objectMapper.writeValueAsString(requestBody)))
+                        .characterEncoding(StandardCharsets.UTF_8))
                 .andDo(System.out::println);
     }
 
@@ -325,10 +346,9 @@ public class BadgeIntegrationTest {
 
         // given
         insertTestData();
-        UpdateMainBadgeReqDto requestBody = new UpdateMainBadgeReqDto(badge2.getId());
 
         // when
-        ResultActions resultActions = requestUpdateMainBadge(memberAccessToken, requestBody);
+        ResultActions resultActions = requestUpdateMainBadge(memberAccessToken, badge2.getId());
         MemberBadge oldMemberBadge = memberBadgeJpaRepository
                 .findByMemberIdAndBadge(member.getId(), badge1)
                 .orElseThrow(() -> new IllegalArgumentException("not found"));
@@ -348,10 +368,9 @@ public class BadgeIntegrationTest {
 
         // given
         insertTestData();
-        UpdateMainBadgeReqDto requestBody = new UpdateMainBadgeReqDto(badge2.getId());
 
         // when
-        ResultActions resultActions = requestUpdateMainBadge(lazyMemberAccessToken, requestBody);
+        ResultActions resultActions = requestUpdateMainBadge(lazyMemberAccessToken, badge2.getId());
 
         // then
         resultActions
@@ -367,10 +386,9 @@ public class BadgeIntegrationTest {
 
         // given
         insertTestData();
-        UpdateMainBadgeReqDto requestBody = new UpdateMainBadgeReqDto(1000L);
 
         // when
-        ResultActions resultActions = requestUpdateMainBadge(memberAccessToken, requestBody);
+        ResultActions resultActions = requestUpdateMainBadge(memberAccessToken, 1000L);
 
         // then
         resultActions
@@ -386,10 +404,9 @@ public class BadgeIntegrationTest {
 
         // given
         insertTestData();
-        UpdateMainBadgeReqDto requestBody = new UpdateMainBadgeReqDto(badge3.getId());
 
         // when
-        ResultActions resultActions = requestUpdateMainBadge(memberAccessToken, requestBody);
+        ResultActions resultActions = requestUpdateMainBadge(memberAccessToken, badge3.getId());
 
         // then
         resultActions

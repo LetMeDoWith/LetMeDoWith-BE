@@ -51,9 +51,9 @@ public class RefreshToken {
             throw new RestApiException(FailResponseStatus.INVALID_RTK_TOKEN_ATK_NOT_MATCHED);
         }
 
-        if (!reqUserAgent.equals(userAgent)) {
-            throw new RestApiException(FailResponseStatus.INVALID_RTK_TOKEN_USER_AGENT_NOT_MATCHED);
-        }
+        //        if (!reqUserAgent.equals(userAgent)) {
+        //            throw new RestApiException(FailResponseStatus.INVALID_RTK_TOKEN_USER_AGENT_NOT_MATCHED);
+        //        }
     }
 
     public LocalDateTime calculateExpireAt() {

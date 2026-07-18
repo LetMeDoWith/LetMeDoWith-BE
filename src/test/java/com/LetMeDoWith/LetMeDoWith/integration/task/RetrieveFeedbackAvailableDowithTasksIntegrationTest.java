@@ -7,6 +7,7 @@ import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.Gender;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
+import com.LetMeDoWith.LetMeDoWith.common.enums.notification.NotificationTemplateCode;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.model.DowithTaskFeedback;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.model.TaskFeedbackTemplate;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
@@ -91,6 +92,7 @@ public class RetrieveFeedbackAvailableDowithTasksIntegrationTest extends Abstrac
                 .title("잔소리 템플릿")
                 .description("설명")
                 .isActive(Yn.TRUE)
+                .notificationTemplateCode(NotificationTemplateCode.FEEDBACK_RECEIVED_1)
                 .build());
 
         taskInRange1 =

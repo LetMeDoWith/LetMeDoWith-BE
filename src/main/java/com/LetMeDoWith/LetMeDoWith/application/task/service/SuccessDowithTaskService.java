@@ -107,7 +107,7 @@ public class SuccessDowithTaskService {
 
         long likeCount = dowithTaskLikeRepository.countDowithTaskLikesByDowithTaskId(dowithTaskId);
 
-        if (!isAlreadyLiked) {
+        if (!isAlreadyLiked && !dowithTask.getMemberId().equals(memberId)) {
             notificationSendService.sendNotificationAsync(
                     NotificationTemplateCode.LIKE_RECEIVED, memberId, dowithTask.getMemberId());
         }
