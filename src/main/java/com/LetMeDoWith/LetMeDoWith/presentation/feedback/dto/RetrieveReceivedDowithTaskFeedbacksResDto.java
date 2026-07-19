@@ -28,7 +28,8 @@ public record RetrieveReceivedDowithTaskFeedbacksResDto(
             @Schema(description = "잔소리 확인여부", example = "false") Boolean isChecked,
             @Schema(description = "잔소리 받은 시각") LocalDateTime receivedAt,
             @Schema(description = "받는사람(나) 닉네임이 치환된 잔소리 메시지", example = "홍길동 오늘도 달렸나요?") String parsedMessage,
-            @Schema(description = "잔소리 템플릿") ReceivedFeedbackTemplateDto taskFeedbackTemplate) {
+            @Schema(description = "잔소리 템플릿") ReceivedFeedbackTemplateDto taskFeedbackTemplate,
+            @Schema(description = "딥링크", example = "letmedowith://home?date=2026-07-19") String deepLink) {
 
         public static ReceivedFeedbackDto from(ReceivedTaskFeedbackDto feedback) {
             return new ReceivedFeedbackDto(
@@ -41,7 +42,8 @@ public record RetrieveReceivedDowithTaskFeedbacksResDto(
                     feedback.isChecked(),
                     feedback.receivedAt(),
                     feedback.parsedMessage(),
-                    ReceivedFeedbackTemplateDto.from(feedback.taskFeedbackTemplate()));
+                    ReceivedFeedbackTemplateDto.from(feedback.taskFeedbackTemplate()),
+                    feedback.deepLink());
         }
     }
 
