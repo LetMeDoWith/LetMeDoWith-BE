@@ -1,5 +1,6 @@
 package com.LetMeDoWith.LetMeDoWith.application.feedback.dto;
 
+import com.LetMeDoWith.LetMeDoWith.application.notification.deeplink.DeepLinkFactory;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.dto.DowithTaskFeedbackQueryDto;
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.dto.TaskFeedbackTemplateQueryDto;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -22,6 +23,7 @@ public record RetrieveReceivedTaskFeedbackResult(Long totalCount, List<ReceivedT
                             .get());
                     String parsedMessage = template.message()
                             .replace("{{receiverNickname}}", receiverNickname != null ? receiverNickname : "");
+                    String deepLink = DeepLinkFactory.home(feedback.receivedAt().toLocalDate());
                     return new ReceivedTaskFeedbackDto(
                             feedback.id(),
                             feedback.dowithTaskId(),
@@ -32,7 +34,8 @@ public record RetrieveReceivedTaskFeedbackResult(Long totalCount, List<ReceivedT
                             feedback.isChecked(),
                             feedback.receivedAt(),
                             parsedMessage,
-                            template);
+                            template,
+                            deepLink);
                 })
                 .toList();
 
@@ -50,5 +53,6 @@ public record RetrieveReceivedTaskFeedbackResult(Long totalCount, List<ReceivedT
             @Schema(description = "잔소리 확인여부", example = "false") Boolean isChecked,
             @Schema(description = "잔소리 받은 시각") LocalDateTime receivedAt,
             @Schema(description = "받는사람(나) 닉네임이 치환된 잔소리 메시지", example = "홍길동 오늘도 달렸나요?") String parsedMessage,
-            @Schema(description = "잔소리 템플릿") TaskFeedbackTemplateDto taskFeedbackTemplate) {}
+            @Schema(description = "잔소리 템플릿") TaskFeedbackTemplateDto taskFeedbackTemplate,
+            @Schema(description = "딥링크", example = "letmedowith://home?date=2026-07-19") String deepLink) {}
 }
