@@ -145,7 +145,7 @@ public class RetrieveFeedbackIntegrationTest extends AbstractIntegrationTest {
                 .filter(t -> t.id().equals(template1.getId()))
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("템플릿1 결과 없음"));
-        assertThat(dto1.name()).isEqualTo(templateMessage1.getName());
+        assertThat(dto1.nameTokens()).containsExactly(templateMessage1.getName());
         assertThat(dto1.message()).isEqualTo(templateMessage1.getMessage());
         assertThat(dto1.emojiUrl()).isEqualTo(template1.getEmojiUrl());
 
@@ -153,7 +153,7 @@ public class RetrieveFeedbackIntegrationTest extends AbstractIntegrationTest {
                 .filter(t -> t.id().equals(template2.getId()))
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("템플릿2 결과 없음"));
-        assertThat(dto2.name()).isEqualTo(templateMessage2.getName());
+        assertThat(dto2.nameTokens()).containsExactly(templateMessage2.getName());
         assertThat(dto2.message()).isEqualTo(templateMessage2.getMessage());
         assertThat(dto2.emojiUrl()).isEqualTo(template2.getEmojiUrl());
     }
