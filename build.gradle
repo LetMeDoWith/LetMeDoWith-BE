@@ -148,6 +148,7 @@ dependencies {
 
     // Sentry
     implementation 'io.sentry:sentry-async-profiler:8.49.0'
+    implementation 'io.sentry:sentry-spring-boot-starter-jakarta:8.49.0'
 
 
     // localStack for AWS
