@@ -54,7 +54,7 @@ public class NotificationController {
         @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "해당 알림 소유 회원이 아닌 경우")
     })
     @PostMapping("/{notificationId}/confirm")
-    public ResponseEntity<ResponseDto<Object>> confirmNotification(
+    public ResponseEntity<ResponseDto<Void>> confirmNotification(
             @Parameter(description = "알림 ID", example = "1") @PathVariable Long notificationId) {
         notificationService.confirmNotification(notificationId, AuthUtil.getMemberId());
         return ResponseUtil.createSuccessResponse();

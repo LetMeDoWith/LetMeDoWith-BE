@@ -2,6 +2,8 @@ package com.LetMeDoWith.LetMeDoWith.presentation.member.controller;
 
 import com.LetMeDoWith.LetMeDoWith.application.member.dto.RetrieveBadgesInfoResult;
 import com.LetMeDoWith.LetMeDoWith.application.member.service.BadgeService;
+import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiSuccessResponse;
+import com.LetMeDoWith.LetMeDoWith.common.dto.ResponseDto;
 import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
@@ -27,8 +29,9 @@ public class BadgeController {
     private final BadgeService badgeService;
 
     @Operation(summary = "뱃지 정보 조회", description = "유져의 뱃지 정보(소유 뱃지, 획득 필요 뱃지, 힌트 등) 조회합니다.")
+    @ApiSuccessResponse(description = "뱃지 정보 조회 성공")
     @GetMapping("")
-    public ResponseEntity retrieveBadgesInfo() {
+    public ResponseEntity<ResponseDto<RetrieveBadgesInfoResDto>> retrieveBadgesInfo() {
 
         String memberId = AuthUtil.getMemberId();
         RetrieveBadgesInfoResult result = badgeService.retrieveBadgesInfo(memberId);
@@ -43,8 +46,9 @@ public class BadgeController {
     }
 
     @Operation(summary = "대표 뱃지 등록", description = "특정 뱃지를 유져의 대표 뱃지로 등록합니다.")
+    @ApiSuccessResponse(description = "대표 뱃지 등록 성공")
     @PutMapping("/{badgeId}/main")
-    public ResponseEntity updateMainBadge(
+    public ResponseEntity<ResponseDto<Void>> updateMainBadge(
             @Parameter(description = "대표로 등록할 뱃지 ID", example = "1") @PathVariable Long badgeId) {
 
         String memberId = AuthUtil.getMemberId();

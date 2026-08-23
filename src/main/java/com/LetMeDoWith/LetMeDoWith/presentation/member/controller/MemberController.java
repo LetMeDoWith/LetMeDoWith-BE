@@ -24,6 +24,7 @@ import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.SignupCompleteReqDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.UpdateMemberInfoReqDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.UpdateMemberTermAgreeReqDto;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -109,7 +110,7 @@ public class MemberController {
     @ApiSuccessResponse(description = "회원 탈퇴 완료")
     @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.MEMBER_NOT_EXIST)})
     @DeleteMapping("")
-    public <T> ResponseEntity<ResponseDto<T>> withdrawMember() {
+    public ResponseEntity<ResponseDto<Void>> withdrawMember() {
         String memberId = AuthUtil.getMemberId();
         memberService.withdrawMember(memberId);
 
@@ -126,7 +127,7 @@ public class MemberController {
     @ApiSuccessResponse(description = "약관 동의 정보 업데이트 완료")
     @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.MEMBER_NOT_EXIST)})
     @PatchMapping("/agreements")
-    public <T> ResponseEntity<ResponseDto<T>> updateMemberTermAgree(
+    public ResponseEntity<ResponseDto<Void>> updateMemberTermAgree(
             @RequestBody UpdateMemberTermAgreeReqDto updateMemberTermAgreeReqDto) {
         String memberId = AuthUtil.getMemberId();
 
@@ -148,7 +149,7 @@ public class MemberController {
     @ApiSuccessResponse(description = "회원 정보 업데이트 완료")
     @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.MEMBER_NOT_EXIST)})
     @PatchMapping("")
-    public <T> ResponseEntity<ResponseDto<T>> updateMemberInfo(
+    public ResponseEntity<ResponseDto<Void>> updateMemberInfo(
             @RequestBody UpdateMemberInfoReqDto updateMemberInfoReqDto) {
         String memberId = AuthUtil.getMemberId();
 
@@ -192,7 +193,9 @@ public class MemberController {
     @ApiSuccessResponse(description = "마이두윗 정보 조회 성공")
     @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.MEMBER_NOT_EXIST)})
     @GetMapping("/{memberId}/my-dowith")
-    public ResponseEntity<ResponseDto<RetrieveMyDowithResDto>> retrieveMemberDowithInfo(@PathVariable String memberId) {
+    public ResponseEntity<ResponseDto<RetrieveMyDowithResDto>> retrieveMemberDowithInfo(
+            @Parameter(description = "조회 대상 회원 ID (TSID)", example = "01234567890123456789012345") @PathVariable
+                    String memberId) {
         return ResponseUtil.createSuccessResponse(
                 RetrieveMyDowithResDto.from(memberService.retrieveMyDowithInfo(memberId)));
     }

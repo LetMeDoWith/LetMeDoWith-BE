@@ -11,11 +11,7 @@ import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.DowithTaskFeedback
 import com.LetMeDoWith.LetMeDoWith.domain.feedback.repository.dto.SentFeedbacksQueryDto;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskQueryRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TodoTaskQueryRepository;
-import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.DowithTaskDetailQueryDto;
-import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.DowithTaskQueryDto;
-import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.FeedbackAvailableDowithTasksQueryDto;
-import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.TodoTaskDetailQueryDto;
-import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.TodoTaskQueryDto;
+import com.LetMeDoWith.LetMeDoWith.domain.task.repository.dto.*;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.Year;
@@ -124,5 +120,23 @@ public class RetrieveTaskService {
 
         return RetrieveFeedbackAvailableDowithTasksResult.from(
                 dowithTaskQueryRepository.countFeedbackAvailableDowithTasks(memberId), tasks);
+    }
+
+    /**
+     * 도리 Task 샘플 리스트 반환
+     *
+     * @return
+     */
+    public List<String> retrieveDoriTaskSamples() {
+        return List.of(
+                "유통기한 지난 음식 버리기",
+                "쓰레기 넘치기 전에 버리기",
+                "유튜브 대신 글 읽기",
+                "운동 좀 하기",
+                "영양제 챙겨먹기",
+                "끼니 챙겨 먹기",
+                "카드값 확인하기",
+                "일어나자마자 물 마시기",
+                "배달앱 켜기 전에 냉장고 확인하기");
     }
 }

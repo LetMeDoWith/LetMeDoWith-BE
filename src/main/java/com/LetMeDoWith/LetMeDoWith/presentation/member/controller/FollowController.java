@@ -2,6 +2,9 @@ package com.LetMeDoWith.LetMeDoWith.presentation.member.controller;
 
 import com.LetMeDoWith.LetMeDoWith.application.member.dto.RetrieveFollowsResult;
 import com.LetMeDoWith.LetMeDoWith.application.member.service.FollowService;
+import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiSuccessResponse;
+import com.LetMeDoWith.LetMeDoWith.common.dto.ResponseDto;
+import com.LetMeDoWith.LetMeDoWith.common.dto.ResponsePageDto;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.FollowType;
 import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
@@ -27,8 +30,9 @@ public class FollowController {
     private final FollowService followService;
 
     @Operation(summary = "팔로우 목록 조회", description = "유져의 팔로우 목록을 조회합니다.")
+    @ApiSuccessResponse(description = "팔로우 목록 조회 성공")
     @GetMapping("/{memberId}/followers")
-    public ResponseEntity retrieveFollows(
+    public ResponseEntity<ResponsePageDto<RetrieveFollowsResDto>> retrieveFollows(
             @Parameter(description = "조회 대상 회원 ID (본인만 가능)", example = "01234567890123456789012345")
                     @PathVariable(name = "memberId")
                     String memberId,
@@ -48,8 +52,9 @@ public class FollowController {
     }
 
     @Operation(summary = "팔로우 등록", description = "유져의 팔로우 대상을 등록합니다.")
+    @ApiSuccessResponse(description = "팔로우 등록 성공")
     @PostMapping()
-    public ResponseEntity createFollow(@RequestBody CreateFollowReqDto requestBody) {
+    public ResponseEntity<ResponseDto<Void>> createFollow(@RequestBody CreateFollowReqDto requestBody) {
 
         followService.createFollow(AuthUtil.getMemberId(), requestBody.followMemberId());
 
@@ -57,8 +62,9 @@ public class FollowController {
     }
 
     @Operation(summary = "팔로우 취소", description = "팔로우를 취소합니다.")
+    @ApiSuccessResponse(description = "팔로우 취소 성공")
     @DeleteMapping("/{followingId}")
-    public ResponseEntity deleteFollow(
+    public ResponseEntity<ResponseDto<Void>> deleteFollow(
             @Parameter(description = "언팔로우할 상대 회원 ID (TSID)", example = "01234567890123456789012345") @PathVariable
                     String followingId) {
 

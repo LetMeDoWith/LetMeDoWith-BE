@@ -42,7 +42,7 @@ public class TodoTaskController {
         @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청입니다."),
     })
     @PostMapping("")
-    public ResponseEntity createTodoTask(@Valid @RequestBody CreateTodoTaskReqDto request) {
+    public ResponseEntity<ResponseDto<Void>> createTodoTask(@Valid @RequestBody CreateTodoTaskReqDto request) {
         String memberId = AuthUtil.getMemberId();
 
         CreateTodoTaskResult result;
@@ -70,7 +70,7 @@ public class TodoTaskController {
         @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청입니다."),
     })
     @PutMapping("/{todoTaskId}")
-    public ResponseEntity updateSingleTodoTask(
+    public ResponseEntity<ResponseDto<Void>> updateSingleTodoTask(
             @Parameter(description = "투두 Task ID", example = "1") @PathVariable Long todoTaskId,
             @RequestBody UpdateTodoTaskReqDto request) {
         String memberId = AuthUtil.getMemberId();
@@ -105,7 +105,7 @@ public class TodoTaskController {
         @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청입니다."),
     })
     @PutMapping("/{todoTaskId}/with-routine")
-    public ResponseEntity updateTodoTaskWithRoutine(
+    public ResponseEntity<ResponseDto<Void>> updateTodoTaskWithRoutine(
             @Parameter(description = "투두 Task ID", example = "1") @PathVariable Long todoTaskId,
             @RequestBody UpdateTodoTaskWithRoutineReqDto request) {
         String memberId = AuthUtil.getMemberId();
@@ -121,7 +121,7 @@ public class TodoTaskController {
         @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청입니다."),
     })
     @PutMapping("/{todoTaskId}/routine")
-    public ResponseEntity updateTodoTaskRoutine(
+    public ResponseEntity<ResponseDto<Void>> updateTodoTaskRoutine(
             @Parameter(description = "투두 Task ID", example = "1") @PathVariable Long todoTaskId,
             @RequestBody UpdateTodoTaskRoutineReqDto request) {
         String memberId = AuthUtil.getMemberId();
@@ -170,7 +170,7 @@ public class TodoTaskController {
     @ApiErrorResponses({
         @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청입니다."),
     })
-    public ResponseEntity deleteTodoTask(
+    public ResponseEntity<ResponseDto<Void>> deleteTodoTask(
             @Parameter(description = "투두 Task ID", example = "1") @PathVariable Long todoTaskId) {
         String memberId = AuthUtil.getMemberId();
 
@@ -184,7 +184,7 @@ public class TodoTaskController {
     @ApiErrorResponses({
         @ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청입니다."),
     })
-    public ResponseEntity deleteTodoTaskWithRoutine(
+    public ResponseEntity<ResponseDto<Void>> deleteTodoTaskWithRoutine(
             @Parameter(description = "투두 Task ID", example = "1") @PathVariable Long todoTaskId) {
         String memberId = AuthUtil.getMemberId();
 

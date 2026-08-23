@@ -4,6 +4,7 @@ import com.LetMeDoWith.LetMeDoWith.application.task.service.TaskSummaryService;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiErrorResponse;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiErrorResponses;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiSuccessResponse;
+import com.LetMeDoWith.LetMeDoWith.common.dto.ResponseDto;
 import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
@@ -32,7 +33,7 @@ public class TaskRewardController {
                 description = "출석체크 보상 지급 횟수를 초과했습니다."),
     })
     @PostMapping("/attendance")
-    public ResponseEntity rewardAttendance() {
+    public ResponseEntity<ResponseDto<Void>> rewardAttendance() {
         taskSummaryService.rewardAttendance(AuthUtil.getMemberId());
         return ResponseUtil.createSuccessResponse();
     }

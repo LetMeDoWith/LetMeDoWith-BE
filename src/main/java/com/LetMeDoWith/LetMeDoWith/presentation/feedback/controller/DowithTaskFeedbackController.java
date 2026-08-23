@@ -59,8 +59,7 @@ public class DowithTaskFeedbackController {
         @ApiErrorResponse(status = FailResponseStatus.FEEDBACK_SENDING_UNAVAILABLE, description = "잔소리 재발송 제한에 걸리는 경우")
     })
     @PostMapping("")
-    public ResponseEntity<ResponseDto<Object>> createDowithFeedback(
-            @Valid @RequestBody CreateDowithFeedbackReqDto req) {
+    public ResponseEntity<ResponseDto<Void>> createDowithFeedback(@Valid @RequestBody CreateDowithFeedbackReqDto req) {
         String memberId = AuthUtil.getMemberId();
 
         createDowithTaskFeedbackService.createDowithFeedback(
@@ -89,7 +88,7 @@ public class DowithTaskFeedbackController {
     @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST)})
     @GetMapping("/dowith-task/{dowithTaskId}/aggregate")
     public ResponseEntity<ResponseDto<RetrieveTaskFeedbackAggregateCountResDto>> retrieveTaskFeedbackAggregateCount(
-            @PathVariable Long dowithTaskId) {
+            @Parameter(description = "두윗 Task ID", example = "1") @PathVariable Long dowithTaskId) {
         RetrieveTaskFeedbackAggregateCountResDto resDto = RetrieveTaskFeedbackAggregateCountResDto.from(
                 retrieveTaskFeedbackService.retrieveTaskReceivedFeedbackAggregateCount(dowithTaskId));
         return ResponseUtil.createSuccessResponse(resDto);
@@ -132,7 +131,7 @@ public class DowithTaskFeedbackController {
     @Operation(summary = "두윗 태스크 잔소리 확인", description = "두윗모드 잔소리를 확인합니다.")
     @ApiSuccessResponse(description = "두윗모드 잔소리 확인 성공. 본 API는 확인 성공 여부만 반환합니다.")
     @PatchMapping("/{feedbackId}/check")
-    public ResponseEntity<ResponseDto<Object>> checkDowithTaskFeedback(
+    public ResponseEntity<ResponseDto<Void>> checkDowithTaskFeedback(
             @Parameter(description = "잔소리(피드백) ID", example = "1") @PathVariable("feedbackId") Long feedbackId) {
         updateDowithTaskFeedbackService.checkDowithFeedbacks(List.of(feedbackId));
         return ResponseUtil.createSuccessResponse();
