@@ -1,6 +1,6 @@
 -- 잔소리 템플릿 테스트 데이터 초기화 후 id=1~4 순서로 재적재
-TRUNCATE TABLE task_feedback_template_message;
-TRUNCATE TABLE task_feedback_template;
+DELETE FROM task_feedback_template_message;
+DELETE FROM task_feedback_template;
 
 INSERT INTO task_feedback_template (id, emoji_url, title, description, is_active, notification_template_code,
                                     created_at, updated_at, created_by, updated_by)

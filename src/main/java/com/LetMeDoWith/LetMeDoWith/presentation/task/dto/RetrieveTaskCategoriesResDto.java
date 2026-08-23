@@ -7,16 +7,23 @@ import io.swagger.v3.oas.annotations.media.SchemaProperty;
 import java.util.List;
 
 @Schema(description = "Task 카테고리 조회 결과")
-@SchemaProperty(name = "id", schema = @Schema(description = "조회한 Task Category의 id"))
-@SchemaProperty(name = "title", schema = @Schema(description = "Task Category의 이름"))
+@SchemaProperty(name = "id", schema = @Schema(description = "조회한 Task Category의 id", example = "1"))
+@SchemaProperty(name = "title", schema = @Schema(description = "Task Category의 이름", example = "운동"))
 @SchemaProperty(
         name = "creationType",
         schema =
                 @Schema(
                         description = "Task Category의 타입 (공통 / 유저 개인)",
-                        implementation = TaskCategoryCreationType.class))
-@SchemaProperty(name = "emoji", schema = @Schema(description = "Task Category 표시 이모티콘"))
-@SchemaProperty(name = "categoryHolderId", schema = @Schema(description = "유저 생성 Category 인 경우 생성한 member의 id"))
+                        implementation = TaskCategoryCreationType.class,
+                        example = "COMMON"))
+@SchemaProperty(name = "emoji", schema = @Schema(description = "Task Category 표시 이모티콘", example = "🏃"))
+@SchemaProperty(
+        name = "categoryHolderId",
+        schema =
+                @Schema(
+                        description = "유저 생성 Category 인 경우 생성한 member의 id",
+                        example = "01234567890123456789012345",
+                        nullable = true))
 public record RetrieveTaskCategoriesResDto(
         Long id, String title, TaskCategoryCreationType creationType, String emoji, String categoryHolderId) {
 

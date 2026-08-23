@@ -44,26 +44,26 @@ public record RetrieveTasksResDto(List<TodoTaskDto> todoTasks, List<DowithTaskDt
 
     @Builder
     public record TodoTaskDto(
-            @Schema(description = "투두모드Task ID", defaultValue = "1") Long id,
-            @Schema(description = "Task카테고리 ID", defaultValue = "2", nullable = true) Long taskCategoryId,
-            @Schema(description = "카테고리명", defaultValue = "일상", nullable = true) String taskCategoryName,
-            @Schema(description = "제목", defaultValue = "아침 먹기") String title,
-            @Schema(description = "상태", implementation = TodoTaskStatus.class) String status,
-            @Schema(description = "일자", defaultValue = "2025-01-30") LocalDate date,
-            @Schema(description = "시작시간", defaultValue = "11:30:00") LocalTime startTime,
-            @Schema(description = "루틴설정여부", defaultValue = "false") Boolean isRoutine) {}
+            @Schema(description = "투두모드Task ID", example = "1") Long id,
+            @Schema(description = "Task카테고리 ID", example = "2", nullable = true) Long taskCategoryId,
+            @Schema(description = "카테고리명", example = "일상", nullable = true) String taskCategoryName,
+            @Schema(description = "제목", example = "아침 먹기") String title,
+            @Schema(description = "상태", implementation = TodoTaskStatus.class, example = "WAIT") String status,
+            @Schema(description = "일자", example = "2025-01-30") LocalDate date,
+            @Schema(description = "시작시간", example = "11:30:00") LocalTime startTime,
+            @Schema(description = "루틴설정여부", example = "false") Boolean isRoutine) {}
 
     @Builder
     public record DowithTaskDto(
-            @Schema(description = "두윗모드Task ID", defaultValue = "1") Long id,
-            @Schema(description = "Task카테고리 ID", defaultValue = "2", nullable = true) Long taskCategoryId,
-            @Schema(description = "카테고리명", defaultValue = "일상", nullable = true) String taskCategoryName,
-            @Schema(description = "제목", defaultValue = "아침 먹기") String title,
-            @Schema(description = "상태", implementation = DowithTaskStatus.class) String status,
-            @Schema(description = "일자", defaultValue = "2025-01-30") LocalDate date,
-            @Schema(description = "시작시간", defaultValue = "11:30:00") LocalTime startTime,
-            @Schema(description = "인증 이미지 URL", defaultValue = "https://example.com/image.jpg")
+            @Schema(description = "두윗모드Task ID", example = "1") Long id,
+            @Schema(description = "Task카테고리 ID", example = "2", nullable = true) Long taskCategoryId,
+            @Schema(description = "카테고리명", example = "일상", nullable = true) String taskCategoryName,
+            @Schema(description = "제목", example = "아침 먹기") String title,
+            @Schema(description = "상태", implementation = DowithTaskStatus.class, example = "WAIT") String status,
+            @Schema(description = "일자", example = "2025-01-30") LocalDate date,
+            @Schema(description = "시작시간", example = "11:30:00") LocalTime startTime,
+            @Schema(description = "인증 이미지 URL", example = "[\"https://example.com/success1.jpg\"]")
                     List<String> successImageUrls,
-            @Schema(description = "루틴설정여부", defaultValue = "false") Boolean isRoutine,
-            @Schema(description = "피드백 개수", defaultValue = "5") Long feedBackCount) {}
+            @Schema(description = "루틴설정여부", example = "false") Boolean isRoutine,
+            @Schema(description = "피드백 개수", example = "5") Long feedBackCount) {}
 }

@@ -21,7 +21,7 @@ public record RetrieveNotificationsResDto(@Schema(description = "알림 목록")
             @Schema(description = "이미지 URL", example = "https://example.com/profile.png") String image,
             @Schema(description = "딥링크", example = "app::deeplink") String deepLink,
             @Schema(description = "확인 여부", example = "true") boolean isConfirmed,
-            @Schema(description = "생성일시") LocalDateTime createdAt) {
+            @Schema(description = "생성일시", example = "2026-01-01T09:00:00") LocalDateTime createdAt) {
 
         public static Notification from(RetrieveNotificationsResult.Notification result) {
             return new Notification(

@@ -16,10 +16,10 @@ import java.util.Set;
 
 @Schema(description = "두윗모드 Task 생성 요청")
 public record CreateDowithTaskReqDto(
-        @Schema(description = "제목", defaultValue = "아침 먹기") @NotBlank @Size(max = 40) String title,
-        @Schema(description = "Task 카테고리 ID", defaultValue = "1") Long taskCategoryId,
-        @Schema(description = "시작 일자", defaultValue = "2025-01-30") @NotNull LocalDate date,
-        @Schema(description = "시작 시각", defaultValue = "11:30:00") LocalTime startTime,
+        @Schema(description = "제목", example = "아침 먹기") @NotBlank @Size(max = 40) String title,
+        @Schema(description = "Task 카테고리 ID", example = "1") Long taskCategoryId,
+        @Schema(description = "시작 일자", example = "2025-01-30") @NotNull LocalDate date,
+        @Schema(description = "시작 시각", example = "11:30:00") LocalTime startTime,
         @Schema(description = "루틴 반복 조건") CreateDowithTaskRoutineCondition routineCondition) {
 
     public CreateDowithTaskCommand toCreateDowithTaskCommand() {
@@ -48,9 +48,10 @@ public record CreateDowithTaskReqDto(
     }
 
     public record CreateDowithTaskRoutineCondition(
-            @Schema(description = "시작 일자", defaultValue = "2025-01-30") @NotNull LocalDate startDate,
-            @Schema(description = "종료 일자", defaultValue = "2025-01-30") @NotNull LocalDate endDate,
-            @Schema(description = "루틴 반복 주기", defaultValue = "DAILY") @NotNull String cycle,
-            @Schema(description = "루틴 반복 패턴", defaultValue = "[1, 2, 3]") @Null Set<Integer> pattern,
-            @Schema(description = "루틴 반복 휴일 제외 여부", defaultValue = "false") @NotNull Boolean isExcludeHolidays) {}
+            @Schema(description = "시작 일자", example = "2025-01-30") @NotNull LocalDate startDate,
+            @Schema(description = "종료 일자", example = "2025-02-28") @NotNull LocalDate endDate,
+            @Schema(description = "루틴 반복 주기", implementation = TaskRoutineCycle.class, example = "DAILY") @NotNull
+                    String cycle,
+            @Schema(description = "루틴 반복 패턴", example = "[1, 2, 3]") @Null Set<Integer> pattern,
+            @Schema(description = "루틴 반복 휴일 제외 여부", example = "false") @NotNull Boolean isExcludeHolidays) {}
 }

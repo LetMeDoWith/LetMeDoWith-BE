@@ -26,6 +26,6 @@ public record RetrieveFollowsResDto(@Schema(description = "팔로우 중인 회�
     public record Follow(
             @Schema(description = "회원 ID (TSID)", example = "01234567890123456789012345") String id,
             @Schema(description = "닉네임", example = "두윗러") String nickname,
-            @Schema(description = "자기소개") String selfDescription,
+            @Schema(description = "자기소개", example = "오늘도 두윗!") String selfDescription,
             @Schema(description = "프로필 이미지 URL", example = "https://example.com/profile.png") String profileImageUrl) {}
 }

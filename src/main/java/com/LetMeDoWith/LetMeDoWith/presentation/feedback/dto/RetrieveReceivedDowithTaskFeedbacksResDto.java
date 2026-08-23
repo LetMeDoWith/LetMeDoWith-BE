@@ -26,7 +26,7 @@ public record RetrieveReceivedDowithTaskFeedbacksResDto(
             @Schema(description = "잔소리 보낸사람 프로필 이미지 URL", example = "https://example.com/profile.jpg")
                     String senderProfileImageUrl,
             @Schema(description = "잔소리 확인여부", example = "false") Boolean isChecked,
-            @Schema(description = "잔소리 받은 시각") LocalDateTime receivedAt,
+            @Schema(description = "잔소리 받은 시각", example = "2026-01-01T09:00:00") LocalDateTime receivedAt,
             @Schema(description = "받는사람(나) 닉네임이 치환된 잔소리 메시지", example = "홍길동 오늘도 달렸나요?") String parsedMessage,
             @Schema(description = "잔소리 템플릿") ReceivedFeedbackTemplateDto taskFeedbackTemplate,
             @Schema(description = "딥링크", example = "letmedowith://home?date=2026-07-19") String deepLink) {
