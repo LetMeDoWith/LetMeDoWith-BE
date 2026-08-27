@@ -5,6 +5,10 @@ spring:
   datasource:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
+  data:
+    redis:
+      username: ${REDIS_USERNAME}
+      password: ${REDIS_PASSWORD}
   # prod에서는 flyway를 사용하지 않음 (spring.flyway.enabled=false, application.yml 참고)
 
 auth:

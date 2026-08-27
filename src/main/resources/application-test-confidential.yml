@@ -8,6 +8,10 @@ spring:
   flyway:
     user: ${DB_USERNAME:letmedowith}
     password: ${DB_PASSWORD:letmedowith@admin#2024}
+  data:
+    redis:
+      username: ${REDIS_USERNAME:letmedowith}
+      password: ${REDIS_PASSWORD:letmedowith@admin#2024}
 
 auth:
   jwt:
