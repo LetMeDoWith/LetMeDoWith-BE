@@ -1,0 +1,47 @@
+spring:
+  config:
+    activate:
+      on-profile: prod-confidential
+  datasource:
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  # prod에서는 flyway를 사용하지 않음 (spring.flyway.enabled=false, application.yml 참고)
+
+auth:
+  jwt:
+    issuer: ${JWT_ISSUER}
+    secret: ${JWT_SECRET}
+    signup-duration-min: ${JWT_SIGNUP_DURATION_MIN}
+    atk-duration-min: ${JWT_ATK_DURATION_MIN}
+    rtk-duration-day: ${JWT_RTK_DURATION_DAY}
+  temp:
+    id: ${TEMP_ID}
+    pw: ${TEMP_PW}
+
+  oidc:
+    aud:
+      kakao: ${KAKAO_CLIENT_ID}
+      google: ${GOOGLE_CLIENT_ID}
+      apple: ${APPLE_CLIENT_ID}
+
+cloud:
+  aws:
+    region: ${AWS_REGION}
+    credentials:
+      accessKey: ${AWS_ACCESS_KEY_ID}
+      secretKey: ${AWS_SECRET_ACCESS_KEY}
+    s3:
+      bucketName: ${AWS_S3_BUCKET_NAME}
+
+firebase:
+  config-base64: ${FIREBASE_CONFIG_BASE64}
+
+# TODO - Sentry 운영 활성화 시 dev-confidential 참고하여 아래 설정 추가
+# sentry:
+#   dsn: ${SENTRY_DSN}
+#   send-default-pii: true
+#   logs:
+#     enabled: true
+#   traces-sample-rate: 1.0
+#   profile-session-sample-rate: 1.0
+#   profile-lifecycle: TRACE
