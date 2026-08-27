@@ -10,7 +10,7 @@ spring:
     password: ${DB_PASSWORD:letmedowith@admin#2024}
   data:
     redis:
-      username: ${REDIS_USERNAME:letmedowith}
+      username: ${REDIS_USER:letmedowith}
       password: ${REDIS_PASSWORD:letmedowith@admin#2024}
 
 auth:
