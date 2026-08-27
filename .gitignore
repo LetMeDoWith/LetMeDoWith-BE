@@ -37,9 +37,6 @@ out/
 .vscode/
 
 
-
-### Dev-Confidential ###
-
 ### Prod-Confidential ###
 /src/main/**/application-prod-confidential.yml
 
