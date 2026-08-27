@@ -18,6 +18,9 @@ auth:
     signup-duration-min: ${JWT_SIGNUP_DURATION_MIN}
     atk-duration-min: ${JWT_ATK_DURATION_MIN} # 개발 및 테스트 용으로 180분 설정
     rtk-duration-day: ${JWT_RTK_DURATION_DAY} # 개발 및 테스트 용으로 1일 설정
+  temp:
+    id: ${TEMP_ID}
+    pw: ${TEMP_PW}
 
   oidc:
     aud:

@@ -3,6 +3,7 @@ package com.LetMeDoWith.LetMeDoWith.presentation.auth.controller;
 import com.LetMeDoWith.LetMeDoWith.application.auth.dto.CreateRefreshTokenResult;
 import com.LetMeDoWith.LetMeDoWith.application.auth.dto.CreateTokenResult;
 import com.LetMeDoWith.LetMeDoWith.application.auth.provider.AccessTokenProvider;
+import com.LetMeDoWith.LetMeDoWith.application.auth.provider.RefreshTokenProvider;
 import com.LetMeDoWith.LetMeDoWith.application.auth.service.CreateTokenService;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiErrorResponse;
 import com.LetMeDoWith.LetMeDoWith.common.annotation.ApiErrorResponses;
@@ -15,10 +16,12 @@ import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.common.util.HeaderUtil;
 import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.auth.model.AccessToken;
+import com.LetMeDoWith.LetMeDoWith.domain.auth.model.RefreshToken;
 import com.LetMeDoWith.LetMeDoWith.presentation.auth.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,6 +37,14 @@ public class AuthController {
     private final CreateTokenService createTokenService;
 
     private final AccessTokenProvider accessTokenProvider;
+
+    private final RefreshTokenProvider refreshTokenProvider;
+
+    @Value("${auth.temp.id}")
+    private String tempId;
+
+    @Value("${auth.temp.pw}")
+    private String tempPw;
 
     @Operation(summary = "토큰 재발급", description = "새로운 AccessToken과 RefreshToken을 발급 받습니다.")
     @ApiSuccessResponse(description = "토큰 재 발급 성공")
@@ -101,16 +112,18 @@ public class AuthController {
     @PostMapping("/token/temp")
     public ResponseEntity<ResponseDto<CreateTokenTempResDto>> createTokenTemp(
             @RequestBody CreateTokenTempReqDto requestBody) {
-        String id = "admin0114";
-        String password = "dev-letmedowith";
+        String id = tempId;
+        String password = tempPw;
 
-        AccessToken accessToken = null;
-        if (requestBody.id().equals(id) && requestBody.password().equals(password)) {
-            accessToken = accessTokenProvider.generateToken(requestBody.memberId());
-        } else {
+        if (!requestBody.id().equals(id) || !requestBody.password().equals(password)) {
             throw new RestApiException(FailResponseStatus.UNAUTHORIZED);
         }
 
-        return ResponseUtil.createSuccessResponse(new CreateTokenTempResDto(accessToken.getToken()));
+        AccessToken accessToken = accessTokenProvider.generateToken(requestBody.memberId());
+        RefreshToken refreshToken = refreshTokenProvider.generateToken(
+                requestBody.memberId(), accessToken.getToken(), HeaderUtil.getUserAgent());
+
+        return ResponseUtil.createSuccessResponse(
+                new CreateTokenTempResDto(accessToken.getToken(), refreshToken.getToken()));
     }
 }
