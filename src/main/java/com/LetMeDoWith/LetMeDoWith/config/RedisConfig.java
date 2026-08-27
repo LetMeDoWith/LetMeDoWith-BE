@@ -3,6 +3,7 @@ package com.LetMeDoWith.LetMeDoWith.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Duration;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +16,7 @@ import org.springframework.data.redis.repository.configuration.EnableRedisReposi
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+@Slf4j
 @Configuration
 @RequiredArgsConstructor
 @EnableRedisRepositories
@@ -30,6 +32,14 @@ public class RedisConfig {
                 .shutdownTimeout(Duration.ZERO)
                 .build();
 
+        // TODO - 실제 자격증명 인입 확인용 임시 로그. 확인 끝나면 제거할 것 (비밀번호는 마스킹해서 출력)
+        log.info(
+                "Redis connect info - host: {}, port: {}, username: {}, password: {}",
+                redisProperties.getHost(),
+                redisProperties.getPort(),
+                redisProperties.getUsername(),
+                maskPassword(redisProperties.getPassword()));
+
         // Single Redis Server
         RedisStandaloneConfiguration standaloneConfig =
                 new RedisStandaloneConfiguration(redisProperties.getHost(), redisProperties.getPort());
@@ -41,6 +51,16 @@ public class RedisConfig {
         }
 
         return new LettuceConnectionFactory(standaloneConfig, clientConfig);
+    }
+
+    private String maskPassword(String password) {
+        if (password == null || password.isEmpty()) {
+            return "(empty)";
+        }
+        if (password.length() <= 4) {
+            return "*".repeat(password.length());
+        }
+        return password.substring(0, 2) + "*".repeat(password.length() - 4) + password.substring(password.length() - 2);
     }
 
     @Bean
