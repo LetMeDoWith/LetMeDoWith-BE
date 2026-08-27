@@ -37,9 +37,6 @@ out/
 .vscode/
 
 
-### Prod-Confidential ###
-/src/main/**/application-prod-confidential.yml
-
 ### Dev server artifacts ###
 samLocalEnvVars.json
 .aws-sam/
