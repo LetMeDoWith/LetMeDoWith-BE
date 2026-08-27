@@ -1,38 +1,229 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.2.2'
-	id 'io.spring.dependency-management' version '1.1.4'
+    id 'java'
+    id 'org.springframework.boot' version '3.2.2'
+    id 'io.spring.dependency-management' version '1.1.4'
+    id "org.flywaydb.flyway" version "10.9.0"
+    id "com.bmuschko.docker-remote-api" version "9.4.0"
+    id "com.diffplug.spotless" version "7.0.3"
+    id "io.sentry.jvm.gradle" version "6.15.0"
 }
 
 group = 'com.LetMeDoWith'
 version = '0.0.1-SNAPSHOT'
 
+spotless {
+    java {
+        // import 순서 정의
+        importOrder(
+                "java",
+                "javax",
+                "lombok",
+                "org.springframework",
+                "",
+                "\\#",
+                "org.junit",
+                "\\#org.junit",
+                "com.guide",
+                "\\#com.guide"
+        )
+        // 사용하지 않는 import 제거
+        removeUnusedImports()
+        // 구글 자바 포맷 적용
+
+        palantirJavaFormat()
+        // 공백 제거
+        trimTrailingWhitespace()
+        // 끝부분 New Line 처리
+        endWithNewline()
+    }
+}
+
+sentry {
+    // Generates a JVM (Java, Kotlin, etc.) source bundle and uploads your source code to Sentry.
+    // This enables source context, allowing you to see your source
+    // code as part of your stack traces in Sentry.
+    includeSourceContext = true
+
+    org = "teamdowith"
+    projectName = "jobdori"
+    authToken = System.getenv("SENTRY_AUTH_TOKEN")
+}
+
 java {
-	sourceCompatibility = '17'
+    sourceCompatibility = '17'
 }
 
 configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+
+
+}
+
+// 환경변수 설정
+ext {
+    awsSdkVersion = '2.27.21'
+    awsCliProfile = System.getenv("AWS_CLI_PROFILE")
+    dockerImageName = System.getenv("DOCKER_IMAGE_NAME")
+    dockerImageTag = System.getenv("DOCKER_IMAGE_TAG")
+    ecrRepository = System.getenv("ECR_REPOSITORY")
+    awsRegion = System.getenv("AWS_REGION")
+    deployPlatform = System.getenv("DEPLOY_PLATFORM")
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-cache'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
-	compileOnly 'org.projectlombok:lombok'
-	runtimeOnly 'com.mysql:mysql-connector-j'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.3'
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
+    testImplementation 'org.projectlombok:lombok:1.18.22'
+    compileOnly 'org.projectlombok:lombok'
+    implementation 'com.mysql:mysql-connector-j'
+    annotationProcessor 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.3'
+    implementation 'com.google.code.findbugs:jsr305:3.0.2'
+
+    // QueryDSL JPA
+    implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+    annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
+    annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+    annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+
+    // Jwt
+    implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
+    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
+    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
+
+    // flyway
+    implementation("org.flywaydb:flyway-core")
+    implementation("org.flywaydb:flyway-mysql")
+
+    // webClient
+    implementation 'org.springframework.boot:spring-boot-starter-webflux:3.2.2'
+
+    // redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis:3.2.3'
+
+    // spring cache
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
+
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+
+    // for resolve error only causes in Apple Silicon Mac.
+    implementation("io.netty:netty-resolver-dns-native-macos:4.1.75.Final:osx-aarch_64")
+
+    // swagger
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
+    annotationProcessor 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
+
+
+    implementation 'com.h2database:h2'
+    testImplementation 'com.h2database:h2'
+
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    implementation 'io.hypersistence:hypersistence-utils-hibernate-63:3.9.10'
+
+    // AWS SDK
+    implementation platform("software.amazon.awssdk:bom:${awsSdkVersion}")
+    implementation "software.amazon.awssdk:s3"
+
+    // Firebase Admin SDK
+    implementation 'com.google.firebase:firebase-admin:9.5.0'
+
+    // for logging
+    implementation("com.github.gavlyukovskiy:datasource-proxy-spring-boot-starter:1.9.0")
+
+    implementation("org.springframework.boot:spring-boot-starter-batch")
+
+    testImplementation 'org.springframework.batch:spring-batch-test'
+
+    // Sentry
+    implementation 'io.sentry:sentry-async-profiler:8.49.0'
+    implementation 'io.sentry:sentry-spring-boot-starter-jakarta:8.49.0'
+
+
+    // localStack for AWS
+//    implementation "com.amazonaws:aws-java-sdk-s3"
+//    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.783'
+//    implementation 'org.testcontainers:localstack:1.21.0'
+//    testImplementation 'org.testcontainers:junit-jupiter'
+
 }
 
-tasks.named('test') {
-	useJUnitPlatform()
+
+import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+import com.bmuschko.gradle.docker.tasks.image.DockerTagImage
+
+task buildDockerImage(type: DockerBuildImage) {
+    group = "docker"
+    inputDir = file(".")
+    images.add(dockerImageName + ":" + dockerImageTag)
+    platform = deployPlatform
+}
+
+task tagDockerImage(type: DockerTagImage) {
+    group = "docker"
+    dependsOn buildDockerImage
+    imageId = dockerImageName + ":" + dockerImageTag
+    repository = ecrRepository
+    tag = dockerImageTag
+}
+
+// AWS ECR 로그인 작업
+task ecrLogin {
+    group = "docker"
+    // AWS-CLI Configure letmedowith profile에 IAM 계정 세팅 필요
+    doLast {
+        def loginCommand = "aws ecr get-login-password --profile " + awsCliProfile + " --region " + awsRegion + " | docker login --username AWS --password-stdin " + ecrRepository
+        exec {
+            commandLine 'sh', '-c', loginCommand
+        }
+    }
+}
+
+task buildAndPushDockerImage {
+    group = "docker"
+    dependsOn ecrLogin, tagDockerImage
+    doLast {
+        def pushCommand = "docker push " + ecrRepository + ":" + dockerImageTag
+        exec {
+            commandLine 'sh', '-c', pushCommand
+        }
+    }
+}
+
+
+test {
+    useJUnitPlatform()
+
+    // 모든 테스트 이벤트 로깅
+    testLogging {
+        events "passed", "skipped", "failed" // 성공, 스킵, 실패한 테스트 이벤트 로깅
+
+        // 예외 메시지 출력
+        showExceptions true // 예외 메시지 출력 활성화
+        showCauses true // 예외 원인 출력 활성화
+        showStackTraces true // 스택 트레이스 출력 활성화
+
+        // 콘솔에 즉시 테스트 결과 표시
+        showStandardStreams = true // 표준 출력 및 오류 스트림 표시
+    }
+}
+
+tasks.test {
+
+}
+
+compileJava {
+    dependsOn spotlessApply
+    options.compilerArgs += ['-parameters']
 }

@@ -1,0 +1,11 @@
+.gradle
+build
+out
+bin
+.git
+.idea
+*.iml
+*.class
+.DS_Store
+work
+

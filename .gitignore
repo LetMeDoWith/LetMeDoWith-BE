@@ -35,3 +35,24 @@ out/
 
 ### VS Code ###
 .vscode/
+
+
+### Prod-Confidential ###
+/src/main/**/application-prod-confidential.yml
+
+### Dev server artifacts ###
+samLocalEnvVars.json
+.aws-sam/
+*.env
+
+### Firebase confidential ###
+/src/main/resources/firebase-confidential.json
+
+/.DS_Store
+/src/main/generated/
+/lib/
+
+### AI collaboration framework docs ###
+/docs
+/.cursor
+/AGENTS.md

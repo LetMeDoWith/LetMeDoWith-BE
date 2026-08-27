@@ -1,0 +1,59 @@
+spring:
+  config:
+    activate:
+      on-profile: dev-confidential
+  datasource:
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  flyway:
+    user: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    enabled: false
+
+
+auth:
+  jwt:
+    issuer: ${JWT_ISSUER}
+    secret: ${JWT_SECRET}
+    signup-duration-min: ${JWT_SIGNUP_DURATION_MIN}
+    atk-duration-min: ${JWT_ATK_DURATION_MIN} # 개발 및 테스트 용으로 180분 설정
+    rtk-duration-day: ${JWT_RTK_DURATION_DAY} # 개발 및 테스트 용으로 1일 설정
+  temp:
+    id: ${TEMP_ID}
+    pw: ${TEMP_PW}
+
+  oidc:
+    aud:
+      kakao: ${KAKAO_CLIENT_ID}
+      google: ${GOOGLE_CLIENT_ID}
+      apple: ${APPLE_CLIENT_ID}
+
+cloud:
+  aws:
+    region: ${AWS_REGION}
+    credentials:
+      accessKey: ${AWS_ACCESS_KEY_ID}
+      secretKey: ${AWS_SECRET_ACCESS_KEY}
+    s3:
+      bucketName: ${AWS_S3_BUCKET_NAME}
+
+firebase:
+  config-base64: ${FIREBASE_CONFIG_BASE64}
+
+
+sentry:
+  dsn: ${SENTRY_DSN}
+  # Add data like request headers and IP for users,
+  # see https://docs.sentry.io/platforms/java/guides/spring-boot/data-management/data-collected/ for more info
+  send-default-pii: true
+  # Enable sending logs to Sentry
+  logs:
+    enabled: true
+  # Set traces-sample-rate to 1.0 to capture 100% of transactions for tracing.
+  # We recommend adjusting this value in production.
+  traces-sample-rate: 1.0
+  # Set profile-session-sample-rate to 1.0 to profile 100% of profile sessions.
+  profile-session-sample-rate: 1.0
+  # Set profile-lifecycle to trace to automatically start and stop
+  # profiling when a transaction starts and finishes.
+  profile-lifecycle: TRACE

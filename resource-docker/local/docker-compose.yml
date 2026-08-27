@@ -1,0 +1,53 @@
+version: '3'
+services:
+  mysql-db:
+    image: mysql:latest
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: letmedowith_db_adm
+      MYSQL_DATABASE: letmedowith_app
+      MYSQL_USER: letmedowith
+      MYSQL_PASSWORD: letmedowith@admin#2024
+    networks:
+      - LMDW
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  mysql-init:
+    image: mysql:latest
+    depends_on:
+      - mysql-db
+    entrypoint:
+      - sh
+      - -c
+      - |
+        until mysqladmin ping -h mysql-db -uroot -pletmedowith_db_adm --silent; do
+          sleep 1
+        done
+        mysql -h mysql-db -uroot -pletmedowith_db_adm -e "
+          CREATE DATABASE IF NOT EXISTS letmedowith_test
+            CHARACTER SET utf8mb4
+            COLLATE utf8mb4_0900_ai_ci;
+          GRANT ALL PRIVILEGES ON letmedowith_test.* TO 'letmedowith'@'%';
+          FLUSH PRIVILEGES;
+        "
+    networks:
+      - LMDW
+
+  redis-server:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - LMDW
+
+networks:
+  LMDW:
+    driver: bridge
+
+volumes:
+  mysql-data:
+  redis-data:

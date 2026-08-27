@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="false">
+
+  <property name="PATTERN"
+    value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] [%X{traceId:-}] %logger{36} - %msg%n%ex"/>
+
+  <appender class="ch.qos.logback.core.ConsoleAppender" name="CONSOLE">
+    <encoder>
+      <pattern>${PATTERN}</pattern>
+    </encoder>
+  </appender>
+
+  <!-- ================= local: 콘솔 ================= -->
+  <springProfile name="local">
+    <logger level="OFF" name="org.hibernate.SQL"/>
+    <logger level="OFF" name="org.hibernate.orm.jdbc.bind"/>
+    <root level="INFO">
+      <appender-ref ref="CONSOLE"/>
+    </root>
+  </springProfile>
+
+  <!-- ================= dev: 콘솔 (기존 파일 설정 제거) ================= -->
+  <springProfile name="dev">
+    <!-- SQL 로그 등을 보고 싶다면 레벨 조절 가능 -->
+    <logger additivity="false" level="OFF" name="datasource-proxy">
+      <appender-ref ref="CONSOLE"/>
+    </logger>
+
+    <!-- 우리 애플리케이션 패키지 로그 -->
+    <logger name="com.LetMeDoWith" level="INFO"/>
+
+    <!-- HikariCP 커넥션 풀 상태 확인용 -->
+    <logger name="com.zaxxer.hikari" level="DEBUG"/>
+
+    <logger level="OFF" name="org.hibernate.SQL"/>
+    <logger level="OFF" name="org.hibernate.orm.jdbc.bind"/>
+
+    <!-- 전체 시스템 로그는 INFO로 설정 (너무 많은 로그 방지) -->
+    <root level="INFO">
+      <appender-ref ref="CONSOLE"/>
+    </root>
+  </springProfile>
+
+  <springProfile name="test">
+    <logger additivity="false" level="DEBUG" name="datasource-proxy">
+      <appender-ref ref="CONSOLE"/>
+    </logger>
+
+    <!-- 실행 SQL / 바인드 파라미터 확인용 (Hibernate 6 로거명) -->
+    <logger name="org.hibernate.SQL" level="DEBUG"/>
+    <logger name="org.hibernate.orm.jdbc.bind" level="TRACE"/>
+
+    <logger name="org.springframework.jdbc.datasource.init.ScriptUtils" level="DEBUG"/>
+    <logger name="org.springframework.batch" level="DEBUG"/>
+
+    <logger name="com.LetMeDoWith" level="INFO"/>
+
+    <root level="INFO">
+      <appender-ref ref="CONSOLE"/>
+    </root>
+  </springProfile>
+
+  <!-- ================= prod: 콘솔 (컨테이너 stdout을 인프라에서 수집한다고 가정) ================= -->
+  <springProfile name="prod">
+    <!-- SQL/바인드 파라미터는 PII를 포함할 수 있고, 운영 트래픽 규모에서는 로그량도 감당 불가 -->
+    <logger level="OFF" name="org.hibernate.SQL"/>
+    <logger level="OFF" name="org.hibernate.orm.jdbc.bind"/>
+    <logger additivity="false" level="OFF" name="datasource-proxy"/>
+
+    <!-- 운영에서는 DEBUG 금지: 로그 비용/성능/민감정보 노출 방지. 우리 패키지도 INFO까지만 -->
+    <logger name="com.LetMeDoWith" level="INFO"/>
+
+    <root level="INFO">
+      <appender-ref ref="CONSOLE"/>
+    </root>
+  </springProfile>
+
+  <!-- ================= 안전망: 위 4개 프로파일 중 아무것도 매칭되지 않을 때 =================
+       프로파일 오타나 신규 프로파일 추가 누락으로 인해 로그가 통째로 사라지는 사고를 방지한다. -->
+  <springProfile name="!local &amp; !dev &amp; !test &amp; !prod">
+    <root level="INFO">
+      <appender-ref ref="CONSOLE"/>
+    </root>
+  </springProfile>
+
+</configuration>

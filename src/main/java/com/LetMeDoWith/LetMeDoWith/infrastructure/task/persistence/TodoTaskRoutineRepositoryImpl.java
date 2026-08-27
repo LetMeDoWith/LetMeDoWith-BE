@@ -1,0 +1,24 @@
+package com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence;
+
+import com.LetMeDoWith.LetMeDoWith.domain.task.model.TodoTaskRoutine;
+import com.LetMeDoWith.LetMeDoWith.domain.task.repository.TodoTaskRoutineRepository;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.TodoTaskRoutineJpaRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
+
+@Repository
+@RequiredArgsConstructor
+class TodoTaskRoutineRepositoryImpl implements TodoTaskRoutineRepository {
+
+    private final TodoTaskRoutineJpaRepository jpaRepository;
+
+    @Override
+    public TodoTaskRoutine save(TodoTaskRoutine todoTaskRoutine) {
+        return jpaRepository.save(todoTaskRoutine);
+    }
+
+    @Override
+    public void delete(TodoTaskRoutine todoTaskRoutine) {
+        jpaRepository.delete(todoTaskRoutine);
+    }
+}

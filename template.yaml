@@ -1,0 +1,70 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Spring Boot + AWS Lambda demo project
+
+Globals:
+  Api:
+    # API Gateway regional endpoints
+    EndpointConfiguration: REGIONAL
+
+Parameters:
+  DbUsername:
+    Type: String
+    Description: "Database username"
+  DbPassword:
+    Type: String
+    Description: "Database password"
+  DbUrl:
+    Type: String
+    Description: "Database URL"
+  DbPort:
+    Type: Number
+    Description: "Database port"
+  DbSchema:
+    Type: String
+    Description: "Database schema"
+  RedisUrl:
+    Type: String
+    Description: "Redis URL"
+  RedisPort:
+    Type: Number
+    Description: "Redis port"
+
+
+Resources:
+  LetMeDoWithDev:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: com.LetMeDoWith.LetMeDoWith.common.handler.LambdaStreamHandler::handleRequest
+      Runtime: java17
+      CodeUri: .
+      Architectures:
+        - x86_64
+      MemorySize: 2048
+      Policies: AWSLambdaBasicExecutionRole
+      Timeout: 600
+      SnapStart:
+        ApplyOn: PublishedVersions
+      AutoPublishAlias: prod
+      Events:
+        LetMeDoWithDevApiGw:
+          Type: Api
+          Properties:
+            Path: /{proxy+}
+            Method: ANY
+      Environment:
+        Variables:
+          DB_USERNAME: !Ref DbUsername
+          DB_PASSWORD: !Ref DbPassword
+          DB_URL: !Ref DbUrl
+          DB_PORT: !Ref DbPort
+          DB_SCHEMA: !Ref DbSchema
+          REDIS_URL: !Ref RedisUrl
+          REDIS_PORT: !Ref RedisPort
+
+Outputs:
+  LetMeDoWithDevApi:
+    Description: URL for application
+    Value: !Sub 'https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com'
+    Export:
+      Name: LetMeDoWithDevApi

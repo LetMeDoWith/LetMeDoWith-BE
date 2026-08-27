@@ -1,0 +1,11 @@
+{
+  "LetMeDoWithDev": {
+    "DB_USERNAME": "letmedowith",
+    "DB_PASSWORD": "letmedowith@admin#2024",
+    "DB_URL": "local-mysql-db-1",
+    "DB_PORT": 3306,
+    "DB_DEFAULT_DATABASE": "letmedowith_app",
+    "REDIS_URL": "local-redis-server-1",
+    "REDIS_PORT": 6379
+  }
+}

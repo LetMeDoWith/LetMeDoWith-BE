@@ -1,0 +1,55 @@
+package com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto;
+
+import com.LetMeDoWith.LetMeDoWith.application.feedback.dto.RetrieveTaskFeedbackResult;
+import com.LetMeDoWith.LetMeDoWith.application.feedback.dto.RetrieveTaskFeedbackResult.TaskFeedbackDto;
+import com.LetMeDoWith.LetMeDoWith.application.feedback.dto.TaskFeedbackTemplateDto;
+import com.LetMeDoWith.LetMeDoWith.domain.task.enums.CountryCode;
+import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.List;
+
+@Schema(description = "잔소리 목록 조회 응답")
+public record RetrieveDowithTaskFeedbacksResDto(
+        @Schema(description = "잔소리 목록") List<RetrieveTaskFeedbackDto> feedbacks) {
+
+    public static RetrieveDowithTaskFeedbacksResDto from(RetrieveTaskFeedbackResult result) {
+        return new RetrieveDowithTaskFeedbacksResDto(
+                result.feedbacks().stream().map(RetrieveTaskFeedbackDto::from).toList());
+    }
+
+    @Schema(description = "두윗 Task에 달린 잔소리 한 건")
+    public record RetrieveTaskFeedbackDto(
+            @Schema(description = "잔소리 ID", example = "1") Long id,
+            @Schema(description = "두윗모드 Task ID", example = "12345") Long dowithTaskId,
+            @Schema(description = "두윗모드 Task 제목", example = "저녁 러닝하기") String dowithTaskTitle,
+            @Schema(description = "잔소리 보낸사람 ID", example = "(TSID)") String senderId,
+            @Schema(description = "잔소리 받는사람 닉네임", example = "feedbackSender123") String senderNickname,
+            @Schema(description = "잔소리 받는사람 프로필 이미지 URL", example = "https://example.com/profile.jpg")
+                    String senderProfileImageUrl,
+            @Schema(description = "잔소리 확인여부", example = "false") Boolean isChecked,
+            @Schema(description = "잔소리 템플릿") RetrieveTaskFeedbackTemplateDto taskFeedbackTemplate) {
+
+        public static RetrieveTaskFeedbackDto from(TaskFeedbackDto feedback) {
+            return new RetrieveTaskFeedbackDto(
+                    feedback.id(),
+                    feedback.dowithTaskId(),
+                    feedback.dowithTaskTitle(),
+                    feedback.senderId(),
+                    feedback.senderNickname(),
+                    feedback.senderProfileImageUrl(),
+                    feedback.isChecked(),
+                    RetrieveTaskFeedbackTemplateDto.from(feedback.taskFeedbackTemplate()));
+        }
+    }
+
+    public record RetrieveTaskFeedbackTemplateDto(
+            @Schema(description = "잔소리 템플릿 ID", example = "1") Long id,
+            @Schema(description = "잔소리 템플릿 언어", example = "ko") CountryCode language,
+            @Schema(description = "잔소리명", example = "잔소리명") String name,
+            @Schema(description = "잔소리 템플릿 이모지 URL", example = "https://example.com/emoji.png") String emojiUrl) {
+
+        public static RetrieveTaskFeedbackTemplateDto from(TaskFeedbackTemplateDto template) {
+            return new RetrieveTaskFeedbackTemplateDto(
+                    template.id(), template.language(), template.name(), template.emojiUrl());
+        }
+    }
+}
