@@ -6,7 +6,7 @@ spring:
     username: ${DB_USERNAME:letmedowith}
     password: ${DB_PASSWORD:letmedowith@admin#2024}
   flyway:
-    user: ${DB_USERNAME:letmedowith}
+    user: ${DB_USER:letmedowith}
     password: ${DB_PASSWORD:letmedowith@admin#2024}
   data:
     redis:
