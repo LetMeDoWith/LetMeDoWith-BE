@@ -29,9 +29,18 @@ public class RedisConfig {
                 .commandTimeout(Duration.ofSeconds(2))
                 .shutdownTimeout(Duration.ZERO)
                 .build();
+
         // Single Redis Server
-        return new LettuceConnectionFactory(
-                new RedisStandaloneConfiguration(redisProperties.getHost(), redisProperties.getPort()), clientConfig);
+        RedisStandaloneConfiguration standaloneConfig =
+                new RedisStandaloneConfiguration(redisProperties.getHost(), redisProperties.getPort());
+        if (redisProperties.getUsername() != null) {
+            standaloneConfig.setUsername(redisProperties.getUsername());
+        }
+        if (redisProperties.getPassword() != null) {
+            standaloneConfig.setPassword(redisProperties.getPassword());
+        }
+
+        return new LettuceConnectionFactory(standaloneConfig, clientConfig);
     }
 
     @Bean

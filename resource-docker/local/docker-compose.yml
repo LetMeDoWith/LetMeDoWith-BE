@@ -39,6 +39,17 @@ services:
     image: redis:latest
     ports:
       - "6379:6379"
+    command:
+      - redis-server
+      - --requirepass
+      - letmedowith@admin#2024
+      - --user
+      - letmedowith
+      - "on"
+      - ">letmedowith@admin#2024"
+      - "~*"
+      - "&*"
+      - "+@all"
     volumes:
       - redis-data:/data
     networks:
