@@ -42,6 +42,7 @@ firebase:
 
 
 sentry:
+  environment: develop
   dsn: ${SENTRY_DSN}
   # Add data like request headers and IP for users,
   # see https://docs.sentry.io/platforms/java/guides/spring-boot/data-management/data-collected/ for more info
@@ -57,3 +58,4 @@ sentry:
   # Set profile-lifecycle to trace to automatically start and stop
   # profiling when a transaction starts and finishes.
   profile-lifecycle: TRACE
+
