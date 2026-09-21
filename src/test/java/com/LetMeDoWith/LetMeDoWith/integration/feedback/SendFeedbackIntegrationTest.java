@@ -116,13 +116,13 @@ public class SendFeedbackIntegrationTest extends AbstractIntegrationTest {
 
         notificationTemplateRepository.save(NotificationTemplate.of(
                 NotificationTemplateCode.FEEDBACK_RECEIVED_1,
-                NotificationType.NORMAL,
+                NotificationType.FEEDBACK,
                 "{{senderNickname}}의 잡도리를 받았어요",
                 "{{receiverNickname}}, 아직도 안했구나?",
                 TEST_DEEP_LINK));
         notificationTemplateRepository.save(NotificationTemplate.of(
-                NotificationTemplateCode.LIKE_RECEIVED,
-                NotificationType.NORMAL,
+                NotificationTemplateCode.FEEDBACK_RECEIVED_2,
+                NotificationType.FEEDBACK,
                 "{{senderNickname}}의 잡도리를 받았어요",
                 "너 혹시 잡도리 수집중이니?",
                 TEST_DEEP_LINK));
@@ -146,7 +146,7 @@ public class SendFeedbackIntegrationTest extends AbstractIntegrationTest {
                 .title("잔소리 템플릿2")
                 .description("설명2")
                 .isActive(Yn.TRUE)
-                .notificationTemplateCode(NotificationTemplateCode.LIKE_RECEIVED)
+                .notificationTemplateCode(NotificationTemplateCode.FEEDBACK_RECEIVED_2)
                 .build());
         templateMessageRepository.save(TaskFeedbackTemplateMessage.builder()
                 .taskFeedbackTemplate(template2)

@@ -240,20 +240,26 @@ public class SuccessDowithTaskIntegrationTest extends AbstractIntegrationTest {
 
         // then
         confirmResultActions.andExpect(status().isOk());
-        retrieveResultActions
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.dowithTasks[0].id").value(waitingDowithTask.getId()))
-                .andExpect(jsonPath("$.data.dowithTasks[0].status").value(DowithTaskStatus.SUCCESS.code))
-                .andExpect(jsonPath("$.data.dowithTasks[0].confirmedImageUrls").isArray())
-                .andExpect(jsonPath("$.data.dowithTasks[0].confirmedImageUrls").value(Matchers.is(publicImageUrls)));
+        retrieveResultActions.andExpect(status().isOk());
+
+        RetrieveTasksResDto retrieveTasksResDto = this.readResponse(retrieveResultActions, RetrieveTasksResDto.class);
+        // 같은 날짜(3/1)에 더 이른 시각(12:00)의 다른 DowithTask들도 함께 조회되므로,
+        // 정렬 순서상 index[0]이 waitingDowithTask라고 가정할 수 없어 id로 찾는다.
+        RetrieveTasksResDto.DowithTaskDto confirmedTask = retrieveTasksResDto.dowithTasks().stream()
+                .filter(task -> task.id().equals(waitingDowithTask.getId()))
+                .findFirst()
+                .orElseThrow();
+
+        assertThat(confirmedTask.status()).isEqualTo(DowithTaskStatus.SUCCESS.code);
+        assertThat(confirmedTask.successImageUrls()).isEqualTo(publicImageUrls);
     }
 
     @Test
-    @DisplayName("[FAIL] 시작시간이 지난 후 인증 시도하는 경우")
+    @DisplayName("[FAIL] 시작시간으로부터 1시간이 지난 후 인증 시도하는 경우")
     void successDowithTask2() throws Exception {
-        // given
+        // given - 인증은 시작시간으로부터 1시간 이내까지 허용되므로(isSuccessAvailable), 그 이후 시점으로 설정
         List<String> publicImageUrls = List.of("https://example.com/photo1.jpg", "https://example.com/photo2.jpg");
-        this.setFixedClock(LocalDateTime.of(2024, 3, 1, 14, 1));
+        this.setFixedClock(LocalDateTime.of(2024, 3, 1, 15, 1));
 
         // when
         SuccessDowithTaskReqDto requestBody = new SuccessDowithTaskReqDto(publicImageUrls);
@@ -393,6 +399,8 @@ public class SuccessDowithTaskIntegrationTest extends AbstractIntegrationTest {
         // - 첫 like는 sendNotification(isSavingHistory=true)을 트리거 → Notification 적재
         // - 두번째 like는 isAlreadyLiked=true라 notification 트리거되지 않음
         // → 적재된 알림 1건이 receiver의 NORMAL 알림 목록에 보여야 함
+        // sendNotificationAsync는 비동기로 처리되므로 DB 반영 시간이 필요할 수 있음
+        Thread.sleep(1000);
         var notificationResult = this.request(MockMvcRequestBuilders.get("/api/v1/notifications")
                         .param("type", NotificationType.NORMAL.getCode())
                         .param("page", "0")

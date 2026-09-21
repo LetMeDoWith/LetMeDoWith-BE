@@ -1,6 +1,6 @@
-package com.LetMeDoWith.LetMeDoWith.batch.job.task;
+package com.LetMeDoWith.LetMeDoWith.batch.job.notification.daily;
 
-import com.LetMeDoWith.LetMeDoWith.batch.tasklet.task.NudgeDoriTaskStartNotifyTasklet;
+import com.LetMeDoWith.LetMeDoWith.batch.tasklet.notification.daily.SendDailyEveningNotificationTasklet;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -15,26 +15,26 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
 @RequiredArgsConstructor
-public class NudgeDoriTaskStartJobConfig {
+public class DailyEveningNotificationJobConfig {
 
-    private static final String JOB_NAME = "nudgeDoriTaskStartJob";
+    private static final String JOB_NAME = "dailyEveningNotificationJob";
 
     private final JobRepository jobRepository;
     private final PlatformTransactionManager platformTransactionManager;
 
     @Bean
-    public Job nudgeDoriTaskStartJob(Step nudgeDoriTaskStartStep) {
+    public Job dailyEveningNotificationJob(Step dailyEveningNotificationStep) {
         return new JobBuilder(JOB_NAME, jobRepository)
                 .incrementer(new RunIdIncrementer())
-                .start(nudgeDoriTaskStartStep)
+                .start(dailyEveningNotificationStep)
                 .build();
     }
 
     @Bean
     @JobScope
-    public Step nudgeDoriTaskStartStep(NudgeDoriTaskStartNotifyTasklet nudgeDoriTaskStartNotifyTasklet) {
-        return new StepBuilder("nudgeDoriTaskStartStep", jobRepository)
-                .tasklet(nudgeDoriTaskStartNotifyTasklet, platformTransactionManager)
+    public Step dailyEveningNotificationStep(SendDailyEveningNotificationTasklet sendDailyEveningNotificationTasklet) {
+        return new StepBuilder("dailyEveningNotificationStep", jobRepository)
+                .tasklet(sendDailyEveningNotificationTasklet, platformTransactionManager)
                 .build();
     }
 }

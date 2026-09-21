@@ -17,12 +17,16 @@ public class DowithTaskJobScheduler {
 
     private final JobLauncher jobLauncher;
     private final Job failDowithTaskJob;
+    private final Job doriTaskFailNotifyJob;
     private final Job nudgeDoriTaskCompleteJob;
     private final Job nudgeDoriTaskStartJob;
 
     /**
-     * DowithTask 실패 처리 배치
+     * DowithTask 실패 알림 발송 + 실패 처리 배치
      * 00분부터 5분 간격으로 실행
+     * doriTaskFailNotifyJob은 status = WAIT 조건으로 대상을 조회하므로,
+     * status를 FAIL로 변경하는 failDowithTaskJob보다 반드시 먼저 실행되어야 한다.
+     * (실행 순서가 뒤바뀌면 이미 FAIL로 바뀐 항목이라 알림 대상에서 누락된다)
      */
     @Scheduled(cron = "0 */5 * * * *")
     public void runFailTaskJob() {
@@ -30,6 +34,12 @@ public class DowithTaskJobScheduler {
                 .addLong("run.id", System.currentTimeMillis())
                 .addLocalDateTime("executionDateTime", SystemTimeUtil.now())
                 .toJobParameters();
+        try {
+            jobLauncher.run(doriTaskFailNotifyJob, jobParameters);
+        } catch (Exception e) {
+            e.printStackTrace(); // TODO - Batch Exception 공통 처리
+            log.error("Failed to run doriTaskFailNotifyJob", e);
+        }
         try {
             jobLauncher.run(failDowithTaskJob, jobParameters);
         } catch (Exception e) {

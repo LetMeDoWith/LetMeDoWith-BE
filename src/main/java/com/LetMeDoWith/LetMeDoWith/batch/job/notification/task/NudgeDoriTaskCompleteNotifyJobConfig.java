@@ -1,6 +1,6 @@
-package com.LetMeDoWith.LetMeDoWith.batch.job.task;
+package com.LetMeDoWith.LetMeDoWith.batch.job.notification.task;
 
-import com.LetMeDoWith.LetMeDoWith.batch.tasklet.task.NudgeDoriTaskCompleteNotifyTasklet;
+import com.LetMeDoWith.LetMeDoWith.batch.tasklet.notification.task.NudgeDoriTaskCompleteNotifyTasklet;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -15,7 +15,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
 @RequiredArgsConstructor
-public class NudgeDoriTaskCompleteJobConfig {
+public class NudgeDoriTaskCompleteNotifyJobConfig {
 
     private static final String JOB_NAME = "nudgeDoriTaskCompleteJob";
 

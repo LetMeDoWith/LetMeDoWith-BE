@@ -13,6 +13,15 @@ public enum StorePolicy implements RedisPolicySpec {
     private final RedisValueType redisValueType;
     private final Duration ttl;
 
+    public static StorePolicy fromCacheName(String cacheName) {
+        for (StorePolicy policy : StorePolicy.values()) {
+            if (policy.keyName.equals(cacheName)) {
+                return policy;
+            }
+        }
+        throw new IllegalArgumentException("No StorePolicy found for cache name: " + cacheName);
+    }
+
     @Override
     public String keyName() {
         return keyName;
