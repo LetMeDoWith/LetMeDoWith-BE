@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.batch.tasklet.notification;
+package com.LetMeDoWith.LetMeDoWith.batch.tasklet.notification.daily;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

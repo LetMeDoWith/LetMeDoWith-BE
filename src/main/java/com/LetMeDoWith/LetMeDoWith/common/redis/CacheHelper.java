@@ -24,7 +24,7 @@ public class CacheHelper {
 
     public <T> T get(String cacheName, String key, Class<T> type) {
 
-        CachePolicy cachePolicy = CachePolicy.fromCacheName(cacheName);
+        RedisPolicySpec cachePolicy = resolvePolicy(cacheName);
 
         if (cachePolicy.redisValueType().equals(RedisValueType.HASH)) {
             String redisKey = this.buildRedisKey(cacheName, key);
@@ -42,7 +42,7 @@ public class CacheHelper {
 
     public <T> T get(String cacheName, String key, String field, Class<T> fieldType) {
 
-        CachePolicy cachePolicy = CachePolicy.fromCacheName(cacheName);
+        RedisPolicySpec cachePolicy = resolvePolicy(cacheName);
         String cacheKey = this.buildRedisKey(cacheName, key);
 
         if (cachePolicy.redisValueType().equals(RedisValueType.HASH)) {
@@ -63,7 +63,7 @@ public class CacheHelper {
     }
 
     public <T> List<T> getByRange(String cacheName, String key, long start, long end, Class<T> elementType) {
-        CachePolicy cachePolicy = CachePolicy.fromCacheName(cacheName);
+        RedisPolicySpec cachePolicy = resolvePolicy(cacheName);
         String redisKey = this.buildRedisKey(cacheName, key);
 
         if (cachePolicy.redisValueType().equals(RedisValueType.LIST)) {
@@ -84,7 +84,7 @@ public class CacheHelper {
 
     public void put(String cacheName, String key, Object value) {
 
-        CachePolicy cachePolicy = CachePolicy.fromCacheName(cacheName);
+        RedisPolicySpec cachePolicy = resolvePolicy(cacheName);
         String redisKey = this.buildRedisKey(cacheName, key);
 
         if (cachePolicy.redisValueType().equals(RedisValueType.HASH)) {
@@ -104,7 +104,7 @@ public class CacheHelper {
     }
 
     public void push(String cacheName, String key, Object element) {
-        CachePolicy cachePolicy = CachePolicy.fromCacheName(cacheName);
+        RedisPolicySpec cachePolicy = resolvePolicy(cacheName);
         String redisKey = this.buildRedisKey(cacheName, key);
 
         if (cachePolicy.redisValueType().equals(RedisValueType.LIST)) {
@@ -118,7 +118,7 @@ public class CacheHelper {
     }
 
     public void remove(String cacheName, String key) {
-        CachePolicy cachePolicy = CachePolicy.fromCacheName(cacheName);
+        RedisPolicySpec cachePolicy = resolvePolicy(cacheName);
 
         if (cachePolicy.redisValueType().equals(RedisValueType.HASH)
                 || cachePolicy.redisValueType().equals(RedisValueType.LIST)) {
@@ -132,7 +132,7 @@ public class CacheHelper {
     }
 
     public <T> void remove(String cacheName, String key, T element) {
-        CachePolicy cachePolicy = CachePolicy.fromCacheName(cacheName);
+        RedisPolicySpec cachePolicy = resolvePolicy(cacheName);
 
         if (!cachePolicy.redisValueType().equals(RedisValueType.LIST)) {
             throw new IllegalArgumentException("CachePolicy redisValueType is not LIST for cache name: " + cacheName);
@@ -141,6 +141,14 @@ public class CacheHelper {
         String cacheKey = this.buildRedisKey(cacheName, key);
 
         redisTemplate.opsForList().remove(cacheKey, 0, element);
+    }
+
+    private RedisPolicySpec resolvePolicy(String cacheName) {
+        try {
+            return CachePolicy.fromCacheName(cacheName);
+        } catch (IllegalArgumentException e) {
+            return StorePolicy.fromCacheName(cacheName);
+        }
     }
 
     private String buildRedisKey(String cacheName, String key) {

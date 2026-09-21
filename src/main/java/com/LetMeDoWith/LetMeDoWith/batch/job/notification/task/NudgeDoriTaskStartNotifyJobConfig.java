@@ -1,6 +1,6 @@
-package com.LetMeDoWith.LetMeDoWith.batch.job.task;
+package com.LetMeDoWith.LetMeDoWith.batch.job.notification.task;
 
-import com.LetMeDoWith.LetMeDoWith.batch.tasklet.task.NudgeTodoTaskStartNotifyTasklet;
+import com.LetMeDoWith.LetMeDoWith.batch.tasklet.notification.task.NudgeDoriTaskStartNotifyTasklet;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -15,26 +15,26 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
 @RequiredArgsConstructor
-public class NudgeTodoTaskStartJobConfig {
+public class NudgeDoriTaskStartNotifyJobConfig {
 
-    private static final String JOB_NAME = "nudgeTodoTaskStartJob";
+    private static final String JOB_NAME = "nudgeDoriTaskStartJob";
 
     private final JobRepository jobRepository;
     private final PlatformTransactionManager platformTransactionManager;
 
     @Bean
-    public Job nudgeTodoTaskStartJob(Step nudgeTodoTaskStartStep) {
+    public Job nudgeDoriTaskStartJob(Step nudgeDoriTaskStartStep) {
         return new JobBuilder(JOB_NAME, jobRepository)
                 .incrementer(new RunIdIncrementer())
-                .start(nudgeTodoTaskStartStep)
+                .start(nudgeDoriTaskStartStep)
                 .build();
     }
 
     @Bean
     @JobScope
-    public Step nudgeTodoTaskStartStep(NudgeTodoTaskStartNotifyTasklet nudgeTodoTaskStartNotifyTasklet) {
-        return new StepBuilder("nudgeTodoTaskStartStep", jobRepository)
-                .tasklet(nudgeTodoTaskStartNotifyTasklet, platformTransactionManager)
+    public Step nudgeDoriTaskStartStep(NudgeDoriTaskStartNotifyTasklet nudgeDoriTaskStartNotifyTasklet) {
+        return new StepBuilder("nudgeDoriTaskStartStep", jobRepository)
+                .tasklet(nudgeDoriTaskStartNotifyTasklet, platformTransactionManager)
                 .build();
     }
 }
