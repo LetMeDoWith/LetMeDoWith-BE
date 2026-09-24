@@ -4,10 +4,6 @@ import com.LetMeDoWith.LetMeDoWith.application.notification.dto.SendNotification
 import com.LetMeDoWith.LetMeDoWith.application.notification.service.NotificationSendService;
 import com.LetMeDoWith.LetMeDoWith.common.enums.notification.NotificationTemplateCode;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -19,6 +15,11 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Component
@@ -39,7 +40,9 @@ public class FailDoriTaskNotifyTasklet implements Tasklet {
         // 시작한지 1시간이 지난 WAIT 상태의 DowithTask들 조회 (UpdateFailDowithTaskTasklet과 동일한 기준)
         // 이 Step은 스케줄러에서 UpdateFailDowithTaskTasklet(상태를 FAIL로 변경)보다 반드시 먼저 실행되어야
         // status = WAIT 조건으로 대상을 정확히 한 번만 찾아낼 수 있다.
+
         LocalDateTime standardDateTime = executionDateTime.minusHours(1);
+        log.info("FailDoriTaskNotifyTasklet 실행 - executionDateTime: {}, standardDateTime: {}", executionDateTime, standardDateTime);
 
         List<FailDoriTaskTarget> failTargets = this.jdbcTemplate.query(
                 """
@@ -56,6 +59,7 @@ public class FailDoriTaskNotifyTasklet implements Tasklet {
                 Timestamp.valueOf(standardDateTime));
 
         if (failTargets.isEmpty()) {
+            log.info("FailDoriTaskNotifyTasklet - 알림 대상 없음");
             return RepeatStatus.FINISHED;
         }
 
@@ -65,6 +69,7 @@ public class FailDoriTaskNotifyTasklet implements Tasklet {
                 .map(target -> Map.of("doriTaskTitle", target.dowithTaskTitle()))
                 .toList();
 
+        log.info("FailDoriTaskNotifyTasklet - 알림 발송 대상 memberIds: {}, bodyParams: {}", receiverMemberIds, bodyParams);
         SendNotificationResult sendNotificationResult = notificationSendService.sendNotifications(
                 NotificationTemplateCode.DORI_FAIL, receiverMemberIds, null, bodyParams, null);
 
@@ -82,5 +87,6 @@ public class FailDoriTaskNotifyTasklet implements Tasklet {
         return RepeatStatus.FINISHED;
     }
 
-    public record FailDoriTaskTarget(Long dowithTaskId, String dowithTaskTitle, String memberId) {}
+    public record FailDoriTaskTarget(Long dowithTaskId, String dowithTaskTitle, String memberId) {
+    }
 }
