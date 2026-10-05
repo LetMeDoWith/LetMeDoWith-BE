@@ -9,7 +9,8 @@ public record RetrieveMyDowithResDto(
         @Schema(description = "닉네임", example = "두윗러123") String nickname,
         @Schema(description = "상태 메세지", example = "오늘도 두윗!") String selfDescription,
         @Schema(description = "프로필 이미지 URL", example = "https://example.com/profile.jpg") String profileImageUrl,
-        @Schema(description = "전체 기간 성공한 두윗 갯수", example = "42") Long successDowithCount) {
+        @Schema(description = "전체 기간 성공한 두윗 갯수", example = "42") Long successDowithCount,
+        @Schema(description = "온보딩 여부", example = "false") boolean isOnBoarded) {
 
     public static RetrieveMyDowithResDto from(RetrieveMyDowithResult result) {
         return new RetrieveMyDowithResDto(
@@ -17,6 +18,7 @@ public record RetrieveMyDowithResDto(
                 result.nickname(),
                 result.selfDescription(),
                 result.profileImageUrl(),
-                result.successDowithCount());
+                result.successDowithCount(),
+                result.isOnBoarded());
     }
 }
