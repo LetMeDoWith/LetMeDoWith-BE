@@ -3,7 +3,12 @@ package com.LetMeDoWith.LetMeDoWith.application.member.dto;
 import com.LetMeDoWith.LetMeDoWith.domain.member.repository.dto.MemberDowithQueryDto;
 
 public record RetrieveMyDowithResult(
-        String memberId, String nickname, String selfDescription, String profileImageUrl, Long successDowithCount) {
+        String memberId,
+        String nickname,
+        String selfDescription,
+        String profileImageUrl,
+        Long successDowithCount,
+        boolean isOnBoarded) {
 
     public static RetrieveMyDowithResult from(MemberDowithQueryDto queryDto) {
         return new RetrieveMyDowithResult(
@@ -11,6 +16,7 @@ public record RetrieveMyDowithResult(
                 queryDto.nickname(),
                 queryDto.selfDescription(),
                 queryDto.profileImageUrl(),
-                queryDto.successDowithCount());
+                queryDto.successDowithCount(),
+                queryDto.isOnBoarded());
     }
 }

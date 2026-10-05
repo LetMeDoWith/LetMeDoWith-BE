@@ -78,6 +78,10 @@ public class Member extends BaseAuditEntity {
     @Column(name = "profile_image_url")
     private String profileImageUrl;
 
+    @Column(name = "onboard_yn", nullable = false, columnDefinition = "bit(1) DEFAULT b'0'")
+    @Builder.Default
+    private boolean onBoarded = false;
+
     /**
      * 소셜 로그인이 완료된 직후 상태(초기 상태)의 Member를 생성한다.
      *
@@ -193,6 +197,12 @@ public class Member extends BaseAuditEntity {
         if (profileImageUrl != null) {
             this.profileImageUrl = profileImageUrl;
         }
+
+        return this;
+    }
+
+    public Member completeOnboarding() {
+        this.onBoarded = true;
 
         return this;
     }

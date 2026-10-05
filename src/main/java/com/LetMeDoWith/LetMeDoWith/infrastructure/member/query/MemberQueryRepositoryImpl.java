@@ -36,7 +36,8 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
                                 .where(qDowithTask
                                         .memberId
                                         .eq(qMember.id)
-                                        .and(qDowithTask.status.eq(DowithTaskStatus.SUCCESS)))))
+                                        .and(qDowithTask.status.eq(DowithTaskStatus.SUCCESS))),
+                        qMember.onBoarded))
                 .from(qMember)
                 .where(qMember.id.eq(memberId).and(qMember.status.eq(MemberStatus.NORMAL)))
                 .fetchOne();
