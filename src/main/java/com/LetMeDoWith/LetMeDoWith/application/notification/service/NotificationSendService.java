@@ -51,23 +51,13 @@ public class NotificationSendService {
             String receiverMemberId,
             Map<String, String> titleParam,
             Map<String, String> bodyParam) {
-        doSend(templateCode, receiverMemberId, titleParam, bodyParam, Map.of());
+        doSend(templateCode, receiverMemberId, titleParam, bodyParam);
     }
 
     @Async
     @Transactional
     public void sendNotificationAsync(
             NotificationTemplateCode templateCode, String senderMemberId, String receiverMemberId) {
-        sendNotificationAsync(templateCode, senderMemberId, receiverMemberId, Map.of());
-    }
-
-    @Async
-    @Transactional
-    public void sendNotificationAsync(
-            NotificationTemplateCode templateCode,
-            String senderMemberId,
-            String receiverMemberId,
-            Map<String, String> deeplinkParams) {
 
         List<Member> members =
                 memberRepository.getMembers(List.of(senderMemberId, receiverMemberId), MemberStatus.NORMAL);
@@ -82,7 +72,7 @@ public class NotificationSendService {
                 "senderNickname", memberMap.get(senderMemberId).getNickname(),
                 "receiverNickname", memberMap.get(receiverMemberId).getNickname());
 
-        doSend(templateCode, receiverMemberId, paramsMap, paramsMap, deeplinkParams);
+        doSend(templateCode, receiverMemberId, paramsMap, paramsMap);
     }
 
     @Transactional
@@ -99,13 +89,12 @@ public class NotificationSendService {
             NotificationTemplateCode templateCode,
             String receiverMemberId,
             Map<String, String> titleParams,
-            Map<String, String> bodyParams,
-            Map<String, String> deeplinkParams) {
+            Map<String, String> bodyParams) {
 
         MessageResolveStrategy strategy = messageResolveStrategyResolver.resolve(templateCode);
         List<Map<String, String>> bodyParamsList = bodyParams == null ? null : List.of(bodyParams);
         List<MessageContentVo> messageContents = strategy.resolve(
-                templateCode, List.of(receiverMemberId), titleParams, bodyParamsList, List.of(deeplinkParams));
+                templateCode, List.of(receiverMemberId), titleParams, bodyParamsList, List.of(Map.of()));
 
         if (messageContents.isEmpty()) {
             throw new RestApiException(FailResponseStatus.INVALID_REQUEST);

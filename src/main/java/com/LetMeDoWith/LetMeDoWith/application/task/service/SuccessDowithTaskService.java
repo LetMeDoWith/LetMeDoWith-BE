@@ -109,10 +109,7 @@ public class SuccessDowithTaskService {
 
         if (!isAlreadyLiked && !dowithTask.getMemberId().equals(memberId)) {
             notificationSendService.sendNotificationAsync(
-                    NotificationTemplateCode.LIKE_RECEIVED,
-                    memberId,
-                    dowithTask.getMemberId(),
-                    Map.of("dowithTaskId", String.valueOf(dowithTaskId)));
+                    NotificationTemplateCode.LIKE_RECEIVED, memberId, dowithTask.getMemberId());
         }
 
         return new LikeSuccessDowithTaskResult(isAlreadyLiked, likeCount);

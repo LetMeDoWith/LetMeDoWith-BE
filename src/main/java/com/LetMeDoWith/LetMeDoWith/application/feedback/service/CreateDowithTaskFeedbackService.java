@@ -12,7 +12,6 @@ import com.LetMeDoWith.LetMeDoWith.domain.feedback.service.FeedbackSendPolicy;
 import com.LetMeDoWith.LetMeDoWith.domain.member.repository.MemberRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskRepository;
-import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -63,9 +62,6 @@ public class CreateDowithTaskFeedbackService {
                 DowithTaskFeedback.of(senderId, dowithTask.getMemberId(), dowithTaskId, taskFeedbackTemplateId));
 
         notificationSendService.sendNotificationAsync(
-                taskFeedbackTemplate.getNotificationTemplateCode(),
-                senderId,
-                dowithTask.getMemberId(),
-                Map.of("dowithTaskId", String.valueOf(dowithTaskId)));
+                taskFeedbackTemplate.getNotificationTemplateCode(), senderId, dowithTask.getMemberId());
     }
 }
