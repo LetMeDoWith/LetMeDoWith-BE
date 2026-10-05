@@ -1,6 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.integration.feedback;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.LetMeDoWith.LetMeDoWith.common.dto.FailResponseDto;
@@ -32,6 +33,7 @@ import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.CreateDowithFeedbac
 import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.RetrieveDowithTaskFeedbacksResDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.feedback.dto.RetrieveDowithTaskFeedbacksResDto.RetrieveTaskFeedbackDto;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -176,9 +178,8 @@ public class SendFeedbackIntegrationTest extends AbstractIntegrationTest {
         assertThat(saved.getReceiverMemberId()).isEqualTo(receiver.getId());
         assertThat(saved.getIsChecked()).isEqualTo(Yn.FALSE);
 
-        // then - Notification 적재 (모든 잔소리는 FCM 발송 + DB 저장)
-        List<Notification> notifications = notificationRepository.findAll();
-        assertThat(notifications).hasSize(1);
+        // then - Notification 적재 (모든 잔소리는 FCM 발송 + DB 저장, 비동기 처리라 polling으로 대기)
+        List<Notification> notifications = awaitNotifications(receiver.getId(), 1);
         Notification savedNotification = notifications.get(0);
         assertThat(savedNotification.getMemberId()).isEqualTo(receiver.getId());
         assertThat(savedNotification.getType()).isEqualTo(NotificationType.FEEDBACK);
@@ -202,10 +203,22 @@ public class SendFeedbackIntegrationTest extends AbstractIntegrationTest {
         assertThat(feedbackRepo.countByDowithTaskIdAndSenderMemberId(dowithTask.getId(), requestMember.getId()))
                 .isEqualTo(1);
 
-        List<Notification> notifications = notificationRepository.findAll();
-        assertThat(notifications).hasSize(1);
+        List<Notification> notifications = awaitNotifications(receiver.getId(), 1);
         assertThat(notifications.get(0).getNotificationTemplateCode()).isEqualTo(NOTIFICATION_TEMPLATE_CODE_2);
         assertThat(notifications.get(0).getType()).isEqualTo(NotificationType.FEEDBACK);
+    }
+
+    /**
+     * 알림 발송은 비동기로 처리되므로, 특정 수신자 기준으로 기대하는 건수가 적재될 때까지 polling 방식으로 대기한다. 전체 테이블을
+     * 필터 없이 조회(findAll)하면 다른 테스트 메서드의 지연된 비동기 적재분이 섞여 들어올 수 있어 memberId로 범위를 좁힌다.
+     */
+    private List<Notification> awaitNotifications(String memberId, int expectedSize) {
+        await().atMost(Duration.ofSeconds(3))
+                .pollInterval(Duration.ofMillis(100))
+                .untilAsserted(() -> assertThat(notificationRepository.findAllByMemberId(memberId))
+                        .hasSize(expectedSize));
+
+        return notificationRepository.findAllByMemberId(memberId);
     }
 
     @Test

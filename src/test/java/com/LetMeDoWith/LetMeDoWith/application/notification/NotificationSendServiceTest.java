@@ -1,6 +1,7 @@
 package com.LetMeDoWith.LetMeDoWith.application.notification;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.LetMeDoWith.LetMeDoWith.application.notification.service.NotificationSendService;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.Gender;
@@ -8,8 +9,6 @@ import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
 import com.LetMeDoWith.LetMeDoWith.common.enums.notification.NotificationTemplateCode;
 import com.LetMeDoWith.LetMeDoWith.common.enums.notification.NotificationType;
-import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
-import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
 import com.LetMeDoWith.LetMeDoWith.domain.notification.model.Notification;
 import com.LetMeDoWith.LetMeDoWith.domain.notification.model.NotificationTemplate;
@@ -142,39 +141,33 @@ public class NotificationSendServiceTest {
 
     @Test
     @DisplayName("[FAIL] title에 필요한 parameter가 한개라도 없는 경우")
-    void sendMessage_fail2() throws InterruptedException {
+    void sendMessage_fail2() {
         // given
         this.notificationToken =
                 notificationTokenJpaRepository.save(NotificationToken.of(member.getId(), REGISTERED_FCM_TOKEN));
-        // when
-        try {
-            notificationSendService.sendNotificationAsync(
-                    notificationTemplate.getCode(),
-                    member.getId(),
-                    Map.of("wrongKey", "테스트 이름"),
-                    Map.of("nickName", member.getNickname()));
-            Thread.sleep(1000);
-        } catch (RestApiException e) {
-            assertThat(e.getStatus()).isEqualTo(FailResponseStatus.INTERNAL_SERVER_ERROR);
-        }
+        // when & then
+        assertThatThrownBy(() -> notificationSendService.sendNotificationAsync(
+                        notificationTemplate.getCode(),
+                        member.getId(),
+                        Map.of("wrongKey", "테스트 이름"),
+                        Map.of("nickName", member.getNickname())))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("testName");
     }
 
     @Test
     @DisplayName("[FAIL] body에 필요한 parameter가 한개라도 없는 경우")
-    void sendMessage_fail3() throws InterruptedException {
+    void sendMessage_fail3() {
         // given
         this.notificationToken =
                 notificationTokenJpaRepository.save(NotificationToken.of(member.getId(), REGISTERED_FCM_TOKEN));
-        // when
-        try {
-            notificationSendService.sendNotificationAsync(
-                    notificationTemplate.getCode(),
-                    member.getId(),
-                    Map.of("testName", "테스트 이름"),
-                    Map.of("nickName", member.getNickname()));
-            Thread.sleep(1000);
-        } catch (RestApiException e) {
-            assertThat(e.getStatus()).isEqualTo(FailResponseStatus.INTERNAL_SERVER_ERROR);
-        }
+        // when & then
+        assertThatThrownBy(() -> notificationSendService.sendNotificationAsync(
+                        notificationTemplate.getCode(),
+                        member.getId(),
+                        Map.of("testName", "테스트 이름"),
+                        Map.of("nickName", member.getNickname())))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("weather");
     }
 }
