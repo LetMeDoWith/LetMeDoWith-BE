@@ -167,6 +167,22 @@ public class MemberService {
     }
 
     /**
+     * 회원의 온보딩 완료 여부를 true로 업데이트합니다. 멱등성을 가지는 작업으로, 이미 온보딩이 완료된 경우에도 동일하게 처리됩니다.
+     *
+     * @param memberId 온보딩을 완료 처리하려는 회원 id
+     */
+    @Transactional
+    public void updateOnboard(String memberId) {
+        Member member = memberRepository
+                .getMember(memberId, MemberStatus.NORMAL)
+                .orElseThrow(() -> new RestApiException(FailResponseStatus.MEMBER_NOT_EXIST));
+
+        member.completeOnboarding();
+
+        memberRepository.save(member);
+    }
+
+    /**
      * 회원 프로필 이미지 업로드를 위한 presigned URL을 발급합니다.
      *
      * <p>실제 업로드 권한 확인은 NORMAL 회원 여부만 검증하고, key 생성 및 URL 발급은 공통 서비스에 위임합니다.

@@ -16,27 +16,13 @@ import com.LetMeDoWith.LetMeDoWith.common.util.AuthUtil;
 import com.LetMeDoWith.LetMeDoWith.common.util.ResponseUtil;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
 import com.LetMeDoWith.LetMeDoWith.presentation.auth.dto.CreateTokenResDto;
-import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.CheckNicknameReqDto;
-import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.GenerateMemberProfileImageUploadPresignedUrlReqDto;
-import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.GenerateMemberProfileImageUploadPresignedUrlResDto;
-import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.RetrieveMyDowithResDto;
-import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.SignupCompleteReqDto;
-import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.UpdateMemberInfoReqDto;
-import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.UpdateMemberTermAgreeReqDto;
+import com.LetMeDoWith.LetMeDoWith.presentation.member.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Member", description = "회원")
 @RestController
@@ -56,13 +42,13 @@ public class MemberController {
     @Operation(summary = "회원가입", description = "회원가입을 완료하고 로그인합니다.")
     @ApiSuccessResponse(description = "회원가입 완료, 회원 정보를 업데이트하고 로그인을 완료함 (토큰 발급).")
     @ApiErrorResponses({
-        @ApiErrorResponse(
-                status = FailResponseStatus.MEMBER_NOT_EXIST,
-                description = "SIGNUP TOKEN 을 통해 얻은 memberId가 존재하지 않을 때 발생"),
-        @ApiErrorResponse(status = FailResponseStatus.DUPLICATE_NICKNAME),
-        @ApiErrorResponse(
-                status = FailResponseStatus.TOKEN_EXPIRED_BY_ADMIN,
-                description = "ATK가 운영자에 의해 강제로 만료됨. 재시도 필요")
+            @ApiErrorResponse(
+                    status = FailResponseStatus.MEMBER_NOT_EXIST,
+                    description = "SIGNUP TOKEN 을 통해 얻은 memberId가 존재하지 않을 때 발생"),
+            @ApiErrorResponse(status = FailResponseStatus.DUPLICATE_NICKNAME),
+            @ApiErrorResponse(
+                    status = FailResponseStatus.TOKEN_EXPIRED_BY_ADMIN,
+                    description = "ATK가 운영자에 의해 강제로 만료됨. 재시도 필요")
     })
     @PutMapping("")
     public ResponseEntity<ResponseDto<CreateTokenResDto>> completeSignup(
@@ -168,8 +154,8 @@ public class MemberController {
     @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")})
     @PostMapping("/profile-image/upload-presigned-url")
     public ResponseEntity<ResponseDto<GenerateMemberProfileImageUploadPresignedUrlResDto>>
-            generateMemberProfileImageUploadPresignedUrl(
-                    @RequestBody GenerateMemberProfileImageUploadPresignedUrlReqDto requestBody) {
+    generateMemberProfileImageUploadPresignedUrl(
+            @RequestBody GenerateMemberProfileImageUploadPresignedUrlReqDto requestBody) {
         String memberId = AuthUtil.getMemberId();
 
         GenerateUploadPresignedUrlsResult result =
@@ -177,6 +163,22 @@ public class MemberController {
 
         return ResponseUtil.createSuccessResponse(new GenerateMemberProfileImageUploadPresignedUrlResDto(
                 result.publicImageUrls().get(0), result.presignedUrls().get(0), result.method()));
+    }
+
+    /**
+     * 회원의 온보딩 완료 여부를 true로 업데이트한다. 멱등성 API로, 호출 결과와 무관하게 항상 200을 반환한다.
+     *
+     * @return 온보딩 완료 처리 완료
+     */
+    @Operation(summary = "온보딩 완료 처리", description = "세션의 회원을 기준으로 온보딩 완료 여부를 true로 업데이트합니다.")
+    @ApiSuccessResponse(description = "온보딩 완료 처리 완료")
+    @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.MEMBER_NOT_EXIST)})
+    @PutMapping("/me/on-board")
+    public ResponseEntity<ResponseDto<Void>> updateOnboard() {
+        String memberId = AuthUtil.getMemberId();
+        memberService.updateOnboard(memberId);
+
+        return ResponseUtil.createSuccessResponse(SuccessResponseStatus.OK);
     }
 
     @Operation(summary = "내 마이두윗 정보 조회", description = "내 기본 정보와 전체 기간 성공한 두윗 갯수를 조회합니다.")
@@ -195,7 +197,7 @@ public class MemberController {
     @GetMapping("/{memberId}/my-dowith")
     public ResponseEntity<ResponseDto<RetrieveMyDowithResDto>> retrieveMemberDowithInfo(
             @Parameter(description = "조회 대상 회원 ID (TSID)", example = "01234567890123456789012345") @PathVariable
-                    String memberId) {
+            String memberId) {
         return ResponseUtil.createSuccessResponse(
                 RetrieveMyDowithResDto.from(memberService.retrieveMyDowithInfo(memberId)));
     }
