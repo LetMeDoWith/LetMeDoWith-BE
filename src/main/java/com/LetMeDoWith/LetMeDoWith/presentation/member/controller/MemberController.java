@@ -42,13 +42,13 @@ public class MemberController {
     @Operation(summary = "회원가입", description = "회원가입을 완료하고 로그인합니다.")
     @ApiSuccessResponse(description = "회원가입 완료, 회원 정보를 업데이트하고 로그인을 완료함 (토큰 발급).")
     @ApiErrorResponses({
-            @ApiErrorResponse(
-                    status = FailResponseStatus.MEMBER_NOT_EXIST,
-                    description = "SIGNUP TOKEN 을 통해 얻은 memberId가 존재하지 않을 때 발생"),
-            @ApiErrorResponse(status = FailResponseStatus.DUPLICATE_NICKNAME),
-            @ApiErrorResponse(
-                    status = FailResponseStatus.TOKEN_EXPIRED_BY_ADMIN,
-                    description = "ATK가 운영자에 의해 강제로 만료됨. 재시도 필요")
+        @ApiErrorResponse(
+                status = FailResponseStatus.MEMBER_NOT_EXIST,
+                description = "SIGNUP TOKEN 을 통해 얻은 memberId가 존재하지 않을 때 발생"),
+        @ApiErrorResponse(status = FailResponseStatus.DUPLICATE_NICKNAME),
+        @ApiErrorResponse(
+                status = FailResponseStatus.TOKEN_EXPIRED_BY_ADMIN,
+                description = "ATK가 운영자에 의해 강제로 만료됨. 재시도 필요")
     })
     @PutMapping("")
     public ResponseEntity<ResponseDto<CreateTokenResDto>> completeSignup(
@@ -154,8 +154,8 @@ public class MemberController {
     @ApiErrorResponses({@ApiErrorResponse(status = FailResponseStatus.INVALID_REQUEST, description = "잘못된 요청인 경우")})
     @PostMapping("/profile-image/upload-presigned-url")
     public ResponseEntity<ResponseDto<GenerateMemberProfileImageUploadPresignedUrlResDto>>
-    generateMemberProfileImageUploadPresignedUrl(
-            @RequestBody GenerateMemberProfileImageUploadPresignedUrlReqDto requestBody) {
+            generateMemberProfileImageUploadPresignedUrl(
+                    @RequestBody GenerateMemberProfileImageUploadPresignedUrlReqDto requestBody) {
         String memberId = AuthUtil.getMemberId();
 
         GenerateUploadPresignedUrlsResult result =
@@ -197,7 +197,7 @@ public class MemberController {
     @GetMapping("/{memberId}/my-dowith")
     public ResponseEntity<ResponseDto<RetrieveMyDowithResDto>> retrieveMemberDowithInfo(
             @Parameter(description = "조회 대상 회원 ID (TSID)", example = "01234567890123456789012345") @PathVariable
-            String memberId) {
+                    String memberId) {
         return ResponseUtil.createSuccessResponse(
                 RetrieveMyDowithResDto.from(memberService.retrieveMyDowithInfo(memberId)));
     }
