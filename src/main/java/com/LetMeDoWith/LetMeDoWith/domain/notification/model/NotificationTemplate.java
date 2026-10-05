@@ -3,8 +3,6 @@ package com.LetMeDoWith.LetMeDoWith.domain.notification.model;
 import com.LetMeDoWith.LetMeDoWith.common.entity.BaseAuditEntity;
 import com.LetMeDoWith.LetMeDoWith.common.enums.notification.NotificationTemplateCode;
 import com.LetMeDoWith.LetMeDoWith.common.enums.notification.NotificationType;
-import com.LetMeDoWith.LetMeDoWith.common.exception.RestApiException;
-import com.LetMeDoWith.LetMeDoWith.common.exception.status.FailResponseStatus;
 import jakarta.persistence.*;
 import java.util.HashSet;
 import java.util.Map;
@@ -56,18 +54,18 @@ public class NotificationTemplate extends BaseAuditEntity {
     }
 
     public String parseTitle(Map<String, String> params) {
-        return parse(this.title, params);
+        return parse("title", this.title, params);
     }
 
     public String parseBody(Map<String, String> params) {
-        return parse(this.body, params);
+        return parse("body", this.body, params);
     }
 
     public String parseDeepLink(Map<String, String> params) {
-        return parse(this.appDeepLink, params);
+        return parse("appDeepLink", this.appDeepLink, params);
     }
 
-    private String parse(String template, Map<String, String> params) {
+    private String parse(String fieldName, String template, Map<String, String> params) {
 
         if (params == null) return template;
 
@@ -80,9 +78,12 @@ public class NotificationTemplate extends BaseAuditEntity {
         }
 
         if (!params.keySet().containsAll(keySet)) {
-            // TODO - 추후 로깅 제대로 된다면, 해당 부분에 Error 로깅 및 alarm 필요
-            // TODO - return title 하고
-            throw new RestApiException(FailResponseStatus.INTERNAL_SERVER_ERROR);
+            Set<String> missingKeys = new HashSet<>(keySet);
+            missingKeys.removeAll(params.keySet());
+
+            throw new IllegalStateException(
+                    "알림 템플릿 파싱 실패 - templateCode: %s, field: %s, 필요한 placeholder: %s, 누락된 key: %s, 전달받은 paramKeys: %s"
+                            .formatted(this.code, fieldName, keySet, missingKeys, params.keySet()));
         }
 
         String parsed = template;

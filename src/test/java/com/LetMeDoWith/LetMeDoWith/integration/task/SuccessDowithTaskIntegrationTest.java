@@ -1,31 +1,34 @@
 package com.LetMeDoWith.LetMeDoWith.integration.task;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.awaitility.Awaitility.await;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.LetMeDoWith.LetMeDoWith.common.enums.common.Yn;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.Gender;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberStatus;
 import com.LetMeDoWith.LetMeDoWith.common.enums.member.MemberType;
 import com.LetMeDoWith.LetMeDoWith.common.enums.notification.NotificationTemplateCode;
 import com.LetMeDoWith.LetMeDoWith.common.enums.notification.NotificationType;
 import com.LetMeDoWith.LetMeDoWith.domain.member.model.Member;
+import com.LetMeDoWith.LetMeDoWith.domain.notification.model.Notification;
 import com.LetMeDoWith.LetMeDoWith.domain.notification.model.NotificationTemplate;
 import com.LetMeDoWith.LetMeDoWith.domain.notification.model.NotificationToken;
 import com.LetMeDoWith.LetMeDoWith.domain.task.enums.DowithTaskStatus;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTaskLike;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.TaskCategory;
+import com.LetMeDoWith.LetMeDoWith.infrastructure.notification.persistence.jpaRepository.NotificationJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.notification.persistence.jpaRepository.NotificationTemplateJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.notification.persistence.jpaRepository.NotificationTokenJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.DowithTaskJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.DowithTaskLikeJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.infrastructure.task.persistence.jpaRepository.TaskCategoryJpaRepository;
 import com.LetMeDoWith.LetMeDoWith.integration.AbstractIntegrationTest;
-import com.LetMeDoWith.LetMeDoWith.presentation.notification.dto.RetrieveNotificationsResDto;
 import com.LetMeDoWith.LetMeDoWith.presentation.task.dto.*;
-import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -71,6 +74,9 @@ public class SuccessDowithTaskIntegrationTest extends AbstractIntegrationTest {
     @Autowired
     private NotificationTemplateJpaRepository notificationTemplateJpaRepository;
 
+    @Autowired
+    private NotificationJpaRepository notificationJpaRepository;
+
     @Value("${cloud.aws.s3.bucketName}")
     private String bucketName;
 
@@ -85,10 +91,15 @@ public class SuccessDowithTaskIntegrationTest extends AbstractIntegrationTest {
     private Member member1;
     private Member member2;
 
+    private DowithTask otherMemberDowithTask;
+
     @Override
     protected void deleteTestData() {
         dowithTaskJpaRepository.deleteAll();
         taskCategoryJpaRepository.deleteAll();
+        notificationJpaRepository.deleteAll();
+        notificationTokenJpaRepository.deleteAll();
+        notificationTemplateJpaRepository.deleteAll();
     }
 
     @Override
@@ -120,6 +131,7 @@ public class SuccessDowithTaskIntegrationTest extends AbstractIntegrationTest {
                 .dateOfBirth(LocalDate.of(1995, 11, 4))
                 .type(MemberType.USER)
                 .build());
+        notificationTokenJpaRepository.save(NotificationToken.of(this.member1.getId(), REGISTERED_FCM_TOKEN));
 
         this.member2 = this.memberJpaRepository.save(Member.builder()
                 .status(MemberStatus.NORMAL)
@@ -143,6 +155,14 @@ public class SuccessDowithTaskIntegrationTest extends AbstractIntegrationTest {
             successDowithTasks.add(dowithTask);
         }
         successDowithTasks = dowithTaskJpaRepository.saveAll(successDowithTasks);
+
+        // member1 소유의 DowithTask - requestMember(자기 자신이 아닌 다른 멤버)가 좋아요를 눌렀을 때
+        // LIKE_RECEIVED 알림이 실제로 발송되는지 검증하기 위한 전용 fixture.
+        // (자기 자신의 Task를 좋아요하면 SuccessDowithTaskService#likeSuccessDowithTask에서 알림 발송을 스킵하고,
+        //  좋아요 자체는 상태(WAIT/SUCCESS)와 무관하게 가능하므로 success() 처리는 하지 않는다 - 전역
+        //  countByStatus(SUCCESS) 집계를 쓰는 다른 테스트의 totalCount에 영향을 주지 않기 위함)
+        otherMemberDowithTask = dowithTaskJpaRepository.save(DowithTask.of(
+                this.member1.getId(), null, "다른 멤버의 Task", LocalDate.of(2024, 3, 1), LocalTime.of(12, 0)));
 
         successDowithTasks.sort(Comparator.comparing(DowithTask::getId).reversed());
         // 제일 최신 등록된 DowtithTask는 member1과 member2가 좋아요 누름
@@ -372,14 +392,16 @@ public class SuccessDowithTaskIntegrationTest extends AbstractIntegrationTest {
     @Test
     @DisplayName("성공한 DowithTask 좋아요 테스트 - 이미 좋아요한 경우에 멱등성 보장")
     void likeSuccessDowithTask() throws Exception {
-        // Given
-        Long successDowithTaskId = this.successDowithTasks.get(0).getId();
+        // Given - requestMember가 member1 소유의 Task를 좋아요한다.
+        // (자기 자신의 Task를 좋아요하면 SuccessDowithTaskService#likeSuccessDowithTask에서 알림 발송 자체를
+        //  스킵하므로, LIKE_RECEIVED 알림 발송 여부를 검증하려면 타인 소유의 Task를 대상으로 해야 한다)
+        Long otherMemberDowithTaskId = this.otherMemberDowithTask.getId();
 
         // when
         ResultActions firstLikeResult =
-                this.request(MockMvcRequestBuilders.post(LIKE_SUCCESS_DOWITH_TASK_URL, successDowithTaskId));
+                this.request(MockMvcRequestBuilders.post(LIKE_SUCCESS_DOWITH_TASK_URL, otherMemberDowithTaskId));
         ResultActions secondLikeResult =
-                this.request(MockMvcRequestBuilders.post(LIKE_SUCCESS_DOWITH_TASK_URL, successDowithTaskId));
+                this.request(MockMvcRequestBuilders.post(LIKE_SUCCESS_DOWITH_TASK_URL, otherMemberDowithTaskId));
 
         // then
         firstLikeResult.andExpect(status().isOk());
@@ -388,33 +410,30 @@ public class SuccessDowithTaskIntegrationTest extends AbstractIntegrationTest {
         LikeDowithTaskResDto firstLikeResponse = this.readResponse(firstLikeResult, LikeDowithTaskResDto.class);
         LikeDowithTaskResDto secondLikeResponse = this.readResponse(secondLikeResult, LikeDowithTaskResDto.class);
         assertThat(firstLikeResponse.isAlreadyLiked()).isFalse();
-        assertThat(firstLikeResponse.likeCount()).isEqualTo(3L);
+        assertThat(firstLikeResponse.likeCount()).isEqualTo(1L);
         assertThat(secondLikeResponse.isAlreadyLiked()).isTrue();
-        assertThat(secondLikeResponse.likeCount()).isEqualTo(3L);
+        assertThat(secondLikeResponse.likeCount()).isEqualTo(1L);
 
-        long likeCount = dowithTaskLikeJpaRepository.countByDowithTask_Id(successDowithTaskId);
-        assertThat(likeCount).isEqualTo(3L);
+        long likeCount = dowithTaskLikeJpaRepository.countByDowithTask_Id(otherMemberDowithTaskId);
+        assertThat(likeCount).isEqualTo(1L);
 
-        // receiver(DowithTask 소유자 = requestMember)가 알림 목록 API로 LIKE_RECEIVED 알림을 확인 가능
-        // - 첫 like는 sendNotification(isSavingHistory=true)을 트리거 → Notification 적재
+        // receiver(DowithTask 소유자 = member1)에게 LIKE_RECEIVED 알림이 적재되는지 확인
+        // - 첫 like는 sendNotification을 트리거 → Notification 적재
         // - 두번째 like는 isAlreadyLiked=true라 notification 트리거되지 않음
-        // → 적재된 알림 1건이 receiver의 NORMAL 알림 목록에 보여야 함
-        // sendNotificationAsync는 비동기로 처리되므로 DB 반영 시간이 필요할 수 있음
-        Thread.sleep(1000);
-        var notificationResult = this.request(MockMvcRequestBuilders.get("/api/v1/notifications")
-                        .param("type", NotificationType.NORMAL.getCode())
-                        .param("page", "0")
-                        .param("size", "10"))
-                .andExpect(status().isOk())
-                .andReturn();
-        RetrieveNotificationsResDto notificationsResDto = this.readPagingResponse(
-                notificationResult.getResponse().getContentAsString(StandardCharsets.UTF_8),
-                RetrieveNotificationsResDto.class);
-        assertThat(notificationsResDto.notifications().size()).isEqualTo(1);
-        assertThat(notificationsResDto.notifications().get(0).title()).isEqualTo("공감을 받았어요");
-        assertThat(notificationsResDto.notifications().get(0).body()).isEqualTo("test님이 도리 인증에 공감했어요");
-        assertThat(notificationsResDto.notifications().get(0).deepLink()).isEqualTo("letmedowith://test");
-        assertThat(notificationsResDto.notifications().get(0).isConfirmed()).isFalse();
+        // receiver가 requestMember가 아니라 알림 목록 API(요청자 세션 기준)로는 조회할 수 없어, repository로 직접 검증한다.
+        // sendNotificationAsync는 비동기로 처리되므로, 적재될 때까지 polling으로 대기
+        await().atMost(Duration.ofSeconds(3))
+                .pollInterval(Duration.ofMillis(100))
+                .untilAsserted(() -> org.assertj.core.api.Assertions.assertThat(
+                                notificationJpaRepository.findAllByMemberId(member1.getId()))
+                        .hasSize(1));
+
+        Notification notification =
+                notificationJpaRepository.findAllByMemberId(member1.getId()).get(0);
+        assertThat(notification.getTitle()).isEqualTo("공감을 받았어요");
+        assertThat(notification.getBody()).isEqualTo("test님이 도리 인증에 공감했어요");
+        assertThat(notification.getDeepLink()).isEqualTo("letmedowith://test");
+        assertThat(notification.getIsConfirmed()).isEqualTo(Yn.FALSE);
     }
 
     @Test
