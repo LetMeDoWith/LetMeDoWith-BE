@@ -12,7 +12,6 @@ import com.LetMeDoWith.LetMeDoWith.domain.feedback.service.FeedbackSendPolicy;
 import com.LetMeDoWith.LetMeDoWith.domain.member.repository.MemberRepository;
 import com.LetMeDoWith.LetMeDoWith.domain.task.model.DowithTask;
 import com.LetMeDoWith.LetMeDoWith.domain.task.repository.DowithTaskRepository;
-import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -67,6 +66,6 @@ public class CreateDowithTaskFeedbackService {
                 taskFeedbackTemplate.getNotificationTemplateCode(),
                 senderId,
                 dowithTask.getMemberId(),
-                Map.of("date", dowithTask.getDate().format(DateTimeFormatter.ISO_LOCAL_DATE)));
+                Map.of("dowithTaskId", String.valueOf(dowithTaskId)));
     }
 }
