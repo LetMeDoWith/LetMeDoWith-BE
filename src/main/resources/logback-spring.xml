@@ -35,6 +35,13 @@
     <logger level="OFF" name="org.hibernate.SQL"/>
     <logger level="OFF" name="org.hibernate.orm.jdbc.bind"/>
 
+    <!-- Spring Batch Job/Step 생명주기 INFO 로그 억제 -->
+    <logger name="org.springframework.batch" level="WARN"/>
+
+    <!-- Sentry JDBC 트레이싱(sentry-jdbc)이 내부적으로 물고 오는 p6spy 기본 쿼리 로깅 억제.
+         Sentry Performance의 DB span 기록과는 무관(별도 경로). -->
+    <logger level="OFF" name="p6spy"/>
+
     <!-- 전체 시스템 로그는 INFO로 설정 (너무 많은 로그 방지) -->
     <root level="INFO">
       <appender-ref ref="CONSOLE"/>
@@ -66,6 +73,13 @@
     <logger level="OFF" name="org.hibernate.SQL"/>
     <logger level="OFF" name="org.hibernate.orm.jdbc.bind"/>
     <logger additivity="false" level="OFF" name="datasource-proxy"/>
+
+    <!-- Spring Batch Job/Step 생명주기 INFO 로그 억제 -->
+    <logger name="org.springframework.batch" level="WARN"/>
+
+    <!-- Sentry JDBC 트레이싱(sentry-jdbc)이 내부적으로 물고 오는 p6spy 기본 쿼리 로깅 억제.
+         Sentry Performance의 DB span 기록과는 무관(별도 경로). -->
+    <logger level="OFF" name="p6spy"/>
 
     <!-- 운영에서는 DEBUG 금지: 로그 비용/성능/민감정보 노출 방지. 우리 패키지도 INFO까지만 -->
     <logger name="com.LetMeDoWith" level="INFO"/>

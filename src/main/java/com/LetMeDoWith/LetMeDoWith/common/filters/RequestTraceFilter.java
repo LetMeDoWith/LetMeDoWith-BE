@@ -34,7 +34,6 @@ public class RequestTraceFilter extends OncePerRequestFilter {
         try {
             String url = req.getRequestURI();
             String qs = req.getQueryString();
-            log.info("REQUEST: {} {}{}", req.getMethod(), url, (qs != null ? "?" + qs : ""));
             chain.doFilter(req, res);
         } finally {
             MDC.remove("traceId");
