@@ -33,8 +33,8 @@ public enum NotificationTemplateCode implements BaseEnum {
     DAILY_SAT_AM("DAILY_SAT_AM", "데일리 알림 (토요일 오전)"),
     DAILY_SAT_PM("DAILY_SAT_PM", "데일리 알림 (토요일 오후)"),
     DAILY_SUN_AM("DAILY_SUN_AM", "데일리 알림 (일요일 오전)"),
-    DAILY_SUN_PM("DAILY_SUN_PM", "데일리 알림 (일요일 오후)");
-
+    DAILY_SUN_PM("DAILY_SUN_PM", "데일리 알림 (일요일 오후)"),
+    DORI_FAIL("DORI_FAIL", "도리 Todo 실패 알림");
     private final String code;
     private final String description;
 }

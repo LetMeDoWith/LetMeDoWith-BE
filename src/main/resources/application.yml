@@ -43,7 +43,7 @@ spring:
     baseline-on-migrate: true
     baseline-version: 0
     enabled: true
-    url: jdbc:mysql://localhost:3306/letmedowith_app
+    url: jdbc:mysql://${DB_URL:localhost}:${DB_PORT:3306}/${DB_SCHEMA:letmedowith_app}
   batch:
     jdbc:
       # TODO - 운영은 보통 'never'로 두고 DDL 미리 반영. 추후 정리 예정

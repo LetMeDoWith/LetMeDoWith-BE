@@ -41,7 +41,7 @@ firebase:
   config-base64: ${FIREBASE_CONFIG_BASE64}
 
 sentry:
-  environment: prduction
+  environment: production
   dsn: ${SENTRY_DSN}
   # Add data like request headers and IP for users,
   # see https://docs.sentry.io/platforms/java/guides/spring-boot/data-management/data-collected/ for more info

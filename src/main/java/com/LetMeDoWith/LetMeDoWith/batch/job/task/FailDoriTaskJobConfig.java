@@ -18,7 +18,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 @Configuration
 @RequiredArgsConstructor
 @Slf4j
-public class FailDowithTaskJobConfig {
+public class FailDoriTaskJobConfig {
 
     private static final String JOB_NAME = "failDowithTaskJob";
     private static final String READER_NAME = "failDowithTaskReader";

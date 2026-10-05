@@ -143,7 +143,7 @@ public class DowithTaskQueryRespositoryImpl implements DowithTaskQueryRepository
                 .join(dowithTaskSuccess)
                 .on(dowithTaskSuccess.dowithTask.eq(dowithTask))
                 .where(dowithTask.status.eq(DowithTaskStatus.SUCCESS))
-                .orderBy(dowithTaskSuccess.createdAt.desc())
+                .orderBy(dowithTaskSuccess.createdAt.desc(), dowithTask.id.desc())
                 .offset(offset)
                 .limit(limit)
                 .fetch();

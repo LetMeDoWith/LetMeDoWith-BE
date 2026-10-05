@@ -51,7 +51,7 @@ class TaskRoutineDateCalculatorTest {
         LocalDate startDate = LocalDate.of(2024, 1, 1);
         LocalDate endDate = LocalDate.of(2024, 1, 2);
 
-        when(routineScheduleStrategies.get("dailyRoutineDateScheduleStrategy")).thenReturn(null);
+        when(routineScheduleStrategies.get("dailyRoutineDateCalculateStrategy")).thenReturn(null);
 
         // when & then
         assertThatThrownBy(() -> routineDateCalculator.computeRoutineDates(
@@ -68,7 +68,7 @@ class TaskRoutineDateCalculatorTest {
         LocalDate endDate = LocalDate.of(2024, 1, 2);
         Set<LocalDate> expectedDates = Set.of(startDate, endDate);
 
-        when(routineScheduleStrategies.get("dailyRoutineDateScheduleStrategy")).thenReturn(dailyStrategy);
+        when(routineScheduleStrategies.get("dailyRoutineDateCalculateStrategy")).thenReturn(dailyStrategy);
         when(dailyStrategy.getRoutineDates(startDate, endDate, Set.of(1))).thenReturn(expectedDates);
 
         // when

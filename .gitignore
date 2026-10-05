@@ -49,6 +49,9 @@ samLocalEnvVars.json
 /src/main/generated/
 /lib/
 
+### p6spy test logging artifact ###
+spy.log
+
 ### AI collaboration framework docs ###
 /docs
 /.cursor

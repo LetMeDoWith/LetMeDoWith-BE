@@ -1,6 +1,6 @@
-package com.LetMeDoWith.LetMeDoWith.batch.job.notification;
+package com.LetMeDoWith.LetMeDoWith.batch.job.notification.task;
 
-import com.LetMeDoWith.LetMeDoWith.batch.tasklet.notification.SendDailyMorningNotificationTasklet;
+import com.LetMeDoWith.LetMeDoWith.batch.tasklet.notification.task.FailDoriTaskNotifyTasklet;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -15,26 +15,26 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
 @RequiredArgsConstructor
-public class DailyMorningNotificationJobConfig {
+public class DoriTaskFailNotifyJobConfig {
 
-    private static final String JOB_NAME = "dailyMorningNotificationJob";
+    private static final String JOB_NAME = "doriTaskFailNotifyJob";
 
     private final JobRepository jobRepository;
     private final PlatformTransactionManager platformTransactionManager;
 
     @Bean
-    public Job dailyMorningNotificationJob(Step dailyMorningNotificationStep) {
+    public Job doriTaskFailNotifyJob(Step doriTaskFailNotifyStep) {
         return new JobBuilder(JOB_NAME, jobRepository)
                 .incrementer(new RunIdIncrementer())
-                .start(dailyMorningNotificationStep)
+                .start(doriTaskFailNotifyStep)
                 .build();
     }
 
     @Bean
     @JobScope
-    public Step dailyMorningNotificationStep(SendDailyMorningNotificationTasklet sendDailyMorningNotificationTasklet) {
-        return new StepBuilder("dailyMorningNotificationStep", jobRepository)
-                .tasklet(sendDailyMorningNotificationTasklet, platformTransactionManager)
+    public Step doriTaskFailNotifyStep(FailDoriTaskNotifyTasklet failDoriTaskNotifyTasklet) {
+        return new StepBuilder("doriTaskFailNotifyStep", jobRepository)
+                .tasklet(failDoriTaskNotifyTasklet, platformTransactionManager)
                 .build();
     }
 }

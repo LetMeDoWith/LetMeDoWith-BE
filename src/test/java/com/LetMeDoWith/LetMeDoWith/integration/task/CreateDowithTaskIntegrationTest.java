@@ -174,6 +174,7 @@ public class CreateDowithTaskIntegrationTest extends AbstractIntegrationTest {
     @DisplayName("[FAIL] Task 카테고리가 존재하지 않는 경우")
     void createDowithTask_taskCategoryNotExist() throws Exception {
         // given
+        setFixedClock(LocalDateTime.of(2024, 3, 1, 0, 0));
         LocalDateTime startDateTime = SystemTimeUtil.now().plusDays(1);
 
         // when
@@ -193,7 +194,8 @@ public class CreateDowithTaskIntegrationTest extends AbstractIntegrationTest {
     @DisplayName("[FAIL] 일자가 오늘인데, 시작시간이 과거인 경우")
     void createDowithTaskWithRoutine_taskNotAvailStartTime() throws Exception {
         // given
-        LocalDateTime startDateTime = LocalDateTime.now().minusMinutes(10);
+        setFixedClock(LocalDateTime.of(2024, 3, 1, 0, 10));
+        LocalDateTime startDateTime = SystemTimeUtil.now().minusMinutes(10);
         LocalDate routineDate1 = startDateTime.plusMonths(1).toLocalDate();
         LocalDate routineDate2 = startDateTime.plusDays(2).toLocalDate();
         List<LocalDate> targetDates = Arrays.asList(startDateTime.toLocalDate(), routineDate1, routineDate2);

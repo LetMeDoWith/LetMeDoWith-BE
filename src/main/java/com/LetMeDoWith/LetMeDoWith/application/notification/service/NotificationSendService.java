@@ -74,6 +74,10 @@ public class NotificationSendService {
 
         Map<String, Member> memberMap = members.stream().collect(Collectors.toMap(Member::getId, Function.identity()));
 
+        if (!memberMap.containsKey(senderMemberId) || !memberMap.containsKey(receiverMemberId)) {
+            return;
+        }
+
         Map<String, String> paramsMap = Map.of(
                 "senderNickname", memberMap.get(senderMemberId).getNickname(),
                 "receiverNickname", memberMap.get(receiverMemberId).getNickname());

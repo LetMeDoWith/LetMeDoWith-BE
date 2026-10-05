@@ -1,4 +1,4 @@
-package com.LetMeDoWith.LetMeDoWith.batch.tasklet.task;
+package com.LetMeDoWith.LetMeDoWith.batch.tasklet.notification.task;
 
 import com.LetMeDoWith.LetMeDoWith.application.notification.dto.SendNotificationResult;
 import com.LetMeDoWith.LetMeDoWith.application.notification.service.NotificationSendService;

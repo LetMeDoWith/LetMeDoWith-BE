@@ -47,7 +47,6 @@ public class AuthenticateInterceptor implements HandlerInterceptor {
         }
 
         AuthContextHolder.setMemberId(memberId);
-        log.info("MEMBER ID: {}", memberId);
 
         return true;
     }

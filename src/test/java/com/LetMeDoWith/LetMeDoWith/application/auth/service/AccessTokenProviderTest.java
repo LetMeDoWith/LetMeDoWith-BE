@@ -28,6 +28,6 @@ public class AccessTokenProviderTest {
         String memberIdWithoutVerify = accessTokenProvider.getMemberIdWithoutVerify(token);
 
         // then
-        assertThat(memberIdWithoutVerify).isEqualTo(158);
+        assertThat(memberIdWithoutVerify).isEqualTo("158");
     }
 }
